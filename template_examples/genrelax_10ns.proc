@@ -1,0 +1,108 @@
+# This is an example input for relaxation inputs generation with q_genrelax.py
+# I know it's a horrible and not really clear way of generating inputs, 
+# but it still seems better than manually modifying 15 input files just to change a sequence restraint 
+# or to hard code certain values in arrays in a bash script (I'm looking at you Paul)
+#
+# Basically, there are three sections in curly braces:
+# SCRIPT_VARS   -   contains user defined constants that will be replaced with their values if they appear in this input. Useful for seq.restr. Example:  RESTRAINT1     5993  6003
+#                   try to make them unique and descriptive, not something like MD (that would suck for you)
+# GENERAL       -   qdyn5 parameters, used in all steps.
+# STEPS         -   qdyn5 parameters for each relaxation step, separated by "________________". These values override the ones defined in the GENERAL section.
+#
+
+#######################################################
+{SCRIPT_VARS}
+#######################################################
+SOLUTE            $1.N$     $316.H2$
+
+#######################################################
+{GENERAL}
+#######################################################
+[MD]
+stepsize                   1
+temperature              300
+bath_coupling            100  
+separate_scaling          on
+lrf                       on
+
+[cut-offs]
+solute_solute             10
+solute_solvent            10
+solvent_solvent           10
+q_atom                    99
+
+[lambdas]
+0.50 0.50
+
+[intervals]
+non_bond                 30
+output                 2000 
+trajectory             2000
+temperature            2000
+
+[sequence_restraints]
+# sequence restraints here
+
+[distance_restraints]
+# distance restraints here
+
+[angle_restraints]
+# angle restraints here
+
+
+#######################################################
+{STEPS}
+#######################################################
+
+
+[MD]
+steps                  50000
+initial_temperature      300
+random_seed               -1
+
+[sequence_restraints]
+SOLUTE     100.0  0 0 0
+_____________________________________________________________
+
+[MD]
+steps                  20000
+
+[sequence_restraints]
+SOLUTE      10.0  0 0 0
+_____________________________________________________________
+
+[MD]
+steps                  20000
+
+[sequence_restraints]
+SOLUTE       3.0  0 0 0
+_____________________________________________________________
+
+[MD]
+steps                  10000
+
+[sequence_restraints]
+SOLUTE       1.0  0 0 0
+_____________________________________________________________
+
+[MD]
+steps                 100000
+
+
+# 10x 1ns
+
+_____________________________________________________________
+[MD]
+steps                   1000000
+_____________________________________________________________
+[MD]
+steps                   1000000
+_____________________________________________________________
+[MD]
+steps                   1000000
+_____________________________________________________________
+[MD]
+steps                   1000000
+_____________________________________________________________
+[MD]
+steps                   1000000

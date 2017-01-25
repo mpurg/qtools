@@ -1,0 +1,411 @@
+
+Build and version information
+
+Build number 5.10.7
+Build date   20170122
+Built:       
+      by     mpurg
+      on     cookieMonster
+      git id 95a25660501bccf29dd4c3b2354c6fae1640f4bb
+      with   GNU Fortran Ubuntu 4.8.4-2ubuntu1~14.04.3 4.8.4
+Current date 2017- 1-24 and time 23: 3:19
+
+Welcome in qcalc modification date 20170122
+
+
+Qcalc works in three stages:
+1. Load topology.
+2. Set up a list of calculations to make.
+3. Read coordinates from trajectory and/or restart files and calculate.
+--> Topology file: Loading topology pro.top
+---------------------------- Reading topology file ---------------------------
+pro.top                                                                         
+
+No. of solute atoms     =       4868
+No. of solvent atoms    =       2166
+No. of coordinates      =      21102
+No. of atom type codes  =       7034
+No. of solute bonds     =       4951
+No. of solvent bonds    =       2166
+No. of solute angles    =       8996
+No. of solvent angles   =        722
+No. of solute torsions  =      18023
+No. of solvent torsions =          0
+No. of solute impropers =        994
+No. of solvent impropers=          0
+No. of atomic charges   =       7034
+No. of solute chargegrps=       1346
+No. of solvent chargegps=        722
+Charge group cut-off    : Switching atoms
+vdW  rule [ 1=G / 2=A ] =          1
+El-static 1-4 damping   =      0.500
+Coulomb constant        =   332.0000
+No. of atom types       =         76
+No. of LJ type 2 pairs  =          0
+No. of heavy atoms      =       3186
+No. of 1-4 neighbours   =      12968
+No. long-range 1-4 nbrs =         10
+No. of nbor exclusions  =      16835
+No. of long-range excls =          0
+No. of residues         =       1038
+No of solute residues   =        316
+No. of molecules        =        727
+Atom type names         =         76
+SYBYL atom types        =         76
+Boundary: sphere
+Exclusion radius        =     25.000
+Eff. solvent radius     =     24.160
+Solute centre           =     14.313     2.491    60.822
+Solvent centre          =     14.313     2.491    60.822
+No. of excluded atoms   =        414
+Molecular topology read successfully.
+
+ To load a fep file, enter the name, or enter . for no FEP file
+--> FEP file:  Loaded FEP file dfpase_dfp_hoh_asp229.fep                                                       
+----------------------------- Reading Q atom list ----------------------------
+No. of fep/evb states    =     2
+No. of fep/evb atoms     =    34
+Atom nos.:  4841  4842  4843  4844  4845  4846  4847  4848  4849  4850
+Atom nos.:  4851  4852  4853  4854  4855  4856  4857  4858  4859  4860
+Atom nos.:  4861  4862  4863  4864  4865  4866  4867  4868  3451  3452
+Atom nos.:  3453  3454  3455  3456
+--------------------------- Reading fep/evb strategy --------------------------
+
+No. of changing charges  =    34
+Effective Q-atom charges for all Q-atoms
+Q atom    charge in state 1 state 2
+     1                1.283   1.416
+     2               -0.549  -0.616
+     3                0.602   0.614
+     4               -0.549  -0.616
+     5                0.602   0.614
+     6               -0.459  -0.464
+     7               -0.459  -0.464
+     8               -0.712  -0.719
+     9               -0.280  -1.000
+    10               -0.459  -0.464
+    11               -0.459  -0.464
+    12               -0.010  -0.011
+    13               -0.010  -0.011
+    14                0.121   0.119
+    15                0.121   0.119
+    16                0.121   0.119
+    17                0.121   0.119
+    18                0.121   0.119
+    19                0.121   0.119
+    20                0.121   0.119
+    21                0.121   0.119
+    22                0.121   0.119
+    23                0.121   0.119
+    24                0.121   0.119
+    25                0.121   0.119
+    26               -0.834  -0.721
+    27                0.417   0.450
+    28                0.417   0.478
+    29               -0.220  -0.120
+    30                0.060   0.060
+    31                0.060   0.060
+    32                0.700   0.520
+    33               -0.800  -0.530
+    34               -0.800  -0.440
+
+   SUM               -1.000  -1.000
+
+No. of Q-atom types  =    61
+Name            Ai      Bi      Ci     ai Ai(1-4) Bi(1-4)    Mass
+dfp_P1     2447.79   46.79   43.00  1.50  1730.85   33.09   30.97
+dfp_O1      401.02   17.32    1.00  2.50   283.56   12.25   16.00
+dfp_C1      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dfp_O2      401.02   17.32    1.00  2.50   283.56   12.25   16.00
+dfp_C2      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dfp_C3      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dfp_C4      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dfp_O3      626.39   23.67    1.00  2.50   442.92   16.74   16.00
+dfp_F1      318.99   12.55  110.00  1.50   225.56    8.88   18.99
+dfp_C5      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dfp_C6      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dfp_H1       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H2       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H3       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H4       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H5       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H6       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H7       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H8       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H9       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H10      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H11      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H12      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H13      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H14      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_P1     2447.79   46.79   43.00  1.50  1730.85   33.09   30.97
+dip_O1      401.02   17.32    1.00  2.50   283.56   12.25   16.00
+dip_C1      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dip_O2      401.02   17.32    1.00  2.50   283.56   12.25   16.00
+dip_C2      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dip_C3      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dip_C4      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dip_O3      626.39   23.67    1.00  2.50   442.92   16.74   16.00
+dip_C5      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dip_C6      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dip_H1       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H2       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H3       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H4       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H5       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H6       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H7       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H8       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H9       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H10      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H11      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H12      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H13      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H14      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_O4      401.02   17.32   53.00  1.50   283.56   12.25   16.00
+dip_H15       0.01    0.04    1.00  2.50     0.00    0.03    1.01
+flu_F1     1356.62   47.81  110.00  1.50   959.28   33.81   18.99
+HC           84.57    5.41    1.00  2.50    59.80    3.83    1.01
+HO            0.00    0.00    5.00  2.50     0.00    0.00    1.01
+HW            0.00    0.00    5.00  2.50     0.00    0.00    1.01
+C2         1802.24   34.18    1.00  2.50  1274.38   24.17   12.01
+CT          944.52   22.03    1.00  2.50   667.88   15.58   12.01
+OW          762.89   24.39   53.00  1.50   539.45   17.25   16.00
+O2          616.44   23.77   53.00  2.50   435.89   16.81   16.00
+O1          616.44   23.77    1.00  2.50   435.89   16.81   16.00
+ODE         601.15   22.27   53.00  2.50   425.08   15.74   16.00
+
+Assigning Q-atom types to all Q atoms:
+Q atom    atom type in  state 1  state 2
+     1                  dfp_P1   dip_P1  
+     2                  dfp_O1   dip_O1  
+     3                  dfp_C1   dip_C1  
+     4                  dfp_O2   dip_O2  
+     5                  dfp_C2   dip_C2  
+     6                  dfp_C3   dip_C3  
+     7                  dfp_C4   dip_C4  
+     8                  dfp_O3   dip_O3  
+     9                  dfp_F1   flu_F1  
+    10                  dfp_C5   dip_C5  
+    11                  dfp_C6   dip_C6  
+    12                  dfp_H1   dip_H1  
+    13                  dfp_H2   dip_H2  
+    14                  dfp_H3   dip_H3  
+    15                  dfp_H4   dip_H4  
+    16                  dfp_H5   dip_H5  
+    17                  dfp_H6   dip_H6  
+    18                  dfp_H7   dip_H7  
+    19                  dfp_H8   dip_H8  
+    20                  dfp_H9   dip_H9  
+    21                  dfp_H10  dip_H10 
+    22                  dfp_H11  dip_H11 
+    23                  dfp_H12  dip_H12 
+    24                  dfp_H13  dip_H13 
+    25                  dfp_H14  dip_H14 
+    26                  OW       dip_O4  
+    27                  HW       HO      
+    28                  HW       dip_H15 
+    29                  CT       CT      
+    30                  HC       HC      
+    31                  HC       HC      
+    32                  C2       C2      
+    33                  O2       ODE     
+    34                  O2       O1      
+
+No. of soft repulsion non-bonded pairs =     4
+q-atom_i q-atom_j
+      33       27
+       1        9
+       1       26
+      26       27
+
+Q-bond types:
+type #  Morse E_diss    alpha       b0  Harmonic force_k 
+     1                            1.25           1312.00
+     2                            1.36            900.00
+     3                            1.23           1140.00
+     4        245.80     1.50     0.94
+     5        186.00     1.44     1.57
+     6         95.00     2.00     1.61
+     7        245.80     1.50     0.96
+     8                            0.96           1106.00
+     9                            0.94           1106.00
+
+
+No. of changing bonds    =     7
+atom_i atom_j   bond type in state 1 state 2
+  3454   3455                      1       2
+  3454   3456                      1       3
+  3455   4867                      0       4
+  4841   4849                      5       0
+  4841   4866                      0       6
+  4866   4867                      7       0
+  4866   4868                      8       9
+
+Q-angle types:
+type #       force-k   theta0
+     1        140.00   117.00
+     2        140.00   108.00
+     3        160.00   120.40
+     4         70.00   113.00
+     5        160.00   126.00
+     6        160.00   121.00
+     7        100.00   113.86
+     8        230.00   101.33
+     9        240.00   102.38
+    10        230.00   101.33
+    11        240.00   102.38
+    12        200.00   110.66
+    13        200.00   115.86
+    14        200.00   104.52
+
+
+No. of changing angles   =    12
+atom_i atom_j atom_k    angle type in state 1 state 2
+  3451   3454   3455                        1       2
+  3451   3454   3456                        1       3
+  3454   3455   4867                        0       4
+  3455   3454   3456                        5       6
+  4841   4866   4868                        0       7
+  4842   4841   4849                        8       0
+  4842   4841   4866                        0       9
+  4844   4841   4849                       10       0
+  4844   4841   4866                        0      11
+  4848   4841   4849                       12       0
+  4848   4841   4866                        0      13
+  4867   4866   4868                       14       0
+
+Q-torsion types:
+type #       force-k     mult    delta
+     1          0.27     2.00   180.00
+     2          0.50    -1.00     0.00
+     3          0.27    -2.00   180.00
+     4          0.23     3.00     0.00
+     5          0.75    -1.00     0.00
+     6          2.75     2.00   180.00
+     7          0.00     1.00     0.00
+     8          0.00     2.00   180.00
+     9          2.75     2.00   180.00
+    10         -0.23    -1.00     0.00
+    11          0.09    -2.00   180.00
+    12         -0.08     3.00     0.00
+    13          0.15     3.00     0.00
+    14          0.92    -1.00     0.00
+    15          0.23    -2.00   180.00
+    16          0.32     3.00     0.00
+    17         -0.23    -1.00     0.00
+    18          0.09    -2.00   180.00
+    19         -0.08     3.00     0.00
+    20          0.15     3.00     0.00
+    21          0.92    -1.00     0.00
+    22          0.23    -2.00   180.00
+    23          0.32     3.00     0.00
+    24          0.00     1.00     0.00
+
+
+No. of changing torsions =    25
+atom_i atom_j atom_k atom_l    torsion type in state 1 state 2
+  3449   3451   3454   3455                          0       2
+  3449   3451   3454   3455                          1       3
+  3449   3451   3454   3455                          0       4
+  3451   3454   3455   4867                          0       5
+  3451   3454   3455   4867                          0       6
+  3452   3451   3454   3456                          7       0
+  3452   3451   3454   3456                          0       8
+  3453   3451   3454   3456                          7       0
+  3453   3451   3454   3456                          0       8
+  3456   3454   3455   4867                          0       9
+  4842   4841   4866   4868                          0      10
+  4842   4841   4866   4868                          0      11
+  4842   4841   4866   4868                          0      12
+  4843   4842   4841   4849                         13       0
+  4843   4842   4841   4866                          0      14
+  4843   4842   4841   4866                          0      15
+  4843   4842   4841   4866                          0      16
+  4844   4841   4866   4868                          0      17
+  4844   4841   4866   4868                          0      18
+  4844   4841   4866   4868                          0      19
+  4845   4844   4841   4849                         20       0
+  4845   4844   4841   4866                          0      21
+  4845   4844   4841   4866                          0      22
+  4845   4844   4841   4866                          0      23
+  4848   4841   4866   4868                          0      24
+
+No. of offdiagonal (Hij) functions =     4
+state_i state_j atom_k atom_l     Aij mu_ij
+      1       2     33     27    0.00  0.00
+      1       2      1      9    0.00  0.00
+      1       2      1     26    0.00  0.00
+      1       2     26     27    0.00  0.00
+No softcore section found. Using normal LJ potentials.
+
+---------------- Removing redefined interactions from topology ---------------
+type      atom1 atom2 atom3 atom4
+bond       3454  3455
+bond       3454  3456
+bond       4841  4849
+bond       4866  4867
+bond       4866  4868
+angle      3451  3454  3455
+angle      3451  3454  3456
+angle      3455  3454  3456
+angle      4842  4841  4849
+angle      4844  4841  4849
+angle      4848  4841  4849
+angle      4867  4866  4868
+torsion    3449  3451  3454  3455
+torsion    3452  3451  3454  3456
+torsion    3453  3451  3454  3456
+torsion    4849  4841  4842  4843
+torsion    4849  4841  4844  4845
+ Give a value for the reaction coordinate (lambda values)
+Lambda in state  1 =      1.000
+Lambda in state  2 =      0.000
+========================== List of calculation types =========================
+   description                             command
+ 1 RMS coord. deviation                    rmsd          
+ 2 Least squares fit                       fit           
+ 3 Distance, bond energy                   dist          
+ 4 Angle, angle energy                     angle         
+ 5 Torsion, torsion energy                 torsion       
+ 6 Entropy [Schlitters formula]            entropy       
+ 7 Nonbonded monitor                       nonbond       
+ 8 Residue nonbond monitor                 nb_prot_qatom 
+ 9 ChemScore                               chemscore     
+10 X-Score                                 xscore        
+11 PMF-Score                               pmfscore      
+12 RDF                                     rdf           
+13 RMSF                                    rmsf          
+14 Center of mass Kinetic Energy           com_ke        
+15 Center of mass position                 com           
+   Show list of calculations+menu          list
+   Proceed to next phase                   go
+Qcalc> Mask:Added    7 atoms to the mask which now contains    7 atoms.
+Mask:--> RMSD print out filename: Added calc. # 1: Root Mean Square Deviation for      7 atoms                 
+Qcalc> dist: Enter the two atom numbers: Added calc. # 2: distance, bond energy between atoms 4841 and 4842           
+Qcalc> dist: Enter the two atom numbers: Added calc. # 3: distance, qbond energy between atoms 4841 and 4866          
+Qcalc> dist: Enter the two atom numbers: Added calc. # 4: distance between atoms 2655 and 4841                        
+Qcalc> angle: Enter the three atom numbers: Added calc. # 5: angle between atoms 4844, 4841, 3456                        
+Qcalc> angle: Enter the three atom numbers: Added calc. # 6: angle, angle energy between atoms 4844, 4841, 4842          
+Qcalc> ---------------------- Help for reading coordinate files ---------------------
+Enter names of coordinate files (restart or trajectory) on separate lines
+Terminate with EOF or period (.).
+========================= List of defined calculations ========================
+ 1 Root Mean Square Deviation for      7 atoms                 
+ 2 distance, bond energy between atoms 4841 and 4842           
+ 3 distance, qbond energy between atoms 4841 and 4866          
+ 4 distance between atoms 2655 and 4841                        
+ 5 angle between atoms 4844, 4841, 3456                        
+ 6 angle, angle energy between atoms 4844, 4841, 4842          
+----------------------------- Calculation results ----------------------------
+file                 frame  1: RMSD(A)  2:dist(Ang)  V_bond  3:dist(Ang)  V_bond  4:dist(Ang)  5:angle(Deg)  6:angle(Deg) V_angle
+fep_050_1.000.dcd       1 1.479696       1.68    1.13       3.09    0.00      17.88      118.76      104.65    0.19
+fep_050_1.000.dcd       2 1.552406       1.63    0.05       3.38    0.00      18.09      114.09      104.55    0.17
+fep_050_1.000.dcd       3 1.464981       1.63    0.00       3.32    0.00      17.88      121.18      108.32    1.29
+fep_050_1.000.dcd       4 1.547118       1.67    0.75       3.38    0.00      18.17      112.43      108.34    1.30
+fep_050_1.000.dcd       5 1.472055       1.64    0.08       3.34    0.00      18.27      112.96      103.35    0.03
+fep_050_1.000.dcd       6 1.367538       1.66    0.59       3.23    0.00      17.71      111.69      107.45    0.94
+fep_050_1.000.dcd       7 1.229423       1.65    0.25       3.35    0.00      17.87      119.78      108.62    1.42
+fep_050_1.000.dcd       8 1.341846       1.64    0.14       3.18    0.00      17.90      123.51      108.49    1.36
+fep_050_1.000.dcd       9 1.376062       1.62    0.00       3.43    0.00      17.97      127.43      105.39    0.33
+fep_050_1.000.dcd      10 1.358191       1.62    0.00       3.11    0.00      18.20      121.18      109.93    2.08

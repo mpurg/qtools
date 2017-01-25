@@ -1,0 +1,42 @@
+{PRB}
+# Generated with q_ffld2q.py from 'probr.ffld'
+# Date: Wed Feb 25 10:36:46 2015
+#
+# Charges were calculated with RESP, 
+# and rescaled with q_rescale.py 
+# (ch.groups have to be el.neutral)
+ 
+
+[atoms]                  # rescaled  # RESP       #      FFLD
+    1  C1    prb_C1       -0.3022    # -0.287744  #    -0.0175
+    2  H2    prb_H2        0.1441    #  0.151713  #     0.0600
+    3  H3    prb_H3        0.1441    #  0.151713  #     0.0600
+    4  C4    prb_C4        0.2129    #  0.224115  #    -0.1200
+    5  H5    prb_H5       -0.0082    # -0.007847  #     0.0600
+    6  H6    prb_H6       -0.0082    # -0.007847  #     0.0600
+    7  C7    prb_C7       -0.2028    # -0.231114  #    -0.1800
+    8  H8    prb_H8        0.0676    #  0.060277  #     0.0600
+    9  H9    prb_H9        0.0676    #  0.060277  #     0.0600
+   10  H10   prb_H10       0.0676    #  0.060277  #     0.0600
+   11  Br11  prb_Br11     -0.1825    # -0.173820  #    -0.1025
+
+
+[bonds]
+C1    H2   
+C1    H3   
+C1    C4   
+C1    Br11 
+C4    H5   
+C4    H6   
+C4    C7   
+C7    H8   
+C7    H9   
+C7    H10  
+
+
+[impropers]
+
+
+[charge_groups]
+C1 H2 H3 C4 H5 H6 Br11
+C7 H8 H9 H10

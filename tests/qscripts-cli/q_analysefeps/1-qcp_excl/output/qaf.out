@@ -1,0 +1,66 @@
+
+------------------------------- Free energies ---------------------------------
+ Qfep_output  dG*         dG0         dG_lambda   QCP_dG*     QCP_dG0     QCP_dG_lambda  QCP_mass_dG*  QCP_mass_dG0  QCP_mass_dG_lambda  ex_el_49_200_221_dG*  ex_el_49_200_221_dG0  ex_el_49_200_221_dG_lambda  ex_full_200_dG*  ex_full_200_dG0  ex_full_200_dG_lambda  ex_full_221_dG*  ex_full_221_dG0  ex_full_221_dG_lambda  ex_full_49_dG*  ex_full_49_dG0  ex_full_49_dG_lambda  ex_full_49_200_221_dG*  ex_full_49_200_221_dG0  ex_full_49_200_221_dG_lambda  ex_vdw_49_200_221_dG*  ex_vdw_49_200_221_dG0  ex_vdw_49_200_221_dG_lambda 
+ ../input/qfep_123.log       23.98      -21.98      -46.71       23.31      -22.12         -48.33         23.60        -21.95              -47.31                 10.64                -47.71                      -83.24            25.82           -15.95                 -38.98             9.77           -52.08                 -88.85           23.28          -23.45                -48.75                   10.69                  -47.67                        -83.16                  24.04                 -21.94                       -46.63 
+
+----------------------------------- SUMMARY -----------------------------------
+# Analysed with: QTools/q_analysefeps.py (0.4.0)
+# Work dir: /home/mpurg/bin/qscripts-devel/tests/qscripts-cli/q_analysefeps/1-qcp_excl/tmp-run
+# Date: Tue Jan 24 21:29:52 2017
+# CMDline: /home/mpurg/bin/qscripts-devel/qscripts-cli/q_analysefeps.py --dirs ../input ../input3 --qfep_out qfep_123.log --out qaf.out --plots_out qaf.pd.json --po_qcp qaf.pd2.json --po_qcpm qaf.pd3.json --lra_l 0.9 0.4
+
+
+----- Statistics -----
+
+#                 Mean      Std.dev    Median    Std.error       N
+dG*              23.98        nan      23.98        nan          1
+dG0             -21.98        nan     -21.98        nan          1
+dG_lambda       -46.71        nan     -46.71        nan          1
+
+# QCP             Mean      Std.dev    Median    Std.error       N
+dG*              23.31        nan      23.31        nan          1
+dG0             -22.12        nan     -22.12        nan          1
+dG_lambda       -48.33        nan     -48.33        nan          1
+
+# QCP_mass        Mean      Std.dev    Median    Std.error       N
+dG*              23.60        nan      23.60        nan          1
+dG0             -21.95        nan     -21.95        nan          1
+dG_lambda       -47.31        nan     -47.31        nan          1
+
+# ex_el_49_200_221 Mean      Std.dev    Median    Std.error       N
+dG*              10.64        nan      10.64        nan          1
+dG0             -47.71        nan     -47.71        nan          1
+dG_lambda       -83.24        nan     -83.24        nan          1
+
+# ex_full_200     Mean      Std.dev    Median    Std.error       N
+dG*              25.82        nan      25.82        nan          1
+dG0             -15.95        nan     -15.95        nan          1
+dG_lambda       -38.98        nan     -38.98        nan          1
+
+# ex_full_221     Mean      Std.dev    Median    Std.error       N
+dG*               9.77        nan       9.77        nan          1
+dG0             -52.08        nan     -52.08        nan          1
+dG_lambda       -88.85        nan     -88.85        nan          1
+
+# ex_full_49      Mean      Std.dev    Median    Std.error       N
+dG*              23.28        nan      23.28        nan          1
+dG0             -23.45        nan     -23.45        nan          1
+dG_lambda       -48.75        nan     -48.75        nan          1
+
+# ex_full_49_200_221 Mean      Std.dev    Median    Std.error       N
+dG*              10.69        nan      10.69        nan          1
+dG0             -47.67        nan     -47.67        nan          1
+dG_lambda       -83.16        nan     -83.16        nan          1
+
+# ex_vdw_49_200_221 Mean      Std.dev    Median    Std.error       N
+dG*              24.04        nan      24.04        nan          1
+dG0             -21.94        nan     -21.94        nan          1
+dG_lambda       -46.63        nan     -46.63        nan          1
+
+
+------- Fails --------
+
+Failed to parse:
+-> ../input3/qfep_123.log: [Errno 2] No such file or directory: '../input3/qfep_123.log'
+-------------------------------------------------------------------------------
+

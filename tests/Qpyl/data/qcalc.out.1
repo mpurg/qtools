@@ -1,0 +1,760 @@
+
+Build and version information
+
+Build number 5.10.7
+Build date   20170122
+Built:       
+      by     mpurg
+      on     cookieMonster
+      git id 95a25660501bccf29dd4c3b2354c6fae1640f4bb
+      with   GNU Fortran Ubuntu 4.8.4-2ubuntu1~14.04.3 4.8.4
+Current date 2017- 1-24 and time 22: 5:59
+
+Welcome in qcalc modification date 20170122
+
+
+Qcalc works in three stages:
+1. Load topology.
+2. Set up a list of calculations to make.
+3. Read coordinates from trajectory and/or restart files and calculate.
+--> Topology file: Loading topology pro.top
+---------------------------- Reading topology file ---------------------------
+pro.top                                                                         
+
+No. of solute atoms     =       4868
+No. of solvent atoms    =       2166
+No. of coordinates      =      21102
+No. of atom type codes  =       7034
+No. of solute bonds     =       4951
+No. of solvent bonds    =       2166
+No. of solute angles    =       8996
+No. of solvent angles   =        722
+No. of solute torsions  =      18023
+No. of solvent torsions =          0
+No. of solute impropers =        994
+No. of solvent impropers=          0
+No. of atomic charges   =       7034
+No. of solute chargegrps=       1346
+No. of solvent chargegps=        722
+Charge group cut-off    : Switching atoms
+vdW  rule [ 1=G / 2=A ] =          1
+El-static 1-4 damping   =      0.500
+Coulomb constant        =   332.0000
+No. of atom types       =         76
+No. of LJ type 2 pairs  =          0
+No. of heavy atoms      =       3186
+No. of 1-4 neighbours   =      12968
+No. long-range 1-4 nbrs =         10
+No. of nbor exclusions  =      16835
+No. of long-range excls =          0
+No. of residues         =       1038
+No of solute residues   =        316
+No. of molecules        =        727
+Atom type names         =         76
+SYBYL atom types        =         76
+Boundary: sphere
+Exclusion radius        =     25.000
+Eff. solvent radius     =     24.160
+Solute centre           =     14.313     2.491    60.822
+Solvent centre          =     14.313     2.491    60.822
+No. of excluded atoms   =        414
+Molecular topology read successfully.
+
+ To load a fep file, enter the name, or enter . for no FEP file
+--> FEP file:  Loaded FEP file dfpase_dfp_hoh_asp229.fep                                                       
+----------------------------- Reading Q atom list ----------------------------
+No. of fep/evb states    =     2
+No. of fep/evb atoms     =    34
+Atom nos.:  4841  4842  4843  4844  4845  4846  4847  4848  4849  4850
+Atom nos.:  4851  4852  4853  4854  4855  4856  4857  4858  4859  4860
+Atom nos.:  4861  4862  4863  4864  4865  4866  4867  4868  3451  3452
+Atom nos.:  3453  3454  3455  3456
+--------------------------- Reading fep/evb strategy --------------------------
+
+No. of changing charges  =    34
+Effective Q-atom charges for all Q-atoms
+Q atom    charge in state 1 state 2
+     1                1.283   1.416
+     2               -0.549  -0.616
+     3                0.602   0.614
+     4               -0.549  -0.616
+     5                0.602   0.614
+     6               -0.459  -0.464
+     7               -0.459  -0.464
+     8               -0.712  -0.719
+     9               -0.280  -1.000
+    10               -0.459  -0.464
+    11               -0.459  -0.464
+    12               -0.010  -0.011
+    13               -0.010  -0.011
+    14                0.121   0.119
+    15                0.121   0.119
+    16                0.121   0.119
+    17                0.121   0.119
+    18                0.121   0.119
+    19                0.121   0.119
+    20                0.121   0.119
+    21                0.121   0.119
+    22                0.121   0.119
+    23                0.121   0.119
+    24                0.121   0.119
+    25                0.121   0.119
+    26               -0.834  -0.721
+    27                0.417   0.450
+    28                0.417   0.478
+    29               -0.220  -0.120
+    30                0.060   0.060
+    31                0.060   0.060
+    32                0.700   0.520
+    33               -0.800  -0.530
+    34               -0.800  -0.440
+
+   SUM               -1.000  -1.000
+
+No. of Q-atom types  =    61
+Name            Ai      Bi      Ci     ai Ai(1-4) Bi(1-4)    Mass
+dfp_P1     2447.79   46.79   43.00  1.50  1730.85   33.09   30.97
+dfp_O1      401.02   17.32    1.00  2.50   283.56   12.25   16.00
+dfp_C1      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dfp_O2      401.02   17.32    1.00  2.50   283.56   12.25   16.00
+dfp_C2      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dfp_C3      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dfp_C4      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dfp_O3      626.39   23.67    1.00  2.50   442.92   16.74   16.00
+dfp_F1      318.99   12.55  110.00  1.50   225.56    8.88   18.99
+dfp_C5      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dfp_C6      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dfp_H1       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H2       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H3       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H4       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H5       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H6       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H7       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H8       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H9       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H10      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H11      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H12      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H13      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dfp_H14      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_P1     2447.79   46.79   43.00  1.50  1730.85   33.09   30.97
+dip_O1      401.02   17.32    1.00  2.50   283.56   12.25   16.00
+dip_C1      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dip_O2      401.02   17.32    1.00  2.50   283.56   12.25   16.00
+dip_C2      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dip_C3      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dip_C4      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dip_O3      626.39   23.67    1.00  2.50   442.92   16.74   16.00
+dip_C5      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dip_C6      944.52   22.03    1.00  2.50   667.88   15.58   12.01
+dip_H1       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H2       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H3       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H4       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H5       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H6       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H7       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H8       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H9       84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H10      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H11      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H12      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H13      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_H14      84.57    5.41    1.00  2.50    59.80    3.83    1.01
+dip_O4      401.02   17.32   53.00  1.50   283.56   12.25   16.00
+dip_H15       0.01    0.04    1.00  2.50     0.00    0.03    1.01
+flu_F1     1356.62   47.81  110.00  1.50   959.28   33.81   18.99
+HC           84.57    5.41    1.00  2.50    59.80    3.83    1.01
+HO            0.00    0.00    5.00  2.50     0.00    0.00    1.01
+HW            0.00    0.00    5.00  2.50     0.00    0.00    1.01
+C2         1802.24   34.18    1.00  2.50  1274.38   24.17   12.01
+CT          944.52   22.03    1.00  2.50   667.88   15.58   12.01
+OW          762.89   24.39   53.00  1.50   539.45   17.25   16.00
+O2          616.44   23.77   53.00  2.50   435.89   16.81   16.00
+O1          616.44   23.77    1.00  2.50   435.89   16.81   16.00
+ODE         601.15   22.27   53.00  2.50   425.08   15.74   16.00
+
+Assigning Q-atom types to all Q atoms:
+Q atom    atom type in  state 1  state 2
+     1                  dfp_P1   dip_P1  
+     2                  dfp_O1   dip_O1  
+     3                  dfp_C1   dip_C1  
+     4                  dfp_O2   dip_O2  
+     5                  dfp_C2   dip_C2  
+     6                  dfp_C3   dip_C3  
+     7                  dfp_C4   dip_C4  
+     8                  dfp_O3   dip_O3  
+     9                  dfp_F1   flu_F1  
+    10                  dfp_C5   dip_C5  
+    11                  dfp_C6   dip_C6  
+    12                  dfp_H1   dip_H1  
+    13                  dfp_H2   dip_H2  
+    14                  dfp_H3   dip_H3  
+    15                  dfp_H4   dip_H4  
+    16                  dfp_H5   dip_H5  
+    17                  dfp_H6   dip_H6  
+    18                  dfp_H7   dip_H7  
+    19                  dfp_H8   dip_H8  
+    20                  dfp_H9   dip_H9  
+    21                  dfp_H10  dip_H10 
+    22                  dfp_H11  dip_H11 
+    23                  dfp_H12  dip_H12 
+    24                  dfp_H13  dip_H13 
+    25                  dfp_H14  dip_H14 
+    26                  OW       dip_O4  
+    27                  HW       HO      
+    28                  HW       dip_H15 
+    29                  CT       CT      
+    30                  HC       HC      
+    31                  HC       HC      
+    32                  C2       C2      
+    33                  O2       ODE     
+    34                  O2       O1      
+
+No. of soft repulsion non-bonded pairs =     4
+q-atom_i q-atom_j
+      33       27
+       1        9
+       1       26
+      26       27
+
+Q-bond types:
+type #  Morse E_diss    alpha       b0  Harmonic force_k 
+     1                            1.25           1312.00
+     2                            1.36            900.00
+     3                            1.23           1140.00
+     4        245.80     1.50     0.94
+     5        186.00     1.44     1.57
+     6         95.00     2.00     1.61
+     7        245.80     1.50     0.96
+     8                            0.96           1106.00
+     9                            0.94           1106.00
+
+
+No. of changing bonds    =     7
+atom_i atom_j   bond type in state 1 state 2
+  3454   3455                      1       2
+  3454   3456                      1       3
+  3455   4867                      0       4
+  4841   4849                      5       0
+  4841   4866                      0       6
+  4866   4867                      7       0
+  4866   4868                      8       9
+
+Q-angle types:
+type #       force-k   theta0
+     1        140.00   117.00
+     2        140.00   108.00
+     3        160.00   120.40
+     4         70.00   113.00
+     5        160.00   126.00
+     6        160.00   121.00
+     7        100.00   113.86
+     8        230.00   101.33
+     9        240.00   102.38
+    10        230.00   101.33
+    11        240.00   102.38
+    12        200.00   110.66
+    13        200.00   115.86
+    14        200.00   104.52
+
+
+No. of changing angles   =    12
+atom_i atom_j atom_k    angle type in state 1 state 2
+  3451   3454   3455                        1       2
+  3451   3454   3456                        1       3
+  3454   3455   4867                        0       4
+  3455   3454   3456                        5       6
+  4841   4866   4868                        0       7
+  4842   4841   4849                        8       0
+  4842   4841   4866                        0       9
+  4844   4841   4849                       10       0
+  4844   4841   4866                        0      11
+  4848   4841   4849                       12       0
+  4848   4841   4866                        0      13
+  4867   4866   4868                       14       0
+
+Q-torsion types:
+type #       force-k     mult    delta
+     1          0.27     2.00   180.00
+     2          0.50    -1.00     0.00
+     3          0.27    -2.00   180.00
+     4          0.23     3.00     0.00
+     5          0.75    -1.00     0.00
+     6          2.75     2.00   180.00
+     7          0.00     1.00     0.00
+     8          0.00     2.00   180.00
+     9          2.75     2.00   180.00
+    10         -0.23    -1.00     0.00
+    11          0.09    -2.00   180.00
+    12         -0.08     3.00     0.00
+    13          0.15     3.00     0.00
+    14          0.92    -1.00     0.00
+    15          0.23    -2.00   180.00
+    16          0.32     3.00     0.00
+    17         -0.23    -1.00     0.00
+    18          0.09    -2.00   180.00
+    19         -0.08     3.00     0.00
+    20          0.15     3.00     0.00
+    21          0.92    -1.00     0.00
+    22          0.23    -2.00   180.00
+    23          0.32     3.00     0.00
+    24          0.00     1.00     0.00
+
+
+No. of changing torsions =    25
+atom_i atom_j atom_k atom_l    torsion type in state 1 state 2
+  3449   3451   3454   3455                          0       2
+  3449   3451   3454   3455                          1       3
+  3449   3451   3454   3455                          0       4
+  3451   3454   3455   4867                          0       5
+  3451   3454   3455   4867                          0       6
+  3452   3451   3454   3456                          7       0
+  3452   3451   3454   3456                          0       8
+  3453   3451   3454   3456                          7       0
+  3453   3451   3454   3456                          0       8
+  3456   3454   3455   4867                          0       9
+  4842   4841   4866   4868                          0      10
+  4842   4841   4866   4868                          0      11
+  4842   4841   4866   4868                          0      12
+  4843   4842   4841   4849                         13       0
+  4843   4842   4841   4866                          0      14
+  4843   4842   4841   4866                          0      15
+  4843   4842   4841   4866                          0      16
+  4844   4841   4866   4868                          0      17
+  4844   4841   4866   4868                          0      18
+  4844   4841   4866   4868                          0      19
+  4845   4844   4841   4849                         20       0
+  4845   4844   4841   4866                          0      21
+  4845   4844   4841   4866                          0      22
+  4845   4844   4841   4866                          0      23
+  4848   4841   4866   4868                          0      24
+
+No. of offdiagonal (Hij) functions =     4
+state_i state_j atom_k atom_l     Aij mu_ij
+      1       2     33     27    0.00  0.00
+      1       2      1      9    0.00  0.00
+      1       2      1     26    0.00  0.00
+      1       2     26     27    0.00  0.00
+No softcore section found. Using normal LJ potentials.
+
+---------------- Removing redefined interactions from topology ---------------
+type      atom1 atom2 atom3 atom4
+bond       3454  3455
+bond       3454  3456
+bond       4841  4849
+bond       4866  4867
+bond       4866  4868
+angle      3451  3454  3455
+angle      3451  3454  3456
+angle      3455  3454  3456
+angle      4842  4841  4849
+angle      4844  4841  4849
+angle      4848  4841  4849
+angle      4867  4866  4868
+torsion    3449  3451  3454  3455
+torsion    3452  3451  3454  3456
+torsion    3453  3451  3454  3456
+torsion    4849  4841  4842  4843
+torsion    4849  4841  4844  4845
+ Give a value for the reaction coordinate (lambda values)
+Lambda in state  1 =      1.000
+Lambda in state  2 =      0.000
+========================== List of calculation types =========================
+   description                             command
+ 1 RMS coord. deviation                    rmsd          
+ 2 Least squares fit                       fit           
+ 3 Distance, bond energy                   dist          
+ 4 Angle, angle energy                     angle         
+ 5 Torsion, torsion energy                 torsion       
+ 6 Entropy [Schlitters formula]            entropy       
+ 7 Nonbonded monitor                       nonbond       
+ 8 Residue nonbond monitor                 nb_prot_qatom 
+ 9 ChemScore                               chemscore     
+10 X-Score                                 xscore        
+11 PMF-Score                               pmfscore      
+12 RDF                                     rdf           
+13 RMSF                                    rmsf          
+14 Center of mass Kinetic Energy           com_ke        
+15 Center of mass position                 com           
+   Show list of calculations+menu          list
+   Proceed to next phase                   go
+Qcalc>  
+Enter first residue of protein: 
+ First residue of protein:              1
+Enter last residue of protein: 
+ Last residue of protein:            314
+ First residue            1
+ Last residue          314
+ Enter mask for q-atoms (e.g. <residue  xx yy>.)
+ Finalize with end.
+Mask:Added    1 atoms to the mask which now contains    1 atoms.
+Mask:Added    1 atoms to the mask which now contains    2 atoms.
+Mask:Added    1 atoms to the mask which now contains    3 atoms.
+Mask:Added    1 atoms to the mask which now contains    4 atoms.
+Mask:Added    1 atoms to the mask which now contains    5 atoms.
+Mask:Added    1 atoms to the mask which now contains    6 atoms.
+Mask:Added    1 atoms to the mask which now contains    7 atoms.
+Mask:Added    1 atoms to the mask which now contains    8 atoms.
+Mask:Added    1 atoms to the mask which now contains    9 atoms.
+Mask:Added    1 atoms to the mask which now contains   10 atoms.
+Mask:Added    1 atoms to the mask which now contains   11 atoms.
+Mask:Added    1 atoms to the mask which now contains   12 atoms.
+Mask:Added    1 atoms to the mask which now contains   13 atoms.
+Mask:Added    1 atoms to the mask which now contains   14 atoms.
+Mask:Added    1 atoms to the mask which now contains   15 atoms.
+Mask:Added    1 atoms to the mask which now contains   16 atoms.
+Mask:Added    1 atoms to the mask which now contains   17 atoms.
+Mask:Added    1 atoms to the mask which now contains   18 atoms.
+Mask:Added    1 atoms to the mask which now contains   19 atoms.
+Mask:Added    1 atoms to the mask which now contains   20 atoms.
+Mask:Added    1 atoms to the mask which now contains   21 atoms.
+Mask:Added    1 atoms to the mask which now contains   22 atoms.
+Mask:Added    1 atoms to the mask which now contains   23 atoms.
+Mask:Added    1 atoms to the mask which now contains   24 atoms.
+Mask:Added    1 atoms to the mask which now contains   25 atoms.
+Mask:Added    1 atoms to the mask which now contains   26 atoms.
+Mask:Added    1 atoms to the mask which now contains   27 atoms.
+Mask:Added    1 atoms to the mask which now contains   28 atoms.
+Mask:Added    1 atoms to the mask which now contains   29 atoms.
+Mask:Added    1 atoms to the mask which now contains   30 atoms.
+Mask:Added    1 atoms to the mask which now contains   31 atoms.
+Mask:Added    1 atoms to the mask which now contains   32 atoms.
+Mask:Added    1 atoms to the mask which now contains   33 atoms.
+Mask:Added    1 atoms to the mask which now contains   34 atoms.
+Mask:Q-atom mask contains     34 atoms
+Added calc. # 1: nonbond monitor for residues      1 to    314               
+Qcalc> ---------------------- Help for reading coordinate files ---------------------
+Enter names of coordinate files (restart or trajectory) on separate lines
+Terminate with EOF or period (.).
+========================= List of defined calculations ========================
+ 1 nonbond monitor for residues      1 to    314               
+----------------------------- Calculation results ----------------------------
+file                 frame  1:
+fep_050_1.000.dcd       1 
+fep_050_1.000.dcd       2 
+fep_050_1.000.dcd       3 
+fep_050_1.000.dcd       4 
+fep_050_1.000.dcd       5 
+fep_050_1.000.dcd       6 
+fep_050_1.000.dcd       7 
+fep_050_1.000.dcd       8 
+fep_050_1.000.dcd       9 
+fep_050_1.000.dcd      10 
+Average nonbonded interaction between qatoms 3451,3452,3453,3454,3455,3456,4841,4842,4843,4844,4845,4846,4847,4848,4849,4850,4851,4852,4853,4854,4855,4856,4857,4858,4859,4860,4861,4862,4863,4864,4865,4866,4867,4868, and other residues:
+        Residue     Average LJ     Average el
+              1          -0.00           0.06
+              2          -0.00           0.46
+              3          -0.00          -0.40
+              4          -0.00           0.36
+              5          -0.00          -0.27
+              6          -0.00           0.13
+              7          -0.00           0.22
+              8          -0.00          -0.38
+              9          -0.00           0.28
+             10          -0.00          -0.59
+             11          -0.00          -0.69
+             12          -0.00           0.56
+             13          -0.00          -0.21
+             14          -0.01          -0.17
+             15          -0.03           0.70
+             16          -0.09           0.39
+             17          -0.76           1.55
+             18          -0.29           4.34
+             19          -0.19          82.79
+             20          -0.08          -3.00
+             21          -0.04           0.65
+             22          -0.01           0.24
+             23          -0.00           0.51
+             24          -0.00          -0.49
+             25          -0.00          -0.01
+             26          -0.00          -0.40
+             27          -0.00          -0.06
+             28          -0.00          -0.20
+             29          -0.00          -0.36
+             30          -0.00           0.06
+             31          -0.02          -1.20
+             32          -0.09           0.40
+             33          -0.06          -0.54
+             34          -1.26          -1.34
+             35          -1.30          24.27
+             36          -0.03           0.32
+             37          -0.01          15.25
+             38          -0.00           0.13
+             39          -0.00          -0.24
+             40          -0.00           0.15
+             41          -0.00          -0.09
+             42          -0.01          -0.46
+             43          -0.01          -0.18
+             44          -0.01          -0.90
+             45          -0.01          17.77
+             46          -0.01          -0.45
+             47          -0.01           0.38
+             48          -0.00          -0.34
+             49          -0.00          -0.01
+             50          -0.00           0.17
+             51          -0.00          -0.01
+             52          -0.00          -0.11
+             53          -0.00           0.15
+             54          -0.00           0.10
+             55          -0.00           0.21
+             56          -0.00         -17.70
+             57          -0.00           0.24
+             58          -0.00          -0.35
+             59          -0.00          -0.42
+             60          -0.00           0.37
+             61          -0.00         -16.32
+             62          -0.00           0.13
+             63          -0.00          -0.02
+             64          -0.00           0.17
+             65          -0.00          -0.23
+             66          -0.00          -0.01
+             67          -0.00          -0.31
+             68          -0.00           0.00
+             69          -0.01          -0.42
+             70          -0.38           0.54
+             71          -0.16           0.40
+             72          -0.80           1.73
+             73          -0.07          -0.32
+             74          -0.01           0.20
+             75          -0.01          -1.25
+             76          -0.00           0.10
+             77          -0.00           0.20
+             78          -0.00          -0.08
+             79          -0.00          -0.09
+             80          -0.00           0.21
+             81          -0.00          -0.37
+             82          -0.00          -0.18
+             83          -0.00          -0.41
+             84          -0.00           0.35
+             85          -0.01          -0.77
+             86          -0.03           0.49
+             87          -0.04          21.97
+             88          -1.31           1.44
+             89          -0.02         -17.84
+             90          -0.01          -0.50
+             91          -0.00           0.19
+             92          -0.00          -0.36
+             93          -0.00           0.32
+             94          -0.00          -0.08
+             95          -0.00          -0.01
+             96          -0.00           0.51
+             97          -0.00          -0.12
+             98          -0.00          -0.22
+             99          -0.00          -0.03
+            100          -0.00           0.48
+            101          -0.00          -0.34
+            102          -0.00           0.15
+            103          -0.00          -0.94
+            104          -0.00          -0.39
+            105          -0.00           0.22
+            106          -0.00           0.52
+            107          -0.00           0.13
+            108          -0.00          -0.07
+            109          -0.00          -0.09
+            110          -0.00          -0.36
+            111          -0.00          -0.09
+            112          -0.00           0.17
+            113          -0.00          -0.11
+            114          -0.00          -0.57
+            115          -0.01          -0.37
+            116          -0.02           0.58
+            117          -0.06          -1.12
+            118          -1.29           8.00
+            119          -0.22          49.17
+            120          -0.02           0.75
+            121          -0.00           0.28
+            122          -0.00           0.51
+            123          -0.00          15.48
+            124          -0.00          -0.26
+            125          -0.00          -0.65
+            126          -0.00          -0.16
+            127          -0.00          -0.05
+            128          -0.00          -0.44
+            129          -0.00           0.58
+            130          -0.01          -0.96
+            131          -0.05          -0.79
+            132          -0.02          -0.54
+            133          -0.21          -1.19
+            134          -0.05          -0.23
+            135          -0.01           0.83
+            136          -0.00           0.47
+            137          -0.00          -0.32
+            138          -0.00           0.01
+            139          -0.00          -0.07
+            140          -0.00           0.15
+            141          -0.00          -0.32
+            142          -0.15           0.25
+            143          -0.02           0.35
+            144          -0.46         -28.73
+            145          -0.03           0.53
+            146          -0.51           0.02
+            147          -0.02           0.21
+            148          -0.01           0.62
+            149          -0.00         -17.65
+            150          -0.01          -0.11
+            151          -0.01          -1.01
+            152          -0.01           0.66
+            153          -0.01          -0.46
+            154          -0.00           0.53
+            155          -0.00          -0.35
+            156          -0.00           0.08
+            157          -0.00          -0.03
+            158          -0.00           0.00
+            159          -0.00          -0.23
+            160          -0.00          -0.14
+            161          -0.00          -0.16
+            162          -0.00          -0.11
+            163          -0.00           0.36
+            164          -0.00          -0.87
+            165          -0.00          -0.49
+            166          -0.00          17.09
+            167          -0.00          -0.18
+            168          -0.00          -0.21
+            169          -0.01          -0.54
+            170          -0.03          -0.08
+            171          -1.29           0.66
+            172          -0.10           0.49
+            173          -2.84           1.80
+            174          -0.19          -0.65
+            175          -0.04           1.42
+            176          -0.01           0.54
+            177          -0.00           0.44
+            178          -0.00          -0.37
+            179          -0.00          -0.04
+            180          -0.00           0.47
+            181          -0.00           0.20
+            182          -0.00          -0.18
+            183          -0.00           0.03
+            184          -0.00           0.21
+            185          -0.00          -0.36
+            186          -0.00          -0.12
+            187          -0.00          -0.23
+            188          -0.00          -0.55
+            189          -0.01           0.27
+            190          -0.02          -1.46
+            191          -0.08           0.54
+            192          -0.06          22.63
+            193          -1.05           0.45
+            194          -0.09          -0.49
+            195          -0.01           0.02
+            196          -0.03         -27.17
+            197          -0.01         -17.22
+            198          -0.02          -0.55
+            199          -0.01           0.53
+            200          -0.00          -0.02
+            201          -0.00           0.83
+            202          -0.00          -0.27
+            203          -0.00          -0.15
+            204          -0.00          -0.31
+            205          -0.00           0.20
+            206          -0.00          -0.24
+            207          -0.00          -0.22
+            208          -0.00           0.04
+            209          -0.00          -0.21
+            210          -0.00           0.08
+            211          -0.00           0.15
+            212          -0.00         -17.97
+            213          -0.00           0.31
+            214          -0.00          -0.48
+            215          -0.00          -0.45
+            216          -0.00           0.33
+            217          -0.00          -0.19
+            218          -0.02          -0.81
+            219          -0.01           1.05
+            220          -0.00           0.51
+            221          -0.00          -0.36
+            222          -0.04          -1.43
+            223          -0.08          22.35
+            224          -0.25          -2.05
+            225          -0.46           2.18
+            226          -0.74           5.36
+            227           1.18         -13.65
+            228           0.17          -5.41
+            229          -0.10           0.19
+            230          -0.01          27.49
+            231          -0.00           0.49
+            232          -0.00           0.38
+            233          -0.00          -0.07
+            234          -0.00          -0.49
+            235          -0.00           0.18
+            236          -0.00          -0.17
+            237          -0.01          -0.47
+            238          -0.01           0.65
+            239          -0.07          -1.76
+            240          -0.65           1.64
+            241          -0.21           0.67
+            242          -4.24          -3.66
+            243          -0.05          -0.37
+            244          -0.02          -1.45
+            245          -0.01          -1.40
+            246          -0.02           0.17
+            247          -0.03          -0.85
+            248          -0.02          24.39
+            249          -0.00          -0.06
+            250          -0.01           0.22
+            251          -0.00           0.64
+            252          -0.00           0.24
+            253          -0.00          -0.08
+            254          -0.00          -0.57
+            255          -0.00           0.26
+            256          -0.00          -0.42
+            257          -0.00          -0.50
+            258          -0.00          -0.32
+            259          -0.00           0.51
+            260          -0.00         -21.38
+            261          -0.00           0.53
+            262          -0.00          -0.50
+            263          -0.01           0.36
+            264          -0.00          -0.09
+            265          -0.02           0.05
+            266          -0.02          20.48
+            267          -0.18         -25.13
+            268          -0.47           1.88
+            269          -0.99          -3.15
+            270          -0.91          -3.01
+            271          -0.08           1.64
+            272          -0.01           1.76
+            273          -0.00           0.50
+            274          -0.00           0.21
+            275          -0.00          -0.14
+            276          -0.00          -0.26
+            277          -0.00           0.44
+            278          -0.00           0.34
+            279          -0.00          -0.10
+            280          -0.00          -0.65
+            281          -0.01           0.39
+            282          -0.02          -1.54
+            283          -0.12           0.57
+            284          -0.09          24.26
+            285          -1.76          -5.21
+            286          -0.03          22.21
+            287          -0.01          -0.88
+            288          -0.05           0.30
+            289          -0.01           1.26
+            290          -0.01          -0.46
+            291          -0.01           0.41
+            292          -0.00          -0.05
+            293          -0.00           0.35
+            294          -0.00           0.27
+            295          -0.00          -0.24
+            296          -0.00          -0.20
+            297          -0.00           0.59
+            298          -0.00           0.13
+            299          -0.00          -0.65
+            300          -0.00           0.22
+            301          -0.00           0.36
+            302          -0.00          -0.59
+            303          -0.00          -0.70
+            304          -0.00          -0.20
+            305          -0.00           0.29
+            306          -0.00          -0.05
+            307          -0.00           0.10
+            308          -0.00          -0.12
+            309          -0.00          -0.07
+            310          -0.00          -0.06
+            311          -0.00           0.05
+            312          -0.00          -0.02
+            313          -0.00         -66.36
+            314          16.42        -325.11

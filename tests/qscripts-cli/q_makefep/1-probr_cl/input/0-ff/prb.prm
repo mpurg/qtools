@@ -1,0 +1,72 @@
+
+[atom_types]
+prb_C1            944.5180   944.5180    22.0296   667.8751    15.5773     12.011  ! high   CT    ! C: alkanes
+prb_H2             84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prb_H3             84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prb_C4            944.5180   944.5180    22.0296   667.8751    15.5773     12.011  ! high   CT    ! C: alkanes
+prb_H5             84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prb_H6             84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prb_C7            944.5180   944.5180    22.0296   667.8751    15.5773     12.011  ! high   CT    ! C: alkanes
+prb_H8             84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prb_H9             84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prb_H10            84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prb_Br11         2393.6231  2393.6231    57.2885  1692.5471    40.5091     79.904  ! high   Br    ! alkyl bromide (UA)
+
+
+[bonds]
+prb_C1          prb_H2              680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+prb_C1          prb_H3              680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+prb_C1          prb_C4              536.00     1.5290     ! high   ! CT -CT ==> CT -CT
+prb_C1          prb_Br11            490.00     1.7810     ! high   ! CT -Br ==> CT -Br
+prb_C4          prb_H5              680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+prb_C4          prb_H6              680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+prb_C4          prb_C7              536.00     1.5290     ! high   ! CT -CT ==> CT -CT
+prb_C7          prb_H8              680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+prb_C7          prb_H9              680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+prb_C7          prb_H10             680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+
+
+[angles]
+prb_H2          prb_C1          prb_H3               66.00   107.8000     ! high   ! HC -CT -HC ==> HC -CT -HC
+prb_H2          prb_C1          prb_C4               75.00   110.7000     ! high   ! HC -CT -CT ==> CT -CT -HC
+prb_H2          prb_C1          prb_Br11            102.00   107.6000     ! high   ! HC -CT -Br ==> HC -CT -Br
+prb_H3          prb_C1          prb_C4               75.00   110.7000     ! high   ! HC -CT -CT ==> CT -CT -HC
+prb_H3          prb_C1          prb_Br11            102.00   107.6000     ! high   ! HC -CT -Br ==> HC -CT -Br
+prb_C4          prb_C1          prb_Br11            138.00   109.8000     ! high   ! CT -CT -Br ==> CT -CT -Br
+prb_C1          prb_C4          prb_H5               75.00   110.7000     ! high   ! CT -CT -HC ==> CT -CT -HC
+prb_C1          prb_C4          prb_H6               75.00   110.7000     ! high   ! CT -CT -HC ==> CT -CT -HC
+prb_C1          prb_C4          prb_C7              116.70   112.7000     ! high   ! CT -CT -CT ==> CT -CT -CT
+prb_H5          prb_C4          prb_H6               66.00   107.8000     ! high   ! HC -CT -HC ==> HC -CT -HC
+prb_H5          prb_C4          prb_C7               75.00   110.7000     ! high   ! HC -CT -CT ==> CT -CT -HC
+prb_H6          prb_C4          prb_C7               75.00   110.7000     ! high   ! HC -CT -CT ==> CT -CT -HC
+prb_C4          prb_C7          prb_H8               75.00   110.7000     ! high   ! CT -CT -HC ==> CT -CT -HC
+prb_C4          prb_C7          prb_H9               75.00   110.7000     ! high   ! CT -CT -HC ==> CT -CT -HC
+prb_C4          prb_C7          prb_H10              75.00   110.7000     ! high   ! CT -CT -HC ==> CT -CT -HC
+prb_H8          prb_C7          prb_H9               66.00   107.8000     ! high   ! HC -CT -HC ==> HC -CT -HC
+prb_H8          prb_C7          prb_H10              66.00   107.8000     ! high   ! HC -CT -HC ==> HC -CT -HC
+prb_H9          prb_C7          prb_H10              66.00   107.8000     ! high   ! HC -CT -HC ==> HC -CT -HC
+
+
+[torsions]
+prb_H2          prb_C1          prb_C4          prb_H5              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prb_H2          prb_C1          prb_C4          prb_H6              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prb_H2          prb_C1          prb_C4          prb_C7              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -CT ==> HC -CT -CT -CT
+prb_H3          prb_C1          prb_C4          prb_H5              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prb_H3          prb_C1          prb_C4          prb_H6              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prb_H3          prb_C1          prb_C4          prb_C7              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -CT ==> HC -CT -CT -CT
+prb_Br11        prb_C1          prb_C4          prb_H5              0.2000     3.0000     0.0000     1.0000  ! high   ! Br -CT -CT -HC ==> HC -CT -CT -Br
+prb_Br11        prb_C1          prb_C4          prb_H6              0.2000     3.0000     0.0000     1.0000  ! high   ! Br -CT -CT -HC ==> HC -CT -CT -Br
+prb_Br11        prb_C1          prb_C4          prb_C7              0.2000     3.0000     0.0000     1.0000  ! high   ! Br -CT -CT -CT ==> CT -CT -CT -Br
+prb_C1          prb_C4          prb_C7          prb_H8              0.1500     3.0000     0.0000     1.0000  ! high   ! CT -CT -CT -HC ==> HC -CT -CT -CT
+prb_C1          prb_C4          prb_C7          prb_H9              0.1500     3.0000     0.0000     1.0000  ! high   ! CT -CT -CT -HC ==> HC -CT -CT -CT
+prb_C1          prb_C4          prb_C7          prb_H10             0.1500     3.0000     0.0000     1.0000  ! high   ! CT -CT -CT -HC ==> HC -CT -CT -CT
+prb_H5          prb_C4          prb_C7          prb_H8              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prb_H5          prb_C4          prb_C7          prb_H9              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prb_H5          prb_C4          prb_C7          prb_H10             0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prb_H6          prb_C4          prb_C7          prb_H8              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prb_H6          prb_C4          prb_C7          prb_H9              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prb_H6          prb_C4          prb_C7          prb_H10             0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+
+
+[impropers]
+

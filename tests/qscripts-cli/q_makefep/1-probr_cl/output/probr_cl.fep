@@ -1,0 +1,131 @@
+# Generated with Qtools, version 0.4.0
+# Date: Mon Jan 23 17:52:38 2017
+# CWD: /home/mpurg/bin/qscripts-devel/tests/qscripts-cli/q_makefep/1-probr_cl/tmp-run
+# CMDline: /home/mpurg/bin/qscripts-devel/qscripts-cli/q_makefep.py -s ../input/probr_cl_start.pdb -m ../input/probr_cl.qmap -l ../input/0-ff/br-.lib ../input/0-ff/cl-.lib ../input/0-ff/prb.lib ../input/0-ff/prc.lib -p ../input/0-ff/br-.prm ../input/0-ff/cl-.prm ../input/0-ff/prb.prm ../input/0-ff/prc.prm -f oplsaa -o probr_cl.fep
+#
+
+[FEP]
+states 2
+
+[atoms]
+#Q index        PDB index      #  St.1 PDB_ID     St.1 LIB_ID        
+1               $1.C1$         #  1.C1            PRB.C1            !
+2               $1.H2$         #  1.H2            PRB.H2             
+3               $1.H3$         #  1.H3            PRB.H3             
+4               $1.C4$         #  1.C4            PRB.C4             
+5               $1.H5$         #  1.H5            PRB.H5             
+6               $1.H6$         #  1.H6            PRB.H6             
+7               $1.Br11$       #  1.Br11          PRB.Br11          !
+8               $2.Cl1$        #  2.Cl1           CL-.Cl1           !
+
+[atom_types]
+#Atom_type         LJ_A       LJ_B      SP_Ci      SP_ai    LJ_A_14    LJ_B_14       mass
+prb_C1          944.518    22.0296      <FIX>        2.5   667.8751    15.5773     12.011
+prc_C1          944.518    22.0296      <FIX>        2.5   667.8751    15.5773     12.011
+prb_H2          84.5728     5.4127          1        2.5     59.802     3.8274     1.0079
+prc_H2          84.5728     5.4127          1        2.5     59.802     3.8274     1.0079
+prb_H3          84.5728     5.4127          1        2.5     59.802     3.8274     1.0079
+prc_H3          84.5728     5.4127          1        2.5     59.802     3.8274     1.0079
+prb_C4          944.518    22.0296          1        2.5   667.8751    15.5773     12.011
+prc_C4          944.518    22.0296          1        2.5   667.8751    15.5773     12.011
+prb_H5          84.5728     5.4127          1        2.5     59.802     3.8274     1.0079
+prc_H5          84.5728     5.4127          1        2.5     59.802     3.8274     1.0079
+prb_H6          84.5728     5.4127          1        2.5     59.802     3.8274     1.0079
+prc_H6          84.5728     5.4127          1        2.5     59.802     3.8274     1.0079
+prb_Br11      2393.6231    57.2885      <FIX>        2.5  1692.5471    40.5091     79.904
+br-_Br1       5863.3456    59.3128      <FIX>        2.5  4146.0114    41.9405     79.904
+cl-_Cl1       5099.0001    59.1621      <FIX>        2.5  3605.5375    41.8339     35.453
+prc_Cl11      1692.2485    43.0554      <FIX>        2.5  1196.6004    30.4448     35.453
+
+[change_atoms]
+#Q index    Type st.1    Type st.2       #  St.1 PDB_ID
+1           prb_C1       prc_C1          #  1.C1      
+2           prb_H2       prc_H2          #  1.H2      
+3           prb_H3       prc_H3          #  1.H3      
+4           prb_C4       prc_C4          #  1.C4      
+5           prb_H5       prc_H5          #  1.H5      
+6           prb_H6       prc_H6          #  1.H6      
+7           prb_Br11     br-_Br1         #  1.Br11    
+8           cl-_Cl1      prc_Cl11        #  2.Cl1     
+
+[change_charges]
+#Q index    Charge st.1  Charge st.2     #  St.1 PDB_ID     dq(1->2)
+1                -0.3022      -0.1984    #  1.C1             0.1038
+2                 0.1441       0.1206    #  1.H2            -0.0235
+3                 0.1441       0.1206    #  1.H3            -0.0235
+4                 0.2129       0.2158    #  1.C4             0.0029
+5                -0.0082      -0.0108    #  1.H5            -0.0026
+6                -0.0082      -0.0108    #  1.H6            -0.0026
+7                -0.1825         -1.0    #  1.Br11          -0.8175
+8                   -1.0       -0.237    #  2.Cl1             0.763
+
+[soft_pairs]
+         1          7
+         1          8
+
+[off_diagonals]
+# State_i State_j  Atom1  Atom2  A_ij  mu_ij
+#
+## Example1, Hij=H12=0 (not known in advance)
+## 1 2  13 14  0  0
+## Example2, Hij=H12=C*exp(-mu * r_13_14)  (C=20.0, mu=0.45)
+## 1 2  13 14  20.0  0.45
+#
+<FIX>
+
+[bond_types]
+## Harmonic format
+#Index                Fc               r0   # PRM_ID
+## Morse format
+#Index       D        alpha            r0   # PRM_ID
+1         <FIX_D>    <FIX_a>     <FIX_r0>   # prb_Br11-prb_C1
+2         <FIX_D>    <FIX_a>     <FIX_r0>   # prc_C1-prc_Cl11
+
+[change_bonds]
+#Atom1     Atom2      St.1  St.2    # St.1 PDB_IDs
+$1.C1$     $1.Br11$     1     0     # 1.C1-1.Br11
+$1.C1$     $2.Cl1$      0     2     # 1.C1-2.Cl1
+
+[angle_types]
+#Index           Fc     theta0   # PRM_ID
+1             138.0      109.8   # prb_Br11-prb_C1-prb_C4
+2             102.0      107.6   # prb_Br11-prb_C1-prb_H2
+3             102.0      107.6   # prb_Br11-prb_C1-prb_H3
+4             138.0      109.8   # prc_C4-prc_C1-prc_Cl11
+5             102.0      107.6   # prc_Cl11-prc_C1-prc_H2
+6             102.0      107.6   # prc_Cl11-prc_C1-prc_H3
+
+[change_angles]
+#Atom1     Atom2      Atom3      St.1  St.2    # St.1 PDB_IDs
+$1.C4$     $1.C1$     $1.Br11$     1     0     # 1.C4-1.C1-1.Br11
+$1.H2$     $1.C1$     $1.Br11$     2     0     # 1.H2-1.C1-1.Br11
+$1.H3$     $1.C1$     $1.Br11$     3     0     # 1.H3-1.C1-1.Br11
+$1.C4$     $1.C1$     $2.Cl1$      0     4     # 1.C4-1.C1-2.Cl1
+$1.H2$     $1.C1$     $2.Cl1$      0     5     # 1.H2-1.C1-2.Cl1
+$1.H3$     $1.C1$     $2.Cl1$      0     6     # 1.H3-1.C1-2.Cl1
+
+[torsion_types]
+#Index           Fc       mult       psi0   # PRM_ID
+1               0.2        3.0        0.0   # prb_Br11-prb_C1-prb_C4-prb_C7
+2               0.2        3.0        0.0   # prb_Br11-prb_C1-prb_C4-prb_H5
+3               0.2        3.0        0.0   # prb_Br11-prb_C1-prb_C4-prb_H6
+4               0.2        3.0        0.0   # prc_C7-prc_C4-prc_C1-prc_Cl11
+5               0.2        3.0        0.0   # prc_Cl11-prc_C1-prc_C4-prc_H5
+6               0.2        3.0        0.0   # prc_Cl11-prc_C1-prc_C4-prc_H6
+
+[change_torsions]
+#Atom1     Atom2      Atom3      Atom4      St.1  St.2    # St.1 PDB_IDs
+$1.C7$     $1.C4$     $1.C1$     $1.Br11$     1     0     # 1.C7-1.C4-1.C1-1.Br11
+$1.H5$     $1.C4$     $1.C1$     $1.Br11$     2     0     # 1.H5-1.C4-1.C1-1.Br11
+$1.H6$     $1.C4$     $1.C1$     $1.Br11$     3     0     # 1.H6-1.C4-1.C1-1.Br11
+$1.C7$     $1.C4$     $1.C1$     $2.Cl1$      0     4     # 1.C7-1.C4-1.C1-2.Cl1
+$1.H5$     $1.C4$     $1.C1$     $2.Cl1$      0     5     # 1.H5-1.C4-1.C1-2.Cl1
+$1.H6$     $1.C4$     $1.C1$     $2.Cl1$      0     6     # 1.H6-1.C4-1.C1-2.Cl1
+
+[improper_types]
+#Index           Fc       phi0   # PRM_ID
+
+[change_impropers]
+#Atom1     Atom2      Atom3      Atom4      St.1  St.2    # St.1 PDB_IDs
+
+

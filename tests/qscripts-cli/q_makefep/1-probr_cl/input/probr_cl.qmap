@@ -1,0 +1,19 @@
+# q atom (q)                   PDB ID                        LIB ID (resname.name)
+# or neighbour (n)?         (resid.name)             STATE 1       STATE 2        STATE 3       ....
+
+# Bromo propane 
+q                               1.C1                 PRB.C1         PRC.C1
+q                               1.H2                 PRB.H2         PRC.H2
+q                               1.H3                 PRB.H3         PRC.H3
+q                               1.C4                 PRB.C4         PRC.C4
+q                               1.H5                 PRB.H5         PRC.H5
+q                               1.H6                 PRB.H6         PRC.H6
+q                               1.Br11               PRB.Br11       BR-.Br1
+                                   
+n                               1.C7                 PRB.C7         PRC.C7 
+n                               1.H8                 PRB.H8         PRC.H8 
+n                               1.H9                 PRB.H9         PRC.H9 
+n                               1.H10                PRB.H10        PRC.H10
+
+## Chloride ion (nucleophile)
+Q                               2.Cl1                CL-.Cl1        PRC.Cl11

@@ -1,0 +1,41 @@
+[qexec]
+qfep =   ; qfep5 binary path
+qcalc =   ; qcalc5 binary path
+
+[gc]
+lambdas_state1   = 1.0, 0.5    ; LRA between A (1.0, 0.0) and B (0.5, 0.5)
+scale_ionized    = 1.0     ; scale down ionized residues by this factor
+nthreads         = 1
+
+[analysis]
+lambdas_state1    = 1.0, 0.0   ; LRA between A (1.0, 0.0) and B (0.0, 1.0)
+
+[mapping]
+gap_bins         = 50
+points_skip      = 100
+minpts_bin       = 10
+temperature      = 300.00
+gas_const        = 0.0019872041   ; kcal/mol
+nthreads         = 1
+
+[inputs]
+fep_frames       = 51
+num_repeats      = 10
+prefix_rep       = rep_
+relax_dir        = relax
+
+[files]
+en_list_fn        = q_enfiles.list    ; created by q_genfeps, used by q_mapper when mapping
+qfep_inp          = qfep.inp
+qfep_out          = qfep.out    ; used in q_analysefeps and q_mapper
+mapper_log        = q_mapper.log
+automapper_log    = q_automapper.log
+analysefeps_log   = q_analysefeps.log
+calcs_log         = q_calcs.log
+analysefeps_plots = qaf.PlotData.json
+analysedyns_plots = qad.PlotData.json
+gc_plots          = qgc.PlotData.json
+plot_export_dir   = qa_PlotData
+
+[other]
+cfgversion       = 9

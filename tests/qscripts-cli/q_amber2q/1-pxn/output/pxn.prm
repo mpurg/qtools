@@ -1,0 +1,107 @@
+# Generated with q_amber2q.py, version 0.4.0
+# Date: Sat Jan 14 13:59:28 2017
+#
+[options]
+
+
+[atom_types]
+c3               1.9069        0.0     0.1078     1.9069     0.0539      12.01 
+ca               1.8606        0.0     0.0988     1.8606     0.0494      12.01 
+h1               1.3593        0.0     0.0208     1.3593     0.0104      1.008 
+ha               1.4735        0.0     0.0161     1.4735    0.00805      1.008 
+hc               1.4593        0.0     0.0208     1.4593     0.0104      1.008 
+no               1.8886        0.0     0.0858     1.8886     0.0429      14.01 
+o                1.7107        0.0     0.1463     1.7107    0.07315       16.0 
+os               1.7713        0.0     0.0726     1.7713     0.0363       16.0 
+p5               2.0732        0.0     0.2295     2.0732    0.11475      30.97 
+
+[bonds]
+c3           c3               465.04      1.538 
+c3           h1               751.84      1.097 
+c3           hc               751.84      1.097 
+c3           os               569.52      1.432 
+ca           ca               757.14      1.398 
+ca           ha               791.44      1.086 
+ca           no               514.76      1.469 
+ca           os               715.06       1.37 
+no           o                 735.9      1.226 
+o            p5               1059.1      1.487 
+os           p5                692.5      1.615 
+
+[angles]
+c3           c3           h1               93.736     109.56 
+c3           c3           hc               93.632      109.8 
+c3           c3           os              170.612     107.97 
+c3           os           p5              166.502     119.54 
+ca           ca           ca              137.534     120.02 
+ca           ca           ha                97.36     119.88 
+ca           ca           no                168.5     119.01 
+ca           ca           os              174.578      119.2 
+ca           no           o               171.884     117.76 
+ca           os           p5              166.386     123.18 
+h1           c3           h1               77.604     108.46 
+h1           c3           os              124.754     109.78 
+hc           c3           hc                77.92     107.58 
+o            no           o               233.298     125.08 
+o            p5           os              163.638     115.46 
+os           p5           os              167.898     101.84 
+
+[torsions]
+c3           c3           os           p5                0.383  -3.0        0.0   1.0 
+c3           c3           os           p5                 3.95   1.0      180.0   1.0 
+c3           os           p5           o                  0.55  -3.0        0.0   1.0 
+c3           os           p5           o                   0.8   2.0        0.0   1.0 
+c3           os           p5           os                  0.0  -3.0        0.0   1.0 
+c3           os           p5           os                 2.61   2.0        0.0   1.0 
+ca           ca           ca           ca                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ca                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ca                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ca                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ca                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ca                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ha                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ha                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ha                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ha                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ha                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ha                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ha                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           ha                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           no                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           no                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           os                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           ca           os                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ca           ca           no           o                   0.7   2.0      180.0   1.0 
+ca           ca           os           p5                 1.75   2.0      180.0   1.0 
+ca           os           p5           o                   0.1  -3.0        0.0   1.0 
+ca           os           p5           o                   0.8   2.0      180.0   1.0 
+ca           os           p5           os                  2.4   2.0        0.0   3.0  # Generic: ? os p5 ?
+ca           os           p5           os                  2.4   2.0        0.0   3.0  # Generic: ? os p5 ?
+h1           c3           c3           hc                  1.4   3.0        0.0   9.0  # Generic: ? c3 c3 ?
+h1           c3           c3           hc                  1.4   3.0        0.0   9.0  # Generic: ? c3 c3 ?
+h1           c3           c3           hc                  1.4   3.0        0.0   9.0  # Generic: ? c3 c3 ?
+h1           c3           c3           hc                  1.4   3.0        0.0   9.0  # Generic: ? c3 c3 ?
+h1           c3           c3           hc                  1.4   3.0        0.0   9.0  # Generic: ? c3 c3 ?
+h1           c3           c3           hc                  1.4   3.0        0.0   9.0  # Generic: ? c3 c3 ?
+h1           c3           c3           hc                  1.4   3.0        0.0   9.0  # Generic: ? c3 c3 ?
+h1           c3           c3           hc                  1.4   3.0        0.0   9.0  # Generic: ? c3 c3 ?
+h1           c3           c3           hc                  1.4   3.0        0.0   9.0  # Generic: ? c3 c3 ?
+h1           c3           c3           hc                  1.4   3.0        0.0   9.0  # Generic: ? c3 c3 ?
+h1           c3           c3           hc                  1.4   3.0        0.0   9.0  # Generic: ? c3 c3 ?
+h1           c3           c3           hc                  1.4   3.0        0.0   9.0  # Generic: ? c3 c3 ?
+h1           c3           os           p5                0.217   3.0        0.0   1.0 
+ha           ca           ca           ha                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ha           ca           ca           ha                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ha           ca           ca           no                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ha           ca           ca           no                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ha           ca           ca           os                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+ha           ca           ca           os                 14.5   2.0      180.0   4.0  # Generic: ? ca ca ?
+hc           c3           c3           os                  0.0  -3.0        0.0   1.0 
+hc           c3           c3           os                 0.25   1.0        0.0   1.0 
+
+[impropers]
+ca           ca           ca           ha                  1.1      180.0 
+ca           ca           ca           no                  1.1      180.0 
+ca           ca           ca           os                  1.1      180.0 
+ca           no           o            o                   1.1      180.0 
+

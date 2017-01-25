@@ -1,0 +1,72 @@
+
+[atom_types]
+prc_C1            944.5180   944.5180    22.0296   667.8751    15.5773     12.011  ! high   CT    ! RCH2Cl " "
+prc_H2             84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prc_H3             84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prc_C4            944.5180   944.5180    22.0296   667.8751    15.5773     12.011  ! high   CT    ! C: alkanes
+prc_H5             84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prc_H6             84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prc_C7            944.5180   944.5180    22.0296   667.8751    15.5773     12.011  ! high   CT    ! C: alkanes
+prc_H8             84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prc_H9             84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prc_H10            84.5728    84.5728     5.4127    59.8020     3.8273     1.0079  ! high   HC    ! H: alkanes
+prc_Cl11         1692.2485  1692.2485    43.0554  1196.6004    30.4447     35.453  ! high   Cl    ! Cl in alkyl chlorides
+
+
+[bonds]
+prc_C1          prc_H2              680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+prc_C1          prc_H3              680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+prc_C1          prc_C4              536.00     1.5290     ! high   ! CT -CT ==> CT -CT
+prc_C1          prc_Cl11            490.00     1.7810     ! high   ! CT -Cl ==> CT -Cl
+prc_C4          prc_H5              680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+prc_C4          prc_H6              680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+prc_C4          prc_C7              536.00     1.5290     ! high   ! CT -CT ==> CT -CT
+prc_C7          prc_H8              680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+prc_C7          prc_H9              680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+prc_C7          prc_H10             680.00     1.0900     ! high   ! CT -HC ==> CT -HC
+
+
+[angles]
+prc_H2          prc_C1          prc_H3               66.00   107.8000     ! high   ! HC -CT -HC ==> HC -CT -HC
+prc_H2          prc_C1          prc_C4               75.00   110.7000     ! high   ! HC -CT -CT ==> CT -CT -HC
+prc_H2          prc_C1          prc_Cl11            102.00   107.6000     ! high   ! HC -CT -Cl ==> HC -CT -Cl
+prc_H3          prc_C1          prc_C4               75.00   110.7000     ! high   ! HC -CT -CT ==> CT -CT -HC
+prc_H3          prc_C1          prc_Cl11            102.00   107.6000     ! high   ! HC -CT -Cl ==> HC -CT -Cl
+prc_C4          prc_C1          prc_Cl11            138.00   109.8000     ! high   ! CT -CT -Cl ==> CT -CT -Cl
+prc_C1          prc_C4          prc_H5               75.00   110.7000     ! high   ! CT -CT -HC ==> CT -CT -HC
+prc_C1          prc_C4          prc_H6               75.00   110.7000     ! high   ! CT -CT -HC ==> CT -CT -HC
+prc_C1          prc_C4          prc_C7              116.70   112.7000     ! high   ! CT -CT -CT ==> CT -CT -CT
+prc_H5          prc_C4          prc_H6               66.00   107.8000     ! high   ! HC -CT -HC ==> HC -CT -HC
+prc_H5          prc_C4          prc_C7               75.00   110.7000     ! high   ! HC -CT -CT ==> CT -CT -HC
+prc_H6          prc_C4          prc_C7               75.00   110.7000     ! high   ! HC -CT -CT ==> CT -CT -HC
+prc_C4          prc_C7          prc_H8               75.00   110.7000     ! high   ! CT -CT -HC ==> CT -CT -HC
+prc_C4          prc_C7          prc_H9               75.00   110.7000     ! high   ! CT -CT -HC ==> CT -CT -HC
+prc_C4          prc_C7          prc_H10              75.00   110.7000     ! high   ! CT -CT -HC ==> CT -CT -HC
+prc_H8          prc_C7          prc_H9               66.00   107.8000     ! high   ! HC -CT -HC ==> HC -CT -HC
+prc_H8          prc_C7          prc_H10              66.00   107.8000     ! high   ! HC -CT -HC ==> HC -CT -HC
+prc_H9          prc_C7          prc_H10              66.00   107.8000     ! high   ! HC -CT -HC ==> HC -CT -HC
+
+
+[torsions]
+prc_H2          prc_C1          prc_C4          prc_H5              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prc_H2          prc_C1          prc_C4          prc_H6              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prc_H2          prc_C1          prc_C4          prc_C7              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -CT ==> HC -CT -CT -CT
+prc_H3          prc_C1          prc_C4          prc_H5              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prc_H3          prc_C1          prc_C4          prc_H6              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prc_H3          prc_C1          prc_C4          prc_C7              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -CT ==> HC -CT -CT -CT
+prc_Cl11        prc_C1          prc_C4          prc_H5              0.2000     3.0000     0.0000     1.0000  ! high   ! Cl -CT -CT -HC ==> HC -CT -CT -Cl
+prc_Cl11        prc_C1          prc_C4          prc_H6              0.2000     3.0000     0.0000     1.0000  ! high   ! Cl -CT -CT -HC ==> HC -CT -CT -Cl
+prc_Cl11        prc_C1          prc_C4          prc_C7              0.2000     3.0000     0.0000     1.0000  ! high   ! Cl -CT -CT -CT ==> CT -CT -CT -Cl
+prc_C1          prc_C4          prc_C7          prc_H8              0.1500     3.0000     0.0000     1.0000  ! high   ! CT -CT -CT -HC ==> HC -CT -CT -CT
+prc_C1          prc_C4          prc_C7          prc_H9              0.1500     3.0000     0.0000     1.0000  ! high   ! CT -CT -CT -HC ==> HC -CT -CT -CT
+prc_C1          prc_C4          prc_C7          prc_H10             0.1500     3.0000     0.0000     1.0000  ! high   ! CT -CT -CT -HC ==> HC -CT -CT -CT
+prc_H5          prc_C4          prc_C7          prc_H8              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prc_H5          prc_C4          prc_C7          prc_H9              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prc_H5          prc_C4          prc_C7          prc_H10             0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prc_H6          prc_C4          prc_C7          prc_H8              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prc_H6          prc_C4          prc_C7          prc_H9              0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+prc_H6          prc_C4          prc_C7          prc_H10             0.1500     3.0000     0.0000     1.0000  ! high   ! HC -CT -CT -HC ==> HC -CT -CT -HC
+
+
+[impropers]
+
