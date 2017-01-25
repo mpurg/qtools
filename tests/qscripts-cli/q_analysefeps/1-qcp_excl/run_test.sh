@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # make sure we are using this copy of the scripts
-source ../../../../qscripts_init.sh
+source ../../../../qtools_init.sh
 
 # get the diffing function and some variable
 source ../../common.sh
