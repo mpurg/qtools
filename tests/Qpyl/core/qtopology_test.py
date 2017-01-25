@@ -61,3 +61,8 @@ improper_definition explicit""".splitlines():
     assert abs(te - 417.2919960) < 1e-7
     assert abs(ie -  23.0370760) < 1e-7
 
+    qa14_lib = open("data/qamber14.lib", "r").read()
+    qa14_prm = open("data/qamber14.prm", "r").read()
+
+    assert qal.get_string() in qa14_lib
+    assert qap.get_string() in qa14_prm
