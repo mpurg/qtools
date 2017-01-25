@@ -24,7 +24,7 @@ Working on it, jeez...
 #### Requirements
 
 The tools pride themselves on not having any dependencies, except *matplotlib*
-which is required only for *q_plot.pt*, a non-essential utility used mostly for
+which is required only for *q_plot.py*, a non-essential utility used mostly for
 debugging.
 
 The only requirement is *Python, version 2.7*
@@ -36,14 +36,14 @@ since development (and testing) is done exclusively on GNU/Linux.*
 Clone this repository to your favourite directory:  
 ```
 mkdir -p ~/bin && cd ~/bin
-git clone https://bitbucket.org/grupim/qscripts.git
+git clone https://github.com/mpurg/QTools
 ```
 
 
 
 Add this to your `~/.bashrc` or `~/.bash_profile`:  
 ```
-source $HOME/bin/qscripts/qscripts_init.sh
+source $HOME/bin/QTools/qtools_init.sh
 ```
 
 Run the config script:  
@@ -58,7 +58,7 @@ Bugs, suggestions and questions: miha.purg@gmail.com
 
 
 ###### Contributors
-Paul Bauer 
+Paul Bauer (paul.bauer@icm.uu.se)
 
 
 
