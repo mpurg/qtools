@@ -427,10 +427,10 @@ class QGroupContrib(object):
         fails = "\n".join(["{}: {}".format(cd, e) for cd, e in \
                                                  self.failed.iteritems()])
 
-        calcdirs = ", ".join(self._calcdirs)
+        calcdirs = ", ".join(os.path.relpath(c) for c in self._calcdirs)
         outstr = """
 ---------------------------------- GC details ---------------------------------
-# Calculated with: QTools ({version}), QCalc ({qcalc_version})
+# Calculated with: Qtools ({version}), Qcalc ({qcalc_version})
 # Work dir: {cwd}
 # Date: {date}
 # CMDline: {cmdline}

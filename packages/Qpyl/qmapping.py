@@ -373,10 +373,10 @@ class QMapper(object):
                 break
 
 
-        mapdirs = ", ".join(self._mapdirs)
+        mapdirs = ", ".join(os.path.relpath(m) for m in self._mapdirs)
         outstr = """
 ------------------------------- Mapping details -------------------------------
-# Mapped with: QTools ({version}), QFep ({qfep_version})
+# Mapped with: Qtools ({version}), Qfep ({qfep_version})
 # Work dir: {cwd}
 # Date: {date}
 # CMDline: {cmdline}
