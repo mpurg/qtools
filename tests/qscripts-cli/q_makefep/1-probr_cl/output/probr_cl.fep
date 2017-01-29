@@ -1,7 +1,7 @@
-# Generated with Qtools, version 0.4.0
-# Date: Mon Jan 23 17:52:38 2017
-# CWD: /home/mpurg/bin/qscripts-devel/tests/qscripts-cli/q_makefep/1-probr_cl/tmp-run
-# CMDline: /home/mpurg/bin/qscripts-devel/qscripts-cli/q_makefep.py -s ../input/probr_cl_start.pdb -m ../input/probr_cl.qmap -l ../input/0-ff/br-.lib ../input/0-ff/cl-.lib ../input/0-ff/prb.lib ../input/0-ff/prc.lib -p ../input/0-ff/br-.prm ../input/0-ff/cl-.prm ../input/0-ff/prb.prm ../input/0-ff/prc.prm -f oplsaa -o probr_cl.fep
+# Generated with Qtools, version 0.5.0
+# Date: Sat Jan 28 20:56:23 2017
+# CWD: /home/mpurg/bin/qtools/tests/qscripts-cli/q_makefep/1-probr_cl/tmp-run
+# CMDline: /home/mpurg/bin/qtools/qscripts-cli/q_makefep.py -s ../input/probr_cl_start.pdb -m ../input/probr_cl.qmap -l ../input/0-ff/br-.lib ../input/0-ff/cl-.lib ../input/0-ff/prb.lib ../input/0-ff/prc.lib -p ../input/0-ff/br-.prm ../input/0-ff/cl-.prm ../input/0-ff/prb.prm ../input/0-ff/prc.prm -f oplsaa -o probr_cl.fep
 #
 
 [FEP]
@@ -39,14 +39,14 @@ prc_Cl11      1692.2485    43.0554      <FIX>        2.5  1196.6004    30.4448  
 
 [change_atoms]
 #Q index    Type st.1    Type st.2       #  St.1 PDB_ID
-1           prb_C1       prc_C1          #  1.C1      
-2           prb_H2       prc_H2          #  1.H2      
-3           prb_H3       prc_H3          #  1.H3      
-4           prb_C4       prc_C4          #  1.C4      
-5           prb_H5       prc_H5          #  1.H5      
-6           prb_H6       prc_H6          #  1.H6      
-7           prb_Br11     br-_Br1         #  1.Br11    
-8           cl-_Cl1      prc_Cl11        #  2.Cl1     
+1           prb_C1       prc_C1          #  1.C1
+2           prb_H2       prc_H2          #  1.H2
+3           prb_H3       prc_H3          #  1.H3
+4           prb_C4       prc_C4          #  1.C4
+5           prb_H5       prc_H5          #  1.H5
+6           prb_H6       prc_H6          #  1.H6
+7           prb_Br11     br-_Br1         #  1.Br11
+8           cl-_Cl1      prc_Cl11        #  2.Cl1
 
 [change_charges]
 #Q index    Charge st.1  Charge st.2     #  St.1 PDB_ID     dq(1->2)

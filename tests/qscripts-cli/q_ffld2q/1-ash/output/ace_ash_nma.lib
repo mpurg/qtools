@@ -1,59 +1,59 @@
 # Generated with q_ffld2q.py, version 0.4.0
-# Date: Fri Jan 13 23:59:50 2017
+# Date: Sun Jan 29 18:51:20 2017
 #
 {ACE}
     [atoms]
-        1  CH3    CT_C1_135     -0.180000 
-        2  C      C_C2_235       0.500000 
-        3  O      O_O2_236      -0.500000 
-        4  HH31   HC_H1_140      0.060000 
-        5  HH32   HC_H1_140      0.060000 
-        6  HH33   HC_H1_140      0.060000 
+        1  CH3    CT_C1_135     -0.180000
+        2  C      C_C2_235       0.500000
+        3  O      O_O2_236      -0.500000
+        4  HH31   HC_H1_140      0.060000
+        5  HH32   HC_H1_140      0.060000
+        6  HH33   HC_H1_140      0.060000
     [bonds]
-        CH3   C    
-        CH3   HH31 
-        CH3   HH32 
-        CH3   HH33 
-        C     O    
+        CH3   C
+        CH3   HH31
+        CH3   HH32
+        CH3   HH33
+        C     O
     [impropers]
-        +N    C     CH3   O    
+        +N    C     CH3   O
     [charge_groups]
         CH3 C O HH31 HH32 HH33
     [connections]
         tail C
 *--------------------------------------------------------------------------------
-{ASP}
+{ASH}
     [atoms]
-        1  N      N_N1_238      -0.500000 
-        2  CA     CT1_C1_224     0.140000 
-        3  C      C_C2_235       0.500000 
-        4  O      O_O2_236      -0.500000 
-        5  CB     CT_C1_135     -0.120000 
-        6  CG     C_C2_267       0.520000 
-        7  OD1    OC3_O2_269    -0.440000 
-        8  OD2    OH_O4_268     -0.530000 
-        9  H      H_H5_240       0.300000 
-       10  HA     HC_H1_140      0.060000 
-       11  HB2    HC_H1_140      0.060000 
-       12  HB3    HC_H1_140      0.060000 
-       13  HD2    HO_H5_270      0.450000 
+        1  N      N_N1_238      -0.500000
+        2  CA     CT1_C1_224     0.140000
+        3  C      C_C2_235       0.500000
+        4  O      O_O2_236      -0.500000
+        5  CB     CT_C1_135     -0.120000
+        6  CG     C_C2_267       0.520000
+        7  OD1    OC3_O2_269    -0.440000
+        8  OD2    OH_O4_268     -0.530000
+        9  H      H_H5_240       0.300000
+       10  HA     HC_H1_140      0.060000
+       11  HB2    HC_H1_140      0.060000
+       12  HB3    HC_H1_140      0.060000
+       13  HD2    HO_H5_270      0.450000
     [bonds]
-        N     CA   
-        N     H    
-        CA    C    
-        CA    CB   
-        CA    HA   
-        C     O    
-        CB    CG   
-        CB    HB2  
-        CB    HB3  
-        CG    OD1  
-        CG    OD2  
-        OD2   HD2  
+        N     CA
+        N     H
+        CA    C
+        CA    CB
+        CA    HA
+        C     O
+        CB    CG
+        CB    HB2
+        CB    HB3
+        CG    OD1
+        CG    OD2
+        OD2   HD2
     [impropers]
-        -C    N     CA    H    
-        +N    C     CA    O    
-        CB    CG    OD1   OD2  
+        -C    N     CA    H
+        +N    C     CA    O
+        CB    CG    OD1   OD2
     [charge_groups]
         N CA C O CB CG OD1 OD2 H HA HB2 HB3 HD2
     [connections]
@@ -62,20 +62,20 @@
 *--------------------------------------------------------------------------------
 {NMA}
     [atoms]
-        1  N      N_N1_238      -0.500000 
-        2  CA     CT_C1_135      0.020000 
-        3  H      H_H5_240       0.300000 
-        4  HA1    HC_H1_140      0.060000 
-        5  HA2    HC_H1_140      0.060000 
-        6  HA3    HC_H1_140      0.060000 
+        1  N      N_N1_238      -0.500000
+        2  CA     CT_C1_135      0.020000
+        3  H      H_H5_240       0.300000
+        4  HA1    HC_H1_140      0.060000
+        5  HA2    HC_H1_140      0.060000
+        6  HA3    HC_H1_140      0.060000
     [bonds]
-        N     CA   
-        N     H    
-        CA    HA1  
-        CA    HA2  
-        CA    HA3  
+        N     CA
+        N     H
+        CA    HA1
+        CA    HA2
+        CA    HA3
     [impropers]
-        -C    N     CA    H    
+        -C    N     CA    H
     [charge_groups]
         N CA H HA1 HA2 HA3
     [connections]

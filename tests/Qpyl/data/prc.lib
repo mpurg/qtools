@@ -1,0 +1,35 @@
+{PRC}
+
+[atoms]                #    FFLD
+    1  C1    prc_C1       -0.0060
+    2  H2    prc_H2        0.1030
+    3  H3    prc_H3        0.1030
+    4  C4    prc_C4       -0.1200
+    5  H5    prc_H5        0.0600
+    6  H6    prc_H6        0.0600
+    7  C7    prc_C7       -0.1800
+    8  H8    prc_H8        0.0600
+    9  H9    prc_H9        0.0600
+   10  H10   prc_H10       0.0600
+   11  Cl11  prc_Cl11     -0.2000
+
+
+[bonds]
+C1    H2   
+C1    H3   
+C1    C4   
+C1    Cl11 
+C4    H5   
+C4    H6   
+C4    C7   
+C7    H8   
+C7    H9   
+C7    H10  
+
+
+[impropers]
+
+
+[charge_groups]
+C1 H2 H3 C4 H5 H6 Cl11
+C7 H8 H9 H10

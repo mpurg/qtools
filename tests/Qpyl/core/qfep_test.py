@@ -9,12 +9,12 @@ from Qpyl.core.qfep import QFepOutput, QFepOutputError
 
 class TestQFepOutput:
 
-    @pytest.fixture
+    @pytest.fixture(scope='session')
     def qfo1(self):
         qfo_str = open("data/qfep.out.1", "r").read()
         return QFepOutput(qfo_str)
 
-    @pytest.fixture
+    @pytest.fixture(scope='session')
     def qfo2(self):
         qfo_str = open("data/qfep.out.2", "r").read()
         return QFepOutput(qfo_str)

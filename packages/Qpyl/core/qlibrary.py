@@ -118,7 +118,7 @@ class QLib(object):
                     residues.append(_LibResidue(resname, self))
                     continue
                 if line.startswith("["):
-                    section = line.strip("[]").lower()
+                    section = line.split("]")[0].strip("[]").lower()
                     continue
                 if not residues or not section:
                     raise QLibError("Line #{} in LIB file '{}' is not a "
@@ -201,6 +201,9 @@ class QLib(object):
                                                     lnumber))
 
                     residue.charge_groups.append(cgrp)
+                else:
+                    logger.warning("Unsupported section in '{}': {}"
+                                   "".format(libfile, section))
 
         for residue in residues:
             self._add_residue(residue)
@@ -523,6 +526,10 @@ class QLib(object):
 
         """
 
+        if self.ff_type != "oplsaa":
+            raise QLibError("Function not supported with "
+                            "force field '{}'".format(self.ff_type))
+
         # keys are ffld atom names, values are tuples:
         # (StructAtom, LibResidue)
         lookup_aname = {}
@@ -686,7 +693,7 @@ class _LibAtom(object):
     @property
     def comment(self):
         if self._comment:
-            return "# {}".format(self._comment)
+            return " # {}".format(self._comment)
         else:
             return ""
 
@@ -776,7 +783,7 @@ class _LibResidue(object):
                                         " '{}'".format(aname, " ".join(cg)))
                     net_charge += charges[names.index(aname)]
 
-                if abs(net_charge - round(net_charge)) > 0.0000001:
+                if abs(net_charge - round(net_charge)) > 1e-7:
                     raise_or_log("Net charge of charge group '{}'"
                                  " in residue {} not integer: {}"\
                                  .format(" ".join(cg),
@@ -786,7 +793,7 @@ class _LibResidue(object):
         # check the whole residue for integer charge
         else:
             net_charge = sum(charges)
-            if abs(net_charge - round(net_charge)) > 0.0000001:
+            if abs(net_charge - round(net_charge)) > 1e-7:
                 raise_or_log("Net charge of residue {} not integer: "
                              "{}".format(self.name, net_charge),
                              QLibError, logger, self.library.ignore_errors)
@@ -853,7 +860,8 @@ class _LibResidue(object):
         diff = sum_all_q - target
         if diff > threshold:
             raise QLibError("Difference between sum of charges and nearest "
-                            "integer ({}) is greater than 'threshold'")
+                            "integer ({}) is greater than threshold"
+                            "".format(diff))
 
         # rescale the charges
         for atom_name in atoms:
@@ -905,11 +913,12 @@ class _LibResidue(object):
         indent = "        "
         for i, atom in enumerate(self.atoms):
             al.append("    {:>5d}  {a.name:<5s}  {a.atom_type:<12s} "
-                      "{a.charge:>10.6f} {a.comment}".format(i+1, a=atom))
+                      "{a.charge:>10.6f}{a.comment}".format(i+1, a=atom))
         for bond in self.bonds:
-            bl.append(indent + "{b[0]:<5s} {b[1]:<5s}".format(b=bond))
+            bl.append(indent + "{b[0]:<5s} {b[1]:s}".format(b=bond))
         for imp in self.impropers:
-            il.append(indent + " ".join("{:<5s}".format(a) for a in imp))
+            tmp = " ".join("{:<5s}".format(a) for a in imp).rstrip()
+            il.append(indent + tmp)
         for chgr in self.charge_groups:
             cl.append(indent + " ".join(chgr))
         for conn in self.connections:

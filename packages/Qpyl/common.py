@@ -35,7 +35,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__version__ = "0.5.0"
+__version__ = "0.5.1"
 
 
 class SpecialFormatter(logging.Formatter):

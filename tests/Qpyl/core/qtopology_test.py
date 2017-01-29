@@ -5,12 +5,13 @@ from Qpyl.core.qtopology import QTopology
 
 
 def test_ff14sb_conversion():
-    # Amber14FF to Qamber14
+    # Amber14FF to Qamber14 
     #
     # Convert Amber14 lib (+prepin for impropers) and parm+frcmod to Q lib/prm
-    # Load all_amino_acids.pdb and all_amino_acids.mol2 and build topology
-    # separately.
-    #
+    # Load the structure 'all_amino_acids.pdb' and build the topology
+    # Check the total bonding energy contributions and number of bonding terms
+    # and compare the library and parameter set with official qamber14.
+    # 
     qal = QLib("amber")
     qap = QPrm("amber", ignore_errors=True) # duplicates
     qal.read_amber_lib("data/ff-amber14/amber12_mod.lib")
@@ -21,13 +22,15 @@ def test_ff14sb_conversion():
     qap.read_amber_frcmod("data/ff-amber14/parm/frcmod.ff14SB")
 
     # add options to parameters
-    for line in """name		Q-Amber14SB
-type		AMBER
-vdw_rule    arithmetic !vdW combination rule (geometric or arithmetic)
-scale_14	0.8333 ! electrostatic 1-4 scaling factor
-switch_atoms	off
-improper_potential	periodic
-improper_definition explicit""".splitlines():
+    for line in """\
+name                           Q-Amber14SB
+type                           AMBER
+vdw_rule                       arithmetic !vdW combination rule (geometric or arithmetic)
+scale_14                       0.8333 ! electrostatic 1-4 scaling factor
+switch_atoms                   off
+improper_potential             periodic
+improper_definition            explicit\
+""".splitlines():
         lf = line.split()
         qap.options[lf[0]] = " ".join(lf[1:])
 
@@ -59,8 +62,9 @@ improper_definition explicit""".splitlines():
     assert abs(be - 181.2572830) < 1e-7
     assert abs(ae - 212.8539304) < 1e-7
     assert abs(te - 417.2919960) < 1e-7
-    assert abs(ie -  23.0370760) < 1e-7
+    assert abs(ie - 23.0370760) < 1e-7
 
+    # compare with official lib
     qa14_lib = open("data/qamber14.lib", "r").read()
     qa14_prm = open("data/qamber14.prm", "r").read()
 

@@ -35,8 +35,12 @@ if sys.version_info < (2, 7):
     print "Python 2.7 required. Detected version {}".format(sys.version)
     sys.exit(1)
 
+try:
+    from Qpyl.common import __version__
+except ImportError:
+    print "Can't import Qpyl module, your installation is messed up..."
+    sys.exit(1)
 
-__version__ = "0.4.0"
 
 # this should change when the config file format changes
 # to indicate an incompatible config file

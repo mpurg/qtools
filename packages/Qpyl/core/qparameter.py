@@ -303,11 +303,12 @@ class QPrm(object):
 
             # get the bond types
             while True:
-                line = parmf.readline().replace("-", " ", 1).split()
+                line = parmf.readline().strip()
                 if not line: break
                 try:
-                    a_types = [x.strip().replace("*", "star") for x in line[:2]]
-                    fc, r0 = float(line[2]), float(line[3])
+                    a_types = line[0:2], line[3:5]
+                    a_types = [x.strip().replace("*", "star") for x in a_types]
+                    fc, r0 = float(line[5:15]), float(line[15:25])
                     fc *= 2   # In Q the fc is divided by 2
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
@@ -317,11 +318,12 @@ class QPrm(object):
 
             # get the angle types
             while True:
-                line = parmf.readline().replace("-", " ", 2).split()
+                line = parmf.readline().strip()
                 if not line: break
                 try:
-                    a_types = [x.strip().replace("*", "star") for x in line[:3]]
-                    fc, t0 = float(line[3]), float(line[4])
+                    a_types = line[0:2], line[3:5], line[6:8]
+                    a_types = [x.strip().replace("*", "star") for x in a_types]
+                    fc, t0 = float(line[8:18]), float(line[18:28])
                     fc *= 2   # In Q the fc is divided by 2
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
@@ -331,13 +333,20 @@ class QPrm(object):
 
             # get the torsion (dihedral) types
             while True:
-                line = parmf.readline().replace("-", " ", 3).split()
+                line = parmf.readline().strip()
                 if not line: break
                 try:
-                    a_types = [x.strip().replace("*", "star") for x in line[:4]]
+                    a_types = line[0:2], line[3:5], line[6:8], line[9:11]
+                    a_types = [x.strip().replace("*", "star") for x in a_types]
                     a_types = map(lambda x: "?" if x == "X" else x, a_types)
-                    npaths, fc, phase, periodicity = map(float, line[4:8])
+                    npaths = float(line[11:15])
+                    fc, phase = float(line[15:30]), float(line[30:45])
+                    try:
+                        periodicity = float(line[45:60])
+                    except ValueError:  # some amber parm files are shit
+                        periodicity = float(line[45:55])
                 except Exception as e:
+                    raise e
                     raise QPrmError("Could not parse line '{}'".format(line))
 
                 torsion = _PrmTorsion(a_types)
@@ -364,13 +373,20 @@ class QPrm(object):
 
             # get the improper types
             while True:
-                line = parmf.readline().replace("-", " ", 3).split()
+                line = parmf.readline().strip()
                 if not line: break
                 try:
-                    a_types = [x.strip().replace("*", "star") for x in line[:4]]
+                    a_types = line[0:2], line[3:5], line[6:8], line[9:11]
+                    a_types = [x.strip().replace("*", "star") for x in a_types]
                     a_types = map(lambda x: "?" if x == "X" else x, a_types)
                     center_atom = a_types.pop(2)
-                    fc, phi0, periodicity = map(float, line[4:7])
+
+                    fc, phi0 = float(line[15:30]), float(line[30:45])
+                    try:
+                        periodicity = float(line[45:60])
+                    except ValueError:  # some amber parm files are shit
+                        periodicity = float(line[45:55])
+
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
@@ -475,12 +491,12 @@ class QPrm(object):
             # get the bond types
             parmf.readline()    # BOND
             while True:
-                line = parmf.readline().replace("-", " ", 1).split()
+                line = parmf.readline().strip()
                 if not line: break
                 try:
-                    a_types = [x.strip().replace("*", "star")
-                               for x in line[:2]]
-                    fc, r0 = float(line[2]), float(line[3])
+                    a_types = line[0:2], line[3:5]
+                    a_types = [x.strip().replace("*", "star") for x in a_types]
+                    fc, r0 = float(line[5:15]), float(line[15:25])
                     fc *= 2   # In Q the fc is divided by 2
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
@@ -491,11 +507,12 @@ class QPrm(object):
             # get the angle types
             parmf.readline()    # ANGL
             while True:
-                line = parmf.readline().replace("-", " ", 2).split()
+                line = parmf.readline().strip()
                 if not line: break
                 try:
-                    a_types = [x.strip().replace("*", "star") for x in line[:3]]
-                    fc, t0 = float(line[3]), float(line[4])
+                    a_types = line[0:2], line[3:5], line[6:8]
+                    a_types = [x.strip().replace("*", "star") for x in a_types]
+                    fc, t0 = float(line[8:18]), float(line[18:28])
                     fc *= 2   # In Q the fc is divided by 2
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
@@ -506,12 +523,18 @@ class QPrm(object):
             # get the torsion (dihedral) types
             parmf.readline()    # DIHE
             while True:
-                line = parmf.readline().replace("-", " ", 3).split()
+                line = parmf.readline().strip()
                 if not line: break
                 try:
-                    a_types = [x.strip().replace("*", "star") for x in line[:4]]
+                    a_types = line[0:2], line[3:5], line[6:8], line[9:11]
+                    a_types = [x.strip().replace("*", "star") for x in a_types]
                     a_types = map(lambda x: "?" if x == "X" else x, a_types)
-                    npaths, fc, phase, periodicity = map(float, line[4:8])
+                    npaths = float(line[11:15])
+                    fc, phase = float(line[15:30]), float(line[30:45])
+                    try:
+                        periodicity = float(line[45:60])
+                    except ValueError:  # some amber parm files are shit
+                        periodicity = float(line[45:55])
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
@@ -539,13 +562,20 @@ class QPrm(object):
             # get the improper types
             parmf.readline()    # IMPR
             while True:
-                line = parmf.readline().replace("-", " ", 3).split()
+                line = parmf.readline().strip()
                 if not line: break
                 try:
-                    a_types = [x.strip().replace("*", "star") for x in line[:4]]
+                    a_types = line[0:2], line[3:5], line[6:8], line[9:11]
+                    a_types = [x.strip().replace("*", "star") for x in a_types]
                     a_types = map(lambda x: "?" if x == "X" else x, a_types)
                     center_atom = a_types.pop(2)
-                    fc, phi0, periodicity = map( float, line[4:7] )
+
+                    fc, phi0 = float(line[15:30]), float(line[30:45])
+                    try:
+                        periodicity = float(line[45:60])
+                    except ValueError:  # some amber parm files are shit
+                        periodicity = float(line[45:55])
+
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
@@ -554,7 +584,7 @@ class QPrm(object):
                 prms["impropers"].append(improper)
 
 
-            # get the improper types
+            # get the nonbonded parameters
             parmf.readline()    # NONB
             while True:
                 line = parmf.readline().split()
@@ -835,13 +865,13 @@ class QPrm(object):
             impropers = self.impropers.values()
 
         for k, v in self.options.iteritems():
-            prm_l["options"].append("{:<30s} {:<30s}".format(k,v))
+            prm_l["options"].append("{:<30s} {:<s}".format(k,v))
 
         for v in sorted(set(atom_types), key=lambda x: x.prm_id):
             if self.ff_type == "amber":
                 prm_l["atom_types"].append("{:<12} {:>10} {:>10} "
                                            "{:>10} {:>10} {:>10} "
-                                           "{:>10} {}"
+                                           "{:>10}{}"
                                            .format(v.atom_type, v.lj_R, 0.0,
                                                    v.lj_eps, v.lj_R,
                                                    v.lj_eps/2, v.mass,
@@ -851,7 +881,7 @@ class QPrm(object):
                 lj_B = round(v.lj_B**0.5, 4)
                 prm_l["atom_types"].append("{:<12} {:>10} {:>10} "
                                            "{:>10} {:>10} {:>10} "
-                                           "{:>10} {}"
+                                           "{:>10}{}"
                                            .format(v.atom_type, lj_A, lj_A,
                                                    lj_B, round(lj_A/2**0.5, 4),
                                                    round(lj_B/2**0.5, 4),
@@ -859,12 +889,12 @@ class QPrm(object):
 
         for v in sorted(set(bonds), key=lambda x: x.prm_id):
             a1, a2 = v.atom_types
-            prm_l["bonds"].append("{:<12} {:<12} {:>10} {:>10} {}"
+            prm_l["bonds"].append("{:<12} {:<12} {:>10} {:>10}{}"
                                   .format(a1, a2, v.fc, v.r0, v.comment))
 
         for v in sorted(set(angles), key=lambda x: x.prm_id):
             a1, a2, a3 = v.atom_types
-            prm_l["angles"].append("{:<12} {:<12} {:<12} {:>10} {:>10} {}"
+            prm_l["angles"].append("{:<12} {:<12} {:<12} {:>10} {:>10}{}"
                                    .format(a1, a2, a3, v.fc, v.theta0,
                                            v.comment))
 
@@ -872,7 +902,7 @@ class QPrm(object):
             a1, a2, a3, a4 = v.atom_types
             for fc, periodicity, phase, npaths in v.get_prms():
                 prm_l["torsions"].append("{:<12} {:<12} {:<12} {:<12} "
-                                         "{:>10} {:>5} {:>10} {:>5} {}"
+                                         "{:>10} {:>5} {:>10} {:>5}{}"
                                          .format(a1, a2, a3, a4, fc,
                                                  periodicity, phase, npaths,
                                                  v.comment))
@@ -881,7 +911,7 @@ class QPrm(object):
             a1, a2, a3, a4 = v.atom_types
             for fc, periodicity, phase, npaths in v.get_prms():
                 prm_l["torsions"].append("{:<12} {:<12} {:<12} {:<12} "
-                                         "{:>10} {:>5} {:>10} {:>5} {}"
+                                         "{:>10} {:>5} {:>10} {:>5}{}"
                                          .format(a1, a2, a3, a4, fc,
                                                  periodicity, phase, npaths,
                                                  v.comment))
@@ -892,14 +922,14 @@ class QPrm(object):
                 x.prm_id.count("?") * " " + x.prm_id):
             a1, a2, a3, a4 = v.atom_types
             prm_l["impropers"].append("{:<12} {:<12} {:<12} {:<12} "
-                                      "{:>10} {:>10} {}"
+                                      "{:>10} {:>10}{}"
                                       .format(a1, a2, a3, a4, v.fc,
                                               v.phi0, v.comment))
 
         for v in sorted(set(impropers), key=lambda x: x.prm_id):
             a1, a2, a3, a4 = v.atom_types
             prm_l["impropers"].append("{:<12} {:<12} {:<12} {:<12} "
-                                      "{:>10} {:>10} {}"
+                                      "{:>10} {:>10}{}"
                                       .format(a1, a2, a3, a4, v.fc,
                                               v.phi0, v.comment))
 

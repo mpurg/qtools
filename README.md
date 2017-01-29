@@ -36,14 +36,14 @@ since development (and testing) is done exclusively on GNU/Linux.*
 Clone this repository to your favourite directory:  
 ```
 mkdir -p ~/bin && cd ~/bin
-git clone https://github.com/mpurg/QTools
+git clone https://github.com/mpurg/qtools
 ```
 
 
 
 Add this to your `~/.bashrc` or `~/.bash_profile`:  
 ```
-source $HOME/bin/QTools/qtools_init.sh
+source $HOME/bin/qtools/qtools_init.sh
 ```
 
 Run the config script:  

@@ -482,7 +482,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
     # CHANGE_CHARGES
     ####################
     format_atoms = "{:<15} {:<10}     #  {:<15} {:<15} {:>3}"
-    format_ch_atoms = "{:<10} " + " {:<12}"*num_evb_states + "    #  {:<10}"
+    format_ch_atoms = "{:<10} " + " {:<12}"*num_evb_states + "    #  {:<}"
     format_ch_crgs = "{:<10} " + " {:12}"*num_evb_states + "    #  {:<10}"\
                    + " {:>12}"*(num_evb_states-1)
     format_qpi = "{:<15} {:<10}     #  {:<10}"

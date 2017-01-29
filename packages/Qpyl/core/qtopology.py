@@ -261,6 +261,9 @@ class QTopology(object):
                             torsion_atoms = [atom4] + angle_atoms
                         else:
                             torsion_atoms = angle_atoms + [atom4]
+
+                        # TODO: QPrm.find_type() would be better
+                        #
                         # find parameters
                         atom_types = [a.prm.atom_type for a in torsion_atoms]
                         prm_id = qparameter._PrmTorsion.get_id(atom_types)

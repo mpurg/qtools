@@ -1,122 +1,122 @@
 # Generated with q_ffld2q.py, version 0.4.0
-# Date: Fri Jan 13 23:59:50 2017
+# Date: Sun Jan 29 18:51:20 2017
 #
 [options]
 
 
 [atom_types]
-CT1_C1_224      944.518    944.518    22.0296   667.8751    15.5773     12.011  # FFLD: C alpha
-CT_C1_135       944.518    944.518    22.0296   667.8751    15.5773     12.011  # FFLD: C: alkanes
-C_C2_235      1802.2385  1802.2385    34.1758  1274.3751    24.1659     12.011  # FFLD: C: C=O in amide.
-C_C2_267      1802.2385  1802.2385    34.1758  1274.3751    24.1659     12.011  # FFLD: Co in CC(=O)OH carboxylic acid
-HC_H1_140       84.5728    84.5728     5.4127     59.802     3.8274     1.0079  # FFLD: H(C)-N dmf
-HO_H5_270           0.0        0.0        0.0        0.0        0.0     1.0079  # FFLD: H in CC(=O)OH
-H_H5_240            0.0        0.0        0.0        0.0        0.0     1.0079  # FFLD: H on N
-N_N1_238       971.7502   971.7502    28.3077   687.1312    20.0166     14.007  # FFLD: N: secondary amide
-OC3_O2_269     616.4387   616.4387    23.7692    435.888    16.8074     15.999  # FFLD: Oc in CC(=O)OH neutral; use 135-140
-OH_O4_268      601.1488   601.1488    22.2648   425.0764    15.7436     15.999  # FFLD: Oh in CC(=O)OH R in RC(=O)OH is
-O_O2_236       616.4387   616.4387    23.7692    435.888    16.8074     15.999  # FFLD: O: C=O in amide.
+CT1_C1_224      944.518    944.518    22.0296   667.8751    15.5773     12.011 # FFLD: C alpha
+CT_C1_135       944.518    944.518    22.0296   667.8751    15.5773     12.011 # FFLD: C: alkanes
+C_C2_235      1802.2385  1802.2385    34.1758  1274.3751    24.1659     12.011 # FFLD: C: C=O in amide.
+C_C2_267      1802.2385  1802.2385    34.1758  1274.3751    24.1659     12.011 # FFLD: Co in CC(=O)OH carboxylic acid
+HC_H1_140       84.5728    84.5728     5.4127     59.802     3.8274     1.0079 # FFLD: H(C)-N dmf
+HO_H5_270           0.0        0.0        0.0        0.0        0.0     1.0079 # FFLD: H in CC(=O)OH
+H_H5_240            0.0        0.0        0.0        0.0        0.0     1.0079 # FFLD: H on N
+N_N1_238       971.7502   971.7502    28.3077   687.1312    20.0166     14.007 # FFLD: N: secondary amide
+OC3_O2_269     616.4387   616.4387    23.7692    435.888    16.8074     15.999 # FFLD: Oc in CC(=O)OH neutral; use 135-140
+OH_O4_268      601.1488   601.1488    22.2648   425.0764    15.7436     15.999 # FFLD: Oh in CC(=O)OH R in RC(=O)OH is
+O_O2_236       616.4387   616.4387    23.7692    435.888    16.8074     15.999 # FFLD: O: C=O in amide.
 
 [bonds]
-CT1_C1_224   CT_C1_135         536.0      1.529  # FFLD: high 139 0 CT1 -CT ==> CT -CT
-CT1_C1_224   C_C2_235          634.0      1.522  # FFLD: high 15 0 CT1 -C ==> C -CT1
-CT1_C1_224   HC_H1_140         680.0       1.09  # FFLD: high 140 0 CT1 -HC ==> CT -HC
-CT1_C1_224   N_N1_238          674.0      1.449  # FFLD: high 141 0 N -CT1 ==> CT -N
-CT_C1_135    C_C2_235          634.0      1.522  # FFLD: high 14 0 CT -C ==> C -CT
-CT_C1_135    C_C2_267          634.0      1.522  # FFLD: high 14 0 CT -C ==> C -CT
-CT_C1_135    HC_H1_140         680.0       1.09  # FFLD: high 140 0 CT -HC ==> CT -HC
-CT_C1_135    N_N1_238          674.0      1.449  # FFLD: high 141 0 N -CT ==> CT -N
-C_C2_235     N_N1_238          980.0      1.335  # FFLD: high 16 0 C -N ==> C -N
-C_C2_235     O_O2_236         1140.0      1.229  # FFLD: high 20 0 C -O ==> C -O
-C_C2_267     OC3_O2_269       1140.0      1.229  # FFLD: high 20 0 C -OC3 ==> C -O
-C_C2_267     OH_O4_268         900.0      1.364  # FFLD: high 22 0 C -OH ==> C -OH
-HO_H5_270    OH_O4_268        1106.0      0.945  # FFLD: high 177 0 OH -HO ==> HO -OH
-H_H5_240     N_N1_238          868.0       1.01  # FFLD: high 171 0 N -H ==> H -N
+CT1_C1_224   CT_C1_135         536.0      1.529 # FFLD: high 139 0 CT1 -CT ==> CT -CT
+CT1_C1_224   C_C2_235          634.0      1.522 # FFLD: high 15 0 CT1 -C ==> C -CT1
+CT1_C1_224   HC_H1_140         680.0       1.09 # FFLD: high 140 0 CT1 -HC ==> CT -HC
+CT1_C1_224   N_N1_238          674.0      1.449 # FFLD: high 141 0 N -CT1 ==> CT -N
+CT_C1_135    C_C2_235          634.0      1.522 # FFLD: high 14 0 CT -C ==> C -CT
+CT_C1_135    C_C2_267          634.0      1.522 # FFLD: high 14 0 CT -C ==> C -CT
+CT_C1_135    HC_H1_140         680.0       1.09 # FFLD: high 140 0 CT -HC ==> CT -HC
+CT_C1_135    N_N1_238          674.0      1.449 # FFLD: high 141 0 N -CT ==> CT -N
+C_C2_235     N_N1_238          980.0      1.335 # FFLD: high 16 0 C -N ==> C -N
+C_C2_235     O_O2_236         1140.0      1.229 # FFLD: high 20 0 C -O ==> C -O
+C_C2_267     OC3_O2_269       1140.0      1.229 # FFLD: high 20 0 C -OC3 ==> C -O
+C_C2_267     OH_O4_268         900.0      1.364 # FFLD: high 22 0 C -OH ==> C -OH
+HO_H5_270    OH_O4_268        1106.0      0.945 # FFLD: high 177 0 OH -HO ==> HO -OH
+H_H5_240     N_N1_238          868.0       1.01 # FFLD: high 171 0 N -H ==> H -N
 
 [angles]
-CT1_C1_224   CT_C1_135    C_C2_267          126.0      111.1  # FFLD: high 352 0 CT1 -CT -C ==> C -CT -CT
-CT1_C1_224   CT_C1_135    HC_H1_140          75.0      110.7  # FFLD: high 376 0 CT1 -CT -HC ==> CT -CT -HC
-CT1_C1_224   C_C2_235     N_N1_238          140.0      116.6  # FFLD: high 62 0 CT1 -C -N ==> CT -C -N
-CT1_C1_224   C_C2_235     O_O2_236          160.0      120.4  # FFLD: high 65 0 CT1 -C -O ==> CT -C -O
-CT1_C1_224   N_N1_238     C_C2_235          100.0      121.9  # FFLD: high 462 0 C -N -CT1 ==> C -N -CT
-CT1_C1_224   N_N1_238     H_H5_240           76.0      118.4  # FFLD: high 471 0 CT1 -N -H ==> CT -N -H
-CT_C1_135    CT1_C1_224   C_C2_235          126.0      111.1  # FFLD: high 352 0 C -CT1 -CT ==> C -CT -CT
-CT_C1_135    CT1_C1_224   HC_H1_140          75.0      110.7  # FFLD: high 376 0 CT -CT1 -HC ==> CT -CT -HC
-CT_C1_135    CT1_C1_224   N_N1_238          160.0      109.7  # FFLD: high 377 0 N -CT1 -CT ==> CT -CT -N
-CT_C1_135    C_C2_235     N_N1_238          140.0      116.6  # FFLD: high 62 0 CT -C -N ==> CT -C -N
-CT_C1_135    C_C2_235     O_O2_236          160.0      120.4  # FFLD: high 65 0 CT -C -O ==> CT -C -O
-CT_C1_135    C_C2_267     OC3_O2_269        160.0      120.4  # FFLD: high 65 0 CT -C -OC3 ==> CT -C -O
-CT_C1_135    C_C2_267     OH_O4_268         140.0      108.0  # FFLD: high 73 0 CT -C -OH ==> CT -C -OH
-CT_C1_135    N_N1_238     C_C2_235          100.0      121.9  # FFLD: high 462 0 C -N -CT ==> C -N -CT
-CT_C1_135    N_N1_238     H_H5_240           76.0      118.4  # FFLD: high 471 0 CT -N -H ==> CT -N -H
-C_C2_235     CT1_C1_224   HC_H1_140          70.0      109.5  # FFLD: high 360 0 C -CT1 -HC ==> C -CT -HC
-C_C2_235     CT1_C1_224   N_N1_238          126.0      110.1  # FFLD: high 361 0 N -CT1 -C ==> C -CT -N
-C_C2_235     CT_C1_135    HC_H1_140          70.0      109.5  # FFLD: high 360 0 C -CT -HC ==> C -CT -HC
-C_C2_235     N_N1_238     H_H5_240           70.0      119.8  # FFLD: high 465 0 C -N -H ==> C -N -H
-C_C2_267     CT_C1_135    HC_H1_140          70.0      109.5  # FFLD: high 360 0 C -CT -HC ==> C -CT -HC
-C_C2_267     OH_O4_268    HO_H5_270          70.0      113.0  # FFLD: high 561 0 C -OH -HO ==> C -OH -HO
-HC_H1_140    CT1_C1_224   N_N1_238           70.0      109.5  # FFLD: high 419 0 N -CT1 -HC ==> HC -CT -N
-HC_H1_140    CT_C1_135    HC_H1_140          66.0      107.8  # FFLD: high 410 0 HC -CT -HC ==> HC -CT -HC
-HC_H1_140    CT_C1_135    N_N1_238           70.0      109.5  # FFLD: high 419 0 N -CT -HC ==> HC -CT -N
-N_N1_238     C_C2_235     O_O2_236          160.0      122.9  # FFLD: high 89 0 O -C -N ==> N -C -O
-OC3_O2_269   C_C2_267     OH_O4_268         160.0      121.0  # FFLD: high 104 0 OC3 -C -OH ==> O -C -OH
+CT1_C1_224   CT_C1_135    C_C2_267          126.0      111.1 # FFLD: high 352 0 CT1 -CT -C ==> C -CT -CT
+CT1_C1_224   CT_C1_135    HC_H1_140          75.0      110.7 # FFLD: high 376 0 CT1 -CT -HC ==> CT -CT -HC
+CT1_C1_224   C_C2_235     N_N1_238          140.0      116.6 # FFLD: high 62 0 CT1 -C -N ==> CT -C -N
+CT1_C1_224   C_C2_235     O_O2_236          160.0      120.4 # FFLD: high 65 0 CT1 -C -O ==> CT -C -O
+CT1_C1_224   N_N1_238     C_C2_235          100.0      121.9 # FFLD: high 462 0 C -N -CT1 ==> C -N -CT
+CT1_C1_224   N_N1_238     H_H5_240           76.0      118.4 # FFLD: high 471 0 CT1 -N -H ==> CT -N -H
+CT_C1_135    CT1_C1_224   C_C2_235          126.0      111.1 # FFLD: high 352 0 C -CT1 -CT ==> C -CT -CT
+CT_C1_135    CT1_C1_224   HC_H1_140          75.0      110.7 # FFLD: high 376 0 CT -CT1 -HC ==> CT -CT -HC
+CT_C1_135    CT1_C1_224   N_N1_238          160.0      109.7 # FFLD: high 377 0 N -CT1 -CT ==> CT -CT -N
+CT_C1_135    C_C2_235     N_N1_238          140.0      116.6 # FFLD: high 62 0 CT -C -N ==> CT -C -N
+CT_C1_135    C_C2_235     O_O2_236          160.0      120.4 # FFLD: high 65 0 CT -C -O ==> CT -C -O
+CT_C1_135    C_C2_267     OC3_O2_269        160.0      120.4 # FFLD: high 65 0 CT -C -OC3 ==> CT -C -O
+CT_C1_135    C_C2_267     OH_O4_268         140.0      108.0 # FFLD: high 73 0 CT -C -OH ==> CT -C -OH
+CT_C1_135    N_N1_238     C_C2_235          100.0      121.9 # FFLD: high 462 0 C -N -CT ==> C -N -CT
+CT_C1_135    N_N1_238     H_H5_240           76.0      118.4 # FFLD: high 471 0 CT -N -H ==> CT -N -H
+C_C2_235     CT1_C1_224   HC_H1_140          70.0      109.5 # FFLD: high 360 0 C -CT1 -HC ==> C -CT -HC
+C_C2_235     CT1_C1_224   N_N1_238          126.0      110.1 # FFLD: high 361 0 N -CT1 -C ==> C -CT -N
+C_C2_235     CT_C1_135    HC_H1_140          70.0      109.5 # FFLD: high 360 0 C -CT -HC ==> C -CT -HC
+C_C2_235     N_N1_238     H_H5_240           70.0      119.8 # FFLD: high 465 0 C -N -H ==> C -N -H
+C_C2_267     CT_C1_135    HC_H1_140          70.0      109.5 # FFLD: high 360 0 C -CT -HC ==> C -CT -HC
+C_C2_267     OH_O4_268    HO_H5_270          70.0      113.0 # FFLD: high 561 0 C -OH -HO ==> C -OH -HO
+HC_H1_140    CT1_C1_224   N_N1_238           70.0      109.5 # FFLD: high 419 0 N -CT1 -HC ==> HC -CT -N
+HC_H1_140    CT_C1_135    HC_H1_140          66.0      107.8 # FFLD: high 410 0 HC -CT -HC ==> HC -CT -HC
+HC_H1_140    CT_C1_135    N_N1_238           70.0      109.5 # FFLD: high 419 0 N -CT -HC ==> HC -CT -N
+N_N1_238     C_C2_235     O_O2_236          160.0      122.9 # FFLD: high 89 0 O -C -N ==> N -C -O
+OC3_O2_269   C_C2_267     OH_O4_268         160.0      121.0 # FFLD: high 104 0 OC3 -C -OH ==> O -C -OH
 
 [torsions]
-CT1_C1_224   CT_C1_135    C_C2_267     OC3_O2_269        0.273     2      180.0   1.0  # FFLD: high 520 0 CT1 -CT -C -OC3 ==> CT -CT -C -OC3
-CT1_C1_224   CT_C1_135    C_C2_267     OH_O4_268         0.225    -3        0.0   1.0  # FFLD: high 525 0 CT1 -CT -C -OH ==> C? -CT -C -OH
-CT1_C1_224   CT_C1_135    C_C2_267     OH_O4_268         0.273    -2      180.0   1.0  # FFLD: high 525 0 CT1 -CT -C -OH ==> C? -CT -C -OH
-CT1_C1_224   CT_C1_135    C_C2_267     OH_O4_268           0.5     1        0.0   1.0  # FFLD: high 525 0 CT1 -CT -C -OH ==> C? -CT -C -OH
-CT1_C1_224   C_C2_235     N_N1_238     CT_C1_135        3.0445    -2      180.0   1.0  # FFLD: high 299 0 CT1 -C -N -CT ==> CT -C -N -CT
-CT1_C1_224   C_C2_235     N_N1_238     CT_C1_135          1.15     1        0.0   1.0  # FFLD: high 299 0 CT1 -C -N -CT ==> CT -C -N -CT
-CT1_C1_224   C_C2_235     N_N1_238     H_H5_240           2.45     2      180.0   1.0  # FFLD: high 314 0 CT1 -C -N -H ==> CT1 -C -N -H
-CT1_C1_224   N_N1_238     C_C2_235     CT_C1_135        3.0445    -2      180.0   1.0  # FFLD: high 299 0 CT -C -N -CT1 ==> CT -C -N -CT
-CT1_C1_224   N_N1_238     C_C2_235     CT_C1_135          1.15     1        0.0   1.0  # FFLD: high 299 0 CT -C -N -CT1 ==> CT -C -N -CT
-CT1_C1_224   N_N1_238     C_C2_235     O_O2_236         3.0445     2      180.0   1.0  # FFLD: high 319 0 O -C -N -CT1 ==> O -C -N -CT1
-CT_C1_135    CT1_C1_224   C_C2_235     N_N1_238           -0.6    -3        0.0   1.0  # FFLD: high 272 0 CT -CT1 -C -N ==> CT -CT1 -C -N
-CT_C1_135    CT1_C1_224   C_C2_235     N_N1_238         0.0945    -2      180.0   1.0  # FFLD: high 272 0 CT -CT1 -C -N ==> CT -CT1 -C -N
-CT_C1_135    CT1_C1_224   C_C2_235     N_N1_238         0.5865     1        0.0   1.0  # FFLD: high 272 0 CT -CT1 -C -N ==> CT -CT1 -C -N
-CT_C1_135    CT1_C1_224   C_C2_235     O_O2_236            0.0   1.0        0.0   1.0  # FFLD: high 294 0 CT -CT1 -C -O ==> CT -CT1 -C -O
-CT_C1_135    CT1_C1_224   N_N1_238     C_C2_235          0.231     2      180.0   1.0  # FFLD: high 271 0 C -N -CT1 -CT ==> C -N -CT1 -CT
-CT_C1_135    CT1_C1_224   N_N1_238     H_H5_240            0.0   1.0        0.0   1.0  # FFLD: high 281 0 H -N -CT1 -CT ==> H -N -CT1 -CT
-CT_C1_135    C_C2_235     N_N1_238     H_H5_240           2.45     2      180.0   1.0  # FFLD: high 296 0 CT -C -N -H ==> CT -C -N -H
-CT_C1_135    C_C2_267     OH_O4_268    HO_H5_270          2.75    -2      180.0   1.0  # FFLD: high 538 0 CT -C -OH -HO ==> CT -C -OH -HO
-CT_C1_135    C_C2_267     OH_O4_268    HO_H5_270          0.75     1        0.0   1.0  # FFLD: high 538 0 CT -C -OH -HO ==> CT -C -OH -HO
-CT_C1_135    N_N1_238     C_C2_235     O_O2_236         3.0445     2      180.0   1.0  # FFLD: high 304 0 O -C -N -CT ==> O -C -N -CT
-C_C2_235     CT1_C1_224   CT_C1_135    C_C2_267         0.2925    -3        0.0   1.0  # FFLD: high 1020 0 C -CT1 -CT -C ==> C -CT1 -CT -CG1
-C_C2_235     CT1_C1_224   CT_C1_135    C_C2_267         -0.228    -2      180.0   1.0  # FFLD: high 1020 0 C -CT1 -CT -C ==> C -CT1 -CT -CG1
-C_C2_235     CT1_C1_224   CT_C1_135    C_C2_267        -0.8485     1        0.0   1.0  # FFLD: high 1020 0 C -CT1 -CT -C ==> C -CT1 -CT -CG1
-C_C2_235     CT1_C1_224   CT_C1_135    HC_H1_140        -0.038     3        0.0   1.0  # FFLD: high 579 0 C -CT1 -CT -HC ==> HC -CT -CT1 -C
-C_C2_235     CT1_C1_224   N_N1_238     C_C2_235         -0.425    -3        0.0   1.0  # FFLD: high 256 0 C -N -CT1 -C ==> C -N -CT1 -C
-C_C2_235     CT1_C1_224   N_N1_238     C_C2_235          0.456    -2      180.0   1.0  # FFLD: high 256 0 C -N -CT1 -C ==> C -N -CT1 -C
-C_C2_235     CT1_C1_224   N_N1_238     C_C2_235        -1.1825     1        0.0   1.0  # FFLD: high 256 0 C -N -CT1 -C ==> C -N -CT1 -C
-C_C2_235     CT1_C1_224   N_N1_238     H_H5_240            0.0   1.0        0.0   1.0  # FFLD: high 282 0 H -N -CT1 -C ==> H -N -CT1 -C
-C_C2_235     N_N1_238     CT1_C1_224   HC_H1_140           0.0   1.0        0.0   1.0  # FFLD: high 278 0 C -N -CT1 -HC ==> C -N -CT1 -HC
-C_C2_235     N_N1_238     CT_C1_135    HC_H1_140       -0.0695     3        0.0   1.0  # FFLD: high 378 0 C -N -CT -HC ==> C -N -CT -HC
-C_C2_267     CT_C1_135    CT1_C1_224   HC_H1_140          0.15     3        0.0   1.0  # FFLD: high 1027 0 HC -CT1 -CT -C ==> CG1 -CT -CT1 -HC
-C_C2_267     CT_C1_135    CT1_C1_224   N_N1_238         0.3565    -3        0.0   1.0  # FFLD: high 229 0 N -CT1 -CT -C ==> N -CT1 -CT -C?
-C_C2_267     CT_C1_135    CT1_C1_224   N_N1_238         -0.481    -2      180.0   1.0  # FFLD: high 229 0 N -CT1 -CT -C ==> N -CT1 -CT -C?
-C_C2_267     CT_C1_135    CT1_C1_224   N_N1_238         0.4225     1        0.0   1.0  # FFLD: high 229 0 N -CT1 -CT -C ==> N -CT1 -CT -C?
-HC_H1_140    CT1_C1_224   CT_C1_135    HC_H1_140          0.15     3        0.0   1.0  # FFLD: high 6 0 HC -CT1 -CT -HC ==> HC -CT1 -CT -HC
-HC_H1_140    CT1_C1_224   C_C2_235     N_N1_238            0.0   1.0        0.0   1.0  # FFLD: high 279 0 HC -CT1 -C -N ==> HC -CT1 -C -N
-HC_H1_140    CT1_C1_224   C_C2_235     O_O2_236            0.0   1.0        0.0   1.0  # FFLD: high 293 0 HC -CT1 -C -O ==> HC -CT1 -C -O
-HC_H1_140    CT1_C1_224   N_N1_238     H_H5_240            0.0   1.0        0.0   1.0  # FFLD: high 280 0 H -N -CT1 -HC ==> H -N -CT1 -HC
-HC_H1_140    CT_C1_135    CT1_C1_224   N_N1_238          0.232     3        0.0   1.0  # FFLD: high 386 0 N -CT1 -CT -HC ==> N -CT1 -CT -HC
-HC_H1_140    CT_C1_135    C_C2_235     N_N1_238            0.0   1.0        0.0   1.0  # FFLD: high 389 0 HC -CT -C -N ==> HC -CT -C -N
-HC_H1_140    CT_C1_135    C_C2_235     O_O2_236            0.0   1.0        0.0   1.0  # FFLD: high 390 0 HC -CT -C -O ==> HC -CT -C -O
-HC_H1_140    CT_C1_135    C_C2_267     OC3_O2_269          0.0   1.0        0.0   1.0  # FFLD: high 517 0 HC -CT -C -OC3 ==> HC -CT -C -OC3
-HC_H1_140    CT_C1_135    C_C2_267     OH_O4_268           0.0   1.0        0.0   1.0  # FFLD: high 516 0 HC -CT -C -OH ==> HC -CT -C -OH
-HC_H1_140    CT_C1_135    N_N1_238     H_H5_240            0.0   1.0        0.0   1.0  # FFLD: high 379 0 H -N -CT -HC ==> HC -CT -N -H
-HO_H5_270    OH_O4_268    C_C2_267     OC3_O2_269         2.75     2      180.0   1.0  # FFLD: high 537 0 OC3 -C -OH -HO ==> OC3 -C -OH -HO
-H_H5_240     N_N1_238     C_C2_235     O_O2_236           2.45     2      180.0   1.0  # FFLD: high 303 0 O -C -N -H ==> O -C -N -H
-N_N1_238     CT1_C1_224   C_C2_235     N_N1_238         0.7905    -3        0.0   1.0  # FFLD: high 262 0 N -CT1 -C -N ==> N -CT1 -C -N
-N_N1_238     CT1_C1_224   C_C2_235     N_N1_238          0.611    -2      180.0   1.0  # FFLD: high 262 0 N -CT1 -C -N ==> N -CT1 -C -N
-N_N1_238     CT1_C1_224   C_C2_235     N_N1_238          0.908     1        0.0   1.0  # FFLD: high 262 0 N -CT1 -C -N ==> N -CT1 -C -N
-N_N1_238     CT1_C1_224   C_C2_235     O_O2_236            0.0   1.0        0.0   1.0  # FFLD: high 291 0 N -CT1 -C -O ==> N -CT1 -C -O
+CT1_C1_224   CT_C1_135    C_C2_267     OC3_O2_269        0.273     2      180.0   1.0 # FFLD: high 520 0 CT1 -CT -C -OC3 ==> CT -CT -C -OC3
+CT1_C1_224   CT_C1_135    C_C2_267     OH_O4_268         0.225    -3        0.0   1.0 # FFLD: high 525 0 CT1 -CT -C -OH ==> C? -CT -C -OH
+CT1_C1_224   CT_C1_135    C_C2_267     OH_O4_268         0.273    -2      180.0   1.0 # FFLD: high 525 0 CT1 -CT -C -OH ==> C? -CT -C -OH
+CT1_C1_224   CT_C1_135    C_C2_267     OH_O4_268           0.5     1        0.0   1.0 # FFLD: high 525 0 CT1 -CT -C -OH ==> C? -CT -C -OH
+CT1_C1_224   C_C2_235     N_N1_238     CT_C1_135        3.0445    -2      180.0   1.0 # FFLD: high 299 0 CT1 -C -N -CT ==> CT -C -N -CT
+CT1_C1_224   C_C2_235     N_N1_238     CT_C1_135          1.15     1        0.0   1.0 # FFLD: high 299 0 CT1 -C -N -CT ==> CT -C -N -CT
+CT1_C1_224   C_C2_235     N_N1_238     H_H5_240           2.45     2      180.0   1.0 # FFLD: high 314 0 CT1 -C -N -H ==> CT1 -C -N -H
+CT1_C1_224   N_N1_238     C_C2_235     CT_C1_135        3.0445    -2      180.0   1.0 # FFLD: high 299 0 CT -C -N -CT1 ==> CT -C -N -CT
+CT1_C1_224   N_N1_238     C_C2_235     CT_C1_135          1.15     1        0.0   1.0 # FFLD: high 299 0 CT -C -N -CT1 ==> CT -C -N -CT
+CT1_C1_224   N_N1_238     C_C2_235     O_O2_236         3.0445     2      180.0   1.0 # FFLD: high 319 0 O -C -N -CT1 ==> O -C -N -CT1
+CT_C1_135    CT1_C1_224   C_C2_235     N_N1_238           -0.6    -3        0.0   1.0 # FFLD: high 272 0 CT -CT1 -C -N ==> CT -CT1 -C -N
+CT_C1_135    CT1_C1_224   C_C2_235     N_N1_238         0.0945    -2      180.0   1.0 # FFLD: high 272 0 CT -CT1 -C -N ==> CT -CT1 -C -N
+CT_C1_135    CT1_C1_224   C_C2_235     N_N1_238         0.5865     1        0.0   1.0 # FFLD: high 272 0 CT -CT1 -C -N ==> CT -CT1 -C -N
+CT_C1_135    CT1_C1_224   C_C2_235     O_O2_236            0.0   1.0        0.0   1.0 # FFLD: high 294 0 CT -CT1 -C -O ==> CT -CT1 -C -O
+CT_C1_135    CT1_C1_224   N_N1_238     C_C2_235          0.231     2      180.0   1.0 # FFLD: high 271 0 C -N -CT1 -CT ==> C -N -CT1 -CT
+CT_C1_135    CT1_C1_224   N_N1_238     H_H5_240            0.0   1.0        0.0   1.0 # FFLD: high 281 0 H -N -CT1 -CT ==> H -N -CT1 -CT
+CT_C1_135    C_C2_235     N_N1_238     H_H5_240           2.45     2      180.0   1.0 # FFLD: high 296 0 CT -C -N -H ==> CT -C -N -H
+CT_C1_135    C_C2_267     OH_O4_268    HO_H5_270          2.75    -2      180.0   1.0 # FFLD: high 538 0 CT -C -OH -HO ==> CT -C -OH -HO
+CT_C1_135    C_C2_267     OH_O4_268    HO_H5_270          0.75     1        0.0   1.0 # FFLD: high 538 0 CT -C -OH -HO ==> CT -C -OH -HO
+CT_C1_135    N_N1_238     C_C2_235     O_O2_236         3.0445     2      180.0   1.0 # FFLD: high 304 0 O -C -N -CT ==> O -C -N -CT
+C_C2_235     CT1_C1_224   CT_C1_135    C_C2_267         0.2925    -3        0.0   1.0 # FFLD: high 1020 0 C -CT1 -CT -C ==> C -CT1 -CT -CG1
+C_C2_235     CT1_C1_224   CT_C1_135    C_C2_267         -0.228    -2      180.0   1.0 # FFLD: high 1020 0 C -CT1 -CT -C ==> C -CT1 -CT -CG1
+C_C2_235     CT1_C1_224   CT_C1_135    C_C2_267        -0.8485     1        0.0   1.0 # FFLD: high 1020 0 C -CT1 -CT -C ==> C -CT1 -CT -CG1
+C_C2_235     CT1_C1_224   CT_C1_135    HC_H1_140        -0.038     3        0.0   1.0 # FFLD: high 579 0 C -CT1 -CT -HC ==> HC -CT -CT1 -C
+C_C2_235     CT1_C1_224   N_N1_238     C_C2_235         -0.425    -3        0.0   1.0 # FFLD: high 256 0 C -N -CT1 -C ==> C -N -CT1 -C
+C_C2_235     CT1_C1_224   N_N1_238     C_C2_235          0.456    -2      180.0   1.0 # FFLD: high 256 0 C -N -CT1 -C ==> C -N -CT1 -C
+C_C2_235     CT1_C1_224   N_N1_238     C_C2_235        -1.1825     1        0.0   1.0 # FFLD: high 256 0 C -N -CT1 -C ==> C -N -CT1 -C
+C_C2_235     CT1_C1_224   N_N1_238     H_H5_240            0.0   1.0        0.0   1.0 # FFLD: high 282 0 H -N -CT1 -C ==> H -N -CT1 -C
+C_C2_235     N_N1_238     CT1_C1_224   HC_H1_140           0.0   1.0        0.0   1.0 # FFLD: high 278 0 C -N -CT1 -HC ==> C -N -CT1 -HC
+C_C2_235     N_N1_238     CT_C1_135    HC_H1_140       -0.0695     3        0.0   1.0 # FFLD: high 378 0 C -N -CT -HC ==> C -N -CT -HC
+C_C2_267     CT_C1_135    CT1_C1_224   HC_H1_140          0.15     3        0.0   1.0 # FFLD: high 1027 0 HC -CT1 -CT -C ==> CG1 -CT -CT1 -HC
+C_C2_267     CT_C1_135    CT1_C1_224   N_N1_238         0.3565    -3        0.0   1.0 # FFLD: high 229 0 N -CT1 -CT -C ==> N -CT1 -CT -C?
+C_C2_267     CT_C1_135    CT1_C1_224   N_N1_238         -0.481    -2      180.0   1.0 # FFLD: high 229 0 N -CT1 -CT -C ==> N -CT1 -CT -C?
+C_C2_267     CT_C1_135    CT1_C1_224   N_N1_238         0.4225     1        0.0   1.0 # FFLD: high 229 0 N -CT1 -CT -C ==> N -CT1 -CT -C?
+HC_H1_140    CT1_C1_224   CT_C1_135    HC_H1_140          0.15     3        0.0   1.0 # FFLD: high 6 0 HC -CT1 -CT -HC ==> HC -CT1 -CT -HC
+HC_H1_140    CT1_C1_224   C_C2_235     N_N1_238            0.0   1.0        0.0   1.0 # FFLD: high 279 0 HC -CT1 -C -N ==> HC -CT1 -C -N
+HC_H1_140    CT1_C1_224   C_C2_235     O_O2_236            0.0   1.0        0.0   1.0 # FFLD: high 293 0 HC -CT1 -C -O ==> HC -CT1 -C -O
+HC_H1_140    CT1_C1_224   N_N1_238     H_H5_240            0.0   1.0        0.0   1.0 # FFLD: high 280 0 H -N -CT1 -HC ==> H -N -CT1 -HC
+HC_H1_140    CT_C1_135    CT1_C1_224   N_N1_238          0.232     3        0.0   1.0 # FFLD: high 386 0 N -CT1 -CT -HC ==> N -CT1 -CT -HC
+HC_H1_140    CT_C1_135    C_C2_235     N_N1_238            0.0   1.0        0.0   1.0 # FFLD: high 389 0 HC -CT -C -N ==> HC -CT -C -N
+HC_H1_140    CT_C1_135    C_C2_235     O_O2_236            0.0   1.0        0.0   1.0 # FFLD: high 390 0 HC -CT -C -O ==> HC -CT -C -O
+HC_H1_140    CT_C1_135    C_C2_267     OC3_O2_269          0.0   1.0        0.0   1.0 # FFLD: high 517 0 HC -CT -C -OC3 ==> HC -CT -C -OC3
+HC_H1_140    CT_C1_135    C_C2_267     OH_O4_268           0.0   1.0        0.0   1.0 # FFLD: high 516 0 HC -CT -C -OH ==> HC -CT -C -OH
+HC_H1_140    CT_C1_135    N_N1_238     H_H5_240            0.0   1.0        0.0   1.0 # FFLD: high 379 0 H -N -CT -HC ==> HC -CT -N -H
+HO_H5_270    OH_O4_268    C_C2_267     OC3_O2_269         2.75     2      180.0   1.0 # FFLD: high 537 0 OC3 -C -OH -HO ==> OC3 -C -OH -HO
+H_H5_240     N_N1_238     C_C2_235     O_O2_236           2.45     2      180.0   1.0 # FFLD: high 303 0 O -C -N -H ==> O -C -N -H
+N_N1_238     CT1_C1_224   C_C2_235     N_N1_238         0.7905    -3        0.0   1.0 # FFLD: high 262 0 N -CT1 -C -N ==> N -CT1 -C -N
+N_N1_238     CT1_C1_224   C_C2_235     N_N1_238          0.611    -2      180.0   1.0 # FFLD: high 262 0 N -CT1 -C -N ==> N -CT1 -C -N
+N_N1_238     CT1_C1_224   C_C2_235     N_N1_238          0.908     1        0.0   1.0 # FFLD: high 262 0 N -CT1 -C -N ==> N -CT1 -C -N
+N_N1_238     CT1_C1_224   C_C2_235     O_O2_236            0.0   1.0        0.0   1.0 # FFLD: high 291 0 N -CT1 -C -O ==> N -CT1 -C -O
 
 [impropers]
-CT1_C1_224   C_C2_235     N_N1_238     O_O2_236           10.5      180.0  # FFLD: high carbonyl and analogs
-CT1_C1_224   N_N1_238     C_C2_235     H_H5_240            1.0      180.0  # FFLD: high amide, amidine-,guanidinium
-CT_C1_135    C_C2_235     N_N1_238     O_O2_236           10.5      180.0  # FFLD: high carbonyl and analogs
-CT_C1_135    C_C2_267     OC3_O2_269   OH_O4_268          10.5      180.0  # FFLD: high carbonyl and analogs
-CT_C1_135    N_N1_238     C_C2_235     H_H5_240            1.0      180.0  # FFLD: high amide, amidine-,guanidinium
+CT1_C1_224   C_C2_235     N_N1_238     O_O2_236           10.5      180.0 # FFLD: high carbonyl and analogs
+CT1_C1_224   N_N1_238     C_C2_235     H_H5_240            1.0      180.0 # FFLD: high amide, amidine-,guanidinium
+CT_C1_135    C_C2_235     N_N1_238     O_O2_236           10.5      180.0 # FFLD: high carbonyl and analogs
+CT_C1_135    C_C2_267     OC3_O2_269   OH_O4_268          10.5      180.0 # FFLD: high carbonyl and analogs
+CT_C1_135    N_N1_238     C_C2_235     H_H5_240            1.0      180.0 # FFLD: high amide, amidine-,guanidinium
 
