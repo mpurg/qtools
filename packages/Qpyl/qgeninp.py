@@ -95,7 +95,7 @@ def genrelax(relax_proc_file, outdir, restraint,
                 raise QGenrelaxError("File '{}' doesn't exist.".format(v))
 
     if restraint not in ["top", "cont_inp", "cont_final"]:
-        raise QGenfepsError("Argument 'restraint' has to be either "
+        raise QGenrelaxError("Argument 'restraint' has to be either "
                             "'cont_inp', 'top' or 'cont_final'")
 
     # constants
