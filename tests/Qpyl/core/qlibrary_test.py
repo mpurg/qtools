@@ -13,7 +13,7 @@ class TestQ:
     def test_read_write_lib(self):
         qlib = QLib("amber")
         qlib.read_lib("data/qamber14.lib")
-        qlib.residue_dict.pop("HOH")
+        qlib.residue_dict.pop("HOH")  # different order
         ql_str2 = qlib.get_string()
         assert ql_str2 in open("data/qamber14.lib", "r").read()
 
@@ -46,6 +46,10 @@ class TestQ:
         assert asp.bonds[5] == ("CB", "HB2")
         assert asp.impropers[0] == ["-C", "N", "CA", "H"]
         assert asp.connections == ["head N", "tail C"]
+        hoh = qlib.residue_dict["HOH"]
+        assert int(hoh.info["solvent"]) == 1
+        assert abs(float(hoh.info["density"]) - 0.0335) < 1e-7
+
 
     def test_rounding(self):
         qlib = QLib("oplsaa")
@@ -128,6 +132,33 @@ class TestQ:
         with pytest.raises(QLibError):
             prc.check_valid()
 
+    def test_build_rules_fail(self):
+        qlib = QLib("oplsaa")
+        qlib.read_lib("data/prc.lib")
+        prc = qlib.residue_dict["PRC"]
+        prc.build_rules = ["torsion C1 C4 C7 H9 0"] # passes
+        prc.check_valid()
+
+        prc.build_rules = ["torsion C1 C4 C7 H9"]
+        with pytest.raises(QLibError):
+            prc.check_valid()
+        prc.build_rules = ["bad_build_rule C1 C4 C7 H9 0"]
+        with pytest.raises(QLibError):
+            prc.check_valid()
+        prc.build_rules = ["torsion C1 BadAtom C7 H9 0"]
+        with pytest.raises(QLibError):
+            prc.check_valid()
+
+    def test_info_fail(self):
+        qlib = QLib("oplsaa")
+        qlib.read_lib("data/prc.lib")
+        prc = qlib.residue_dict["PRC"]
+        prc.info["random_number_generation"] = "true"
+        with pytest.raises(QLibError):
+            prc.check_valid()
+
+
+
 class TestAmber:
     def read_amber_conversion(self):
         qlib = QLib("amber")
@@ -165,6 +196,7 @@ class TestAmber:
         with pytest.raises(QLibError):
             qlib.read_amber_lib("data/ff-amber14/prep/amino12.in")
 
+
 class TestOplsaa:
     def test_read_ffld(self):
         qlib = QLib("oplsaa")
@@ -180,6 +212,13 @@ class TestOplsaa:
         assert "tail C" in ash.connections
         assert "head N" in ash.connections
 
+    def test_convert_oplsaa(self):
+        qlib = QLib("oplsaa")
+        qstruct = QStruct("data/ace_ash_nma.pdb", "pdb")
+        qlib.read_ffld("data/ace_ash_nma.ffld11", qstruct)
+        ql_str = qlib.get_string()
+        assert ql_str == open("data/ace_ash_nma.lib").read()
+
     def test_read_ffld_fail(self):
         # no residues found
         qlib = QLib("oplsaa")
@@ -193,13 +232,5 @@ class TestOplsaa:
         qstruct = QStruct("data/ace_ash_nma_bad.pdb", "pdb")
         with pytest.raises(QLibError):
             qlib.read_ffld("data/ace_ash_nma.ffld11", qstruct)
-
-        
-
-
-
-
-
-
 
 

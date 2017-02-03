@@ -39,8 +39,7 @@ class QLibError(Exception):
     pass
 
 class QLib(object):
-    """
-    Class for reading and writing Q library files.
+    """Class for reading and writing Q library files.
 
     Also supports parsing oplsaa_ffld and amber_lib.
 
@@ -83,8 +82,7 @@ class QLib(object):
 
 
     def check_valid(self):
-        """
-        Run 'check_valid' on each _LibResidue object.
+        """Call 'check_valid' on each _LibResidue object.
 
         Raises QLibError if something is not cool with the residues.
         (see _LibResidue for more info)
@@ -94,8 +92,7 @@ class QLib(object):
 
 
     def read_lib(self, libfile):
-        """
-        Read and parse a Q library (.lib) file
+        """Read and parse a Q library (.lib) file
 
         Add new residues to QLib.residue_dict as _LibResidue objects
 
@@ -118,7 +115,7 @@ class QLib(object):
                     residues.append(_LibResidue(resname, self))
                     continue
                 if line.startswith("["):
-                    section = line.split("]")[0].strip("[]").lower()
+                    section = line.split("]")[0].strip("[] ").lower()
                     continue
                 if not residues or not section:
                     raise QLibError("Line #{} in LIB file '{}' is not a "
@@ -144,69 +141,59 @@ class QLib(object):
 
                 elif section == "bonds":
                     try:
-                        # transpose and take first column
-                        atomnames = [a.name for a in residue.atoms]
                         a1, a2 = line.split()
-                        if a1 not in atomnames or a2 not in atomnames:
-                            raise QLibError("Undefined atom(s) {} and/or {} "
-                                            "mentioned in the bonds section "
-                                            "of '{}', ln.{}."
-                                            .format(a1, a2, libfile, lnumber))
-
-                        residue.bonds.append((a1, a2))
                     except ValueError:
                         raise QLibError("Line #{} in LIB file '{}' couldn't "
                                         "be parsed (should look like this "
                                         "'atom1 atom2'):\n{}"
                                         .format(lnumber, libfile, line))
+                    else:
+                        residue.bonds.append((a1, a2))
+
 
                 elif section == "impropers":
                     try:
-                        atoms = line.split()[0:4]
-                        # transpose and take first column
-                        atomnames = [a.name for a in residue.atoms]
-                        for atom_name in atoms:
-                            if atom_name not in atomnames and \
-                               atom_name not in ["+N", "-C"]:
-                                raise QLibError("Undefined atom {} mentioned "
-                                                "in the improper section of "
-                                                "'{}', ln.{}."
-                                                .format(atom_name,
-                                                        residue.name,
-                                                        lnumber))
-                        residue.impropers.append(atoms)
+                        a1, a2, a3, a4 = line.split()
                     except ValueError:
                         raise QLibError("Line #{} in LIB file '{}' couldn't be"
                                         "parsed (should look like this "
                                         "'atom1 atom2 atom3 atom4'):\n{}"
                                         .format(lnumber, libfile, line))
+                    else:
+                        residue._add_improper(a2, [a1, a3, a4])
 
-                elif section == "connections":
-                    residue.connections.append(" ".join(line.split()))
 
                 elif section == "charge_groups":
                     if self.ff_type == "amber":
                         raise QLibError("'Charge_groups' section is not "
                                         "compatible with 'amber' forcefield")
                     cgrp = line.split()
-                    # transpose and take first column
-                    atomnames = [a.name for a in residue.atoms]
-                    for atom_name in cgrp:
-                        if atom_name not in atomnames:
-                            raise QLibError("Undefined atom {} mentioned in "
-                                            "the charge_groups section of '{}'"
-                                            ", ln.{}."
-                                            .format(atom_name,
-                                                    residue.name,
-                                                    lnumber))
-
                     residue.charge_groups.append(cgrp)
+
+
+                elif section == "info":
+                    try:
+                        key, value = line.split()
+                    except ValueError:
+                        raise QLibError("Line #{} in LIB file '{}' couldn't be"
+                                        "parsed (should look like this "
+                                        "'keyword value'):\n{}"
+                                        .format(lnumber, libfile, line))
+                    else:
+                        residue.info[key] = value
+
+                elif section == "connections":
+                    residue.connections.append(" ".join(line.split()))
+
+                elif section == "build_rules":
+                    residue.build_rules.append(" ".join(line.split()))
                 else:
                     logger.warning("Unsupported section in '{}': {}"
                                    "".format(libfile, section))
 
         for residue in residues:
             self._add_residue(residue)
+
         if not residues:
             raise_or_log("No residues found", QLibError,
                          logger, self.ignore_errors)
@@ -214,8 +201,7 @@ class QLib(object):
 
 
     def read_amber_lib(self, libfile):
-        """
-        Read and parse an Amber library (.lib) file
+        """Read and parse an Amber library (.lib) file
 
         Add new residues to QLib.residue_dict as _LibResidue objects
 
@@ -274,7 +260,6 @@ class QLib(object):
                                         .format(lnumber, libfile, line))
 
                 elif section == "connectivity":
-                    # transpose and take first column
                     atomnames = [a.name for a in residue.atoms]
                     try:
                         ai1, ai2 = line.split()[:2]
@@ -292,7 +277,6 @@ class QLib(object):
                                         .format(lnumber, libfile, line))
 
                 elif section == "residueconnect":
-                    # transpose and take first column
                     atomnames = [a.name for a in residue.atoms]
                     try:
                         ai1, ai2 = line.split()[:2]
@@ -320,8 +304,7 @@ class QLib(object):
 
 
     def read_mol2(self, mol2_file):
-        """
-        Read and parse a mol2 file.
+        """Read and parse a mol2 file.
 
         Add the residues to QLib.residue_dict as _LibResidue objects
 
@@ -407,8 +390,7 @@ class QLib(object):
 
 
     def read_prepin_impropers(self, prepin_file):
-        """
-        Read and parse an Amber prepin (.prepi) file
+        """Read and parse an Amber prepin (.prepi) file
 
         NOTE: Extracts only improper definitions for residues already
               defined in QLib.residue_dict
@@ -480,8 +462,7 @@ class QLib(object):
 
 
     def read_ffld(self, ffld_file, qstruct):
-        """
-        Read and parse a Macromodel's FFLD file for oplsaa parameters.
+        """Read and parse a Macromodel's FFLD file for oplsaa parameters.
 
         Args:
             ffld_file (string):  path/name of ffld file
@@ -635,10 +616,8 @@ class QLib(object):
                     atom_names.append(name)
 
                 atom_names.sort()
-                atom_names.insert(1, center_atom.name)
                 residue = lookup_aname[lf[2]][1]
-
-                residue.impropers.append(atom_names)
+                residue._add_improper(center_atom.name, atom_names)
 
 
 
@@ -723,6 +702,10 @@ class _LibResidue(object):
         resname (string):   three letter residue identifier (GLY, ARG...)
         library (QLib):   parent object
     """
+    
+    INFO_KEYS = ("solvent", "SYBILtype", "density")
+    BUILD_RULES = ("torsion")
+        
     def __init__(self, resname, library):
         self.name = resname.upper()
         self.atoms = []   # [ _LibAtom, _LibAtom... ]
@@ -730,6 +713,8 @@ class _LibResidue(object):
         self.impropers = []   # [ ("C1","C2","C3","C4"), ... ]  # C2 is center
         self.connections = []   # [ "head N", "tail C" ]
         self.charge_groups = []   # [ ["O1", "H1"], ["C1","H2","H3"], ... ]
+        self.build_rules = []   # [ "torsion HE1 OE1 CD OE2 0", ... ]
+        self.info = {}   # { "SYBILtype": "RESIDUE", "solvent": 1, ... }
         self.library = library
 
     def _add_improper(self, center_atom, other_atoms):
@@ -759,7 +744,7 @@ class _LibResidue(object):
 
 
     def check_valid(self):
-        """Checks for duplicates, missing atoms, integer charges.
+        """Checks for duplicates, missing atoms, integer charges, ...
 
         Raises QLibError (or logs if QLib.ignore_errors is True).
         """
@@ -770,7 +755,7 @@ class _LibResidue(object):
         # check for duplicates
         for i, name in enumerate(names):
             if name in names[i+1:]:
-                raise QLibError("Duplicate atom name {} in residue {}"\
+                raise QLibError("Duplicate atom name '{}' in residue '{}'"\
                                 .format(name, self.name))
         # check charge groups for integer charges (and bad atom names)
         if self.charge_groups:
@@ -785,7 +770,7 @@ class _LibResidue(object):
 
                 if abs(net_charge - round(net_charge)) > 1e-7:
                     raise_or_log("Net charge of charge group '{}'"
-                                 " in residue {} not integer: {}"\
+                                 " in residue '{}' not integer: {}"\
                                  .format(" ".join(cg),
                                          self.name,
                                          net_charge),
@@ -794,21 +779,47 @@ class _LibResidue(object):
         else:
             net_charge = sum(charges)
             if abs(net_charge - round(net_charge)) > 1e-7:
-                raise_or_log("Net charge of residue {} not integer: "
+                raise_or_log("Net charge of residue '{}' not integer: "
                              "{}".format(self.name, net_charge),
                              QLibError, logger, self.library.ignore_errors)
+
         # check bonds for bad atom names
         for bond_atoms in self.bonds:
             for aname in bond_atoms:
                 if aname not in names:
                     raise QLibError("Undefined atom {} in bond '{}'"\
                                     .format(aname, " ".join(bond_atoms)))
+
         # check impropers for bad atom names
         for imp_atoms in self.impropers:
             for aname in imp_atoms:
                 if aname not in names and aname not in ["-C", "+N"]:
-                    raise QLibError("Undefined atom {} in improper '{}'"\
+                    raise QLibError("Undefined atom '{}' in improper '{}'"\
                                     .format(aname, " ".join(imp_atoms)))
+
+        # check keywords in info section
+        low_keys = (x.lower() for x in self.INFO_KEYS)
+        for keyword in self.info:
+            if keyword.lower() not in low_keys:
+                raise QLibError("Keyword '{}' in [info] section not "
+                                "not supported (residue '{}')."
+                                "".format(keyword, self.name))
+
+        # check build rules
+        for build_rule in self.build_rules:
+            br = build_rule.split()
+            try:
+                typ, anames, value = br[0], br[1:5], br[5]
+            except IndexError:
+                raise QLibError("Invalid build rule '{}'"
+                                "".format(build_rule))
+            if typ not in self.BUILD_RULES:
+                raise QLibError("Build_rule '{}' not supported".format(typ))
+
+            for aname in anames:
+                if aname not in names:
+                    raise QLibError("Undefined atom '{}' in build_rule '{}'"
+                                    "".format(aname, build_rule))
 
 
 
@@ -908,9 +919,11 @@ class _LibResidue(object):
     def get_str(self):
         """Return the Q-lib formatted string for the residue."""
 
-        al, bl, il, cl, col = [], [], [], [], []
+        infol, al, bl, il, cl, brl, col = [], [], [], [], [], [], []
 
         indent = "        "
+        for k, v in self.info.iteritems():
+            infol.append(indent + "{:30} {}".format(k, v))
         for i, atom in enumerate(self.atoms):
             al.append("    {:>5d}  {a.name:<5s}  {a.atom_type:<12s} "
                       "{a.charge:>10.6f}{a.comment}".format(i+1, a=atom))
@@ -921,41 +934,26 @@ class _LibResidue(object):
             il.append(indent + tmp)
         for chgr in self.charge_groups:
             cl.append(indent + " ".join(chgr))
+        for br in self.build_rules:
+            brl.append(indent + br)
         for conn in self.connections:
             col.append(indent + conn)
 
-        al = "\n".join(al)
-        bl = "\n".join(bl)
-        il = "\n".join(il)
-        cl = "\n".join(cl)
-        col = "\n".join(col)
+        outl = OrderedDict((("info", infol),
+                            ("atoms", al),
+                            ("bonds", bl),
+                            ("impropers", il),
+                            ("build_rules", brl),
+                            ("connections", col),
+                            ("charge_groups", cl)))
 
-        outstr = """\
-{{{}}}
-    [atoms]
+        outstr = "{{{}}}\n".format(self.name)
+        for section, lines in outl.iteritems():
+            if lines:
+                outstr += """\
+    [{}]
 {}
-""".format(self.name, al)
-
-        if bl: outstr += """\
-    [bonds]
-{}
-""".format(bl)
-
-        if il: outstr += """\
-    [impropers]
-{}
-""".format(il)
-
-        if cl: outstr += """\
-    [charge_groups]
-{}
-""".format(cl)
-
-        if col: outstr += """\
-    [connections]
-{}
-""".format(col)
-
+""".format(section, "\n".join(lines))
         return outstr
 
     def __repr__(self):

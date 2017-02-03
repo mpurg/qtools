@@ -97,8 +97,8 @@ _TopoTorsion: (C-N-CA-HA1)                value:  179.94   eq.value:    0.00    
 _TopoTorsion: (C-N-CA-HA3)                value:   59.97   eq.value:    0.00    dE:  0.14    # Prm: C_C2_235-N_N1_238-CT_C1_135-HC_H1_140
 _TopoImproper: (C-N-CA-H)                 value:  179.95   eq.value:    0.00    dE:  0.14    # Prm: CT1_C1_224-N_N1_238-C_C2_235-H_H5_240
 _TopoImproper: (C-N-CA-H)                 value:  179.88   eq.value:    0.00    dE:  0.14    # Prm: CT_C1_135-N_N1_238-C_C2_235-H_H5_240
-_TopoImproper: (N-C-CH3-O)                value:  179.96   eq.value:    0.00    dE:  0.14    # Prm: CT_C1_135-C_C2_235-N_N1_238-O_O2_236
-_TopoImproper: (N-C-CA-O)                 value:  179.91   eq.value:    0.00    dE:  0.14    # Prm: CT1_C1_224-C_C2_235-N_N1_238-O_O2_236
+_TopoImproper: (CH3-C-N-O)                value:  179.96   eq.value:    0.00    dE:  0.14    # Prm: CT_C1_135-C_C2_235-N_N1_238-O_O2_236
+_TopoImproper: (CA-C-N-O)                 value:  179.91   eq.value:    0.00    dE:  0.14    # Prm: CT1_C1_224-C_C2_235-N_N1_238-O_O2_236
 _TopoImproper: (CB-CG-OD1-OD2)            value:  177.64   eq.value:    0.00    dE:  0.17    # Prm: CT_C1_135-C_C2_267-OC3_O2_269-OH_O4_268
 _TopoAngle: (C-CA-CB)                     value:  114.12   eq.value:  111.10    dE:  0.18    # Prm: CT_C1_135-CT1_C1_224-C_C2_235
 _TopoTorsion: (N-CA-CB-CG)                value:  179.99   eq.value:   90.00    dE:  0.18    # Prm: C_C2_267-CT_C1_135-CT1_C1_224-N_N1_238

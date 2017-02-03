@@ -516,13 +516,19 @@ class _TopoBond(_TopoBonding):
     def __init__(self, *args):
         super(self.__class__, self).__init__(*args)
 
-    def calc(self):
+    def calc(self, r=None):
         """Calculate bond distance and energy.
         
+        Args:
+            r (float, optional): define the bond distance instead of
+                                 calculating it from the structure
+
         Returns tuple (E [kcal/mol], r [angstrom])
         """
-        ac1, ac2 = [a.struct.coordinates for a in self.atoms]
-        r = qpotential.bond_distance(ac1, ac2)
+        if not r:
+            ac1, ac2 = [a.struct.coordinates for a in self.atoms]
+            r = qpotential.bond_distance(ac1, ac2)
+
         e = qpotential.bond_energy(r, self.prm.fc, self.prm.r0)
         return (e,r)
 
@@ -535,14 +541,20 @@ class _TopoAngle(_TopoBonding):
     def __init__(self, *args):
         super(self.__class__, self).__init__(*args)
 
-    def calc(self):
+    def calc(self, theta=None):
         """Calculate angle and energy
+
+        Args:
+            theta (float, optional): define the angle instead of calculating it
+                                     from the structure
 
         Returns tuple (E [kcal/mol], theta [degrees])
         """
 
-        ac1, ac2, ac3 = [a.struct.coordinates for a in self.atoms]
-        theta = qpotential.angle_angle(ac1, ac2, ac3)
+        if theta == None:
+            ac1, ac2, ac3 = [a.struct.coordinates for a in self.atoms]
+            theta = qpotential.angle_angle(ac1, ac2, ac3)
+
         e = qpotential.angle_energy(theta,
                                     self.prm.fc,
                                     self.prm.theta0)
@@ -557,14 +569,19 @@ class _TopoTorsion(_TopoBonding):
     def __init__(self, *args):
         super(self.__class__, self).__init__(*args)
 
-    def calc(self):
+    def calc(self, phi=None):
         """Calculate torsion angle and energy
+
+        Args:
+            phi (float, optional): define the angle instead of calculating it
+                                   from the structure
 
         Returns tuple (E [kcal/mol], phi [degrees])
         """
 
-        ac1, ac2, ac3, ac4 = [a.struct.coordinates for a in self.atoms]
-        phi = qpotential.torsion_angle(ac1, ac2, ac3, ac4)
+        if phi == None:
+            ac1, ac2, ac3, ac4 = [a.struct.coordinates for a in self.atoms]
+            phi = qpotential.torsion_angle(ac1, ac2, ac3, ac4)
 
         energy = 0
         for fc, periodicity, phase, npaths in self.prm.get_prms():
@@ -594,14 +611,19 @@ class _TopoImproper(_TopoBonding):
     def __init__(self, *args):
         super(self.__class__, self).__init__(*args)
 
-    def calc(self):
+    def calc(self, phi=None):
         """Calculate improper angle and energy
+
+        Args:
+            phi (float, optional): define the angle instead of calculating it
+                                   from the structure
 
         Returns tuple (E [kcal/mol], phi [degrees])
         """
 
-        ac1, ac2, ac3, ac4 = [a.struct.coordinates for a in self.atoms]
-        phi = qpotential.improper_angle(ac1, ac2, ac3, ac4)
+        if phi == None:
+            ac1, ac2, ac3, ac4 = [a.struct.coordinates for a in self.atoms]
+            phi = qpotential.improper_angle(ac1, ac2, ac3, ac4)
 
         e =  qpotential.improper_energy_periodic(phi,
                                                  self.prm.fc,

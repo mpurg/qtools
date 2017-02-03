@@ -241,14 +241,21 @@ class QMapper(object):
             logger.info("{:>10} {:>10} {:>10} {:>10}"
                         "".format("Hij", "Alpha", "dG#", "dG0"))
             if iteration == 1:
-                dga_mean, dg0_mean = self._getmeans()
+                try:
+                    dga_mean, dg0_mean = self._getmeans()
+                except QMapperError:
+                    raise
                 logger.info("{:10.2f} {:10.2f} {:10.2f} {:10.2f}"
                             "".format(self.parms["hij"], self.parms["alpha"],
                                       dga_mean, dg0_mean))
 
-            dga_mean, dg0_mean = self._do_iteration(dga_mean, dg0_mean,
-                                                    dga_ref, dg0_ref,
-                                                    step_size)
+            try:
+                dga_mean, dg0_mean = self._do_iteration(dga_mean, dg0_mean,
+                                                        dga_ref, dg0_ref,
+                                                        step_size)
+            except QMapperError:
+                raise
+
             if abs(dga_mean - dga_ref) < threshold and \
                    abs(dg0_mean - dg0_ref) < threshold:
                 return True

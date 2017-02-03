@@ -1,6 +1,3 @@
-# Generated with q_ffld2q.py, version 0.5.1
-# Date: Fri Feb  3 22:22:07 2017
-#
 {ACE}
     [atoms]
         1  CH3    CT_C1_135     -0.180000
@@ -81,4 +78,3 @@
     [charge_groups]
         N CA H HA1 HA2 HA3
 *--------------------------------------------------------------------------------
-
