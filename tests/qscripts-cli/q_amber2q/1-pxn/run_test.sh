@@ -9,6 +9,7 @@ source ../../common.sh
 ROOTDIR=$(pwd)
 mkdir -p $TESTDIR
 cd $TESTDIR
+rm pxn.lib pxn.prm pxn.prm.chk 2>/dev/null
 
 q_amber2q.py -m ../input/pxn.mol2 \
              -i ../input/pxn.prepi \

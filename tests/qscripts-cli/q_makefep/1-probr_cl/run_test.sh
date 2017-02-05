@@ -9,6 +9,7 @@ source ../../common.sh
 ROOTDIR=$(pwd)
 mkdir -p $TESTDIR
 cd $TESTDIR
+rm probr_cl.fep 2>/dev/null
 
 q_makefep.py -s ../input/probr_cl_start.pdb \
              -m ../input/probr_cl.qmap \

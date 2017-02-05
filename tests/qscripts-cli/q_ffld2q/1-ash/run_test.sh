@@ -9,6 +9,7 @@ source ../../common.sh
 ROOTDIR=$(pwd)
 mkdir -p $TESTDIR
 cd $TESTDIR
+rm ace_ash_nma.lib ace_ash_nma.prm ace_ash_nma.prm.chk 2>/dev/null
 
 q_ffld2q.py ../input/ace_ash_nma.ffld11 ../input/ace_ash_nma.pdb -o ace_ash_nma >> ${STDOUT}
 

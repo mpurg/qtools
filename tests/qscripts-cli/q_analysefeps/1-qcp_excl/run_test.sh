@@ -9,6 +9,7 @@ source ../../common.sh
 ROOTDIR=$(pwd)
 mkdir -p $TESTDIR
 cd $TESTDIR
+rm qaf.out qaf.pd.json qaf.pd2.json qaf.pd3.json 2>/dev/null
 
 q_analysefeps.py ../input ../input3 \
                  --qfep_out qfep_123.log \

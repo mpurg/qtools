@@ -354,15 +354,11 @@ def make_fep(qmap_file, pdb_file, forcefield,
                     # one of the Atoms is not defined in QMAP
                     continue
 
-                residue_ids = set()
                 pdbid_index = []
                 for atom in atoms_st1:
                     pdbid_index.append((atom.index,
                                         "{}.{}".format(atom.residue.index,
                                                        atom.name)))
-                    residue_ids.add(atom.residue.index)
-
-
                 # order the pdbids to prevent double entries
                 if bati_type == "bonds":
                     pids = sorted(pdbid_index)
@@ -371,10 +367,13 @@ def make_fep(qmap_file, pdb_file, forcefield,
                 elif bati_type == "torsions":
                     pids = min(pdbid_index, list(reversed(pdbid_index)))
                 elif bati_type == "impropers":
+                    # topology order == library order == correct order
                     pids = pdbid_index
-
                 key = " ".join([p[1] for p in pids])
 
+                # check for bonds/angles/torsions/impropers that are
+                # shared between residues
+                residue_ids = set(atom.residue.index for atom in bati.atoms)
                 if len(residue_ids) > 1:
                     raise QMakeFepError("Inter-residue bond/angle/torsion '{}'"
                                         " not supported. Combine the residues "
@@ -382,6 +381,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
                                         "want to make changes over the "
                                         "'head-tail' bond.".format(key))
 
+                # add bati to bati_map
                 try:
                     bati_map[bati_type][key][state] = bati
                 except KeyError:
