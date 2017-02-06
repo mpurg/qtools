@@ -150,6 +150,13 @@ def make_fep(qmap_file, pdb_file, forcefield,
                                     "with either 'q' (qatom) or 'n' "
                                     "(neighboring atom) or 'q_qpi' "
                                     "(QPI q atom)")
+            try:
+                resid, name = pdb_id.split(".")
+                if not name or not int(resid): raise ValueError
+
+            except ValueError:
+                raise QMakeFepError("Invalid PDB ID '{}'. Should be "
+                                    "RESID.ATOMNAME".format(pdb_id))
 
             tmp = (atom_type, [pdb_id,])
             if tmp in pdb_ids_map:
@@ -163,6 +170,12 @@ def make_fep(qmap_file, pdb_file, forcefield,
                                     "to number of PDB files".format(line))
 
             for state, lib_id in enumerate(lib_ids):
+                try:
+                    resname, name = lib_id.split(".")
+                    if not resname or not name: raise ValueError
+                except ValueError:
+                    raise QMakeFepError("Invalid library ID '{}'. Should be "
+                                        "RESNAME.ATOMNAME".format(lib_id))
                 try:
                     if lib_id in lib_ids_map[state]:
                         raise QMakeFepError("The library IDs in one EVB state "
@@ -195,9 +208,13 @@ def make_fep(qmap_file, pdb_file, forcefield,
         atom_index = 1
         processed_residues = []
         for i, (q_or_n, pdb_ids_all_states) in enumerate(pdb_ids_map):
-            lib_id = lib_ids_map[state][i]
-            resname = lib_id.split(".")[0]
 
+            lib_id = lib_ids_map[state][i]
+            resname, aname = lib_id.split(".")
+
+            # add all atoms of current residue to the dummy structure
+            # at the same time, storing the mapping lib_id:pdb_id
+            # in libid_pdbid_map for later
             if resname not in processed_residues:
                 try:
                     residue_lib = qlib.residue_dict[resname]
@@ -206,10 +223,10 @@ def make_fep(qmap_file, pdb_file, forcefield,
                                         "".format(resname))
                 processed_residues.append(resname)
                 res_index = len(processed_residues)
+
                 for atom in residue_lib.atoms:
                     lib_id2 = "{}.{}".format(resname, atom.name)
                     pdb_id2 = "{}.{}".format(res_index, atom.name)
-                    libid_pdbid_map[state][lib_id2] = pdb_id2
                     state_structure.append("{:<6}{:5} {:4} {:3} {:5}    "
                                            "{:8.3f}{:8.3f}{:8.3f}"
                                            "".format("ATOM", atom_index,
@@ -217,7 +234,17 @@ def make_fep(qmap_file, pdb_file, forcefield,
                                                      res_index, 0, 0, 0))
                     atom_index += 1
 
-            pdb_ids_all_states.append(libid_pdbid_map[state][lib_id])
+                    # map the newly created dummy atom's pdb_id to lib_id
+                    libid_pdbid_map[state][lib_id2] = pdb_id2
+
+            # add pdb_id of current atom in current (dummy structure)
+            # state to pdb_ids_map (using its lib_id)
+            try:
+                pdb_id_this_state = libid_pdbid_map[state][lib_id]
+            except KeyError:
+                raise QMakeFepError("Library ID '{}' not valid.".format(lib_id))
+            pdb_ids_all_states.append(pdb_id_this_state)
+
         _, structures[state] = tempfile.mkstemp()
         open(structures[state], "w").write("\n".join(state_structure))
         # DEBUG
