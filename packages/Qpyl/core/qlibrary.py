@@ -702,10 +702,10 @@ class _LibResidue(object):
         resname (string):   three letter residue identifier (GLY, ARG...)
         library (QLib):   parent object
     """
-    
-    INFO_KEYS = ("solvent", "SYBILtype", "density")
+
+    INFO_KEYS = ("solvent", "SYBILtype", "density", "dielectric")
     BUILD_RULES = ("torsion")
-        
+
     def __init__(self, resname, library):
         self.name = resname.upper()
         self.atoms = []   # [ _LibAtom, _LibAtom... ]
@@ -798,12 +798,13 @@ class _LibResidue(object):
                                     .format(aname, " ".join(imp_atoms)))
 
         # check keywords in info section
-        low_keys = (x.lower() for x in self.INFO_KEYS)
+        low_keys = [x.lower() for x in self.INFO_KEYS]
         for keyword in self.info:
             if keyword.lower() not in low_keys:
-                raise QLibError("Keyword '{}' in [info] section not "
-                                "not supported (residue '{}')."
-                                "".format(keyword, self.name))
+                raise_or_log("Keyword '{}' in [info] section not "
+                             "not supported (residue '{}')."
+                             "".format(keyword, self.name),
+                             QLibError, logger, self.library.ignore_errors)
 
         # check build rules
         for build_rule in self.build_rules:
