@@ -32,7 +32,7 @@ import ConfigParser
 
 # check for python 2.7
 if sys.version_info < (2, 7):
-    print "Python 2.7 required. Detected version {}".format(sys.version)
+    print "Python 2.7 required. Detected version {0}".format(sys.version)
     sys.exit(1)
 
 try:
