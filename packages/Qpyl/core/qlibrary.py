@@ -703,7 +703,7 @@ class _LibResidue(object):
         library (QLib):   parent object
     """
 
-    INFO_KEYS = ("solvent", "SYBILtype", "density", "dielectric")
+    INFO_KEYS = ("solvent", "SYBYLtype", "density", "dielectric")
     BUILD_RULES = ("torsion")
 
     def __init__(self, resname, library):
@@ -714,7 +714,7 @@ class _LibResidue(object):
         self.connections = []   # [ "head N", "tail C" ]
         self.charge_groups = []   # [ ["O1", "H1"], ["C1","H2","H3"], ... ]
         self.build_rules = []   # [ "torsion HE1 OE1 CD OE2 0", ... ]
-        self.info = {}   # { "SYBILtype": "RESIDUE", "solvent": 1, ... }
+        self.info = {}   # { "SYBYLtype": "RESIDUE", "solvent": 1, ... }
         self.library = library
 
     def _add_improper(self, center_atom, other_atoms):
