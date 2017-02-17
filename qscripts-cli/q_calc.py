@@ -42,10 +42,15 @@ def gc(args):
         print "This file went missing: {}".format(args.pdb)
         sys.exit(1)
 
-    if args.qmaskfile and not os.path.lexists(args.qmaskfile):
-        print "This file went missing: {}".format(args.qmaskfile)
-        sys.exit(1)
-
+    if args.qmaskfile:
+        try:
+            qmask = open(args.qmaskfile, "r").read().split()
+            if not qmask: raise IOError
+        except IOError:
+            print "Can't read '{}' or file empty".format(args.qmaskfile)
+            sys.exit(1)
+    else:
+        qmask = None
 
     lambdas = []
     for lamb in args.lra_l:
@@ -75,7 +80,7 @@ def gc(args):
                         args.resid_first, args.resid_last,
                         args.scale_ionized,
                         args.nthreads,
-                        args.qmaskfile)
+                        qmask)
 
     try:
         qgc.calcall()
