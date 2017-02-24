@@ -76,8 +76,8 @@ def make_fep(qmap_file, pdb_file, forcefield,
     atom. The latter will not be included in the 'Q-region' but will be
     included in the 'change_bonds/change_angles...' sections in case there is a
     change in bonding/parameters outside the Q region. Additionally, you can
-    define a 'q' atom with 'q_qpi', which will create an additional section for
-    isotopically clean masses used in QPI calculations.
+    define a 'q' atom with 'q_qcp', which will create an additional section for
+    isotopically clean masses used in QCP calculations.
     The second column is the PDB ID, comprised of residue index and atom name,
     separated by a dot.
     The third column is the library ID of this atom in state 1, comprised of
@@ -116,7 +116,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
     fep_changes = {"atoms": [], "charges": [],
                    "bonds": ODict(), "angles": ODict(),
                    "torsions": ODict(), "impropers": ODict()}
-    fep_qpi_atoms = []
+    fep_qcp_atoms = []
     fep_morse_prms = {}
     fep_reacting_atoms = set()
     num_evb_states = None
@@ -145,10 +145,10 @@ def make_fep(qmap_file, pdb_file, forcefield,
             pdb_id = c[1]
             lib_ids = c[2:]
 
-            if atom_type not in ["q", "n", "q_qpi"]:
+            if atom_type not in ["q", "n", "q_qcp"]:
                 raise QMakeFepError("Lines in the QMAP file should begin "
                                     "with either 'q' (qatom) or 'n' "
-                                    "(neighboring atom) or 'q_qpi' "
+                                    "(neighboring atom) or 'q_qcp' "
                                     "(QPI q atom)")
             try:
                 resid, name = pdb_id.split(".")
@@ -315,15 +315,15 @@ def make_fep(qmap_file, pdb_file, forcefield,
 
         # For Q atoms (and not the neighbor atoms):
         # get FEP atom types, type changes and charge changes
-        if q_or_n in ["q", "q_qpi"]:
+        if q_or_n in ["q", "q_qcp"]:
             for atom in atom_all_states:
                 if atom.prm not in fep_types["atoms"]:
                     fep_types["atoms"].append(atom.prm)
 
             fep_changes["charges"].append([a.charge for a in atom_all_states])
             fep_changes["atoms"].append(atom_all_states)
-            if q_or_n == "q_qpi":
-                fep_qpi_atoms.append(atom_all_states)
+            if q_or_n == "q_qcp":
+                fep_qcp_atoms.append(atom_all_states)
 
     charge_sums = []
     for state in range(num_evb_states):
@@ -504,7 +504,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
 
     fep_l = {"atoms": [],
              "atom_types": [],
-             "qpi_mass": [],
+             "qcp_mass": [],
              "change_atoms": [],
              "change_charges": [],
              "soft_pairs": [],
@@ -527,7 +527,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
     format_ch_atoms = "{:<10} " + " {:<12}"*num_evb_states + "    #  {:<}"
     format_ch_crgs = "{:<10} " + " {:12}"*num_evb_states + "    #  {:<10}"\
                    + " {:>12}"*(num_evb_states-1)
-    format_qpi = "{:<15} {:<10}     #  {:<10}"
+    format_qcp = "{:<15} {:<10}     #  {:<10}"
 
     fep_l["atoms"].append(format_atoms.format("#Q index", "PDB index",
                                               "St.1 PDB_ID", "St.1 LIB_ID", ""))
@@ -543,9 +543,9 @@ def make_fep(qmap_file, pdb_file, forcefield,
     tmp.extend(["dq({}->{})".format(n+1, n+2) for n in range(num_evb_states-1)])
     fep_l["change_charges"].append(format_ch_crgs.format(*tmp))
 
-    if fep_qpi_atoms:
-        fep_l["qpi_mass"].append("[qpi_mass]")
-        fep_l["qpi_mass"].append(format_qpi.format("#Q index", "Mass",
+    if fep_qcp_atoms:
+        fep_l["qcp_mass"].append("[qcp_mass]")
+        fep_l["qcp_mass"].append(format_qcp.format("#Q index", "Mass",
                                                    "St.1 PDB_ID"))
 
     for i, atom_all_states in enumerate(fep_changes["atoms"]):
@@ -571,9 +571,9 @@ def make_fep(qmap_file, pdb_file, forcefield,
             + [crgs[n+1]-crgs[n] for n in range(num_evb_states-1)]
         fep_l["change_charges"].append(format_ch_crgs.format(*tmp))
 
-        # qpi_atoms
-        if atom_all_states in fep_qpi_atoms:
-            fep_l["qpi_mass"].append(format_qpi.format(q_index,
+        # qcp_atoms
+        if atom_all_states in fep_qcp_atoms:
+            fep_l["qcp_mass"].append(format_qcp.format(q_index,
                                                        "<FIX>", pdb_id))
 
 
@@ -874,7 +874,7 @@ states {states}
 [change_impropers]
 {change_impropers}
 
-{qpi_mass}
+{qcp_mass}
 """.format(states=num_evb_states, date=time.ctime(), cmd=" ".join(sys.argv),
            cwd=os.getcwd(), version=__version__, **fep_l)
 
