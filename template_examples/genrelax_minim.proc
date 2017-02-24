@@ -9,6 +9,10 @@
 # GENERAL       -   qdyn5 parameters, used in all steps.
 # STEPS         -   qdyn5 parameters for each relaxation step, separated by "________________". These values override the ones defined in the GENERAL section.
 #
+#
+# Run MD @ 0.1K to "minimize" the badly positioned 
+# water molecules and to remove bad contacts
+#
 
 #######################################################
 {SCRIPT_VARS}
