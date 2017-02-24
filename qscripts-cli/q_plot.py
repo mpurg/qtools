@@ -33,9 +33,7 @@ import Tkinter as Tk
 import argparse
 from collections import OrderedDict as ODict
 
-from Qpyl import plotdata
-
-
+from Qpyl.plotdata import PlotData, PlotDataError, PlotDataJSONDecoder
 
 class PlotApp():
 
@@ -299,7 +297,7 @@ if __name__ == "__main__":
             print "File '%s' doesn't exist." % pf
             sys.exit(1)
         try:
-            jsondec = plotdata.PlotDataJSONDecoder()
+            jsondec = PlotDataJSONDecoder()
             plots = jsondec.decode(open(pf, 'r').read())
         except Exception as e:
             raise
@@ -309,7 +307,7 @@ if __name__ == "__main__":
             print "Something is wrong with the data file '%s'. Aborting..." % pf
             sys.exit(1)
         for plot_id, plot in plots.iteritems():
-            if not isinstance(plot, plotdata.PlotData):
+            if not isinstance(plot, PlotData):
                 print "Something is wrong with the data file '%s'. Aborting..." % pf
                 sys.exit(1)
 
@@ -378,7 +376,7 @@ if __name__ == "__main__":
                 fn = os.path.join(exdir, "%s.agr" % plot_id)
                 open(fn, 'w').write( plot.export_grace() )
                 print "Wrote '%s' to %s" % (plot.title, fn)
-            except IOError as e:
+            except (IOError, PlotDataError) as e:
                 print "Could not export '%s': %s" % (plot.title, str(e))
             
         
