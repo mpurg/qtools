@@ -1,0 +1,18 @@
+{BR-}
+# Generated with q_ffld2q.py from 'br.ffld'
+# Date: Wed Feb 25 10:37:04 2015
+
+[atoms]
+    1  Br1   br-_Br1            -1.0000
+
+
+[bonds]
+
+
+[impropers]
+
+
+[charge_groups]
+Br1
+
+

@@ -1,0 +1,44 @@
+# Generated with QTools, version 0.5.2
+# Date: Sat Feb  4 20:17:54 2017
+# CWD: /home/mpurg/Desktop/Projects/DFPase/4-newlib/DFP/HOH_ASP229/dock1/pro/3.4_from2.2/1
+# Cmdline: /home/mpurg/bin/qtools/qscripts-cli/q_genfeps.py genfeps.proc ../../2.2-relax_20ns/1/relax/relax_010.inp relax --rs run_q_kebne.sh --pdb ../../0-topol/dfpase_dfp_start.pdb --repeats 1
+[md]
+steps                                        100000
+temperature                                  298.15
+stepsize                                          1
+bath_coupling                                   100
+separate_scaling                                 on
+lrf                                              on
+
+[cut-offs]
+solute_solute                                    10
+solvent_solvent                                  10
+solute_solvent                                   10
+q_atom                                           99
+
+[intervals]
+non_bond                                         30
+output                                        10000
+temperature                                   10000
+energy                                           10
+trajectory                                    10000
+
+[files]
+topology                                    pro.top
+restart                          equil_000_0.500.re
+final                              fep_000_0.500.re
+trajectory                        fep_000_0.500.dcd
+energy                             fep_000_0.500.en
+fep                       dfpase_dfp_hoh_asp229.fep
+restraint                    cont_relax_010.re.rest
+
+[lambdas]
+0.5000000 0.5000000
+
+[sequence_restraints]
+4841   4868   0.1    0      0      0     
+
+[distance_restraints]
+4841   4849   0.0    3.0    3.0    0     
+
+[angle_restraints]

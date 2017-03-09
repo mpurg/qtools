@@ -1,0 +1,11 @@
+readlib  ./0-ff/qoplsaa.lib
+readlib  ./0-ff/prb.lib
+readlib  ./0-ff/cl-.lib
+readprm  ./0-ff/qoplsaa_prb_cl-.prm
+readpdb  probr_cl.pdb
+boundary sphere 1:C1 20
+#solvate 1:C1 20 1 HOH
+maketop  probr_cl.top
+writetop probr_cl.top
+writepdb probr_cl_start.pdb y
+quit
