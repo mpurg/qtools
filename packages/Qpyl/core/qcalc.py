@@ -72,8 +72,8 @@ class QCalc(object):
             raise QCalcError("Problem when running qcalc5: {}"
                              "".format(error_msg))
 
-
-        stdout, stderr = self.process.communicate(qcalc_input_str)
+        # "\n" is added to fix the blocking qcalc5 issue 
+        stdout, stderr = self.process.communicate(qcalc_input_str + "\n")
 
         # not sure if this ever happens, but will keep it anyway
         if stderr:
