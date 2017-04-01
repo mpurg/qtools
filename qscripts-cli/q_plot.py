@@ -46,7 +46,16 @@ class PlotApp():
 
     def __init__(self, parent, plotdata, plotdata_files):
         self.parent = parent
-        self.plots = plotdata   # example:  { "dgde" : { 0 : QPlotData_instance (from file 1), 1 : QPlotData_instance (from file 2) }, ... }, where 0,1,... are indices of the filenames in plotdata_files
+        self.plots = plotdata
+        # self.plots looks like this:
+        # 
+        # { "dgde" : { 0 : PlotData_instance (from file 1),
+        #              1 : PlotData_instance (from file 2), ... },
+        #   "egap_l" : { 0 : PlotData_instance (from file 1),
+        #                1 : PlotData_instance (from file 2), ... }, 
+        #  ... }
+        # where 0,1,... are indices of the filenames in plotdata_files
+        #
         self.plotdata_files = plotdata_files    #  [ "/home/.../pro/qa.PlotData.pickle", "/home/.../wat/qa.PlotData.pickle" ]
         self.nrows = 1
         self.ncols = 1
@@ -128,12 +137,13 @@ class PlotApp():
 
     def draw_plots(self):
     
-# clear the figure 
+        # clear the figure 
         self.figure.clear()
-# clear the subplot_lines dictionary
+
+        # clear the subplot_lines dictionary
         self.subplot_lines = {}
 
-# get keys for the selected plots in lb1
+        # get keys for the selected plots in lb1
         plot_keys = [ self.lb1_entries[ self.lb1.get(int(index)) ] for index in self.lb1.curselection() ]
 
         for i, key in enumerate(plot_keys):   # example of plot_keys: [ "dgde", "egapl", "dgl", ... ]
@@ -144,76 +154,114 @@ class PlotApp():
                                               projection='3d')
             else:
                 plt = self.figure.add_subplot(self.nrows,self.ncols,i+1)
+            
+            # if the plot is a bar chart and if xvalues are string categories:
+            # make a common list of categories from all plots since they
+            # can be different (top 20 group contribs for example)
+            bar_categories = []
+            if plots[0].plot_type == "bar" and \
+                isinstance(plots[0].subplots.values()[0]["xdata"][0],
+                           basestring):
+                for plot in plots.values():
+                    for subplots in plot.subplots.values():
+                        for i_cat, cat in enumerate(subplots["xdata"]):
+                            if cat not in bar_categories:
+                                bar_categories.insert(i_cat, cat)
 
-
-            for plot_number, plot in plots.iteritems():   # example of plots:   { 0: protein_plot, 1: protein2_plot, 2: water_plot }
-                for subplot_label, subplot_data in plot.subplots.iteritems():   
+            # plot the plots
+            # example of plots:
+            # { 0: protein_plot, 1: protein2_plot, 2: water_plot }
+            for plot_number, plot in plots.iteritems():
+                for subplot_label, subplot_data in plot.subplots.iteritems():
 
                     if plot.plot_type == "line":
-                        line, = plt.plot(subplot_data["xdata"],subplot_data["ydata"], color=self._COLORS[plot_number] )
+                        line, = plt.plot(subplot_data["xdata"],
+                                         subplot_data["ydata"],
+                                         color=self._COLORS[plot_number])
                     elif plot.plot_type == "bar":
-                        width = 0.9/( len(plots) ) 
-                        # color bar charts in lighter colors
+                        width = 0.9/(len(plots))
+                        # string categories
                         if isinstance(subplot_data["xdata"][0], basestring):
-                            xind = range(0,len(subplot_data["xdata"]) )
-                            xind = [ x - 0.45 + plot_number*(width) for x in xind ]
-                            line = plt.bar(xind, subplot_data["ydata"], width =
-                                    width, yerr=subplot_data["yerror"],
-                                    color=self._COLORS_LIGHT[plot_number] )
-                            plt.set_xticks( xind )
-                            plt.set_xticklabels( subplot_data["xdata"], rotation=70 )
+                            # map values to category list made before
+                            xymap = dict(zip(subplot_data["xdata"],
+                                             subplot_data["ydata"]))
+                            xyemap = dict(zip(subplot_data["xdata"],
+                                              subplot_data["yerror"]))
+                            ydata = []
+                            yerror = []
+                            for cat in bar_categories:
+                                try:
+                                    ydata.append(xymap[cat])
+                                    yerror.append(xyemap[cat])
+                                except KeyError:
+                                    ydata.append(0)
+                                    yerror.append(0)
+
+                            xind = range(0, len(bar_categories))
+                            xind = [x-0.45+plot_number*(width) for x in xind]
+                            line = plt.bar(xind, ydata, width=width,
+                                           yerr=yerror,
+                                           color=self._COLORS_LIGHT[plot_number])
+                            plt.set_xticks(xind)
+                            plt.set_xticklabels(bar_categories, rotation=70)
                         else:
-                            xind = [ x - 0.45 + plot_number*(width) for x in subplot_data["xdata"] ]
-                            line = plt.bar(xind, subplot_data["ydata"], width =
-                                    width, yerr=subplot_data["yerror"],
+                            xind = [x-0.45+plot_number*(width) for x in subplot_data["xdata"]]
+                            line = plt.bar(xind, subplot_data["ydata"],
+                                    width=width,
+                                    yerr=subplot_data["yerror"],
                                     color=self._COLORS_LIGHT[plot_number] )
+
                     elif plot.plot_type == "scatter":
                         line = plt.scatter(subplot_data["xdata"],
-                               subplot_data["ydata"],
-                               color=self._COLORS[plot_number],
-                               marker="s")
+                                           subplot_data["ydata"],
+                                           color=self._COLORS[plot_number],
+                                           marker="s")
+
                     elif plot.plot_type == "wireframe":
                         line = plt.plot_wireframe(subplot_data["xdata"],
                                                   subplot_data["ydata"],
                                                   subplot_data["zdata"],
                                                   color=self._COLORS[plot_number])
 
-                    # add the line that was drawn to subplot_lines so that we can change color if lb2 selection changes
+                    # add the line that was drawn to subplot_lines
+                    # so that we can change color if lb2 selection changes
                     subplot_label = "%d/%s" % (plot_number, subplot_label)
                     if subplot_label not in self.subplot_lines.keys():
                         self.subplot_lines[subplot_label] = []
                     self.subplot_lines[subplot_label].append(line)
-                
+
             plt.set_title(plot.title)
             plt.set_xlabel(plot.xlabel)
             plt.set_ylabel(plot.ylabel)
-            
-    
+
         if plot_keys:
             self.draw_legend()
             padding = len(self.plotdata_files) * 0.03
             try:
-                self.figure.tight_layout(rect = [0,0+padding,1,1])
-            except TypeError as e:
+                self.figure.tight_layout(rect=[0, 0+padding, 1, 1])
+            except TypeError:
                 # rect doesn't exist in ancient matplotlib versions
                 self.figure.tight_layout()
 
             self.canvas.draw()
         self.blocked_draw = False
-    
 
 
     def on_select_lb1(self,event):
 
-# remove and add all subplots to lb2 (1/rep_000,1/rep_001... 2/rep_000,2/rep_001...)
+        # remove and add all subplots to lb2 (1/rep_000,1/rep_001... 2/rep_000,2/rep_001...)
         self.lb2.delete(0, Tk.END)
-# get keys for the selected plots in lb1
+
+        # get keys for the selected plots in lb1
         plot_keys = [ self.lb1_entries[ self.lb1.get(int(index)) ] for index in self.lb1.curselection() ]
 
-# iterate through all the selected plots (lb1)
-# iterate through all the plots with the same key (protein dG_dE, water dG_dE, mutant dG_dE, ...)
-# iterate through all subplot labels (rep_000, rep_001)
-# if exists do not append it (subplots from different keys have the same label - protein dG_dE, protein dG_lambda, ... and should be combined)
+        # iterate through all the selected plots (lb1)
+        # iterate through all the plots with the same key
+        #     (protein dG_dE, water dG_dE, mutant dG_dE, ...)
+        # iterate through all subplot labels
+        #     (rep_000, rep_001)
+        # if exists do not append it (subplots from different keys have the
+        #      same label - protein dG_dE, protein dG_lambda, ... and should be combined)
         for i,key in enumerate(plot_keys):
 
             subplots_labels = []
@@ -235,7 +283,7 @@ class PlotApp():
 
     def on_select_lb2(self,event):
 
-# get selected subplots from lb2
+        # get selected subplots from lb2
         selected_subplots_keys = [ self.lb2.get(int(index)) for index in self.lb2.curselection() ]
         for subplot_key, subplot_line_list in self.subplot_lines.iteritems():
             for subplot_line in subplot_line_list:
@@ -290,7 +338,16 @@ if __name__ == "__main__":
         print "Exporting works only with one plotfile at a time."
         sys.exit(1)
 
-    allplots = ODict()    # example:  { "dgde" : { 0 : PlotData_instance (from file 1), 1 : PlotData_instance (from file 2) }, ... }, where 0,1,... are indices of the filenames in plotdata_files
+    # allplots looks like this:
+    # 
+    # { "dgde" : { 0 : PlotData_instance (from file 1),
+    #              1 : PlotData_instance (from file 2), ... },
+    #   "egap_l" : { 0 : PlotData_instance (from file 1),
+    #                1 : PlotData_instance (from file 2), ... }, 
+    #  ... }
+    # where 0,1,... are indices of the filenames in plotdata_files
+    #
+    allplots = ODict()    
 
     for pf_number, pf in enumerate(args.plotfiles):
         if not os.path.lexists(pf):
@@ -334,6 +391,7 @@ if __name__ == "__main__":
             (mac)       $ sudo brew install matplotlib
             (mac)       $ sudo port install py27-matplotlib
             (anything)  $ sudo pip install matplotlib
+            (anything)  $ conda install -c conda-forge matplotlib=2.0.0
             or if you are working on a cluster, try loading a different python module..."""
             sys.exit(1)
 
