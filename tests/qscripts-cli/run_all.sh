@@ -12,7 +12,8 @@ do
         echo "# Testing:    $i$j"
         echo "####################################################"
         ./run_test.sh
-        cd $ROOTDIR
+        cd $ROOTDIR/$i
     done
+    cd $ROOTDIR
 done
 

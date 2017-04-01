@@ -73,7 +73,8 @@ optarg.add_argument("--repeats", dest="repeats", type=int,
                     default=QScfg.get("inputs", "num_repeats"))
 
 optarg.add_argument("--fep", dest="fep", default=None,
-                    help="FEP file (default is the one in the input file).")
+                    help="FEP file (default is the one in the input file)."
+                         "It can contain atom placeholders.")
 
 optarg.add_argument("--fromlambda", dest="fromlambda",
                     type=float, default=None,

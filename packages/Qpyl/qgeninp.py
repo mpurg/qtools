@@ -80,7 +80,8 @@ def genrelax(relax_proc_file, outdir, restraint,
     (a) Restraint coordinate can be set to:
        'top' - topology
        'cont_inp' - whatever is defined in cont_file
-       'cont_final' - endpoint of previous simulation (final restart of cont_file)
+       'cont_final' - endpoint of previous simulation
+                      (final restart of cont_file)
 
     (b) top_file and cont_file are mutually exclusive, one of them has to
         be provided
@@ -96,7 +97,7 @@ def genrelax(relax_proc_file, outdir, restraint,
 
     if restraint not in ["top", "cont_inp", "cont_final"]:
         raise QGenrelaxError("Argument 'restraint' has to be either "
-                            "'cont_inp', 'top' or 'cont_final'")
+                             "'cont_inp', 'top' or 'cont_final'")
 
     # constants
     PREFIX = "relax_"
@@ -104,7 +105,7 @@ def genrelax(relax_proc_file, outdir, restraint,
     if os.path.lexists(DIR):
         raise QGenrelaxError("Directory '{}' exists. Please (re)move it "
                              "or set 'outdir'.".format(DIR))
-        sys.exit(1)
+
     TMPDIR = tempfile.mkdtemp()
 
     header_comment = """\
@@ -118,8 +119,8 @@ def genrelax(relax_proc_file, outdir, restraint,
     relax_proc_str = open(relax_proc_file, 'r').read()
     c = find_placeholders(relax_proc_str)
     if c and not pdb_file:
-        raise QGenrelaxError("Found placeholders, but no PDB was given (--pdb):"
-                             "\n{}\n".format(", ".join(c)))
+        raise QGenrelaxError("Found placeholders in proc.file, but no PDB "
+                             "was given: {}".format(", ".join(c)))
     elif c:
         logger.info("These placeholders will be replaced with atom indices: {}"
                     "".format(", ".join(c)))
@@ -127,9 +128,9 @@ def genrelax(relax_proc_file, outdir, restraint,
             # TODO: ignore_errors should not be hardcoded like this
             qstruct = QStruct(pdb_file, "pdb", ignore_errors=False)
             relax_proc_str = qstruct.convert_placeholders(relax_proc_str)
-        except QStructError as e:
+        except QStructError as err_msg:
             raise QGenrelaxError("Failed to replace placeholders: "
-                                 "{}".format(str(e)))
+                                 "{}".format(err_msg))
 
     # get topology and fep and others from previous input if given (--cont)
     if cont_file:
@@ -139,10 +140,10 @@ def genrelax(relax_proc_file, outdir, restraint,
                                  "different topology...")
         try:
             c = QDynInput(open(cont_file, 'r').read())
-        except QDynInputError as e:
+        except QDynInputError as err_msg:
             raise QGenrelaxError("There is something wrong with the given "
                                  "input file ({}): {}".format(cont_file,
-                                                              str(e)))
+                                                              err_msg))
 
         cont_files = c.parameters["files"]
         di = os.path.dirname(cont_file)
@@ -175,7 +176,7 @@ def genrelax(relax_proc_file, outdir, restraint,
         else:
             try:
                 fep_fn = cont_files["fep"]
-                shutil.copy2(os.path.join(di,fep_fn), TMPDIR)
+                shutil.copy2(os.path.join(di, fep_fn), TMPDIR)
             except KeyError:
                 logger.info("No FEP file found in the input")
 
@@ -215,7 +216,7 @@ def genrelax(relax_proc_file, outdir, restraint,
     section = ""
     for line in relax_proc_str.split("\n"):
         # remove comments and strip whitespaces.
-        line = re.split("#|\!",line)[0].strip()
+        line = re.split("#|\!", line)[0].strip()
         # empty lines are useless
         if line == "":
             continue
@@ -241,6 +242,27 @@ def genrelax(relax_proc_file, outdir, restraint,
                 steps_inps.append([])
             else:
                 steps_inps[-1].append(line)
+
+    if "fep_fn" in locals():
+        # find and replace atom placeholders in FEP file
+        # if no PDB was given to replace them, exit
+        fep_tmp = os.path.join(TMPDIR, fep_fn)
+        fep_file_str = open(fep_tmp, 'r').read()
+        c = find_placeholders(fep_file_str)
+        if c and not pdb_file:
+            raise QGenfepsError("Found placeholders in FEP file, but no "
+                                "PDB was given: {}".format(", ".join(c)))
+        elif c:
+            logger.info("Replacing FEP file placeholders...")
+            try:
+                # TODO: ignore_errors should not be fixed
+                qstruct = QStruct(pdb_file, "pdb", ignore_errors=False)
+                fep_file_str = qstruct.convert_placeholders(fep_file_str)
+            except QStructError as err_msg:
+                raise QGenfepsError("Failed to replace placeholders: {}"
+                                    "".format(err_msg))
+            else:
+                open(fep_tmp, 'w').write(fep_file_str)
 
 
     # check for steps with no parameters
@@ -282,7 +304,7 @@ def genrelax(relax_proc_file, outdir, restraint,
             files["restart"] = "{}{:03d}.re".format(PREFIX, prev_step)
         elif cont_files:
             files["restart"] = re_fn
-  
+
         if rest_fn != None:
             files["restraint"] = rest_fn
 
@@ -294,7 +316,7 @@ def genrelax(relax_proc_file, outdir, restraint,
             overridden_prms = inp.update(step_inp_s)
             if overridden_prms:
                 overridden_prms_all.append((step_n, ", ".join(
-                    ["{}:{}->{}".format(key,value_old,value_new) \
+                    ["{}:{}->{}".format(key, value_old, value_new) \
                             for key, (value_old, value_new) in \
                             overridden_prms.iteritems()])))
 
@@ -303,9 +325,9 @@ def genrelax(relax_proc_file, outdir, restraint,
 
             inp.update(parameters={"files": files})
 
-        except QDynInputError as e:
+        except QDynInputError as err_msg:
             raise QGenrelaxError("Problem with step no. {}: {}"
-                                 "".format(step_n, str(e)))
+                                 "".format(step_n, err_msg))
 
         # set the random seed
         mdp = inp.parameters["md"]
@@ -318,9 +340,9 @@ def genrelax(relax_proc_file, outdir, restraint,
         # get the input string
         try:
             inpstr = inp.get_string()
-        except QDynInputError as e:
+        except QDynInputError as err_msg:
             raise QGenrelaxError("Error in step {}: {}"
-                                 "".format(step_n, str(e)))
+                                 "".format(step_n, err_msg))
 
         inpfn = "{}{:03d}.inp".format(PREFIX, step_n)
         inp_fns.append(os.path.join(DIR, inpfn))
@@ -459,7 +481,7 @@ Quick summary
                                  locale.format('%d', mdsteps, 1),
                                  seq, dist, angle, shake, random_seed, data)
 
-        except KeyError as e:
+        except KeyError as err_msg:
             raise QGenrelaxError("You are missing either 'steps', "
                                  "'temperature' or 'stepsize' in one of your "
                                  "relaxation steps. These parameters are "
@@ -539,12 +561,12 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
                             "'inp', 'top' or 'relax'")
 
     # find and replace atom placeholders.
-    # if not PDB was given to replace them, exit
+    # if no PDB was given to replace them, exit
     fep_proc_str = open(fep_proc_file, 'r').read()
     c = find_placeholders(fep_proc_str)
     if c and not pdb_file:
-        raise QGenfepsError("Found placeholders, but no PDB was given: {}"
-                            "".format(", ".join(c)))
+        raise QGenfepsError("Found placeholders in proc. file, but no PDB "
+                            "was given: {}".format(", ".join(c)))
     elif c:
         logger.info("These placeholders will be replaced with atom indices: "
                     + ", ".join(c))
@@ -552,9 +574,9 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
             # TODO: ignore_errors should not be fixed
             qstruct = QStruct(pdb_file, "pdb", ignore_errors=False)
             fep_proc_str = qstruct.convert_placeholders(fep_proc_str)
-        except QStructError as e:
+        except QStructError as err_msg:
             raise QGenfepsError("Failed to replace placeholders: {}"
-                                "".format(str(e)))
+                                "".format(err_msg))
 
 
     # make a nice header comment in each input file with the
@@ -571,9 +593,9 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
     lambda_initial = None
     try:
         c = QDynInput(open(relax_input_file, 'r').read())
-    except QDynInputError as e:
+    except QDynInputError as err_msg:
         raise QGenfepsError("There is something wrong with the given input "
-                            "file ({}): {}".format(relax_input_file, str(e)))
+                            "file ({}): {}".format(relax_input_file, err_msg))
 
 
     di = os.path.dirname(relax_input_file)
@@ -585,9 +607,9 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
         fep_file_abs = os.path.join(di, files["fep"])
         if "restraint" in files:
             rest_file = os.path.join(di, files["restraint"])
-    except KeyError as e:
+    except KeyError as err_msg:
         raise QGenfepsError("Parsing the relaxation input file failed, "
-                            "keyword missing... {}".format(str(e)))
+                            "keyword missing... {}".format(err_msg))
 
     # check if the files actually exist
     for fn, descr in [(top_file_abs, "topology"),
@@ -604,6 +626,25 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
     # a soft core value in the fep)
     if fep_file:
         fep_file_abs = os.path.abspath(fep_file)
+
+
+    # find and replace atom placeholders in FEP file
+    # if no PDB was given to replace them, exit
+    fep_file_str = open(fep_file_abs, 'r').read()
+    c = find_placeholders(fep_file_str)
+    if c and not pdb_file:
+        raise QGenfepsError("Found placeholders in FEP file, but no PDB was "
+                            "given: {}".format(", ".join(c)))
+    elif c:
+        logger.info("Replacing FEP file placeholders...")
+        try:
+            # TODO: ignore_errors should not be fixed
+            qstruct = QStruct(pdb_file, "pdb", ignore_errors=False)
+            fep_file_str = qstruct.convert_placeholders(fep_file_str)
+        except QStructError as err_msg:
+            raise QGenfepsError("Failed to replace placeholders: {}"
+                                "".format(err_msg))
+
 
     # change the inital lambda (this is not recommended, the system should
     # be properly relaxed at a particual lambda before doing FEP)
@@ -650,8 +691,9 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
     fep_fn = os.path.basename(fep_file_abs)
     relax_re_fn = "cont_" + os.path.basename(re_file_abs)
     shutil.copy2(top_file_abs, TMPDIR)
-    shutil.copy2(fep_file_abs, TMPDIR)
     shutil.copy2(re_file_abs, os.path.join(TMPDIR, relax_re_fn))
+
+    open(os.path.join(TMPDIR, fep_fn), "w").write(fep_file_str)
     if runscript_file:
         shutil.copy2(runscript_file, TMPDIR)
     else:
@@ -677,7 +719,6 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
         else:
             logger.info("Restraining to: topology (from input)")
             rest_fn = None
-
 
 
     # parse the proc file
@@ -728,9 +769,9 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
             eq_steps_inps.pop(i)
 
     # check for missing sections
-    for l, n in (("general_inp", "GENERAL"),
-                 ("eq_steps_inps", "STEPS_EQUIL"),
-                 ("fep_inp", "FEP")):
+    for l, n in ((general_inp, "GENERAL"),
+                 (eq_steps_inps, "STEPS_EQUIL"),
+                 (fep_inp, "FEP")):
         if not l:
             raise QGenfepsError("Parsing the procedure file failed: "
                                 "Section '{}' is missing".format(n))
@@ -794,16 +835,16 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
             inp.update(parameters={"lambdas": "{:9.7f} {:9.7f}"
                                               "".format(lambda_initial,
                                                         1-lambda_initial)})
-        except QDynInputError as e:
+        except QDynInputError as err_msg:
             raise QGenfepsError("Problem with equil. step no. {}: {}"
-                                "".format(step_n, str(e)))
+                                "".format(step_n, err_msg))
 
         # test the input string
         try:
             _ = inp.get_string()
-        except QDynInputError as e:
+        except QDynInputError as err_msg:
             raise QGenfepsError("Error in equil. step {}: {}"
-                                "".format(step_n, str(e)))
+                                "".format(step_n, err_msg))
 
         # check if random seed is not defined or is fixed in the first step
         if step_n == 0:
@@ -883,9 +924,9 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
             inp.update(parameters={"lambdas": "{:9.7f} {:9.7f}"
                                               "".format(lam, 1-lam)})
             inp.check()
-        except QDynInputError as e:
+        except QDynInputError as err_msg:
             raise QGenfepsError("Error in FEP step {}: {}"
-                                "".format(step_n, str(e)))
+                                "".format(step_n, err_msg))
 
         # append the input
         feps.append(inp)
@@ -951,9 +992,9 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
 
             try:
                 s = eqs.get_string()
-            except QDynInputError as e:
+            except QDynInputError as err_msg:
                 raise QGenfepsError("Error in step {}: {}"
-                                    "".format(step_n, str(e)))
+                                    "".format(step_n, err_msg))
             fn = os.path.join(rep, "{}{:03d}_{:4.3f}.inp"
                                    "".format(PREFIX_EQ,
                                              step_n,
@@ -975,9 +1016,9 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
 
             try:
                 s = fs.get_string()
-            except QDynInputError as e:
+            except QDynInputError as err_msg:
                 raise QGenfepsError("Error in step {}: {}"
-                                    "".format(step_n, str(e)))
+                                    "".format(step_n, err_msg))
             lam = lambdas[step_n]  # feps was created in lambdas iteration
             fn = os.path.join(rep, "{}{:03d}_{:4.3f}.inp"
                                    "".format(PREFIX_FEP, step_n, lam))

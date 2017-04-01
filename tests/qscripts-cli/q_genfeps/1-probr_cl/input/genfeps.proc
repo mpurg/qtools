@@ -1,0 +1,54 @@
+#######################################################
+{SCRIPT_VARS}
+#######################################################
+SEQ_REST1     $1.C1$    $1.H6$    0.1  0  0
+SEQ_REST2     $1.Br11$  $2.Cl1$   0.1  0  0
+DIST_REST1    $1.C1$    $1.Br11$    0.0  3.5  3.0  2   # C-Br  (leaving group)
+DIST_REST2    $1.C1$    $2.Cl1$     0.0  3.5  3.0  1   # C-Cl  (nucleophile)
+
+#######################################################
+{GENERAL}
+#######################################################
+[MD]
+stepsize                  1
+temperature             300
+bath_coupling           100  
+
+[cut-offs]
+q_atom                   99
+
+[intervals]
+non_bond                 30
+output                10000
+trajectory            10000
+temperature            1000
+
+[sequence_restraints]
+SEQ_REST1
+SEQ_REST2
+
+[distance_restraints]
+DIST_REST1
+DIST_REST2
+
+#######################################################
+{STEPS_EQUIL}
+#######################################################
+
+[MD]
+steps                 10000
+initial_temperature      10
+temperature              10
+random_seed             457
+______________________________________________________
+[MD]
+steps                 50000
+
+#######################################################
+{FEP}
+#######################################################
+[MD]
+steps                 10000
+
+[intervals]
+energy                   10

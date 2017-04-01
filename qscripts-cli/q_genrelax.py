@@ -54,13 +54,14 @@ reqarg.add_argument("relax_proc",
 
 optarg = parser.add_argument_group("Optional")
 optarg.add_argument("--top", dest="top", default=None,
-                    help="path to topology file")
+                    help="Path to topology file")
 
 optarg.add_argument("--fep", dest="fep", default=None,
-                    help="path to fep file (if there is one)")
+                    help="Path to fep file (if there is one). "
+                         "It can contain atom placeholders.")
 
 optarg.add_argument("--rs", dest="runscript", default=None,
-                    help="submission script (for Slurm,SGE,Torque,...) ")
+                    help="Submission script (for Slurm,SGE,Torque,...) ")
 
 optarg.add_argument("--cont", dest="cont", default=None,
                     help="Continue a previous relaxation, argument is the "

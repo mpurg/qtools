@@ -1,0 +1,38 @@
+
+
+
+
+[md]
+steps                                         10000
+
+temperature                                      10
+stepsize                                          1
+bath_coupling                                   100
+initial_temperature                              10
+
+[cut-offs]
+q_atom                                           99
+
+[intervals]
+non_bond                                         30
+output                                        10000
+temperature                                    1000
+trajectory                                    10000
+
+[files]
+topology                               probr_cl.top
+restart                           cont_relax_003.re
+final                            equil_000_1.000.re
+trajectory                      equil_000_1.000.dcd
+fep                                    probr_cl.fep
+
+[lambdas]
+1.0000000 0.0000000
+
+[sequence_restraints]
+1      6      0.1    0      0     
+11     12     0.1    0      0     
+
+[distance_restraints]
+1      11     0.0    3.5    3.0    2     
+1      12     0.0    3.5    3.0    1     
