@@ -346,7 +346,6 @@ class QPrm(object):
                     except ValueError:  # some amber parm files are shit
                         periodicity = float(line[45:55])
                 except Exception as e:
-                    raise e
                     raise QPrmError("Could not parse line '{}'".format(line))
 
                 torsion = _PrmTorsion(a_types)
@@ -837,7 +836,8 @@ class QPrm(object):
         If unset, all parameters will be printed.
 
         Example:
-        get_string(atom_types=["CA", "NA", "CB"], bonds=["CA_CB"],
+        get_string(atom_types=[_PrmAtom, _PrmAtom],
+                   bonds=[_PrmBond, _PrmBond, _PrmBond],
                    angles=[], torsions=[], impropers=[])
         """
         
@@ -898,7 +898,10 @@ class QPrm(object):
                                    .format(a1, a2, a3, v.fc, v.theta0,
                                            v.comment))
 
-        for v in sorted(set(gentorsions), key=lambda x: x.prm_id):
+        # sorting function includes empty spaces before the prm_id so
+        # parameters with more wildcards come first
+        for v in sorted(set(gentorsions), key=lambda x: \
+                x.prm_id.count("?") * " " + x.prm_id):
             a1, a2, a3, a4 = v.atom_types
             for fc, periodicity, phase, npaths in v.get_prms():
                 prm_l["torsions"].append("{:<12} {:<12} {:<12} {:<12} "
