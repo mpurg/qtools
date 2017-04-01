@@ -74,7 +74,7 @@ def gc(args):
         print "Will use these directories for calculating GCs (use --dirs to "\
               "change this): {}\n".format(", ".join(calcdirs))
 
-    qgc = QGroupContrib(QScfg.get("qexec", "qcalc"), calcdirs, args.pdb,
+    qgc = QGroupContrib(args.qcalc_exec, calcdirs, args.pdb,
                         QScfg.get("files", "en_list_fn"),
                         lambdas[0], lambdas[1],
                         args.resid_first, args.resid_last,
@@ -238,6 +238,11 @@ def main():
     gc_optarg.add_argument("--writeout", action="store_true", default=False,
                            help="Write out QCalc inputs and outputs."
                                 "Default=Don't")
+
+    gc_optarg.add_argument("--qcalc_exec", dest="qcalc_exec",
+                           default=QScfg.get("qexec", "qcalc"),
+                           help="qcalc5 executable path (default={})."
+                                "".format(QScfg.get("qexec", "qcalc")))
 
 
     if len(sys.argv) == 1:

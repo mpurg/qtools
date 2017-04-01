@@ -58,26 +58,25 @@ class _QMapperThread(threading.Thread):
             if self.qm.kill_event.is_set():
                 return
 
-            relp = os.path.relpath(self.mapdir)
             try:
                 self.qinp, self.qout = self.qm.mapsingle(self.mapdir,
                                                          _qfep=self.qfep)
                 if self.supress_info:
-                    logger.debug("{} mapped.".format(relp))
+                    logger.debug("{} mapped.".format(self.mapdir))
                 else:
-                    logger.info("{} mapped.".format(relp))
+                    logger.info("{} mapped.".format(self.mapdir))
 
             except QMapperError as error_msg:
                 self.error = error_msg
                 if self.supress_info:
-                    logger.debug("{} failed.".format(relp))
+                    logger.debug("{} failed.".format(self.mapdir))
                 else:
-                    logger.info("{} failed.".format(relp))
+                    logger.info("{} failed.".format(self.mapdir))
 
             except Exception as error_msg:
                 self.error = error_msg
                 logger.critical("{}: Uncaught exception in mapping thread: "
-                                "{}".format(relp, error_msg))
+                                "{}".format(self.mapdir, error_msg))
 
 
 class QMapperError(Exception):
@@ -122,7 +121,7 @@ class QMapper(object):
 
         self._en_list_fn = en_list_fn
         self._qfep = QFep(qfep_exec)
-        self._mapdirs = mapdirs
+        self._mapdirs = [os.path.relpath(m) for m in mapdirs]
         self._nthreads = nthreads
 
         self.parms = {"hij": hij,
@@ -270,8 +269,7 @@ class QMapper(object):
 
         self.mapall(_supress_info=True)
         for (qfo, err) in self.failed.iteritems():
-            logger.info("Failed to map '{}': {}".format(os.path.relpath(qfo),
-                                                        err))
+            logger.info("Failed to map '{}': {}".format(qfo, err))
 
         if not self.mapped:
             raise QMapperError("All directories failed to map! Try changing "
@@ -366,7 +364,7 @@ class QMapper(object):
     @property
     def details(self):
 
-        fails = "\n".join(["{}: {}".format(md, e) for md, e in
+        fails = "\n".join(["{}: {}".format(md, e) for md, e in \
                                                  self.failed.iteritems()])
 
         qfep_version = "Unknown, likely ancient"
@@ -379,11 +377,11 @@ class QMapper(object):
                 qfep_version = qfo.header.qfep_version
                 break
 
-
-        mapdirs = ", ".join(os.path.relpath(m) for m in self._mapdirs)
+        mapdirs = ", ".join(self._mapdirs)
         outstr = """
 ------------------------------- Mapping details -------------------------------
 # Mapped with: Qtools ({version}), Qfep ({qfep_version})
+# Qfep path: {qfep_exec}
 # Work dir: {cwd}
 # Date: {date}
 # CMDline: {cmdline}
@@ -399,7 +397,8 @@ Fails:
 -------------------------------------------------------------------------------
 """.format(version=__version__, cwd=os.getcwd(), date=time.ctime(),
            inp_parms=self.input_parms_str, cmdline=" ".join(sys.argv),
-           fails=fails or "None", dirs=mapdirs, qfep_version=qfep_version)
+           fails=fails or "None", dirs=mapdirs, qfep_version=qfep_version,
+           qfep_exec=os.path.abspath(self._qfep.qfep_exec))
 
         return outstr
 

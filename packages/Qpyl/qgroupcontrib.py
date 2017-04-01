@@ -57,18 +57,17 @@ class _QGroupContribThread(threading.Thread):
         with self.semaphore:
             if self.qgc.kill_event.is_set():
                 return
-            relp = os.path.relpath(self.calcdir)
             try:
                 self.qinps, self.qouts = self.qgc._calcsingle(self.calcdir,
                                                               self.qcalc)
-                logger.info("'{}' done.".format(relp))
+                logger.info("'{}' done.".format(self.calcdir))
             except QGroupContribError as error_msg:
                 self.error = error_msg
-                logger.info("'{}' failed.".format(relp))
+                logger.info("'{}' failed.".format(self.calcdir))
             except Exception as error_msg:
                 self.error = error_msg
                 logger.critical("{}: Uncaught exception in calc thread: "
-                                "{}".format(relp, error_msg))
+                                "{}".format(self.calcdir, error_msg))
 
 
 class QGroupContribError(Exception):
@@ -108,7 +107,7 @@ class QGroupContrib(object):
             raise QGroupContribError("Can't parse PDB file '{}': {}"
                                      "".format(pdb_file, error_msg))
 
-        self._calcdirs = calcdirs
+        self._calcdirs = [os.path.relpath(cd) for cd in calcdirs]
         self._nthreads = nthreads
         self._lambdas_A = lambdas_A
         self._lambdas_B = lambdas_B
@@ -424,13 +423,14 @@ class QGroupContrib(object):
     @property
     def details(self):
 
-        fails = "\n".join(["{}: {}".format(cd, e) for cd, e in \
-                                                 self.failed.iteritems()])
+        fails = "\n".join(["{}: {}".format(cd, e) \
+                           for cd, e in self.failed.iteritems()])
 
-        calcdirs = ", ".join(os.path.relpath(c) for c in self._calcdirs)
+        calcdirs = ", ".join(self._calcdirs)
         outstr = """
 ---------------------------------- GC details ---------------------------------
 # Calculated with: Qtools ({version}), Qcalc ({qcalc_version})
+# Qcalc path: {qcalc_exec}
 # Work dir: {cwd}
 # Date: {date}
 # CMDline: {cmdline}
@@ -443,7 +443,8 @@ Fails:
 -------------------------------------------------------------------------------
 """.format(version=__version__, cwd=os.getcwd(), date=time.ctime(),
            cmdline=" ".join(sys.argv), qcalc_version=self.qcalc_version,
-           fails=fails or "None", dirs=calcdirs)
+           fails=fails or "None", dirs=calcdirs,
+           qcalc_exec=os.path.abspath(self._qcalc_exec))
 
         return outstr
 

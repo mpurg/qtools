@@ -89,6 +89,11 @@ def main():
                         help="Logfile name (default={})."
                              "".format(QScfg.get("files", "mapper_log")))
 
+    parser.add_argument("--qfep_exec", dest="qfep_exec",
+                        default=QScfg.get("qexec", "qfep"),
+                        help="qfep5 executable path (default={})."
+                             "".format(QScfg.get("qexec", "qfep")))
+
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
@@ -122,7 +127,7 @@ def main():
                      "points_skip": args.points_skip,
                      "minpts_bin": args.minpts_bin,
                      "gap_bins": args.gap_bins,
-                     "qfep_exec": QScfg.get("qexec", "qfep"),
+                     "qfep_exec": args.qfep_exec,
                      "en_list_fn": QScfg.get("files", "en_list_fn"),
                      "gas_const": QScfg.get("mapping", "gas_const")}
 
