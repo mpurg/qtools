@@ -142,11 +142,11 @@ class QStruct(object):
                                  .format(old_aindex, aindex),
                                  QStructError, logger, self.ignore_errors)
 
-                if not residue or residue.index != rindex:
-                    if residue and rindex - residue.index != 1:
+                if not residue or residue.index_struct != rindex:
+                    if residue and rindex - residue.index_struct != 1:
                         raise_or_log("Bad Mol2 format - residue "
                                      "index {} followed by {}"
-                                     .format(residue.index, rindex),
+                                     .format(residue.index_struct, rindex),
                                      QStructError, logger, self.ignore_errors)
                     residue = _StructResidue(rindex, rname, molecule, self)
                     self.residues.append(residue)
@@ -194,11 +194,11 @@ class QStruct(object):
                 rindex = int(line[22:26])
                 x, y, z = map(float, (line[30:38], line[38:46], line[46:54]))
 
-                if not residue or residue.index != rindex:
-                    if residue and rindex - residue.index != 1:
+                if not residue or residue.index_struct != rindex:
+                    if residue and rindex - residue.index_struct != 1:
                         raise_or_log("Bad PDB format - residue "
                                      "index {} followed by {}"
-                                     .format(residue.index, rindex),
+                                     .format(residue.index_struct, rindex),
                                      QStructError, logger, self.ignore_errors)
 
                     residue = _StructResidue(rindex, rname, molecule, self)
