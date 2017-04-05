@@ -27,10 +27,9 @@
 #
 #
 # Converts FFLD output to library and parameter files for Q.
-# Three arguments are required:
+# Two arguments are required:
 # - the FFLD file created with 'ffld_server' (SCHRODINGER's Maestro)
 # - PDB structure from which the FFLD_OUTPUT was created (QM optimized)
-# - the 3 letter code for the ligand
 #
 # Creates three files: .lib, .prm and .prm.chk
 #
@@ -65,8 +64,8 @@ and non-integer residue charges.
 """, add_help=False)
 reqarg = parser.add_argument_group("Required")
 reqarg.add_argument("ffld_output", help = "ffld_server output")
-reqarg.add_argument("pdb", help="QM optimized PDB structure file WHICH WAS "
-                                "USED TO CREATE THE FFLD_OUTPUT (used to copy "
+reqarg.add_argument("pdb", help="PDB structure file WHICH WAS USED TO CREATE "
+                                "THE FFLD_OUTPUT (used to copy "
                                 "atom names and check parameter energies)")
 optarg = parser.add_argument_group("Optional")
 optarg.add_argument("-o", dest="output_basename",

@@ -462,7 +462,7 @@ class QLib(object):
 
 
     def read_ffld(self, ffld_file, qstruct):
-        """Read and parse a Macromodel's FFLD file for oplsaa parameters.
+        """Read and parse a Macromodel FFLD file for oplsaa parameters.
 
         Args:
             ffld_file (string):  path/name of ffld file
@@ -510,6 +510,9 @@ class QLib(object):
         if self.ff_type != "oplsaa":
             raise QLibError("Function not supported with "
                             "force field '{}'".format(self.ff_type))
+
+        logger.warning("Q version 5.x does not support atom types "
+                       "with more than 8 characters!")
 
         # keys are ffld atom names, values are tuples:
         # (StructAtom, LibResidue)

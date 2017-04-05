@@ -633,6 +633,9 @@ class QPrm(object):
             raise QPrmError("Function not supported with "
                             "force field '{}'".format(self.ff_type))
 
+        logger.warning("Q version 5.x does not support atom types "
+                       "with more than 8 characters!")
+
         # key is ffld atom name (C1), value is atom type (CA_145)
         lookup_aname = {}
         section = None
