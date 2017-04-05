@@ -24,6 +24,22 @@ class TestQ:
 
         assert qp_str == qp_str2
 
+    def test_read_write_prm2(self):
+        qp_str = open("data/ace_ash_nma.prm", "r").read()
+        qp_str = re.sub("(\*|\!|#).*", "", qp_str)
+        qp_str = re.sub("\s+$", "", qp_str, 0, re.MULTILINE)
+        qp_str = re.sub("^\n", "", qp_str, 0, re.MULTILINE)
+
+        qprm = QPrm("oplsaa")
+        qprm.read_prm("data/ace_ash_nma.prm")
+        qp_str2 = qprm.get_string()
+        qp_str2 = re.sub("(\*|\!|#).*", "", qp_str2)
+        qp_str2 = re.sub("\s+$", "", qp_str2, 0, re.MULTILINE)
+        qp_str2 = re.sub("^\n", "", qp_str2, 0, re.MULTILINE)
+
+        assert qp_str == qp_str2
+
+
     def test_wrong_ff_fail(self):
         qprm = QPrm("amber")
         with pytest.raises(QPrmError):
@@ -49,6 +65,28 @@ class TestQ:
 
         assert qprm.torsions["Cstar CT CX N3"].fcs == [0.031, 0.234,
                                                        0.313, 0.079]
+
+    def test_types_opls(self):
+        qprm = QPrm("oplsaa")
+        qprm.read_prm("data/ace_ash_nma.prm")
+        assert qprm.atom_types["C_C2_235"].lj_A == 1802.2385
+        assert qprm.atom_types["C_C2_235"].lj_B == 34.1758
+        assert qprm.atom_types["C_C2_235"].mass == 12.011
+
+        assert qprm.bonds["CT1_C1_224 HC_H1_140"].fc == 680.0
+        assert qprm.bonds["CT1_C1_224 HC_H1_140"].r0 == 1.09
+
+        assert qprm.angles["OC3_O2_269 C_C2_267 OH_O4_268"].fc == 160.0
+        assert qprm.angles["OC3_O2_269 C_C2_267 OH_O4_268"].theta0 == 121.0
+
+        t = qprm.torsions["CT1_C1_224 CT_C1_135 C_C2_267 OH_O4_268"]
+        assert t.fcs == [0.225, 0.273, 0.5]
+        assert t.periodicities == [3.0, 2.0, 1.0]
+
+        i = qprm.impropers["CT1_C1_224 C_C2_235 N_N1_238 O_O2_236"]
+        assert i.fc == 10.5
+        assert i.phi0 == 180.0
+
 
 
 class TestAmber:
@@ -134,15 +172,15 @@ class TestOplsaa:
         assert len(qprm.torsions) == 35
         assert len(qprm.impropers) == 5
 
-    def test_types2(self):
+    def test_types_ffld(self):
         qprm = QPrm("oplsaa")
         qprm.read_ffld("data/ace_ash_nma.ffld11")
         print qprm.torsions.keys()
-        lj_A = 4*0.17*((3.25)**12)
-        lj_B = 4*0.17*((3.25)**6)
+        lj_A_i= ( 4*0.17*((3.25)**12) )**0.5
+        lj_B_i = ( 4*0.17*((3.25)**6) )**0.5
         at = qprm.atom_types["N_N1_238"]
-        assert abs(at.lj_A - lj_A) < 1e-7
-        assert abs(at.lj_B - lj_B) < 1e-7
+        assert abs(at.lj_A - lj_A_i) < 1e-7
+        assert abs(at.lj_B - lj_B_i) < 1e-7
 
         bond = qprm.bonds["CT_C1_135 C_C2_235"]
         assert abs(bond.fc/2.0 - 317.0) < 1e-7

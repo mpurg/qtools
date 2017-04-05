@@ -130,7 +130,13 @@ class QPrm(object):
 
 
                 if section == "options":
-                    key, value = line.split()
+                    try:
+                        key, value = line.split()
+                    except ValueError:
+                        raise QPrmError("Malformed key/value pair in "
+                                        "[options] section of parm file: "
+                                        "{line}"
+                                        .format(line))
                     self.options[key] = value
 
 
@@ -675,12 +681,13 @@ class QPrm(object):
                     name, type_, vdw, symbol = lf[0:4]
                     charge, sigma, epsilon = map(float, lf[4:7])
                     comment = "FFLD: " + " ".join(lf[8:])
-                except Exception as e:
+                except Exception:
                     raise QPrmError("Could not parse line: '{}'"
                                     .format(line))
 
-                lj_A = 4*epsilon*((sigma)**12)
-                lj_B = 4*epsilon*((sigma)**6)
+                lj_A_i = (4 * epsilon * sigma**12 )**0.5
+                lj_B_i = (4 * epsilon * sigma**6 )**0.5
+
                 element = "".join(c for c in vdw if c.isalpha())
                 try:
                     mass = ATOM_MASSES[element.upper()]
@@ -694,7 +701,7 @@ class QPrm(object):
                 atype = "{}_{}_{}".format(symbol, vdw, type_)
                 lookup_aname[name] = atype
                 atom_type = _PrmAtom(atype, mass,
-                                     lj_A=lj_A, lj_B=lj_B,
+                                     lj_A=lj_A_i, lj_B=lj_B_i,
                                      comment=comment)
                 prms["atoms"].append(atom_type)
 
@@ -746,7 +753,7 @@ class QPrm(object):
                                     .format(line))
 
 
-                periodicity = (1, 2, 3, 4)
+                periodicity = (1.0, 2.0, 3.0, 4.0)
                 phi0s = (0.0, 180.0, 0.0, 180.0)
                 paths = (1.0, 1.0, 1.0, 1.0)
 
@@ -868,7 +875,7 @@ class QPrm(object):
             impropers = self.impropers.values()
 
         for k, v in self.options.iteritems():
-            prm_l["options"].append("{:<30s} {:<s}".format(k,v))
+            prm_l["options"].append("{:<30s} {:<s}".format(k, v))
 
         for v in sorted(set(atom_types), key=lambda x: x.prm_id):
             if self.ff_type == "amber":
@@ -880,13 +887,14 @@ class QPrm(object):
                                                    v.lj_eps/2, v.mass,
                                                    v.comment))
             elif self.ff_type == "oplsaa":
-                lj_A = round(v.lj_A**0.5, 4)
-                lj_B = round(v.lj_B**0.5, 4)
+                lj_A = round(v.lj_A, 4)
+                lj_B = round(v.lj_B, 4)
                 prm_l["atom_types"].append("{:<12} {:>10} {:>10} "
                                            "{:>10} {:>10} {:>10} "
                                            "{:>10}{}"
                                            .format(v.atom_type, lj_A, lj_A,
-                                                   lj_B, round(lj_A/2**0.5, 4),
+                                                   lj_B,
+                                                   round(lj_A/2**0.5, 4),
                                                    round(lj_B/2**0.5, 4),
                                                    v.mass, v.comment))
 
@@ -973,17 +981,19 @@ class _PrmAtom(object):
         Args:
             atom_type (string):  atom type (CT, CA, Cstar)
             mass (float):  mass of atom
-            lj_A (float):  A_ii parameter for 12-6 pot. function
-                           (geometric rules)  [ kcal/A^12 ]
-            lj_B (float):  B_ii parameter
-                           (geometric rules)   [ kcal/A^6 ]
-            lj_R (float):  Rm_ii parameter
+            lj_A (float):  A_i parameter for 12-6 pot. function
+                           (geometric rules)  [ (kcal/A^12)^0.5 ]
+            lj_B (float):  B_i parameter
+                           (geometric rules)   [ (kcal/A^6)^0.5 ]
+            lj_R (float):  Rm_i parameter
                            (arithmetic rules)  [ A ]
-            lj_eps (float):  epsilon_ii parameter
-                             (arithmetic rules)  [ kcal ]
+            lj_eps (float):  epsilon_i parameter
+                             (arithmetic rules)  [ kcal^0.5 ]
             comment (string):  comment
 
         Note: Both A and B or both R and eps have to be given.
+        Note2: All parameters are "single-atom" parameters as defined
+               in Q prm files, ie. A_i = sqrt(A_ii), Rm_i = Rm_ii/2
         """
         # atom_type is a string like "CA" or "OW"
         self.atom_type = atom_type
@@ -998,7 +1008,7 @@ class _PrmAtom(object):
     @property
     def comment(self):
         if self._comment:
-            return " # {}".format(self._comment) 
+            return " # {}".format(self._comment)
         else:
             return ""
 
@@ -1032,7 +1042,7 @@ class _PrmBond(object):
     @property
     def comment(self):
         if self._comment:
-            return " # {}".format(self._comment) 
+            return " # {}".format(self._comment)
         else:
             return ""
 
@@ -1048,7 +1058,8 @@ class _PrmBond(object):
     @staticmethod
     def get_id(atom_types):
         """Return the unique identifier (sorted atom types)"""
-        # prm_id = atom_types - sorted, "CA CB" instead of "CB CA", to prevent double entries
+        # prm_id = atom_types - sorted, "CA CB" instead of "CB CA",
+        # to prevent double entries
         return " ".join(sorted(atom_types))
 
 
@@ -1063,7 +1074,7 @@ class _PrmAngle(object):
     @property
     def comment(self):
         if self._comment:
-            return " # {}".format(self._comment) 
+            return " # {}".format(self._comment)
         else:
             return ""
 
@@ -1100,7 +1111,7 @@ class _PrmTorsion(object):
         npaths = ",".join("{:.1f}".format(path) for path in self.npaths)
 
         return "_PrmTorsion({}, {})".format(self.prm_id, self.strval)
-            
+
     @property
     def strval(self):
         """Return parameter values in string format."""
@@ -1115,7 +1126,7 @@ class _PrmTorsion(object):
     @property
     def comment(self):
         if self._comment:
-            return " # {}".format(self._comment) 
+            return " # {}".format(self._comment)
         else:
             return ""
 
@@ -1142,7 +1153,7 @@ class _PrmTorsion(object):
 
     def get_prms(self):
         """Return a list of the torsion parameters.
-        
+
         The list is in reverse order of periodicity,
         all but last periodicities are set to negative value.
 
@@ -1151,10 +1162,10 @@ class _PrmTorsion(object):
           (fc1, periodicity1, phase1, npaths1) ]
         """
         prms = sorted(zip(self.fcs, self.periodicities,
-                          self.phases, self.npaths), 
-                          key=lambda x: x[1], reverse=True)
+                          self.phases, self.npaths),
+                      key=lambda x: x[1], reverse=True)
         rl = []
-        for i,prm in enumerate(prms):
+        for i, prm in enumerate(prms):
             prm = list(prm)
             if i != len(prms)-1:
                 prm[1] = -prm[1]
@@ -1169,8 +1180,8 @@ class _PrmImproper(object):
         self.fc = fc
         self.phi0 = phi0
         if abs(periodicity) - 2.0 > 0.00001:
-            raise QPrmError("Q does not support periodicity != 2.0 in impropers "
-                            "({})".format(self))
+            raise QPrmError("Q does not support periodicity != 2.0 in "
+                            "impropers ({})".format(self))
         self.periodicity = periodicity
         self.prm_id = self.get_id(center_atom_type, other_atom_types)
         self.atom_types = self.prm_id.split()
@@ -1179,7 +1190,7 @@ class _PrmImproper(object):
     @property
     def comment(self):
         if self._comment:
-            return " # {}".format(self._comment) 
+            return " # {}".format(self._comment)
         else:
             return ""
 
