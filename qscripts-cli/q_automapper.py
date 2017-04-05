@@ -140,7 +140,7 @@ def main():
     optarg.add_argument("--nosingle", dest="nosingle", action="store_true",
                         help="Do not run the first iteration on only 1 dir.")
 
-    parser.add_argument("--qfep_exec", dest="qfep_exec",
+    optarg.add_argument("--qfep_exec", dest="qfep_exec",
                         default=QScfg.get("qexec", "qfep"),
                         help="qfep5 executable path (default={})."
                              "".format(QScfg.get("qexec", "qfep")))

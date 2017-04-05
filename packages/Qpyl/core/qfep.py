@@ -331,11 +331,7 @@ class _QFepPart1(object):
             line = re.split("#|\!", line)[0].strip()
             if not line:
                 continue
-            try:
-                row = [float(x) for x in line.split()]
-            except ValueError:
-                raise QFepOutputError("Bad data in Part1: {}"
-                                      "".format(line))
+            row = [float(x) for x in line.split()]
             self.data.add_row(row)
 
 
@@ -392,11 +388,7 @@ class _QFepPart2(object):
             line = re.split("#|\!", line)[0].strip()
             if not line:
                 continue
-            try:
-                row = [float(x) for x in line.split()]
-            except ValueError:
-                raise QFepOutputError("Bad data in Part2: {}"
-                                      "".format(line))
+            row = [float(x) for x in line.split()]
             self.data.add_row(row)
 
 

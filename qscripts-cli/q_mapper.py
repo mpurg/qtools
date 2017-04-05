@@ -50,46 +50,47 @@ def main():
     """, add_help=False)
 
     reqarg = parser.add_argument_group("Required")
-    parser.add_argument("hij", type=float, help="Hij coupling constant")
+    reqarg.add_argument("hij", type=float, help="Hij coupling constant")
 
-    parser.add_argument("alpha", type=float, help="state 2 shift (alpha)")
+    reqarg.add_argument("alpha", type=float, help="state 2 shift (alpha)")
 
-    parser.add_argument("--nt", dest='nthreads', type=int,
+    optarg = parser.add_argument_group("Optional")
+    optarg.add_argument("--nt", dest='nthreads', type=int,
                         default=QScfg.get("mapping", "nthreads"),
                         help="Number of threads (default = {})"
                              "".format(QScfg.get("mapping", "nthreads")))
 
-    parser.add_argument("--bins", dest="gap_bins", type=int,
+    optarg.add_argument("--bins", dest="gap_bins", type=int,
                         default=QScfg.get("mapping", "gap_bins"),
                         help="Number of gap-bins (default={})."
                              "".format(QScfg.get("mapping", "gap_bins")))
 
-    parser.add_argument("--skip", dest="points_skip", type=int,
+    optarg.add_argument("--skip", dest="points_skip", type=int,
                         default=QScfg.get("mapping", "points_skip"),
                         help="Number of points to skip in each frame "
                              "(default={})."
                              "".format(QScfg.get("mapping", "points_skip")))
 
-    parser.add_argument("--min", dest="minpts_bin", type=int,
+    optarg.add_argument("--min", dest="minpts_bin", type=int,
                         default=QScfg.get("mapping", "minpts_bin"),
                         help="Minimum points for gap-bin (default={})."
                              "".format(QScfg.get("mapping", "minpts_bin")))
 
-    parser.add_argument("--temp", dest="temperature", type=float,
+    optarg.add_argument("--temp", dest="temperature", type=float,
                         default=QScfg.get("mapping", "temperature"),
                         help="Temperature (default={})."
                              "".format(QScfg.get("mapping", "temperature")))
 
-    parser.add_argument("--dirs", nargs="+", dest="mapdirs", default=[],
+    optarg.add_argument("--dirs", nargs="+", dest="mapdirs", default=[],
                         help="Directories to map (default=all subdirs "
                              "in cwd or current dir)")
 
-    parser.add_argument("--out", dest="outfile",
+    optarg.add_argument("--out", dest="outfile",
                         default=QScfg.get("files", "mapper_log"),
                         help="Logfile name (default={})."
                              "".format(QScfg.get("files", "mapper_log")))
 
-    parser.add_argument("--qfep_exec", dest="qfep_exec",
+    optarg.add_argument("--qfep_exec", dest="qfep_exec",
                         default=QScfg.get("qexec", "qfep"),
                         help="qfep5 executable path (default={})."
                              "".format(QScfg.get("qexec", "qfep")))

@@ -371,7 +371,7 @@ class QMapper(object):
         for _, qfep_out in self.mapped.values():
             try:
                 qfo = QFepOutput(qfep_out)
-            except QFepOutputError:
+            except Exception:
                 pass
             else:
                 qfep_version = qfo.header.qfep_version
