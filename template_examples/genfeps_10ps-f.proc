@@ -70,3 +70,5 @@ steps                100000
 [MD]
 steps                 10000
 
+[intervals]
+energy                   10
