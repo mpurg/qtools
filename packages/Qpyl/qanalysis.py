@@ -239,6 +239,7 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
         - Sampling profiles
         - LRA contributions (statistics)
         - Free energy profiles vs Egap (bin-averaged)
+        - Coefficients vs Egap (part3)
         """
 
         plots = ODict()
@@ -275,15 +276,23 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
                                       ylabel="Potential energy  [kcal/mol]",
                                       plot_type="bar")
 
-        plots["egap_l"] = PlotData("Sampling",
-                                   xlabel="Lambda",
-                                   ylabel="E1-E2  [kcal/mol]")
-        plots["pts_egap"] = PlotData("Sampling2",
-                                     xlabel="Egap",
+        plots["lambda_egap"] = PlotData("Sampling (binning): "
+                                        "Check the overlap between lambda "
+                                        "frames in each bin",
+                                        xlabel="Egap [kcal/mol]",
+                                        ylabel="Lambda",
+                                        plot_type="scatter")
+        plots["pts_egap"] = PlotData("Sampling (total counts): "
+                                     "Check for breaks.",
+                                     xlabel="Egap [kcal/mol]",
                                      ylabel="Number of points")
+        plots["pts_egap_hists"] = PlotData("Sampling (histograms, 1st output "
+                                           "only): Check overlap ",
+                                           xlabel="Egap",
+                                           ylabel="Number of points,")
         plots["pts_egap_l"] = PlotData("Sampling3D (1st output only)",
-                                       xlabel="Lambda",
-                                       ylabel="Egap",
+                                       xlabel="Egap",
+                                       ylabel="Lambda",
                                        zlabel="Number of points",
                                        plot_type="wireframe")
         plots["dgl"] = PlotData("dG vs Lambda",
@@ -332,19 +341,33 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
                     # 3rd column is lambda, 4,5,6,7.. are energies
                     plots[key].add_subplot(relp, data[3], data[i+4])
 
+
             # Part 1 FEP
             data = qfo.part1.data.get_columns(["Lambda", "sum_dGf",
                                                "sum_dGr", "dG"])
             plots["dgl_forw"].add_subplot(relp, data[0], data[1])
+
             plots["dgl_rev"].add_subplot(relp, data[0], data[2])
             plots["dgl"].add_subplot(relp, data[0], data[3])
 
+
             # Part 2 (sampling/binning)
             data = qfo.part2.data.get_columns(["Lambda", "Egap", "points"])
-            plots["egap_l"].add_subplot(relp, data[0], data[1])
-            # only the first one, it's used only for debugging anyway
+            plots["lambda_egap"].add_subplot(relp, data[1], data[0])
+
+            ## use only the first one, too much data otherwise
+            if not plots["pts_egap_hists"].subplots:
+                rows = zip(*data) #transpose columns to rows
+                for l in sorted(set(data[0])):
+                    rows_f = [(eg, pts) for lam, eg, pts in rows if lam == l]
+                    eg, pts = zip(*rows_f) #transpose rows to columns
+
+                    plots["pts_egap_hists"].add_subplot("{}_{}".format(relp, l),
+                                                        eg, pts)
+            ## use only the first one, too much data otherwise
             if not plots["pts_egap_l"].subplots:
-                plots["pts_egap_l"].add_subplot(relp, data[0], data[1], data[2])
+                plots["pts_egap_l"].add_subplot(relp, data[1], data[0], data[2])
+
 
             # Part 3
             data = qfo.part3.data.get_columns(["Egap", "dGg_norm",
