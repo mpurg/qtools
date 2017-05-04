@@ -236,6 +236,7 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
         Useful data:
         - All energies from part 0
         - FEP back, forward and average dG profiles vs lambda
+        - FEP delta (forward - reverse) vs lambda
         - Sampling profiles
         - LRA contributions (statistics)
         - Free energy profiles vs Egap (bin-averaged)
@@ -298,6 +299,9 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
         plots["dgl"] = PlotData("dG vs Lambda",
                                 xlabel="Lambda",
                                 ylabel="Free energy  [kcal/mol]")
+        plots["dgl_delta"] = PlotData("(dGf-dGr) vs Lambda: Lower, better",
+                                      xlabel="Lambda",
+                                      ylabel="Free energy  [kcal/mol]")
         plots["dgl_forw"] = PlotData("dG vs Lambda (forward)",
                                      xlabel="Lambda",
                                      ylabel="Free energy  [kcal/mol]")
@@ -343,10 +347,16 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
 
 
             # Part 1 FEP
-            data = qfo.part1.data.get_columns(["Lambda", "sum_dGf",
-                                               "sum_dGr", "dG"])
-            plots["dgl_forw"].add_subplot(relp, data[0], data[1])
+            data = qfo.part1.data.get_columns(["Lambda", "dGf",
+                                               "dGr", "dG"])
 
+            delta = [0,]
+            for dgf, dgb in zip(data[1][1:], data[2][:-1]):
+                dg = abs(dgf)-abs(dgb)
+                delta.append(dg)
+
+            plots["dgl_delta"].add_subplot(relp, data[0], delta)
+            plots["dgl_forw"].add_subplot(relp, data[0], data[1])
             plots["dgl_rev"].add_subplot(relp, data[0], data[2])
             plots["dgl"].add_subplot(relp, data[0], data[3])
 
