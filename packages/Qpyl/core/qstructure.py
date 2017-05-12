@@ -38,13 +38,17 @@ PosVector = namedtuple("PosVector", ["x", "y", "z"])
 
 
 _PLACEHOLDER_RE = re.compile("\$\S+\.\S+\$")
+_COMMENTS_RE = re.compile(r"[#\!].*")
 
 def find_placeholders(inputstring):
-    """Find atom placeholders ($514.C3).
+    """Find atom placeholders of the form $514.C3$
+
+    It ignores comments (characters following # or !)
     
     See also QStruct.convert_placeholders
     """
-    return _PLACEHOLDER_RE.findall(inputstring)
+    tmp = re.sub(_COMMENTS_RE, "", inputstring)
+    return _PLACEHOLDER_RE.findall(tmp)
 
 
 class QStructError(Exception):
