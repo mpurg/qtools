@@ -3,3 +3,4 @@ tmp-run/
 qscripts.cfg
 *swp
 .cache
+.coverage

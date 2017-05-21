@@ -62,7 +62,7 @@ improper_definition            explicit\
     assert abs(be - 181.2572830) < 1e-7
     assert abs(ae - 212.8539304) < 1e-7
     assert abs(te - 417.2919960) < 1e-7
-    assert abs(ie - 23.0370760) < 1e-7
+    assert abs(ie - 22.8171235) < 1e-7
 
     # compare with official lib
     qa14_lib = open("data/qamber14.lib", "r").read()

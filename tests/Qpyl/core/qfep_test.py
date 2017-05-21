@@ -19,6 +19,9 @@ class TestQFepOutput:
         qfo_str = open("data/qfep.out.2", "r").read()
         return QFepOutput(qfo_str)
 
+    def test_bad_output(self):
+        with pytest.raises(QFepOutputError):
+            QFepOutput(open("data/qcalc.out.1", "r").read())
 
     def test_header(self, qfo1):
         # no point in having multiple tests for this

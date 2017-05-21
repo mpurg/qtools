@@ -298,7 +298,7 @@ class QTopology(object):
     def _get_impropers(self):
         # create impropers -
         # only those that are explicitly defined in the library
-        for i, residue in enumerate(self.residues):
+        for residue_index, residue in enumerate(self.residues):
             for improper in residue.lib.impropers:
                 # find _TopoAtom-s involved
                 atoms = []
@@ -307,13 +307,13 @@ class QTopology(object):
                     # some impropers span to next or
                     # previous residues (-C, +N)
                     if "+" in aname:
-                        if i+1 == len(self.residues):
+                        if residue_index+1 == len(self.residues):
                             continue
-                        res = self.residues[i+1]
+                        res = self.residues[residue_index+1]
                     if "-" in aname:
-                        if i == 0:
+                        if residue_index == 0:
                             continue
-                        res = self.residues[i-1]
+                        res = self.residues[residue_index-1]
 
                     # if separate chains, skip
                     if residue.struct.molecule != res.struct.molecule:
