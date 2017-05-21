@@ -3,6 +3,9 @@ from Qpyl.core.qlibrary import QLib
 from Qpyl.core.qstructure import QStruct
 from Qpyl.core.qtopology import QTopology
 
+def is_close(a, b, rel_tol=1e-09, abs_tol=0.0):
+    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
 
 def test_ff14sb_conversion():
     # Amber14FF to Qamber14 
@@ -59,10 +62,10 @@ improper_definition            explicit\
     te = sum([tor.calc()[0] for tor in qat.torsions])
     ie = sum([imp.calc()[0] for imp in qat.impropers])
 
-    assert abs(be - 181.2572830) < 1e-7
-    assert abs(ae - 212.8539304) < 1e-7
-    assert abs(te - 417.2919960) < 1e-7
-    assert abs(ie - 22.8171235) < 1e-7
+    assert is_close(be, 181.2572830)
+    assert is_close(ae, 212.8539304)
+    assert is_close(te, 417.2919960)
+    assert is_close(ie, 22.8171235)
 
     # compare with official lib
     qa14_lib = open("data/qamber14.lib", "r").read()

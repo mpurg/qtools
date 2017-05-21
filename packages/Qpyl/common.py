@@ -83,7 +83,7 @@ def backup_file(filename):
         while os.path.lexists(os.path.join(di, backup_filename)):
             backup_filename = "#%s.%d#" % (fn, i)
             i += 1
-            if i > 100:
+            if i > 10:
                 logger.warning("You have more than 100 backed up files... "
                                "Cleaning time...")
         shutil.copy2(filename, os.path.join(di, backup_filename))

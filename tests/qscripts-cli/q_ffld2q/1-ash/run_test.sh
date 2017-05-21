@@ -1,10 +1,13 @@
 #!/bin/bash
 
-# make sure we are using this copy of the scripts
-source ../../../../qtools_init.sh
-
 # get the diffing function and some variable
 source ../../common.sh
+
+
+# make sure we are running this copy of the scripts
+source ../../../../qtools_init.sh
+
+
 
 ROOTDIR=$(pwd)
 mkdir -p $TESTDIR

@@ -2,11 +2,6 @@
 # common stuff all the test scripts share
 #
 
-PASSONFAIL=0
-if [[ $1 == "pass" ]]; then
-    PASSONFAIL=1
-fi
-
 TESTDIR="tmp-run"
 DIFFS="diffs.txt"
 STDOUT="stdout.txt"
@@ -24,9 +19,17 @@ ${TESTDIR}/${STDOUT}
 run_diff () {
   d=$(eval $@)
   if [[ $? -ne 0 ]]; then
-    echo "$@"   >> ${DIFFS}
-    echo "${d}" >> ${DIFFS}
     echo -e "${FAIL}"
+    if [[ ${TRAVIS} == "true" ]]; then
+        echo "$@"
+        echo "${d}"
+        # since we can't access the files on travis, print them out...
+        echo "Outputs:"
+        cat ${STDOUT}
+    else
+        echo "$@"   >> ${DIFFS}
+        echo "${d}" >> ${DIFFS}
+    fi
     if [[ ${PASSONFAIL} -eq 0 ]]; then
         exit 1
     fi

@@ -7,6 +7,9 @@ import re
 import pytest
 from Qpyl.core.qparameter import QPrm, QPrmError
 
+def is_close(a, b, rel_tol=1e-09, abs_tol=0.0):
+    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
 
 class TestQ:
 # TODO: tests for _PrmAtom/Bond/Angle/Torsion/Improper's functions
@@ -179,29 +182,29 @@ class TestOplsaa:
         lj_A_i= ( 4*0.17*((3.25)**12) )**0.5
         lj_B_i = ( 4*0.17*((3.25)**6) )**0.5
         at = qprm.atom_types["N_N1_238"]
-        assert abs(at.lj_A - lj_A_i) < 1e-7
-        assert abs(at.lj_B - lj_B_i) < 1e-7
+        assert is_close(at.lj_A, lj_A_i)
+        assert is_close(at.lj_B, lj_B_i)
 
         bond = qprm.bonds["CT_C1_135 C_C2_235"]
-        assert abs(bond.fc/2.0 - 317.0) < 1e-7
-        assert abs(bond.r0 - 1.522) < 1e-7
+        assert is_close(bond.fc/2.0, 317.0)
+        assert is_close(bond.r0, 1.522)
 
         ang = qprm.angles["CT_C1_135 CT1_C1_224 C_C2_235"]
-        assert abs(ang.fc/2.0 - 63.0) < 1e-7
-        assert abs(ang.theta0 - 111.1) < 1e-7
+        assert is_close(ang.fc/2.0, 63.0)
+        assert is_close(ang.theta0, 111.1)
 
         ang = qprm.angles["CT_C1_135 CT1_C1_224 C_C2_235"]
-        assert abs(ang.fc/2.0 - 63.0) < 1e-7
-        assert abs(ang.theta0 - 111.1) < 1e-7
+        assert is_close(ang.fc/2.0, 63.0)
+        assert is_close(ang.theta0, 111.1)
 
         tors = qprm.torsions["C_C2_235 CT1_C1_224 N_N1_238 C_C2_235"]
-        assert abs(tors.fcs[0]*2.0 - -2.365) < 1e-7
-        assert abs(tors.fcs[1]*2.0 - 0.912) < 1e-7
-        assert abs(tors.fcs[2]*2.0 - -0.850) < 1e-7
-        assert abs(tors.periodicities[0] - 1.0) < 1e-7
-        assert abs(tors.periodicities[1] - 2.0) < 1e-7
-        assert abs(tors.periodicities[2] - 3.0) < 1e-7
-        assert abs(tors.phases[0] - 0.0) < 1e-7
-        assert abs(tors.phases[1] - 180.0) < 1e-7
-        assert abs(tors.phases[2] - 0.0) < 1e-7
+        assert is_close(tors.fcs[0]*2.0, -2.365)
+        assert is_close(tors.fcs[1]*2.0, 0.912)
+        assert is_close(tors.fcs[2]*2.0, -0.850)
+        assert is_close(tors.periodicities[0], 1.0)
+        assert is_close(tors.periodicities[1], 2.0)
+        assert is_close(tors.periodicities[2], 3.0)
+        assert is_close(tors.phases[0], 0.0)
+        assert is_close(tors.phases[1], 180.0)
+        assert is_close(tors.phases[2], 0.0)
 

@@ -6,6 +6,9 @@ import pytest
 
 from Qpyl.core.qfep import QFepOutput, QFepOutputError
 
+def is_close(a, b, rel_tol=1e-09, abs_tol=0.0):
+    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
 
 class TestQFepOutput:
 
@@ -46,10 +49,10 @@ class TestQFepOutput:
 
     def test_part1(self, qfo1):
         sum_dg = sum(qfo1.part1.data.get_columns(["dG"])[0])
-        assert abs(sum_dg - 1651.77) < 1e-7
+        assert is_close(sum_dg, 1651.77)
 
     def test_dgfep1(self, qfo1):
-        assert abs(qfo1.part1.dg - -10.204) < 1e-7
+        assert is_close(qfo1.part1.dg, -10.204)
 
     def test_lra1(self, qfo1):
         # LRA of EQbond
@@ -60,7 +63,7 @@ class TestQFepOutput:
         lras = qfo1.part0.calc_lra(1.0, 0.0)
         print lras
         lra_eqbond = lras.get_columns(["LRA"])[0][1]
-        assert abs(lra_eqbond - -6.7350) < 1e-7
+        assert is_close(lra_eqbond, -6.7350)
 
     def test_lra2(self, qfo2):
         lras = qfo2.part0.calc_lra(1.0, 0.0)
@@ -71,48 +74,48 @@ class TestQFepOutput:
         assert lras == expected
 
     def test_dgs1(self, qfo2):
-        assert abs(qfo2.part3.dga - 23.98) < 1e-7
-        assert abs(qfo2.part3.dg0 - -21.98) < 1e-7
+        assert is_close(qfo2.part3.dga, 23.98)
+        assert is_close(qfo2.part3.dg0, -21.98)
 
     def test_dgs2(self, qfo2):
         sub_calc = qfo2.sub_calcs["ex_full_49"]
-        assert abs(sub_calc.part3.dga - 23.28) < 1e-7
-        assert abs(sub_calc.part3.dg0 - -23.45) < 1e-7
+        assert is_close(sub_calc.part3.dga, 23.28)
+        assert is_close(sub_calc.part3.dg0, -23.45)
 
     def test_dgs3(self, qfo2):
         sub_calc = qfo2.sub_calcs["ex_full_200"]
-        assert abs(sub_calc.part3.dga - 25.82) < 1e-7
-        assert abs(sub_calc.part3.dg0 - -15.95) < 1e-7
+        assert is_close(sub_calc.part3.dga, 25.82)
+        assert is_close(sub_calc.part3.dg0, -15.95)
 
     def test_dgs4(self, qfo2):
         sub_calc = qfo2.sub_calcs["ex_full_221"]
-        assert abs(sub_calc.part3.dga - 9.77) < 1e-7
-        assert abs(sub_calc.part3.dg0 - -52.08) < 1e-7
+        assert is_close(sub_calc.part3.dga, 9.77)
+        assert is_close(sub_calc.part3.dg0, -52.08)
 
     def test_dgs5(self, qfo2):
         sub_calc = qfo2.sub_calcs["ex_full_49_200_221"]
-        assert abs(sub_calc.part3.dga - 10.69) < 1e-7
-        assert abs(sub_calc.part3.dg0 - -47.67) < 1e-7
+        assert is_close(sub_calc.part3.dga, 10.69)
+        assert is_close(sub_calc.part3.dg0, -47.67)
 
     def test_dgs6(self, qfo2):
         sub_calc = qfo2.sub_calcs["ex_el_49_200_221"]
-        assert abs(sub_calc.part3.dga - 10.64) < 1e-7
-        assert abs(sub_calc.part3.dg0 - -47.71) < 1e-7
+        assert is_close(sub_calc.part3.dga, 10.64)
+        assert is_close(sub_calc.part3.dg0, -47.71)
 
     def test_dgs7(self, qfo2):
         sub_calc = qfo2.sub_calcs["ex_vdw_49_200_221"]
-        assert abs(sub_calc.part3.dga - 24.04) < 1e-7
-        assert abs(sub_calc.part3.dg0 - -21.94) < 1e-7
+        assert is_close(sub_calc.part3.dga, 24.04)
+        assert is_close(sub_calc.part3.dg0, -21.94)
 
     def test_dgs8(self, qfo2):
         sub_calc = qfo2.sub_calcs["QCP"]
-        assert abs(sub_calc.part3.dga - 23.31) < 1e-7
-        assert abs(sub_calc.part3.dg0 - -22.12) < 1e-7
+        assert is_close(sub_calc.part3.dga, 23.31)
+        assert is_close(sub_calc.part3.dg0, -22.12)
 
     def test_dgs9(self, qfo2):
         sub_calc = qfo2.sub_calcs["QCP_mass"]
-        assert abs(sub_calc.part3.dga - 23.60) < 1e-7
-        assert abs(sub_calc.part3.dg0 - -21.95) < 1e-7
+        assert is_close(sub_calc.part3.dga, 23.60)
+        assert is_close(sub_calc.part3.dg0, -21.95)
 
 
 

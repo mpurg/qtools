@@ -34,11 +34,17 @@ import sys
 import argparse
 import os
 from collections import OrderedDict as ODict
+import logging
 
 from Qpyl.qanalysis import QAnalyseDyns, QAnalyseDynError
-from Qpyl.common import backup_file
+from Qpyl.common import backup_file, SpecialFormatter
 from Qpyl import plotdata
 
+logger = logging.getLogger('Qpyl')
+logger.setLevel(logging.INFO)
+handler = logging.StreamHandler(sys.stdout)
+handler.setFormatter(SpecialFormatter())
+logger.addHandler(handler)
 
 parser = argparse.ArgumentParser(description="""
 Script for extracting temperatures and energies from QDyn outputs.

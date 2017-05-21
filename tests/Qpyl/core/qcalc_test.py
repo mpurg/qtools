@@ -6,6 +6,9 @@ import pytest
 
 from Qpyl.core.qcalc import QCalcOutput
 
+def is_close(a, b, rel_tol=1e-09, abs_tol=0.0):
+    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
+
 
 class TestQFepOutput:
 
@@ -24,19 +27,19 @@ class TestQFepOutput:
 
     def test_gc1(self, qco1):
         lj, el = qco1.results["gc"].get_columns(["E_LJ", "E_EL"])
-        assert abs(sum(lj) - -10.40) < 1e-7
-        assert abs(sum(el) - -212.96) < 1e-7
+        assert is_close(sum(lj), -10.40)
+        assert is_close(sum(el), -212.96)
 
     def test_gc2(self, qco1):
         els = dict(qco1.results["gc"].get_rows(columns=["Residue", "E_EL"]))
-        assert abs(els[35] - 24.27) < 1e-7
-        assert abs(els[227] - -13.65) < 1e-7
-        assert abs(els[286] - 22.21) < 1e-7
+        assert is_close(els[35], 24.27)
+        assert is_close(els[227], -13.65)
+        assert is_close(els[286], 22.21)
 
     def test_calcs(self, qco2):
-        assert abs(sum(qco2.results["1"].get_columns()[1]) - 14.189316) < 1e-7
-        assert abs(sum(qco2.results["2"].get_columns()[1]) - 16.44) < 1e-7
-        assert abs(sum(qco2.results["3"].get_columns()[1]) - 32.81) < 1e-7
-        assert abs(sum(qco2.results["4"].get_columns()[1]) - 179.94) < 1e-7
-        assert abs(sum(qco2.results["5"].get_columns()[1]) - 1183.01) < 1e-7
+        assert is_close(sum(qco2.results["1"].get_columns()[1]), 14.189316)
+        assert is_close(sum(qco2.results["2"].get_columns()[1]), 16.44)
+        assert is_close(sum(qco2.results["3"].get_columns()[1]), 32.81)
+        assert is_close(sum(qco2.results["4"].get_columns()[1]), 179.94)
+        assert is_close(sum(qco2.results["5"].get_columns()[1]), 1183.01)
 

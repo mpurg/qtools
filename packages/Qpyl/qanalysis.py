@@ -483,6 +483,10 @@ class QAnalyseDyns(object):
             print colt, np.mean( [ x for j,x in enumerate(temps[i]) if temps[0][j] >= midpoint ] )
 
         """
+
+        logger.warning("QAnalyseDyns is under development. "
+                       "Use at your own risk!")
+
         if not logfiles:
             raise QAnalyseDynError("No logfiles given")
         self.analysed = []

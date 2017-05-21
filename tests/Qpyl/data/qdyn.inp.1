@@ -1,0 +1,54 @@
+[md]
+steps                                        100000
+random_seed                                     123
+temperature                                     300
+stepsize                                          1
+bath_coupling                                   100
+initial_temperature                             300
+separate_scaling                                 on
+lrf                                              on
+shake_solvent                                   off
+
+[cut-offs]
+solute_solute                                    10
+solvent_solvent                                  10
+solute_solvent                                   10
+q_atom                                           99
+
+[intervals]
+non_bond                                         30
+output                                         5000
+temperature                                    1000
+energy                                           10
+trajectory                                     5000
+
+[files]
+topology                                    asd.top
+restart                                      asd.re
+final                                       asd2.re
+trajectory                                  asd.dcd
+energy                                       asd.en
+fep                                         asd.fep
+
+[lambdas]
+1.00  0.00
+
+[group_contribution]
+residue full  80
+
+[atom_restraints]
+8      0.0    0.0    0.0    5      5      5      0     
+
+[sequence_restraints]
+1      6      0.1    0      0     
+11     12     0.1    0      0     
+
+[distance_restraints]
+1      11     0.0    3.5    3.0    2     
+1      12     0.0    3.5    3.0    1     
+
+[angle_restraints]
+1      5      3      180.0  3.0    2     
+
+[wall_restraints]
+1      2      10     5      0      0      0     

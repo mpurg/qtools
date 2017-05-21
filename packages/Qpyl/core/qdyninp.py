@@ -110,7 +110,8 @@ Q_PARAMETERS = ODict( [ ("md", ODict( [ ("steps", int),
                         ("atom_restraints", list),
                         ("sequence_restraints", list),
                         ("distance_restraints", list),
-                        ("angle_restraints", list)
+                        ("angle_restraints", list),
+                        ("wall_restraints", list)
                       ]) 
 
 class QDynInputError(Exception):
