@@ -1,0 +1,14 @@
+# q atom (q)                   PDB ID                        LIB ID (resname.name)
+# or neighbour (n)?         (resid.name)             STATE 1       STATE 2        STATE 3       ....
+
+# Bromo propane 
+q                               1.O1                3HP.O1      3H2.O1
+q                               1.C1                3HP.C1      3H2.C1
+q                               1.C2                3HP.C2      3H2.C2
+q                               1.C3                3HP.C3      3H2.C3
+q                               1.O2                3HP.O2      3H2.O2
+q                               1.H1                3HP.H1      3H2.H1
+q                               1.H2                3HP.H2      3H2.H2
+q                               1.H3                3HP.H3      3H2.H3
+q                               1.H4                3HP.H4      3H2.H4
+                                   

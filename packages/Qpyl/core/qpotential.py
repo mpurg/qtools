@@ -193,7 +193,7 @@ def torsion_energy(phi, fc, periodicity, npaths, phi0):
     """
     phi = math.pi/180.0 * phi   # degrees to radians
     phi0 = math.pi/180.0 * phi0   # degrees to radians
-    return fc/npaths * (1 + math.cos(periodicity*phi - phi0))
+    return 1.0 * fc/npaths * (1 + math.cos(periodicity*phi - phi0))
 
 def improper_energy_periodic(phi, fc, periodicity, phi0):
     """

@@ -44,7 +44,7 @@ except ImportError:
 
 # this should change when the config file format changes
 # to indicate an incompatible config file
-CFG_VERSION = 9
+CFG_VERSION = 10
 
 
 # absolute config path

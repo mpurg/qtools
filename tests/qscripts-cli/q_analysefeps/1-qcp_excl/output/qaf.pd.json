@@ -4,7 +4,7 @@
     "title": "Free energy profile", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           8.8, 
@@ -363,7 +363,7 @@
     "title": "Sampling (binning): Check the overlap between lambda frames in each bin", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           1.0, 
@@ -722,7 +722,7 @@
     "title": "Sampling (total counts): Check for breaks.", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           32.0, 
@@ -841,7 +841,7 @@
     "title": "Sampling (histograms, 1st output only): Check overlap ", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log_0.0": {
+      "input/qfep_123.log_0.0": {
         "yerror": null, 
         "ydata": [
           17.0, 
@@ -857,7 +857,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.02": {
+      "input/qfep_123.log_0.02": {
         "yerror": null, 
         "ydata": [
           34.0, 
@@ -869,7 +869,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.04": {
+      "input/qfep_123.log_0.04": {
         "yerror": null, 
         "ydata": [
           16.0, 
@@ -885,7 +885,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.06": {
+      "input/qfep_123.log_0.06": {
         "yerror": null, 
         "ydata": [
           25.0, 
@@ -899,7 +899,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.08": {
+      "input/qfep_123.log_0.08": {
         "yerror": null, 
         "ydata": [
           22.0, 
@@ -913,7 +913,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.1": {
+      "input/qfep_123.log_0.1": {
         "yerror": null, 
         "ydata": [
           30.0, 
@@ -927,7 +927,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.12": {
+      "input/qfep_123.log_0.12": {
         "yerror": null, 
         "ydata": [
           24.0, 
@@ -943,7 +943,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.14": {
+      "input/qfep_123.log_0.14": {
         "yerror": null, 
         "ydata": [
           23.0, 
@@ -957,7 +957,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.16": {
+      "input/qfep_123.log_0.16": {
         "yerror": null, 
         "ydata": [
           13.0, 
@@ -975,7 +975,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.18": {
+      "input/qfep_123.log_0.18": {
         "yerror": null, 
         "ydata": [
           13.0, 
@@ -993,7 +993,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.2": {
+      "input/qfep_123.log_0.2": {
         "yerror": null, 
         "ydata": [
           16.0, 
@@ -1009,7 +1009,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.22": {
+      "input/qfep_123.log_0.22": {
         "yerror": null, 
         "ydata": [
           17.0, 
@@ -1025,7 +1025,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.24": {
+      "input/qfep_123.log_0.24": {
         "yerror": null, 
         "ydata": [
           16.0, 
@@ -1041,7 +1041,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.26": {
+      "input/qfep_123.log_0.26": {
         "yerror": null, 
         "ydata": [
           11.0, 
@@ -1057,7 +1057,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.28": {
+      "input/qfep_123.log_0.28": {
         "yerror": null, 
         "ydata": [
           23.0, 
@@ -1073,7 +1073,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.3": {
+      "input/qfep_123.log_0.3": {
         "yerror": null, 
         "ydata": [
           25.0, 
@@ -1087,7 +1087,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.32": {
+      "input/qfep_123.log_0.32": {
         "yerror": null, 
         "ydata": [
           11.0, 
@@ -1103,7 +1103,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.34": {
+      "input/qfep_123.log_0.34": {
         "yerror": null, 
         "ydata": [
           12.0, 
@@ -1119,7 +1119,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.36": {
+      "input/qfep_123.log_0.36": {
         "yerror": null, 
         "ydata": [
           10.0, 
@@ -1135,7 +1135,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.38": {
+      "input/qfep_123.log_0.38": {
         "yerror": null, 
         "ydata": [
           22.0, 
@@ -1149,7 +1149,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.4": {
+      "input/qfep_123.log_0.4": {
         "yerror": null, 
         "ydata": [
           21.0, 
@@ -1163,7 +1163,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.42": {
+      "input/qfep_123.log_0.42": {
         "yerror": null, 
         "ydata": [
           18.0, 
@@ -1179,7 +1179,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.44": {
+      "input/qfep_123.log_0.44": {
         "yerror": null, 
         "ydata": [
           24.0, 
@@ -1195,7 +1195,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.46": {
+      "input/qfep_123.log_0.46": {
         "yerror": null, 
         "ydata": [
           16.0, 
@@ -1211,7 +1211,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.48": {
+      "input/qfep_123.log_0.48": {
         "yerror": null, 
         "ydata": [
           14.0, 
@@ -1227,7 +1227,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.5": {
+      "input/qfep_123.log_0.5": {
         "yerror": null, 
         "ydata": [
           10.0, 
@@ -1243,7 +1243,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.52": {
+      "input/qfep_123.log_0.52": {
         "yerror": null, 
         "ydata": [
           19.0, 
@@ -1257,7 +1257,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.54": {
+      "input/qfep_123.log_0.54": {
         "yerror": null, 
         "ydata": [
           32.0, 
@@ -1271,7 +1271,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.56": {
+      "input/qfep_123.log_0.56": {
         "yerror": null, 
         "ydata": [
           37.0, 
@@ -1285,7 +1285,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.58": {
+      "input/qfep_123.log_0.58": {
         "yerror": null, 
         "ydata": [
           32.0, 
@@ -1299,7 +1299,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.6": {
+      "input/qfep_123.log_0.6": {
         "yerror": null, 
         "ydata": [
           11.0, 
@@ -1315,7 +1315,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.62": {
+      "input/qfep_123.log_0.62": {
         "yerror": null, 
         "ydata": [
           10.0, 
@@ -1331,7 +1331,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.64": {
+      "input/qfep_123.log_0.64": {
         "yerror": null, 
         "ydata": [
           17.0, 
@@ -1345,7 +1345,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.66": {
+      "input/qfep_123.log_0.66": {
         "yerror": null, 
         "ydata": [
           36.0, 
@@ -1357,7 +1357,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.68": {
+      "input/qfep_123.log_0.68": {
         "yerror": null, 
         "ydata": [
           22.0, 
@@ -1371,7 +1371,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.7": {
+      "input/qfep_123.log_0.7": {
         "yerror": null, 
         "ydata": [
           10.0, 
@@ -1385,7 +1385,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.72": {
+      "input/qfep_123.log_0.72": {
         "yerror": null, 
         "ydata": [
           34.0, 
@@ -1399,7 +1399,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.74": {
+      "input/qfep_123.log_0.74": {
         "yerror": null, 
         "ydata": [
           26.0, 
@@ -1413,7 +1413,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.76": {
+      "input/qfep_123.log_0.76": {
         "yerror": null, 
         "ydata": [
           28.0, 
@@ -1427,7 +1427,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.78": {
+      "input/qfep_123.log_0.78": {
         "yerror": null, 
         "ydata": [
           33.0, 
@@ -1439,7 +1439,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.8": {
+      "input/qfep_123.log_0.8": {
         "yerror": null, 
         "ydata": [
           21.0, 
@@ -1453,7 +1453,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.82": {
+      "input/qfep_123.log_0.82": {
         "yerror": null, 
         "ydata": [
           38.0, 
@@ -1467,7 +1467,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.84": {
+      "input/qfep_123.log_0.84": {
         "yerror": null, 
         "ydata": [
           19.0, 
@@ -1481,7 +1481,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.86": {
+      "input/qfep_123.log_0.86": {
         "yerror": null, 
         "ydata": [
           16.0, 
@@ -1495,7 +1495,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.88": {
+      "input/qfep_123.log_0.88": {
         "yerror": null, 
         "ydata": [
           16.0, 
@@ -1509,7 +1509,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.9": {
+      "input/qfep_123.log_0.9": {
         "yerror": null, 
         "ydata": [
           44.0, 
@@ -1521,7 +1521,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.92": {
+      "input/qfep_123.log_0.92": {
         "yerror": null, 
         "ydata": [
           18.0, 
@@ -1535,7 +1535,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.94": {
+      "input/qfep_123.log_0.94": {
         "yerror": null, 
         "ydata": [
           38.0, 
@@ -1547,7 +1547,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.96": {
+      "input/qfep_123.log_0.96": {
         "yerror": null, 
         "ydata": [
           25.0, 
@@ -1561,7 +1561,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_0.98": {
+      "input/qfep_123.log_0.98": {
         "yerror": null, 
         "ydata": [
           11.0, 
@@ -1577,7 +1577,7 @@
         ], 
         "zdata": null
       }, 
-      "../input/qfep_123.log_1.0": {
+      "input/qfep_123.log_1.0": {
         "yerror": null, 
         "ydata": [
           21.0, 
@@ -1600,7 +1600,7 @@
     "title": "Sampling3D (1st output only)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           1.0, 
@@ -2131,7 +2131,7 @@
     "title": "dG vs Lambda", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           0.0, 
@@ -2250,7 +2250,7 @@
     "title": "(dGf-dGr) vs Lambda: Lower, better", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           0, 
@@ -2369,7 +2369,7 @@
     "title": "dG vs Lambda (forward)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           0.0, 
@@ -2488,7 +2488,7 @@
     "title": "dG vs Lambda (reverse)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -9.786, 
@@ -2607,7 +2607,7 @@
     "title": "Reactive distance", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           2.223, 
@@ -2726,7 +2726,7 @@
     "title": "E1 vs Lambda (EQtot)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -571.4, 
@@ -2845,7 +2845,7 @@
     "title": "E2 vs Lambda (EQtot)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           244.94, 
@@ -2964,7 +2964,7 @@
     "title": "E1 vs Lambda (EQbond)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -384.35, 
@@ -3083,7 +3083,7 @@
     "title": "E2 vs Lambda (EQbond)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           4.25, 
@@ -3202,7 +3202,7 @@
     "title": "E1 vs Lambda (EQang)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           7.43, 
@@ -3321,7 +3321,7 @@
     "title": "E2 vs Lambda (EQang)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           250.39, 
@@ -3440,7 +3440,7 @@
     "title": "E1 vs Lambda (EQtor)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           0.71, 
@@ -3559,7 +3559,7 @@
     "title": "E2 vs Lambda (EQtor)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           1.61, 
@@ -3678,7 +3678,7 @@
     "title": "E1 vs Lambda (EQimp)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           0.02, 
@@ -3797,7 +3797,7 @@
     "title": "E2 vs Lambda (EQimp)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           0.0, 
@@ -3916,7 +3916,7 @@
     "title": "E1 vs Lambda (EQel)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -172.19, 
@@ -4035,7 +4035,7 @@
     "title": "E2 vs Lambda (EQel)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -50.21, 
@@ -4154,7 +4154,7 @@
     "title": "E1 vs Lambda (EQvdW)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -23.02, 
@@ -4273,7 +4273,7 @@
     "title": "E2 vs Lambda (EQvdW)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           38.9, 
@@ -4392,7 +4392,7 @@
     "title": "E1 vs Lambda (Eel_qq)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -14.97, 
@@ -4511,7 +4511,7 @@
     "title": "E2 vs Lambda (Eel_qq)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           58.07, 
@@ -4630,7 +4630,7 @@
     "title": "E1 vs Lambda (EvdW_qq)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           5.57, 
@@ -4749,7 +4749,7 @@
     "title": "E2 vs Lambda (EvdW_qq)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           68.23, 
@@ -4868,7 +4868,7 @@
     "title": "E1 vs Lambda (Eel_qp)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -153.76, 
@@ -4987,7 +4987,7 @@
     "title": "E2 vs Lambda (Eel_qp)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -113.53, 
@@ -5106,7 +5106,7 @@
     "title": "E1 vs Lambda (EvdW_qp)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -28.21, 
@@ -5225,7 +5225,7 @@
     "title": "E2 vs Lambda (EvdW_qp)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -29.02, 
@@ -5344,7 +5344,7 @@
     "title": "E1 vs Lambda (Eel_qw)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -3.46, 
@@ -5463,7 +5463,7 @@
     "title": "E2 vs Lambda (Eel_qw)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           5.25, 
@@ -5582,7 +5582,7 @@
     "title": "E1 vs Lambda (EvdW_qw)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -0.38, 
@@ -5701,7 +5701,7 @@
     "title": "E2 vs Lambda (EvdW_qw)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           -0.31, 
@@ -5820,7 +5820,7 @@
     "title": "E1 vs Lambda (Eqrstr)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           0.0, 
@@ -5939,7 +5939,7 @@
     "title": "E2 vs Lambda (Eqrstr)", 
     "__type__": "PlotData", 
     "subplots": {
-      "../input/qfep_123.log": {
+      "input/qfep_123.log": {
         "yerror": null, 
         "ydata": [
           0.0, 

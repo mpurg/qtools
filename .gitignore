@@ -4,3 +4,4 @@ qscripts.cfg
 *swp
 .cache
 _build
+.coverage

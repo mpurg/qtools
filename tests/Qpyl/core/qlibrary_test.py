@@ -3,11 +3,13 @@
 #########################
 
 
-import re
 import pytest
 
 from Qpyl.core.qlibrary import QLib, QLibError
 from Qpyl.core.qstructure import QStruct
+
+def is_close(a, b, rel_tol=1e-09, abs_tol=0.0):
+    return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
 
 class TestQ:
     def test_read_write_lib(self):
@@ -36,7 +38,7 @@ class TestQ:
         trp_CG = qlib.residue_dict["TRP"].atoms[7]
         assert trp_CG.name == "CG"
         assert trp_CG.atom_type == "Cstar"
-        assert abs(trp_CG.charge - -0.1415) < 1e-7
+        assert is_close(trp_CG.charge, -0.1415)
         assert trp_CG.residue.name == "TRP"
 
     def test_residue(self):
@@ -48,7 +50,7 @@ class TestQ:
         assert asp.connections == ["head N", "tail C"]
         hoh = qlib.residue_dict["HOH"]
         assert int(hoh.info["solvent"]) == 1
-        assert abs(float(hoh.info["density"]) - 0.0335) < 1e-7
+        assert is_close(float(hoh.info["density"]), 0.0335)
 
 
     def test_rounding(self):
@@ -58,7 +60,7 @@ class TestQ:
         old_charge = prc.atoms[0].charge
         prc.atoms[0].charge -= 1e-7
         prc.rescale(prc.charge_groups[0], 1)
-        assert abs(prc.atoms[0].charge - old_charge) < 1e-7
+        assert is_close(prc.atoms[0].charge, old_charge)
 
     def test_rescale(self):
         qlib = QLib("oplsaa")
@@ -66,7 +68,7 @@ class TestQ:
         prc = qlib.residue_dict["PRC"]
         prc.atoms[0].charge -= 0.5
         prc.rescale(prc.charge_groups[0], 1)
-        assert abs(prc.atoms[0].charge - -0.7256169) < 1e-7
+        assert is_close(prc.atoms[0].charge, -0.72561699999)
 
     def test_rescale_badatom_fail(self):
         qlib = QLib("oplsaa")
@@ -208,7 +210,7 @@ class TestOplsaa:
         assert len(qlib.residue_dict["NMA"].atoms) == 6
         ash = qlib.residue_dict["ASH"]
         assert ash.atoms[1].atom_type == "CT1_C1_224"
-        assert abs(ash.atoms[1].charge - 0.14) < 1e-7
+        assert is_close(ash.atoms[1].charge, 0.14)
         assert "tail C" in ash.connections
         assert "head N" in ash.connections
 

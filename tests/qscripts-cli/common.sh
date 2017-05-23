@@ -1,20 +1,21 @@
 #
-# common stuff all the test scripts share
+# Common stuff all the test scripts share.
+#
+# This script should be sourced in each run_test.sh.
 #
 
-PASSONFAIL=0
-if [[ $1 == "pass" ]]; then
-    PASSONFAIL=1
-fi
 
-TESTDIR="tmp-run"
+TEST_ROOT=$(pwd)
+test_name=$(basename ${TEST_ROOT})
+TEST_TMP=$(mktemp -d --tmpdir=${QTOOLS_TMPDIR} ${test_name}_XXX)
+
 DIFFS="diffs.txt"
 STDOUT="stdout.txt"
 OK="\033[0;32mOK \033[0m"
 FAIL="
 \033[0;31mFAIL \033[0m Check the following files:
-${TESTDIR}/${DIFFS} 
-${TESTDIR}/${STDOUT}
+${TEST_TMP}/${DIFFS} 
+${TEST_TMP}/${STDOUT}
 "
 
 # evaluates a string argument (diff command)
@@ -24,9 +25,17 @@ ${TESTDIR}/${STDOUT}
 run_diff () {
   d=$(eval $@)
   if [[ $? -ne 0 ]]; then
-    echo "$@"   >> ${DIFFS}
-    echo "${d}" >> ${DIFFS}
     echo -e "${FAIL}"
+    if [[ ${TRAVIS} == "true" ]]; then
+        echo "$@"
+        echo "${d}"
+        # since we can't access the files on travis, print them out...
+        echo "Outputs:"
+        cat ${STDOUT}
+    else
+        echo "$@"   >> ${DIFFS}
+        echo "${d}" >> ${DIFFS}
+    fi
     if [[ ${PASSONFAIL} -eq 0 ]]; then
         exit 1
     fi

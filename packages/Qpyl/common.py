@@ -35,7 +35,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-__version__ = "0.5.5"
+__version__ = "0.5.6"
 
 
 class SpecialFormatter(logging.Formatter):
@@ -83,8 +83,8 @@ def backup_file(filename):
         while os.path.lexists(os.path.join(di, backup_filename)):
             backup_filename = "#%s.%d#" % (fn, i)
             i += 1
-            if i > 100:
-                logger.warning("You have more than 100 backed up files... "
+            if i > 20:
+                logger.warning("You have more than 20 backed up files... "
                                "Cleaning time...")
         shutil.copy2(filename, os.path.join(di, backup_filename))
         return backup_filename

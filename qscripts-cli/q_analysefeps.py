@@ -82,13 +82,17 @@ every mapping.
                              "".format(QScfg.get("files", "analysefeps_plots")),
                         default=QScfg.get("files", "analysefeps_plots"))
 
-    optarg.add_argument("--po_qcp", dest="plots_out_qcp", default=None,
-                        help="Output filename for QCP plot data. By default "
-                             "this data is not written out.")
+    optarg.add_argument("--subcalcs", dest="subcalcs", default=False,
+                        help="Write out plot data for sub-calculations "
+                             "(QCP, QCP_mass, Exclusions). By default "
+                             "this data is not written out.",
+                        action="store_true")
 
-    optarg.add_argument("--po_qcpm", dest="plots_out_qcp_mass", default=None,
-                        help="Output filename for QCP_mass plot data. "
-                             "By default this data is not written out.")
+    optarg.add_argument("--subcalc_dir", dest="subcalc_dir",
+                        help="Output directory for sub-calculation plot data "
+                             "Default={}".format(QScfg.get("files", \
+                                                 "analysefeps_subcalc_dir")),
+                        default=QScfg.get("files", "analysefeps_subcalc_dir"))
 
 
     if len(sys.argv) == 1:
@@ -108,21 +112,30 @@ every mapping.
             sys.exit(1)
         lra_l.append(lamb)
 
+    if args.subcalcs and os.path.lexists(args.subcalc_dir):
+        print "Directory '{}' exists. Please (re)move it or "\
+              "use --subcalc_dir.".format(args.subcalc_dir)
+        sys.exit(1)
+
+    # analyse the outputs
     qos = [os.path.join(md, args.qfep_out) for md in sorted(args.fepdirs)]
     qaf = QAnalyseFeps(qos, lra_lambdas=lra_l)
 
     stats, fails = [], []
 
+    # get the statistics
     stats.append(qaf.stats_str)
     for sub_calc_key, sub_calc in sorted(qaf.sub_calcs.iteritems()):
         stats.append(sub_calc.stats_str)
 
+    # get those that completely failed
     if qaf.failed:
         fails.append("Failed to parse:")
     for failed_path, failed_msg in sorted(qaf.failed.iteritems()):
         relp = os.path.relpath(failed_path)
         fails.append("-> {}: {}".format(relp, failed_msg))
 
+    # get those that didn't produce dG*/dG0
     if qaf.failed_dg:
         fails.append("Failed to produce dGa/dG0:")
     for failed_path, failed_msg in sorted(qaf.failed_dg.iteritems()):
@@ -169,52 +182,41 @@ every mapping.
 
     fn_out = args.output_fn
     backup = backup_file(fn_out)
-    if backup:
-        print "# Backed up '{}' to '{}'".format(fn_out, backup)
     open(fn_out, "w").write(output_string)
-    print "Wrote '{}'...".format(fn_out)
+
+    if backup:
+        print "Wrote '{}'...    # Backed up to '{}'".format(fn_out, backup)
+    else:
+        print "Wrote '{}'...".format(fn_out)
 
     # convert plots to json and write them out
     fn_out = args.plots_out
     plots = qaf.plotdata
     jsonenc = plotdata.PlotDataJSONEncoder(indent=2)
     backup = backup_file(fn_out)
-    if backup:
-        print "# Backed up '{}' to '{}'".format(fn_out, backup)
     open(fn_out, 'w').write(jsonenc.encode(plots))
-    print "Wrote '{}'... (q_plot.py is your "\
-          "friend)".format(fn_out)
+    if backup:
+        print "Wrote '{}'... (q_plot.py is your friend)   "\
+              "# Backed up to '{}'".format(fn_out, backup)
+    else:
+        print "Wrote '{}'... (q_plot.py is your friend)".format(fn_out)
 
-    if args.plots_out_qcp:
-        try:
-            plots = qaf.sub_calcs["QCP"].plotdata
-        except KeyError:
-            print "No QCP data found, can't write it out..."
+    # if there are sub-calculations in the outputs
+    if qaf.sub_calcs:
+        if not args.subcalcs:
+            print "\nNote: These sub-calculations were found: {}. "\
+                  "Use --subcalcs to write out the plot data."\
+                  "".format(", ".join(qaf.sub_calcs))
+            sys.exit(1)
         else:
-            fn_out = args.plots_out_qcp
-            jsonenc = plotdata.PlotDataJSONEncoder(indent=2)
-            backup = backup_file(fn_out)
-            if backup:
-                print "# Backed up '{}' to '{}'".format(fn_out, backup)
-            open(fn_out, 'w').write(jsonenc.encode(plots))
-            print "Wrote '{}'... (q_plot.py is your "\
-                "friend)".format(fn_out)
+            os.mkdir(args.subcalc_dir)
+            for subcalc_key, subcalc in qaf.sub_calcs.iteritems():
+                fn_out = os.path.join(args.subcalc_dir,
+                                      "qaf.{}.json".format(subcalc_key))
 
-    if args.plots_out_qcp_mass:
-        try:
-            plots = qaf.sub_calcs["QCP_mass"].plotdata
-        except KeyError:
-            print "No QCP_mass data found, can't write it out..."
-        else:
-            fn_out = args.plots_out_qcp_mass
-            jsonenc = plotdata.PlotDataJSONEncoder(indent=2)
-            backup = backup_file(fn_out)
-            if backup:
-                print "# Backed up '{}' to '{}'".format(fn_out, backup)
-            open(fn_out, 'w').write(jsonenc.encode(plots))
-            print "Wrote '{}'... (q_plot.py is your "\
-                "friend)".format(fn_out)
-
+                open(fn_out, 'w').write(jsonenc.encode(subcalc.plotdata))
+                print "Wrote '{}'... (q_plot.py is your "\
+                      "friend)".format(fn_out)
 
 
 if __name__ == "__main__":
