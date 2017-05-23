@@ -36,6 +36,7 @@ analysefeps_plots = qaf.PlotData.json
 analysedyns_plots = qad.PlotData.json
 gc_plots          = qgc.PlotData.json
 plot_export_dir   = qa_PlotData
+analysefeps_subcalc_dir = qaf_subcalc
 
 [other]
-cfgversion       = 9
+cfgversion       = 10

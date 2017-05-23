@@ -1,15 +1,21 @@
 #
-# common stuff all the test scripts share
+# Common stuff all the test scripts share.
+#
+# This script should be sourced in each run_test.sh.
 #
 
-TESTDIR="tmp-run"
+
+TEST_ROOT=$(pwd)
+test_name=$(basename ${TEST_ROOT})
+TEST_TMP=$(mktemp -d --tmpdir=${QTOOLS_TMPDIR} ${test_name}_XXX)
+
 DIFFS="diffs.txt"
 STDOUT="stdout.txt"
 OK="\033[0;32mOK \033[0m"
 FAIL="
 \033[0;31mFAIL \033[0m Check the following files:
-${TESTDIR}/${DIFFS} 
-${TESTDIR}/${STDOUT}
+${TEST_TMP}/${DIFFS} 
+${TEST_TMP}/${STDOUT}
 "
 
 # evaluates a string argument (diff command)

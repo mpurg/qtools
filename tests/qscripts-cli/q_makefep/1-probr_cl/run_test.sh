@@ -8,23 +8,22 @@ source ../../common.sh
 source ../../../../qtools_init.sh
 
 
+echo "Working in ${TEST_TMP}"
+cp -r input ${TEST_TMP}
+cd ${TEST_TMP}
 
-ROOTDIR=$(pwd)
-mkdir -p $TESTDIR
-cd $TESTDIR
-rm probr_cl.fep 2>/dev/null
 
-q_makefep.py -s ../input/probr_cl_start.pdb \
-             -m ../input/probr_cl.qmap \
-             -l ../input/0-ff/*lib \
-             -p ../input/0-ff/*prm \
+q_makefep.py -s ./input/probr_cl_start.pdb \
+             -m ./input/probr_cl.qmap \
+             -l ./input/0-ff/*lib \
+             -p ./input/0-ff/*prm \
              -f oplsaa \
              -o probr_cl.fep >> ${STDOUT}
 
 for i in probr_cl.fep
 do
-    echo "Checking '$i'"
-    run_diff "diff <(sed 's/#.*//' $i) <(sed 's/#.*//' ../output/$i)"
+    echo "Checking '${i}'"
+    run_diff "diff <(sed 's/#.*//' ${i}) <(sed 's/#.*//' ${TEST_ROOT}/output/${i})"
 done
 
-cd $ROOTDIR
+cd ${TEST_ROOT}

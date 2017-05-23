@@ -8,27 +8,24 @@ source ../../common.sh
 source ../../../../qtools_init.sh
 
 
+echo "Working in ${TEST_TMP}"
+cp -r input ${TEST_TMP}
+cd ${TEST_TMP}
 
-ROOTDIR=$(pwd)
-mkdir -p $TESTDIR
-cd $TESTDIR
 
-rm test_relax/* 2>/dev/null
-rmdir test_relax 2>/dev/null
-
-q_genrelax.py ../input/genrelax.proc \
-              --top ../input/0-topol/probr_cl.top \
-              --pdb ../input/0-topol/probr_cl_start.pdb \
-              --fep ../input/0-topol/probr_cl.fep \
-              --rs ../input/run_relax_q.sh \
+q_genrelax.py ./input/genrelax.proc \
+              --top ./input/0-topol/probr_cl.top \
+              --pdb ./input/0-topol/probr_cl_start.pdb \
+              --fep ./input/0-topol/probr_cl.fep \
+              --rs ./input/run_relax_q.sh \
               --outdir test_relax >> ${STDOUT}
 
 for i in test_relax/*
 do
-    sed -i 's/#.*//' $i
+    sed -i 's/#.*//' ${i}
 done
 
 echo "Checking outputs"
-run_diff "diff test_relax $ROOTDIR/output/test_relax"
+run_diff "diff test_relax ${TEST_ROOT}/output/test_relax"
 
-cd $ROOTDIR
+cd ${TEST_ROOT}
