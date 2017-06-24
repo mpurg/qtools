@@ -34,17 +34,13 @@ import os
 import argparse
 import logging
 
-from Qpyl.common import backup_file, SpecialFormatter
 from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl import plotdata
+from Qpyl.common import backup_file, init_logger
 
 
 def main():
-    logger = logging.getLogger('Qpyl')
-    logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(SpecialFormatter())
-    logger.addHandler(handler)
+    logger = init_logger('Qpyl')
 
     parser = argparse.ArgumentParser(description="""
 Tool for analysing QFep outputs - extracting FEP results, activation and reaction free
@@ -93,6 +89,8 @@ every mapping.
                              "Default={}".format(QScfg.get("files", \
                                                  "analysefeps_subcalc_dir")),
                         default=QScfg.get("files", "analysefeps_subcalc_dir"))
+    optarg.add_argument("-h", "--help", action="help", help="show this help "
+                        "  message and exit")
 
 
     if len(sys.argv) == 1:

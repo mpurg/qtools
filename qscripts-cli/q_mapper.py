@@ -31,22 +31,17 @@ import os
 import argparse
 import logging
 
-from Qpyl.common import backup_file, SpecialFormatter
 from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl.qmapping import QMapper
-
+from Qpyl.common import backup_file, init_logger
 
 def main():
-    logger = logging.getLogger('Qpyl')
-    logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(SpecialFormatter())
-    logger.addHandler(handler)
+    logger = init_logger('Qpyl')
 
     parser = argparse.ArgumentParser(description="""
     Command-line interface for mapping EVB (or just plain old FEP) simulations
     with QFep. At the moment, supports only single Hij (constant) and alpha.
-    For FEP, just give it dummy values.
+    For FEP, use Hij=alpha=0.
     """, add_help=False)
 
     reqarg = parser.add_argument_group("Required")
@@ -94,6 +89,8 @@ def main():
                         default=QScfg.get("qexec", "qfep"),
                         help="qfep5 executable path (default={})."
                              "".format(QScfg.get("qexec", "qfep")))
+    optarg.add_argument("-h", "--help", action="help", help="show this "
+                        "help message and exit")
 
     if len(sys.argv) == 1:
         parser.print_help()

@@ -34,9 +34,10 @@ import sys
 import argparse
 import logging
 
-from Qpyl.common import SpecialFormatter
 from Qpyl.qgeninp import genfeps, QGenfepsError
+from Qpyl.common import init_logger
 
+logger = init_logger('Qpyl')
 
 parser = argparse.ArgumentParser(description="""
 Script for generating FEP inputs from the 'procedure' file (example can be
@@ -108,6 +109,12 @@ optarg.add_argument("--first_frame_eq", dest="first_frame_eq",
                     help="If set, the first FEP frame will be replaced "
                          "by the last equilibration step (CADEE stuff).")
 
+optarg.add_argument("--ignore_errors", action="store_true", default=False,
+                    help="Keyword/parameter checks will no longer be fatal."
+                         "Use with care.")
+
+optarg.add_argument("-h", "--help", action="help", help="show this "
+                    "help message and exit")
 
 if len(sys.argv) == 1:
     parser.print_help()
@@ -115,12 +122,6 @@ if len(sys.argv) == 1:
 
 args = parser.parse_args()
 
-logger = logging.getLogger('Qpyl')
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(SpecialFormatter())
-logger.addHandler(handler)
-    
 kwargs = {"fep_proc_file": args.fep_proc,
           "relax_input_file": args.relax_input,
           "restraint": args.restraint,
@@ -132,7 +133,8 @@ kwargs = {"fep_proc_file": args.fep_proc,
           "repeats": args.repeats,
           "fromlambda": args.fromlambda,
           "prefix": args.prefix,
-          "first_frame_eq": args.first_frame_eq}
+          "first_frame_eq": args.first_frame_eq,
+          "ignore_errors": args.ignore_errors}
 
 try:
     gen_dirs = genfeps(**kwargs)

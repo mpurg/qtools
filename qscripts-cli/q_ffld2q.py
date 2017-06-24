@@ -50,7 +50,9 @@ from Qpyl.core.qparameter import QPrm, QPrmError
 from Qpyl.core.qpotential import torsion_energy
 from Qpyl.core.qstructure import QStruct, QStructError
 from Qpyl.core.qtopology import QTopology, QTopologyError
-from Qpyl.common import backup_file, SpecialFormatter
+from Qpyl.common import backup_file, init_logger
+
+logger = init_logger('Qpyl')
 
 parser = argparse.ArgumentParser(description="""
 Command-line tool for converting OPLS-AA force-field parameters from FFLD
@@ -77,6 +79,8 @@ optarg.add_argument("--ignore_errors", action="store_true", default=False,
                          "instance), or other weird stuff, but PLEASE don't "
                          "ignore the output message and triple check your "
                          "outputs.")
+optarg.add_argument("-h", "--help", action="help", help="show this "
+                    "help message and exit")
 
 if len(sys.argv) == 1:
     parser.print_help()
@@ -88,12 +92,6 @@ for k, v in vars(args).iteritems():
     if k in ['ffld_output', 'pdb'] and not os.path.lexists(v):
         print "FATAL! File '{}' doesn't exist.".format(v)
         sys.exit(1)
-
-logger = logging.getLogger('Qpyl')
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(SpecialFormatter())
-logger.addHandler(handler)
 
 
 #

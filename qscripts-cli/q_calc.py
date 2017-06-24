@@ -32,9 +32,11 @@ import os
 import logging
 import argparse
 
-from Qpyl.common import backup_file, SpecialFormatter
 from Qpyl.qgroupcontrib import QGroupContrib, QGroupContribError
 from Qpyl import plotdata
+from Qpyl.common import backup_file, init_logger
+
+logger = init_logger('Qpyl')
 
 def gc(args):
 
@@ -159,11 +161,7 @@ Top group contributions:
 
 
 def main():
-    logger = logging.getLogger('Qpyl')
-    logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(SpecialFormatter())
-    logger.addHandler(handler)
+    logger = init_logger('Qpyl')
 
     parser = argparse.ArgumentParser(description="""
     A friendly command-line interface for calculating distances, angles, rmsds,
@@ -244,11 +242,13 @@ def main():
                            help="qcalc5 executable path (default={})."
                                 "".format(QScfg.get("qexec", "qcalc")))
 
+    gc_optarg.add_argument("-h", "--help", action="help", help="show this "
+                           "help message and exit")
 
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
-    elif len(sys.argv) == 2:
+    elif len(sys.argv) == 2 and sys.argv[1] not in ['-h', '--help']:
         try:
             subps[sys.argv[1]].print_help()
         except KeyError:

@@ -51,17 +51,15 @@ import argparse
 import logging
 import inspect
 
-from Qpyl.common import backup_file, SpecialFormatter
 from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl.qmapping import QMapper, QMapperError
+from Qpyl.common import backup_file, init_logger
+
+logger = init_logger('Qpyl')
 
 
 def main():
-    logger = logging.getLogger('Qpyl')
-    logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(SpecialFormatter())
-    logger.addHandler(handler)
+    logger = init_logger('Qpyl')
 
     parser = argparse.ArgumentParser(description="""
     Bored of changing your Hij and alpha manually when calibrating 
@@ -144,6 +142,8 @@ def main():
                         default=QScfg.get("qexec", "qfep"),
                         help="qfep5 executable path (default={})."
                              "".format(QScfg.get("qexec", "qfep")))
+    optarg.add_argument("-h", "--help", action="help", help="show this help "
+                        "  message and exit")
 
     if len(sys.argv) == 1:
         parser.print_help()

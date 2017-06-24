@@ -39,8 +39,10 @@ import sys
 import argparse
 import logging
 
-from Qpyl.common import SpecialFormatter
 from Qpyl.qgeninp import genrelax, QGenrelaxError
+from Qpyl.common import init_logger
+
+logger = init_logger('Qpyl')
 
 parser = argparse.ArgumentParser(description="""
 Script for generating QDyn MD inputs from the 'procedure' file (example can be
@@ -84,18 +86,19 @@ optarg.add_argument("--outdir", dest="outdir",
                          "".format(QScfg.get("inputs", "relax_dir")),
                     default=QScfg.get("inputs", "relax_dir"))
 
+optarg.add_argument("--ignore_errors", action="store_true", default=False,
+                    help="Keyword/parameter checks will no longer be fatal."
+                         "Use with care.")
+
+optarg.add_argument("-h", "--help", action="help", help="show this "
+                    "help message and exit")
+
 
 if len(sys.argv) == 1:
     parser.print_help()
     sys.exit(1)
 
 args = parser.parse_args()
-
-logger = logging.getLogger('Qpyl')
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(SpecialFormatter())
-logger.addHandler(handler)
 
 if args.cont == None and args.restraint == None:
     args.restraint = 'top'
@@ -110,7 +113,8 @@ kwargs = {"relax_proc_file": args.relax_proc,
           "runscript_file": args.runscript,
           "restraint": args.restraint,
           "pdb_file": args.pdb,
-          "outdir": args.outdir}
+          "outdir": args.outdir,
+          "ignore_errors": args.ignore_errors}
 
 try:
     gen_inps = genrelax(**kwargs)

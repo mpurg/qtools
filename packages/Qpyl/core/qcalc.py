@@ -75,10 +75,7 @@ class QCalc(object):
         # "\n" is added to fix the blocking qcalc5 issue 
         stdout, stderr = self.process.communicate(qcalc_input_str + "\n")
 
-        # not sure if this ever happens, but will keep it anyway
-        if stderr:
-            raise QCalcError("QCalc wrote to STDERR: {}".format(stderr))
-
+        # stderr is useless in qcalc5
         return stdout
 
 
@@ -128,7 +125,22 @@ class QCalcInput(object):
 
         """
         self.actions.append((self.CALC_ANGLE, ["{} {} {}".format(atom1,
-                                                                 atom2)]))
+                                                                 atom2,
+                                                                 atom3)]))
+    def add_torsion(self, atom1, atom2, atom3, atom4):
+        """Add a torsion/torsion_energy calculation.
+
+        Args:
+            atom1 (int): index of atom in topology
+            atom2 (int): index of atom in topology
+            atom3 (int): index of atom in topology
+            atom4 (int): index of atom in topology
+
+        """
+        self.actions.append((self.CALC_TORSION,
+                             ["{} {} {} {}".format(atom1, atom2,
+                                                   atom3, atom4)]))
+
 
     def add_rmsd(self, masks):
         """Add a RMSD calculation.
@@ -139,7 +151,8 @@ class QCalcInput(object):
         """
         if isinstance(masks, basestring):
             masks = [masks,]
-        self.actions.append((self.CALC_RMSD, "rmsd.out", masks + ["."]))
+        # rmsd.out is due to the unfortunate feature added in Q c79ef672400
+        self.actions.append((self.CALC_RMSD, masks + [".",] + ["rmsd.out",]))
 
     def add_residue_nb_mon(self, resid_first, resid_last, masks):
         """Add a residue nonbond monitor calculation.
@@ -254,6 +267,12 @@ class QCalcOutput(object):
                 self.results[calc_i] = DataContainer(["Frame", "angle"])
             elif "angle, qangle energy between" in line:
                 self.results[calc_i] = DataContainer(["Frame", "angle"])
+            elif "torsion between" in line:
+                self.results[calc_i] = DataContainer(["Frame", "torsion"])
+            elif "torsion, torsion energy between" in line:
+                self.results[calc_i] = DataContainer(["Frame", "torsion"])
+            elif "torsion, qtorsion energy between" in line:
+                self.results[calc_i] = DataContainer(["Frame", "torsion"])
             elif "nonbond monitor for residues" in line:
                 pass
             else:

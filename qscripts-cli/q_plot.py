@@ -324,6 +324,8 @@ if __name__ == "__main__":
                         help="Export plots in Grace format to this directory: "
                              "'{}'. Try without args, to see available plots."
                              "".format(QScfg.get("files", "plot_export_dir")))
+    optarg.add_argument("-h", "--help", action="help", help="show this "
+                        "help message and exit")
 
     if len(sys.argv) == 1:
         parser.print_help()

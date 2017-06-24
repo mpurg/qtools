@@ -34,7 +34,9 @@ import argparse
 import logging
 
 from Qpyl.core.qlibrary import QLib, QLibError
-from Qpyl.common import backup_file, SpecialFormatter
+from Qpyl.common import backup_file, init_logger
+
+logger = init_logger('Qpyl')
 
 parser = argparse.ArgumentParser(description="""
 Script for rescaling charges in OPLS-AA. The given library must have correctly
@@ -42,14 +44,17 @@ defined charge groups, the charges will then be rescaled such that the charge
 groups have integer charge.
 """, add_help=False)
 reqarg = parser.add_argument_group("Required")
-parser.add_argument("lib_file",
+reqarg.add_argument("lib_file",
                     help="Q oplsaa library file (single residue only)")
-parser.add_argument("-t", dest="threshold", type=float, default=0.3,
+optarg = parser.add_argument_group("Optional")
+optarg.add_argument("-t", dest="threshold", type=float, default=0.3,
                     help="Threshold of difference between net charge and "
                          "nearest integer charge, above which the script "
                          "will fail. Default=0.3")
-parser.add_argument("--ignore_errors", action="store_true", default=False,
+optarg.add_argument("--ignore_errors", action="store_true", default=False,
                     help="Use if nothing else works")
+optarg.add_argument("-h", "--help", action="help", help="show this "
+                    "help message and exit")
 
 if len(sys.argv) == 1:
     parser.print_help()
@@ -60,12 +65,6 @@ args = parser.parse_args()
 if not os.path.lexists(args.lib_file):
     print "FATAL! File %s doesn't exist." % args.lib_file
     sys.exit(1)
-
-logger = logging.getLogger('Qpyl')
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(SpecialFormatter())
-logger.addHandler(handler)
 
 
 # load the library

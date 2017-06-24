@@ -34,16 +34,12 @@ import os
 import argparse
 import logging
 
-from Qpyl.common import backup_file, SpecialFormatter
 from Qpyl.qmakefep import make_fep, QMakeFepError
+from Qpyl.common import backup_file, init_logger
 
 
 if __name__ == "__main__":
-    logger = logging.getLogger('Qpyl')
-    logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(SpecialFormatter())
-    logger.addHandler(handler)
+    logger = init_logger('Qpyl')
 
     parser = argparse.ArgumentParser(description="""
     Generates a FEP file for EVB simulations in Q. The changes in atom types,
@@ -82,6 +78,8 @@ if __name__ == "__main__":
                              "(from MCPB.py for instance), or other weird "
                              "stuff, but PLEASE don't ignore the output "
                              "messages and PLEASE triple check your outputs.")
+    optarg.add_argument("-h", "--help", action="help", help="show this "
+                        "help message and exit")
 
     if len(sys.argv) == 1:
         parser.print_help()

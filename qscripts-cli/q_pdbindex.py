@@ -38,14 +38,9 @@ import argparse
 import logging
 
 from Qpyl.core.qstructure import QStruct, QStructError
-from Qpyl.common import backup_file, SpecialFormatter
+from Qpyl.common import backup_file, init_logger
 
-logger = logging.getLogger('Qpyl')
-logger.setLevel(logging.INFO)
-handler = logging.StreamHandler(sys.stdout)
-handler.setFormatter(SpecialFormatter())
-logger.addHandler(handler)
-
+logger = init_logger('Qpyl')
 
 parser = argparse.ArgumentParser(description="""
 Command-line tool for converting atom placeholders to indexes. The

@@ -44,7 +44,7 @@ from collections import OrderedDict as ODict
 
 from Qpyl.core.qdyninp import QDynInput, QDynInputError
 from Qpyl.core.qstructure import QStruct, QStructError, find_placeholders
-from Qpyl.common import __version__
+from Qpyl.common import __version__, raise_or_log
 
 logger = logging.getLogger(__name__)
 
@@ -60,7 +60,7 @@ class QGenfepsError(Exception):
 
 def genrelax(relax_proc_file, outdir, restraint,
              top_file=None, fep_file=None, runscript_file=None,
-             pdb_file=None, cont_file=None):
+             pdb_file=None, cont_file=None, ignore_errors=False):
 
     """Generates inputs for an MD simulation with Q (qdyn5).
 
@@ -75,6 +75,9 @@ def genrelax(relax_proc_file, outdir, restraint,
         runscript_file (string):  slurm/sge run script
         pdb_file (string):  pdb pathname (used to convert placeholders)
         cont_file (string):  pathname of previous qdyn5 input (continuation)
+        ignore_errors (boolean):  passed to QStruct and QDynInp - write to
+                                  logger instead of raising exceptions on
+                                  non-critical things
 
 
     (a) Restraint coordinate can be set to:
@@ -125,8 +128,7 @@ def genrelax(relax_proc_file, outdir, restraint,
         logger.info("These placeholders will be replaced with atom indices: {}"
                     "".format(", ".join(c)))
         try:
-            # TODO: ignore_errors should not be hardcoded like this
-            qstruct = QStruct(pdb_file, "pdb", ignore_errors=False)
+            qstruct = QStruct(pdb_file, "pdb", ignore_errors=ignore_errors)
             relax_proc_str = qstruct.convert_placeholders(relax_proc_str)
         except QStructError as err_msg:
             raise QGenrelaxError("Failed to replace placeholders: "
@@ -139,7 +141,8 @@ def genrelax(relax_proc_file, outdir, restraint,
                                  "other. Difficult to continue with a "
                                  "different topology...")
         try:
-            c = QDynInput(open(cont_file, 'r').read())
+            c = QDynInput(open(cont_file, 'r').read(),
+                          ignore_errors=ignore_errors)
         except QDynInputError as err_msg:
             raise QGenrelaxError("There is something wrong with the given "
                                  "input file ({}): {}".format(cont_file,
@@ -255,8 +258,7 @@ def genrelax(relax_proc_file, outdir, restraint,
         elif c:
             logger.info("Replacing FEP file placeholders...")
             try:
-                # TODO: ignore_errors should not be fixed
-                qstruct = QStruct(pdb_file, "pdb", ignore_errors=False)
+                qstruct = QStruct(pdb_file, "pdb", ignore_errors=ignore_errors)
                 fep_file_str = qstruct.convert_placeholders(fep_file_str)
             except QStructError as err_msg:
                 raise QGenfepsError("Failed to replace placeholders: {}"
@@ -310,7 +312,7 @@ def genrelax(relax_proc_file, outdir, restraint,
 
         try:
             # parse the general input
-            inp = QDynInput(gen_inp_s)
+            inp = QDynInput(gen_inp_s, ignore_errors=ignore_errors)
             # update the general parameters with step input, printout the
             # overriden parms, update the files section
             overridden_prms = inp.update(step_inp_s)
@@ -508,7 +510,8 @@ Total wasted storage (wild approximation): \
 
 def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
             frames, repeats, fromlambda, prefix, first_frame_eq,
-            pdb_file=None, fep_file=None, runscript_file=None):
+            pdb_file=None, fep_file=None, runscript_file=None,
+            ignore_errors=False):
 
     """Generates inputs for a FEP/MD simulation with Q (qdyn5).
 
@@ -527,6 +530,9 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
         pdb_file (string):  pdb pathname (used to convert placeholders)
         fep_file (string):  alternate fep file pathname (ignoring input's fep)
         runscript_file (string):  slurm/sge run script
+        ignore_errors (boolean):  passed to QStruct and QDynInp - write to
+                                  logger instead of raising exceptions on
+                                  non-critical things
 
     Returns:
         rep_dirs (list):  list of created replica folders
@@ -571,8 +577,7 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
         logger.info("These placeholders will be replaced with atom indices: "
                     + ", ".join(c))
         try:
-            # TODO: ignore_errors should not be fixed
-            qstruct = QStruct(pdb_file, "pdb", ignore_errors=False)
+            qstruct = QStruct(pdb_file, "pdb", ignore_errors=ignore_errors)
             fep_proc_str = qstruct.convert_placeholders(fep_proc_str)
         except QStructError as err_msg:
             raise QGenfepsError("Failed to replace placeholders: {}"
@@ -592,7 +597,8 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
     top_file_abs, fep_file_abs, re_file_abs, rest_file = None, None, None, None
     lambda_initial = None
     try:
-        c = QDynInput(open(relax_input_file, 'r').read())
+        c = QDynInput(open(relax_input_file, 'r').read(),
+                      ignore_errors=ignore_errors)
     except QDynInputError as err_msg:
         raise QGenfepsError("There is something wrong with the given input "
                             "file ({}): {}".format(relax_input_file, err_msg))
@@ -638,8 +644,7 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
     elif c:
         logger.info("Replacing FEP file placeholders...")
         try:
-            # TODO: ignore_errors should not be fixed
-            qstruct = QStruct(pdb_file, "pdb", ignore_errors=False)
+            qstruct = QStruct(pdb_file, "pdb", ignore_errors=ignore_errors)
             fep_file_str = qstruct.convert_placeholders(fep_file_str)
         except QStructError as err_msg:
             raise QGenfepsError("Failed to replace placeholders: {}"
@@ -819,7 +824,7 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
 
         # parse the general input and update with step input and files section
         try:
-            inp = QDynInput(gen_inp_s)
+            inp = QDynInput(gen_inp_s, ignore_errors=ignore_errors)
             inp.update(eq_step_inp_s)
             if "energy" in inp.parameters["intervals"]:
                 files["energy"] = "{}{:03d}_{:4.3f}.en".format(PREFIX_EQ,
@@ -913,7 +918,7 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
 
         # update the parameters and check the input
         try:
-            inp = QDynInput(gen_inp_s)
+            inp = QDynInput(gen_inp_s, ignore_errors=ignore_errors)
             inp.update(fep_inp_s)
             if "energy" not in inp.parameters["intervals"]:
                 raise QGenfepsError("FEP stage requires the energy printout "

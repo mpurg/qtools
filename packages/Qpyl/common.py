@@ -28,6 +28,7 @@
 # Some common classes and functions
 
 import math
+import sys
 import os
 import shutil
 import logging
@@ -50,7 +51,40 @@ class SpecialFormatter(logging.Formatter):
         return logging.Formatter.format(self, record)
 
 
-def raise_or_log(message, exception_class, logger, ignore_errors=False):
+def init_logger(name,
+                level=None,
+                handler=None,
+                formatter=None):
+    """Helper function for initializing the logger.
+
+    Args:
+        name (string):  module name, usually root: 'Qpyl'
+        level (int, optional):  logging level (DEBUG, INFO, WARNING...),
+                                default is INFO
+        handler: (logging.Handler, optional):  default is
+                                               StreamHandler(sys.stdout)
+        formatter: (logging.Formatter, optional): default is
+                                                  SpecialFormatter
+
+    Returns:
+        lg (logging.Logger)
+
+    """
+    lg = logging.getLogger(name)
+    if level == None:
+        level = logging.INFO
+    lg.setLevel(level)
+
+    if handler == None:
+        handler = logging.StreamHandler(sys.stdout)
+    if formatter == None:
+        handler.setFormatter(SpecialFormatter())
+
+    lg.addHandler(handler)
+    return lg
+
+
+def raise_or_log(message, exception_class, logger, ignore_errors):
     """Method used for raising exceptions or writting them to logger instead
 
     This way one can bypass certain exceptions like non-integer charge groups,

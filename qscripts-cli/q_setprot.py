@@ -53,6 +53,10 @@ reqarg.add_argument("resids", help="Text file with space or newline separated "
                                    "their neutral form.")
 reqarg.add_argument("outfn", help="Output filename")
 
+optarg = parser.add_argument_group("Optional")
+optarg.add_argument("-h", "--help", action="help", help="show this "
+                    "help message and exit")
+
 if len(sys.argv) == 1:
     parser.print_help()
     sys.exit(1)
