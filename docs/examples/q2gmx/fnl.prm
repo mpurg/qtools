@@ -1,0 +1,93 @@
+# Generated with q_ffld2q.py, version 0.5.7
+# Date: Mon Jul  3 17:36:04 2017
+#
+[options]
+
+
+[atom_types]
+fnl.C1        1059.1297  1059.1297    23.6736   748.9178    16.7398     12.011 # FFLD: CA_C4_145 Benzene C - 12 site JACS,112,4768-90
+fnl.C2        1059.1297  1059.1297    23.6736   748.9178    16.7398     12.011 # FFLD: CA_C4_145 Benzene C - 12 site JACS,112,4768-90
+fnl.C3        1059.1297  1059.1297    23.6736   748.9178    16.7398     12.011 # FFLD: CA_C4_145 Benzene C - 12 site JACS,112,4768-90
+fnl.C4        1059.1297  1059.1297    23.6736   748.9178    16.7398     12.011 # FFLD: CA_C4_145 Benzene C - 12 site JACS,112,4768-90
+fnl.C5        1059.1297  1059.1297    23.6736   748.9178    16.7398     12.011 # FFLD: CA_C4_145 Benzene C - 12 site JACS,112,4768-90
+fnl.C6        1059.1297  1059.1297    23.6736   748.9178    16.7398     12.011 # FFLD: CA_C4_145 Benzene C - 12 site JACS,112,4768-90
+fnl.H1          69.5797    69.5797     4.9095    49.2003     3.4715     1.0079 # FFLD: HA_H6_146 Benzene H - 12 site JACS,112,4768-90
+fnl.H2          69.5797    69.5797     4.9095    49.2003     3.4715     1.0079 # FFLD: HA_H6_146 Benzene H - 12 site JACS,112,4768-90
+fnl.H3          69.5797    69.5797     4.9095    49.2003     3.4715     1.0079 # FFLD: HA_H6_146 Benzene H - 12 site JACS,112,4768-90
+fnl.H4          69.5797    69.5797     4.9095    49.2003     3.4715     1.0079 # FFLD: HA_H6_146 Benzene H - 12 site JACS,112,4768-90
+fnl.H5          69.5797    69.5797     4.9095    49.2003     3.4715     1.0079 # FFLD: HA_H6_146 Benzene H - 12 site JACS,112,4768-90
+fnl.H6           0.0054     0.0054     0.0433     0.0038     0.0306     1.0079 # FFLD: HO_H8_240 H(O): alcohols
+fnl.O1         690.3744   690.3744      23.86   488.1684    16.8716     15.999 # FFLD: OH_O6_167 O: phenol
+
+[bonds]
+fnl.C1       fnl.C2            938.0        1.4 # FFLD: high 0 => 0 CA-CA ==> CA-CA
+fnl.C1       fnl.C6            938.0        1.4 # FFLD: high 0 => 0 CA-CA ==> CA-CA
+fnl.C1       fnl.O1            900.0      1.364 # FFLD: high 0 => 0 CA-OH ==> OH-CA
+fnl.C2       fnl.C3            938.0        1.4 # FFLD: high 0 => 0 CA-CA ==> CA-CA
+fnl.C2       fnl.H1            734.0       1.08 # FFLD: high 0 => 0 CA-HA ==> HA-CA
+fnl.C3       fnl.C4            938.0        1.4 # FFLD: high 0 => 0 CA-CA ==> CA-CA
+fnl.C3       fnl.H2            734.0       1.08 # FFLD: high 0 => 0 CA-HA ==> HA-CA
+fnl.C4       fnl.C5            938.0        1.4 # FFLD: high 0 => 0 CA-CA ==> CA-CA
+fnl.C4       fnl.H3            734.0       1.08 # FFLD: high 0 => 0 CA-HA ==> HA-CA
+fnl.C5       fnl.C6            938.0        1.4 # FFLD: high 0 => 0 CA-CA ==> CA-CA
+fnl.C5       fnl.H4            734.0       1.08 # FFLD: high 0 => 0 CA-HA ==> HA-CA
+fnl.C6       fnl.H5            734.0       1.08 # FFLD: high 0 => 0 CA-HA ==> HA-CA
+fnl.H6       fnl.O1           1106.0      0.945 # FFLD: high 0 => 0 OH-HO ==> OH-HO
+
+[angles]
+fnl.C1       fnl.C2       fnl.C3            126.0      120.0 # FFLD: high 0 CA-CA-CA ==> CA-CA-CA
+fnl.C1       fnl.C2       fnl.H1             70.0      120.0 # FFLD: high 0 CA-CA-HA ==> HA-CA-CA
+fnl.C1       fnl.C6       fnl.C5            126.0      120.0 # FFLD: high 0 CA-CA-CA ==> CA-CA-CA
+fnl.C1       fnl.C6       fnl.H5             70.0      120.0 # FFLD: high 0 CA-CA-HA ==> HA-CA-CA
+fnl.C1       fnl.O1       fnl.H6             70.0      113.0 # FFLD: high 0 CA-OH-HO ==> HO-OH-CA
+fnl.C2       fnl.C1       fnl.C6            126.0      120.0 # FFLD: high 0 CA-CA-CA ==> CA-CA-CA
+fnl.C2       fnl.C1       fnl.O1            140.0      120.0 # FFLD: high 0 CA-CA-OH ==> OH-CA-CA
+fnl.C2       fnl.C3       fnl.C4            126.0      120.0 # FFLD: high 0 CA-CA-CA ==> CA-CA-CA
+fnl.C2       fnl.C3       fnl.H2             70.0      120.0 # FFLD: high 0 CA-CA-HA ==> HA-CA-CA
+fnl.C3       fnl.C2       fnl.H1             70.0      120.0 # FFLD: high 0 CA-CA-HA ==> HA-CA-CA
+fnl.C3       fnl.C4       fnl.C5            126.0      120.0 # FFLD: high 0 CA-CA-CA ==> CA-CA-CA
+fnl.C3       fnl.C4       fnl.H3             70.0      120.0 # FFLD: high 0 CA-CA-HA ==> HA-CA-CA
+fnl.C4       fnl.C3       fnl.H2             70.0      120.0 # FFLD: high 0 CA-CA-HA ==> HA-CA-CA
+fnl.C4       fnl.C5       fnl.C6            126.0      120.0 # FFLD: high 0 CA-CA-CA ==> CA-CA-CA
+fnl.C4       fnl.C5       fnl.H4             70.0      120.0 # FFLD: high 0 CA-CA-HA ==> HA-CA-CA
+fnl.C5       fnl.C4       fnl.H3             70.0      120.0 # FFLD: high 0 CA-CA-HA ==> HA-CA-CA
+fnl.C5       fnl.C6       fnl.H5             70.0      120.0 # FFLD: high 0 CA-CA-HA ==> HA-CA-CA
+fnl.C6       fnl.C1       fnl.O1            140.0      120.0 # FFLD: high 0 CA-CA-OH ==> OH-CA-CA
+fnl.C6       fnl.C5       fnl.H4             70.0      120.0 # FFLD: high 0 CA-CA-HA ==> HA-CA-CA
+
+[torsions]
+fnl.C1       fnl.C2       fnl.C3       fnl.C4            3.625   2.0      180.0   1.0 # FFLD: high 0 CA-CA-CA-CA ==> CA-CA-CA-CA
+fnl.C1       fnl.C2       fnl.C3       fnl.H2            3.625   2.0      180.0   1.0 # FFLD: high 0 CA-CA-CA-HA ==> HA-CA-CA-CA
+fnl.C1       fnl.C6       fnl.C5       fnl.C4            3.625   2.0      180.0   1.0 # FFLD: high 0 CA-CA-CA-CA ==> CA-CA-CA-CA
+fnl.C1       fnl.C6       fnl.C5       fnl.H4            3.625   2.0      180.0   1.0 # FFLD: high 0 HA-CA-CA-CA ==> HA-CA-CA-CA
+fnl.C2       fnl.C1       fnl.C6       fnl.C5            3.625   2.0      180.0   1.0 # FFLD: high 0 CA-CA-CA-CA ==> CA-CA-CA-CA
+fnl.C2       fnl.C1       fnl.C6       fnl.H5            3.625   2.0      180.0   1.0 # FFLD: high 0 CA-CA-CA-HA ==> HA-CA-CA-CA
+fnl.C2       fnl.C1       fnl.O1       fnl.H6            0.841   2.0      180.0   1.0 # FFLD: high 0 CA-CA-OH-HO ==> HO-OH-CA-CA
+fnl.C2       fnl.C3       fnl.C4       fnl.C5            3.625   2.0      180.0   1.0 # FFLD: high 0 CA-CA-CA-CA ==> CA-CA-CA-CA
+fnl.C2       fnl.C3       fnl.C4       fnl.H3            3.625   2.0      180.0   1.0 # FFLD: high 0 CA-CA-CA-HA ==> HA-CA-CA-CA
+fnl.C3       fnl.C2       fnl.C1       fnl.C6            3.625   2.0      180.0   1.0 # FFLD: high 0 CA-CA-CA-CA ==> CA-CA-CA-CA
+fnl.C3       fnl.C2       fnl.C1       fnl.O1            3.625   2.0      180.0   1.0 # FFLD: high 0 OH-CA-CA-CA ==> OH-CA-CA-CA
+fnl.C3       fnl.C4       fnl.C5       fnl.C6            3.625   2.0      180.0   1.0 # FFLD: high 0 CA-CA-CA-CA ==> CA-CA-CA-CA
+fnl.C3       fnl.C4       fnl.C5       fnl.H4            3.625   2.0      180.0   1.0 # FFLD: high 0 CA-CA-CA-HA ==> HA-CA-CA-CA
+fnl.C4       fnl.C3       fnl.C2       fnl.H1            3.625   2.0      180.0   1.0 # FFLD: high 0 HA-CA-CA-CA ==> HA-CA-CA-CA
+fnl.C4       fnl.C5       fnl.C6       fnl.H5            3.625   2.0      180.0   1.0 # FFLD: high 0 CA-CA-CA-HA ==> HA-CA-CA-CA
+fnl.C5       fnl.C4       fnl.C3       fnl.H2            3.625   2.0      180.0   1.0 # FFLD: high 0 HA-CA-CA-CA ==> HA-CA-CA-CA
+fnl.C5       fnl.C6       fnl.C1       fnl.O1            3.625   2.0      180.0   1.0 # FFLD: high 0 OH-CA-CA-CA ==> OH-CA-CA-CA
+fnl.C6       fnl.C1       fnl.C2       fnl.H1            3.625   2.0      180.0   1.0 # FFLD: high 0 CA-CA-CA-HA ==> HA-CA-CA-CA
+fnl.C6       fnl.C1       fnl.O1       fnl.H6            0.841   2.0      180.0   1.0 # FFLD: high 0 CA-CA-OH-HO ==> HO-OH-CA-CA
+fnl.C6       fnl.C5       fnl.C4       fnl.H3            3.625   2.0      180.0   1.0 # FFLD: high 0 HA-CA-CA-CA ==> HA-CA-CA-CA
+fnl.H1       fnl.C2       fnl.C1       fnl.O1            3.625   2.0      180.0   1.0 # FFLD: high 0 OH-CA-CA-HA ==> OH-CA-CA-HA
+fnl.H1       fnl.C2       fnl.C3       fnl.H2            3.625   2.0      180.0   1.0 # FFLD: high 0 HA-CA-CA-HA ==> HA-CA-CA-HA
+fnl.H2       fnl.C3       fnl.C4       fnl.H3            3.625   2.0      180.0   1.0 # FFLD: high 0 HA-CA-CA-HA ==> HA-CA-CA-HA
+fnl.H3       fnl.C4       fnl.C5       fnl.H4            3.625   2.0      180.0   1.0 # FFLD: high 0 HA-CA-CA-HA ==> HA-CA-CA-HA
+fnl.H4       fnl.C5       fnl.C6       fnl.H5            3.625   2.0      180.0   1.0 # FFLD: high 0 HA-CA-CA-HA ==> HA-CA-CA-HA
+fnl.H5       fnl.C6       fnl.C1       fnl.O1            3.625   2.0      180.0   1.0 # FFLD: high 0 OH-CA-CA-HA ==> OH-CA-CA-HA
+
+[impropers]
+fnl.C1       fnl.C2       fnl.C3       fnl.H1              1.1      180.0 # FFLD: high aromatic atom
+fnl.C1       fnl.C6       fnl.C5       fnl.H5              1.1      180.0 # FFLD: high aromatic atom
+fnl.C2       fnl.C1       fnl.C6       fnl.O1              4.0      180.0 # FFLD: high aromatic atom
+fnl.C2       fnl.C3       fnl.C4       fnl.H2              1.1      180.0 # FFLD: high aromatic atom
+fnl.C3       fnl.C4       fnl.C5       fnl.H3              1.1      180.0 # FFLD: high aromatic atom
+fnl.C4       fnl.C5       fnl.C6       fnl.H4              1.1      180.0 # FFLD: high aromatic atom
+

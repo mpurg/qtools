@@ -1,0 +1,43 @@
+# Generated with q_ffld2q.py, version 0.5.7
+# Date: Mon Jul  3 17:36:04 2017
+#
+{FNL}
+    [atoms]
+        1  C1     fnl.C1         0.150000
+        2  C2     fnl.C2        -0.115000
+        3  C3     fnl.C3        -0.115000
+        4  C4     fnl.C4        -0.115000
+        5  C5     fnl.C5        -0.115000
+        6  C6     fnl.C6        -0.115000
+        7  O1     fnl.O1        -0.585000
+        8  H1     fnl.H1         0.115000
+        9  H2     fnl.H2         0.115000
+       10  H3     fnl.H3         0.115000
+       11  H4     fnl.H4         0.115000
+       12  H5     fnl.H5         0.115000
+       13  H6     fnl.H6         0.435000
+    [bonds]
+        C1    C2
+        C1    C6
+        C1    O1
+        C2    C3
+        C2    H1
+        C3    C4
+        C3    H2
+        C4    C5
+        C4    H3
+        C5    C6
+        C5    H4
+        C6    H5
+        O1    H6
+    [impropers]
+        C2    C1    C6    O1
+        C1    C2    C3    H1
+        C2    C3    C4    H2
+        C3    C4    C5    H3
+        C4    C5    C6    H4
+        C1    C6    C5    H5
+    [charge_groups]
+        C1 C2 C3 C4 C5 C6 O1 H1 H2 H3 H4 H5 H6
+*--------------------------------------------------------------------------------
+

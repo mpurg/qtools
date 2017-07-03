@@ -195,7 +195,7 @@ class QPrm(object):
                     parms = line.split()
                     try:
                         atom_types = parms[0:4]
-                        fc, periodicity, phase, npaths = map(float, parms[4:8])
+                        fc, multiplicity, phase, npaths = map(float, parms[4:8])
                     except Exception as e:
                         raise QPrmError("Could not parse line {} in [torsions]"
                                         " section of parm file '{}':\n{}"
@@ -214,10 +214,10 @@ class QPrm(object):
 
                     try:
                         torsion.add_prm(fc,
-                                        periodicity,
+                                        multiplicity,
                                         phase,
                                         npaths)
-                    # in case of two parms sharing same periodicity
+                    # in case of two parms sharing same multiplicity
                     except ValueError:
                         raise QPrmError("Duplicate parameter found: {}"
                                         .format(torsion))
@@ -348,9 +348,9 @@ class QPrm(object):
                     npaths = float(line[11:15])
                     fc, phase = float(line[15:30]), float(line[30:45])
                     try:
-                        periodicity = float(line[45:60])
+                        multiplicity = float(line[45:60])
                     except ValueError:  # some amber parm files are shit
-                        periodicity = float(line[45:55])
+                        multiplicity = float(line[45:55])
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
@@ -367,10 +367,10 @@ class QPrm(object):
 
                 try:
                     torsion.add_prm(fc,
-                                    periodicity,
+                                    multiplicity,
                                     phase,
                                     npaths)
-                # in case of two parms sharing same periodicity
+                # in case of two parms sharing same multiplicity
                 except ValueError:
                     raise QPrmError("Duplicate parameter found: {}"
                                     .format(torsion))
@@ -388,15 +388,15 @@ class QPrm(object):
 
                     fc, phi0 = float(line[15:30]), float(line[30:45])
                     try:
-                        periodicity = float(line[45:60])
+                        multiplicity = float(line[45:60])
                     except ValueError:  # some amber parm files are shit
-                        periodicity = float(line[45:55])
+                        multiplicity = float(line[45:55])
 
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
                 improper = _PrmImproper(center_atom, a_types, fc,
-                                        phi0, periodicity=periodicity)
+                                        phi0, multiplicity=multiplicity)
                 prms["impropers"].append(improper)
 
             # two useless lines
@@ -537,9 +537,9 @@ class QPrm(object):
                     npaths = float(line[11:15])
                     fc, phase = float(line[15:30]), float(line[30:45])
                     try:
-                        periodicity = float(line[45:60])
+                        multiplicity = float(line[45:60])
                     except ValueError:  # some amber parm files are shit
-                        periodicity = float(line[45:55])
+                        multiplicity = float(line[45:55])
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
@@ -555,10 +555,10 @@ class QPrm(object):
 
                 try:
                     torsion.add_prm(fc,
-                                    periodicity,
+                                    multiplicity,
                                     phase,
                                     npaths)
-                # in case of two parms sharing same periodicity
+                # in case of two parms sharing same multiplicity
                 except ValueError:
                     raise QPrmError("Duplicate parameter found: {}"
                                     .format(torsion))
@@ -577,15 +577,15 @@ class QPrm(object):
 
                     fc, phi0 = float(line[15:30]), float(line[30:45])
                     try:
-                        periodicity = float(line[45:60])
+                        multiplicity = float(line[45:60])
                     except ValueError:  # some amber parm files are shit
-                        periodicity = float(line[45:55])
+                        multiplicity = float(line[45:55])
 
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
                 improper = _PrmImproper(center_atom, a_types, fc, phi0,
-                                        periodicity=periodicity)
+                                        multiplicity=multiplicity)
                 prms["impropers"].append(improper)
 
 
@@ -617,33 +617,38 @@ class QPrm(object):
         return dups
 
 
-    def read_ffld(self, ffld_file):
+    def read_ffld(self, ffld_file, qstruct):
         """
         Read and parse a Macromodel's FFLD file for oplsaa parameters.
 
         Args:
             ffld_file (string):  path/name of ffld file
+            qstruct (qstructure.QStruct):  object created with the same
+                                           structure file as the ffld
+
 
         Returns:
             overwritten_prms (list):  list of overwritten parameters
+
+        The second argument is a QStruct object created with
+        the pdb or mol2 file that was used to create the ffld file.
+        It's needed to map atoms and residue to their names in the structure.
 
         Same parameters with equal values (duplicates) are overwritten,
         same parameters with different values raise QPrmError, unless
         QPrm.ignore_errors is set to True.
 
-        Atom types are created by combining 'symbol', 'vdw' and 'type'.
-        See qlibrary.QLib.read_ffld for more details.
+        Created atom-types have the following format: resisduename.ATOMNAME
+        Eg. asp.CA, pxn.OP
         """
 
         if self.ff_type != "oplsaa":
             raise QPrmError("Function not supported with "
                             "force field '{}'".format(self.ff_type))
 
-        logger.warning("Q version 5.x does not support atom types "
-                       "with more than 8 characters!")
-
-        # key is ffld atom name (C1), value is atom type (CA_145)
+        # keys are ffld atom names, values are atom_types ("resname.atname")
         lookup_aname = {}
+
         section = None
 
         prms = {"atoms": [],
@@ -680,13 +685,14 @@ class QPrm(object):
                 try:
                     name, type_, vdw, symbol = lf[0:4]
                     charge, sigma, epsilon = map(float, lf[4:7])
-                    comment = "FFLD: " + " ".join(lf[8:])
+                    comment = "FFLD: {}_{}_{} {}".format(symbol, vdw, type_,
+                                                         " ".join(lf[8:]))
                 except Exception:
                     raise QPrmError("Could not parse line: '{}'"
                                     .format(line))
 
-                lj_A_i = (4 * epsilon * sigma**12 )**0.5
-                lj_B_i = (4 * epsilon * sigma**6 )**0.5
+                lj_A_i = (4 * epsilon * sigma**12)**0.5
+                lj_B_i = (4 * epsilon * sigma**6)**0.5
 
                 element = "".join(c for c in vdw if c.isalpha())
                 try:
@@ -697,13 +703,31 @@ class QPrm(object):
                                    .format(element, name))
                     mass = "<FIX>"
 
+                aindex_struct = len(lookup_aname)
+                atom_struct = qstruct.atoms[aindex_struct]
+                residue_struct = atom_struct.residue
 
-                atype = "{}_{}_{}".format(symbol, vdw, type_)
-                lookup_aname[name] = atype
+                # check if element from ffld matches the one in the structure
+                # (just the first letters)
+                if name[0].lower() != atom_struct.name[0].lower():
+                    raise_or_log("Atom element mismatch, possible wrong "
+                                 "order of atoms: '{}' (struct) '{}' (ffld)"
+                                 .format(atom_struct.name, name),
+                                 QPrmError, logger, self.ignore_errors)
+
+                # make unique atom_type
+                atom_name = atom_struct.name
+                residue_name = residue_struct.name.lower()
+                atype = "{}.{}".format(residue_name, atom_name)
+
+                # make PrmAtom
                 atom_type = _PrmAtom(atype, mass,
                                      lj_A=lj_A_i, lj_B=lj_B_i,
                                      comment=comment)
                 prms["atoms"].append(atom_type)
+
+                # add atom name: atom type
+                lookup_aname[name] = atype
 
 #
 #  C1      H2      340.00000    1.09000   high      140  0   CT  -HC    ==> CT  -HC
@@ -753,13 +777,13 @@ class QPrm(object):
                                     .format(line))
 
 
-                periodicity = (1.0, 2.0, 3.0, 4.0)
+                multiplicity = (1.0, 2.0, 3.0, 4.0)
                 phi0s = (0.0, 180.0, 0.0, 180.0)
                 paths = (1.0, 1.0, 1.0, 1.0)
 
                 atypes = [lookup_aname[name] for name in anames]
                 torsion = _PrmTorsion(atypes, comment=comment)
-                for fc, nmin, phi0, path in zip(fcs, periodicity, phi0s, paths):
+                for fc, nmin, phi0, path in zip(fcs, multiplicity, phi0s, paths):
                     if abs(fc) > 0.000001:
                         torsion.add_prm(fc/2.0, nmin, phi0, path)
                 if not torsion.get_prms():
@@ -782,7 +806,7 @@ class QPrm(object):
                 atypes = [lookup_aname[name] for name in anames]
                 center_atom = atypes.pop(2)
                 improper = _PrmImproper(center_atom, atypes, fc/2.0,
-                                        180.0, periodicity=2, comment=comment)
+                                        180.0, multiplicity=2, comment=comment)
                 prms["impropers"].append(improper)
 
         dups = []
@@ -914,20 +938,20 @@ class QPrm(object):
         for v in sorted(set(gentorsions), key=lambda x: \
                 x.prm_id.count("?") * " " + x.prm_id):
             a1, a2, a3, a4 = v.atom_types
-            for fc, periodicity, phase, npaths in v.get_prms():
+            for fc, multiplicity, phase, npaths in v.get_prms():
                 prm_l["torsions"].append("{:<12} {:<12} {:<12} {:<12} "
                                          "{:>10} {:>5} {:>10} {:>5}{}"
                                          .format(a1, a2, a3, a4, fc,
-                                                 periodicity, phase, npaths,
+                                                 multiplicity, phase, npaths,
                                                  v.comment))
 
         for v in sorted(set(torsions), key=lambda x: x.prm_id):
             a1, a2, a3, a4 = v.atom_types
-            for fc, periodicity, phase, npaths in v.get_prms():
+            for fc, multiplicity, phase, npaths in v.get_prms():
                 prm_l["torsions"].append("{:<12} {:<12} {:<12} {:<12} "
                                          "{:>10} {:>5} {:>10} {:>5}{}"
                                          .format(a1, a2, a3, a4, fc,
-                                                 periodicity, phase, npaths,
+                                                 multiplicity, phase, npaths,
                                                  v.comment))
 
         # sorting function includes empty spaces before the prm_id so
@@ -1096,7 +1120,7 @@ class _PrmAngle(object):
 class _PrmTorsion(object):
     def __init__(self, atom_types, comment=None):
         self.is_generic = True if "?" in atom_types else False
-        self.periodicities = []
+        self.multiplicities = []
         self.fcs = []
         self.phases = []
         self.npaths = []
@@ -1106,7 +1130,7 @@ class _PrmTorsion(object):
 
     def __repr__(self):
         fcs = ", ".join("{:.4f}".format(fc) for fc in self.fcs)
-        prds = ",".join("{:.1f}".format(prd) for prd in self.periodicities)
+        mults = ",".join("{:.1f}".format(mult) for mult in self.multiplicities)
         phases = ",".join("{:.1f}".format(phase) for phase in self.phases)
         npaths = ",".join("{:.1f}".format(path) for path in self.npaths)
 
@@ -1116,12 +1140,12 @@ class _PrmTorsion(object):
     def strval(self):
         """Return parameter values in string format."""
         fcs = ", ".join("{:.4f}".format(fc) for fc in self.fcs)
-        prds = ",".join("{:.1f}".format(prd) for prd in self.periodicities)
+        mults = ",".join("{:.1f}".format(mult) for mult in self.multiplicities)
         phases = ",".join("{:.1f}".format(phase) for phase in self.phases)
         npaths = ",".join("{:.1f}".format(path) for path in self.npaths)
 
-        return "fcs=({}), periodicities=({}), phi0=({}), "\
-               "npaths=({})".format(fcs, prds, phases, npaths)
+        return "fcs=({}), multiplicities=({}), phi0=({}), "\
+               "npaths=({})".format(fcs, mults, phases, npaths)
 
     @property
     def comment(self):
@@ -1138,15 +1162,15 @@ class _PrmTorsion(object):
         return " ".join(min(atom_types, list(reversed(atom_types))))
 
 
-    def add_prm(self, fc, periodicity, phase, npaths):
+    def add_prm(self, fc, multiplicity, phase, npaths):
         # a torsion is comprised of several functions with different
-        # periodicities
-        # if periodicity already exists, raise exception
-        prd = abs(periodicity)
-        if prd in self.periodicities:
-            raise ValueError("Duplicate parameter - periodicity")
+        # multiplicities
+        # if multiplicity already exists, raise exception
+        mult = abs(multiplicity)
+        if mult in self.multiplicities:
+            raise ValueError("Duplicate parameter - multiplicity")
 
-        self.periodicities.append(prd)
+        self.multiplicities.append(mult)
         self.fcs.append(fc)
         self.phases.append(phase)
         self.npaths.append(npaths)
@@ -1154,14 +1178,14 @@ class _PrmTorsion(object):
     def get_prms(self):
         """Return a list of the torsion parameters.
 
-        The list is in reverse order of periodicity,
-        all but last periodicities are set to negative value.
+        The list is in reverse order of multiplicity,
+        all but last multiplicities are set to negative value.
 
-        [ (fc3, -periodicity3, phase3, npaths3),
-          (fc2, -periodicity2, phase2, npaths2),
-          (fc1, periodicity1, phase1, npaths1) ]
+        [ (fc3, -multiplicity3, phase3, npaths3),
+          (fc2, -multiplicity2, phase2, npaths2),
+          (fc1, multiplicity1, phase1, npaths1) ]
         """
-        prms = sorted(zip(self.fcs, self.periodicities,
+        prms = sorted(zip(self.fcs, self.multiplicities,
                           self.phases, self.npaths),
                       key=lambda x: x[1], reverse=True)
         rl = []
@@ -1175,14 +1199,14 @@ class _PrmTorsion(object):
 
 class _PrmImproper(object):
     def __init__(self, center_atom_type, other_atom_types,
-                 fc, phi0, periodicity=2.0, comment=None):
+                 fc, phi0, multiplicity=2.0, comment=None):
         self.is_generic = True if "?" in other_atom_types else False
         self.fc = fc
         self.phi0 = phi0
-        if abs(periodicity) - 2.0 > 0.00001:
-            raise QPrmError("Q does not support periodicity != 2.0 in "
+        if abs(multiplicity) - 2.0 > 0.00001:
+            raise QPrmError("Q does not support multiplicity != 2.0 in "
                             "impropers ({})".format(self))
-        self.periodicity = periodicity
+        self.multiplicity = multiplicity
         self.prm_id = self.get_id(center_atom_type, other_atom_types)
         self.atom_types = self.prm_id.split()
         self._comment = comment

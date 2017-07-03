@@ -102,16 +102,17 @@ qlib = QLib("oplsaa", ignore_errors=args.ignore_errors)
 qprm = QPrm("oplsaa", ignore_errors=args.ignore_errors)
 
 try:
-    qprm.read_ffld(args.ffld_output)
-except QPrmError as err:
-    print "FATAL! Problem with ffld file: {}".format(err)
-    sys.exit(1)
-
-try:
     qstruct = QStruct(args.pdb, "pdb")
 except QStructError as err:
     print "FATAL! Problem with pdb: {}".format(err)
     sys.exit(1)
+
+try:
+    qprm.read_ffld(args.ffld_output, qstruct)
+except QPrmError as err:
+    print "FATAL! Problem with ffld file: {}".format(err)
+    sys.exit(1)
+
 
 try:
     qlib.read_ffld(args.ffld_output, qstruct)
@@ -148,8 +149,8 @@ for bati_name in ["bonds", "angles", "torsions", "impropers"]:
             energy_profile = []
             for phi in range(0, 181, 30):
                 energy = 0
-                for fc, periodicity, phase, npaths in bati.prm.get_prms():
-                    energy += torsion_energy(phi, fc, periodicity,
+                for fc, multiplicity, phase, npaths in bati.prm.get_prms():
+                    energy += torsion_energy(phi, fc, multiplicity,
                                              npaths, phase)
                 energy_profile.append((energy, phi))
             energy_profile.sort()

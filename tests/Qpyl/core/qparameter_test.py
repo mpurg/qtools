@@ -6,6 +6,7 @@
 import re
 import pytest
 from Qpyl.core.qparameter import QPrm, QPrmError
+from Qpyl.core.qstructure import QStruct
 
 def is_close(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
@@ -46,7 +47,7 @@ class TestQ:
     def test_wrong_ff_fail(self):
         qprm = QPrm("amber")
         with pytest.raises(QPrmError):
-            qprm.read_ffld("data/ace_ash_nma.ffld11")
+            qprm.read_ffld("data/ace_ash_nma.ffld11", None)
         qprm = QPrm("oplsaa")
         with pytest.raises(QPrmError):
             qprm.read_amber_parm("data/ff-amber14/parm/parm10.dat")
@@ -72,21 +73,21 @@ class TestQ:
     def test_types_opls(self):
         qprm = QPrm("oplsaa")
         qprm.read_prm("data/ace_ash_nma.prm")
-        assert qprm.atom_types["C_C2_235"].lj_A == 1802.2385
-        assert qprm.atom_types["C_C2_235"].lj_B == 34.1758
-        assert qprm.atom_types["C_C2_235"].mass == 12.011
+        assert qprm.atom_types["ace.C"].lj_A == 1802.2385
+        assert qprm.atom_types["ace.C"].lj_B == 34.1758
+        assert qprm.atom_types["ace.C"].mass == 12.011
 
-        assert qprm.bonds["CT1_C1_224 HC_H1_140"].fc == 680.0
-        assert qprm.bonds["CT1_C1_224 HC_H1_140"].r0 == 1.09
+        assert qprm.bonds["ace.CH3 ace.HH31"].fc == 680.0
+        assert qprm.bonds["ace.CH3 ace.HH31"].r0 == 1.09
 
-        assert qprm.angles["OC3_O2_269 C_C2_267 OH_O4_268"].fc == 160.0
-        assert qprm.angles["OC3_O2_269 C_C2_267 OH_O4_268"].theta0 == 121.0
+        assert qprm.angles["ash.OD1 ash.CG ash.OD2"].fc == 160.0
+        assert qprm.angles["ash.OD1 ash.CG ash.OD2"].theta0 == 121.0
 
-        t = qprm.torsions["CT1_C1_224 CT_C1_135 C_C2_267 OH_O4_268"]
+        t = qprm.torsions["ash.CA ash.CB ash.CG ash.OD2"]
         assert t.fcs == [0.225, 0.273, 0.5]
-        assert t.periodicities == [3.0, 2.0, 1.0]
+        assert t.multiplicities == [3.0, 2.0, 1.0]
 
-        i = qprm.impropers["CT1_C1_224 C_C2_235 N_N1_238 O_O2_236"]
+        i = qprm.impropers["ash.CA ash.C ash.O nma.N"]
         assert i.fc == 10.5
         assert i.phi0 == 180.0
 
@@ -167,43 +168,41 @@ improper_definition            explicit\
 
 class TestOplsaa:
     def test_read_ffld(self):
+        qstruct = QStruct("data/ace_ash_nma.pdb", "pdb")
         qprm = QPrm("oplsaa")
-        qprm.read_ffld("data/ace_ash_nma.ffld11")
-        assert len(qprm.atom_types) == 11
-        assert len(qprm.bonds) == 14
-        assert len(qprm.angles) == 26
-        assert len(qprm.torsions) == 35
+        qprm.read_ffld("data/ace_ash_nma.ffld11", qstruct)
+        assert len(qprm.atom_types) == 25
+        assert len(qprm.bonds) == 24
+        assert len(qprm.angles) == 40
+        assert len(qprm.torsions) == 49
         assert len(qprm.impropers) == 5
 
     def test_types_ffld(self):
+        qstruct = QStruct("data/ace_ash_nma.pdb", "pdb")
         qprm = QPrm("oplsaa")
-        qprm.read_ffld("data/ace_ash_nma.ffld11")
+        qprm.read_ffld("data/ace_ash_nma.ffld11", qstruct)
         print qprm.torsions.keys()
         lj_A_i= ( 4*0.17*((3.25)**12) )**0.5
         lj_B_i = ( 4*0.17*((3.25)**6) )**0.5
-        at = qprm.atom_types["N_N1_238"]
+        at = qprm.atom_types["nma.N"]
         assert is_close(at.lj_A, lj_A_i)
         assert is_close(at.lj_B, lj_B_i)
 
-        bond = qprm.bonds["CT_C1_135 C_C2_235"]
+        bond = qprm.bonds["ace.C ace.CH3"]
         assert is_close(bond.fc/2.0, 317.0)
         assert is_close(bond.r0, 1.522)
 
-        ang = qprm.angles["CT_C1_135 CT1_C1_224 C_C2_235"]
+        ang = qprm.angles["ash.C ash.CA ash.CB"]
         assert is_close(ang.fc/2.0, 63.0)
         assert is_close(ang.theta0, 111.1)
 
-        ang = qprm.angles["CT_C1_135 CT1_C1_224 C_C2_235"]
-        assert is_close(ang.fc/2.0, 63.0)
-        assert is_close(ang.theta0, 111.1)
-
-        tors = qprm.torsions["C_C2_235 CT1_C1_224 N_N1_238 C_C2_235"]
+        tors = qprm.torsions["ace.C ash.N ash.CA ash.C"]
         assert is_close(tors.fcs[0]*2.0, -2.365)
         assert is_close(tors.fcs[1]*2.0, 0.912)
         assert is_close(tors.fcs[2]*2.0, -0.850)
-        assert is_close(tors.periodicities[0], 1.0)
-        assert is_close(tors.periodicities[1], 2.0)
-        assert is_close(tors.periodicities[2], 3.0)
+        assert is_close(tors.multiplicities[0], 1.0)
+        assert is_close(tors.multiplicities[1], 2.0)
+        assert is_close(tors.multiplicities[2], 3.0)
         assert is_close(tors.phases[0], 0.0)
         assert is_close(tors.phases[1], 180.0)
         assert is_close(tors.phases[2], 0.0)

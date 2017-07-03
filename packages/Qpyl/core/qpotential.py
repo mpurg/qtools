@@ -174,17 +174,17 @@ def angle_energy(theta, fc, theta0):
     return 0.5 * fc * (theta - theta0)**2
 
 
-def torsion_energy(phi, fc, periodicity, npaths, phi0):
+def torsion_energy(phi, fc, multiplicity, npaths, phi0):
     """
     Calculate the torsion energy using the periodic potential.
 
     One torsion term at a time, using this function:
-    E = fc/npaths * [1 + cos(periodicity*phi - phi0)]
+    E = fc/npaths * [1 + cos(multiplicity*phi - phi0)]
 
     Args:
       phi (float):  dihedral angle [degrees]
       fc (float):  force constant [kcal/mol]
-      periodicity (float):  periodicity [/]
+      multiplicity (float):  multiplicity [/]
       npaths (float):  division factor [/]
       phi0 (float):  phase shift [degrees]
 
@@ -193,19 +193,19 @@ def torsion_energy(phi, fc, periodicity, npaths, phi0):
     """
     phi = math.pi/180.0 * phi   # degrees to radians
     phi0 = math.pi/180.0 * phi0   # degrees to radians
-    return 1.0 * fc/npaths * (1 + math.cos(periodicity*phi - phi0))
+    return 1.0 * fc/npaths * (1 + math.cos(multiplicity*phi - phi0))
 
-def improper_energy_periodic(phi, fc, periodicity, phi0):
+def improper_energy_periodic(phi, fc, multiplicity, phi0):
     """
     Calculate the improper energy using the periodic potential.
 
     Using the same potential as torsion_energy(), with npaths==1.
-    E = fc/npaths * [1 + cos(periodicity*phi - phi0)]
+    E = fc/npaths * [1 + cos(multiplicity*phi - phi0)]
 
     Args:
       phi (float):  dihedral angle [degrees]
       fc (float):  force constant [kcal/mol]
-      periodicity (float):  periodicity [/]
+      multiplicity (float):  multiplicity [/]
       phi0 (float):  phase shift [degrees]
 
     Returns:
@@ -213,7 +213,7 @@ def improper_energy_periodic(phi, fc, periodicity, phi0):
     """
     phi = math.pi/180.0 * phi   # degrees to radians
     phi0 = math.pi/180.0 * phi0   # degrees to radians
-    return fc * (1 + math.cos(periodicity*phi - phi0))
+    return fc * (1 + math.cos(multiplicity*phi - phi0))
 
 
 

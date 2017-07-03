@@ -473,46 +473,13 @@ class QLib(object):
         the pdb or mol2 file that was used to create the ffld file.
         It's needed to map atoms and residue to their names in the structure.
 
-        Note:
-        The atoms in oplsaa have atom types defined such that the vdw types
-        don't map 1 to 1 with bonding types ('symbols'). Also, atom type
-        identifiers ('type') do not seem to uniquely map vdw-symbol
-        combinations. Examples:
-
-        Vdws and symbols map N:M
-        type   vdw   symbol
-        135    C1    CTH
-        224    C1    CT1
-        145    C4    CA
-        351    C5    CA
-
-        Type does not map them uniquely
-        type   vdw   symbol
-        135    C1    CT
-        135    C1    CTH
-        181    C1    CT
-
-        One type can have different vdw
-        type   vdw   symbol
-        140    H1    HC
-        140    H2    HC
-
-        To prevent any clashes, this function creates Q atom types by
-        combining 'symbol', 'vdw' and 'type':
-         CA_C4_145
-         CA_C5_351
-        CTH_C1_135
-         CT_C1_135
-         CT_C1_181
-
+        Atom-types have the following format: resisduename.ATOMNAME
+        Eg. asp.CA
         """
 
         if self.ff_type != "oplsaa":
             raise QLibError("Function not supported with "
                             "force field '{}'".format(self.ff_type))
-
-        logger.warning("Q version 5.x does not support atom types "
-                       "with more than 8 characters!")
 
         # keys are ffld atom names, values are tuples:
         # (StructAtom, LibResidue)
@@ -572,7 +539,8 @@ class QLib(object):
 
                 # append the atom to the residue
                 atom_name = atom_struct.name
-                atom_type = "{}_{}_{}".format(symbol, vdw, type_)
+                residue_name = residue_struct.name.lower()
+                atom_type = "{}.{}".format(residue_name, atom_name)
                 residue.atoms.append(_LibAtom(atom_name, atom_type, charge,
                                               residue))
 

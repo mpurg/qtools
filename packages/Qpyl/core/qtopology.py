@@ -584,14 +584,19 @@ class _TopoTorsion(_TopoBonding):
             phi = qpotential.torsion_angle(ac1, ac2, ac3, ac4)
 
         energy = 0
-        for fc, periodicity, phase, npaths in self.prm.get_prms():
+        for fc, multiplicity, phase, npaths in self.prm.get_prms():
             energy += qpotential.torsion_energy(phi,
-                                                fc, periodicity, 
+                                                fc, multiplicity, 
                                                 npaths, phase)
         return (energy, phi)
 
     @property
     def prm_full(self):
+        """Return full parameter in case it is generic.
+
+        Basically, make a copy of the generic parameter,
+        but use actual atom-types instead of X's.
+        """
         if self.prm.is_generic:
             atypes = [a.prm.prm_id for a in self.atoms]
             comment = "Generic: {}".format(self.prm.prm_id)
@@ -627,18 +632,23 @@ class _TopoImproper(_TopoBonding):
 
         e =  qpotential.improper_energy_periodic(phi,
                                                  self.prm.fc,
-                                                 self.prm.periodicity,
+                                                 self.prm.multiplicity,
                                                  self.prm.phi0)
         return (e, phi)
 
     @property
     def prm_full(self):
+        """Return full parameter in case it is generic.
+
+        Basically, make a copy of the generic parameter,
+        but use actual atom-types instead of X's.
+        """
         if self.prm.is_generic:
             atypes = [a.prm.prm_id for a in self.atoms]
             center = atypes.pop(1)
             comment = "Generic: {}".format(self.prm.prm_id)
             full_prm = type(self.prm)(center, atypes, self.prm.fc,
-                                      self.prm.phi0, self.prm.periodicity,
+                                      self.prm.phi0, self.prm.multiplicity,
                                       comment=comment)
             return full_prm
         else:

@@ -170,8 +170,8 @@ for bati_name in ["bonds", "angles", "torsions", "impropers"]:
             energy_profile = []
             for phi in range(0, 181, 30):
                 energy = 0
-                for fc, periodicity, phase, npaths in bati.prm.get_prms():
-                    energy += torsion_energy(phi, fc, periodicity,
+                for fc, multiplicity, phase, npaths in bati.prm.get_prms():
+                    energy += torsion_energy(phi, fc, multiplicity,
                                              npaths, phase)
                 energy_profile.append((energy, phi))
             energy_profile.sort()

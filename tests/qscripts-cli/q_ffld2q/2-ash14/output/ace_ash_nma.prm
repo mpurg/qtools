@@ -1,0 +1,176 @@
+# Generated with q_ffld2q.py, version 0.5.7
+# Date: Sun Jul  2 22:03:38 2017
+#
+[options]
+
+
+[atom_types]
+ace.C         1802.2385  1802.2385    34.1758  1274.3751    24.1659     12.011 # FFLD: C_C2_235 C: C=O in amide or unsaturated amide.
+ace.CH3         944.518    944.518    22.0296   667.8751    15.5773     12.011 # FFLD: CT_C1_135 C: alkanes
+ace.HH31        84.5728    84.5728     5.4127     59.802     3.8274     1.0079 # FFLD: HC_H1_140 H on C-alpha in amide
+ace.HH32        84.5728    84.5728     5.4127     59.802     3.8274     1.0079 # FFLD: HC_H1_140 H on C-alpha in amide
+ace.HH33        84.5728    84.5728     5.4127     59.802     3.8274     1.0079 # FFLD: HC_H1_140 H on C-alpha in amide
+ace.O          616.4387   616.4387    23.7692    435.888    16.8074     15.999 # FFLD: O_O2_233 O: C=O in amide.
+ash.C         1802.2385  1802.2385    34.1758  1274.3751    24.1659     12.011 # FFLD: C_C2_235 C: C=O in amide or unsaturated amide.
+ash.CA          944.518    944.518    22.0296   667.8751    15.5773     12.011 # FFLD: CT1_C1_224 CT1 in ASH 2003
+ash.CB          944.518    944.518    22.0296   667.8751    15.5773     12.011 # FFLD: CT_C1_135 CG in ASH 2003
+ash.CG        1802.2385  1802.2385    34.1758  1274.3751    24.1659     12.011 # FFLD: C_C2_267 CD in ASH 2003
+ash.H            0.0054     0.0054     0.0433     0.0038     0.0306     1.0079 # FFLD: H_H8_240 H on neutral N
+ash.HA          84.5728    84.5728     5.4127     59.802     3.8274     1.0079 # FFLD: HC_H1_140 H(C)-N dmf
+ash.HB2         84.5728    84.5728     5.4127     59.802     3.8274     1.0079 # FFLD: HC_H1_140 H on C-alpha in acid
+ash.HB3         84.5728    84.5728     5.4127     59.802     3.8274     1.0079 # FFLD: HC_H1_140 H on C-alpha in acid
+ash.HD2          0.0054     0.0054     0.0433     0.0038     0.0306     1.0079 # FFLD: HO_H8_240 CG in ASH 2003
+ash.N          971.7502   971.7502    28.3077   687.1312    20.0166     14.007 # FFLD: N_N1_238 N: secondary amide
+ash.O          616.4387   616.4387    23.7692    435.888    16.8074     15.999 # FFLD: O_O2_233 O: C=O in amide.
+ash.OD1        616.4387   616.4387    23.7692    435.888    16.8074     15.999 # FFLD: OC3_O2_269 CG in ASH 2003
+ash.OD2        601.1488   601.1488    22.2648   425.0764    15.7436     15.999 # FFLD: OH_O4_268 CG in ASH 2003
+nma.CA          944.518    944.518    22.0296   667.8751    15.5773     12.011 # FFLD: CT_C1_135 C: alkanes
+nma.H            0.0054     0.0054     0.0433     0.0038     0.0306     1.0079 # FFLD: H_H8_240 H on neutral N
+nma.HA1         84.5728    84.5728     5.4127     59.802     3.8274     1.0079 # FFLD: HC_H1_140 H(C)-N dmf
+nma.HA2         84.5728    84.5728     5.4127     59.802     3.8274     1.0079 # FFLD: HC_H1_140 H(C)-N dmf
+nma.HA3         84.5728    84.5728     5.4127     59.802     3.8274     1.0079 # FFLD: HC_H1_140 H(C)-N dmf
+nma.N          971.7502   971.7502    28.3077   687.1312    20.0166     14.007 # FFLD: N_N1_238 N: secondary amide
+
+[bonds]
+ace.C        ace.CH3           634.0      1.522 # FFLD: high 0 => 0 CT-C ==> CT-C
+ace.C        ace.O            1140.0      1.229 # FFLD: high 0 => 0 C-O ==> O-C
+ace.C        ash.N             980.0      1.335 # FFLD: high 0 => 0 C-N ==> N-C
+ace.CH3      ace.HH31          680.0       1.09 # FFLD: high 0 => 0 CT-HC ==> HC-CT
+ace.CH3      ace.HH32          680.0       1.09 # FFLD: high 0 => 0 CT-HC ==> HC-CT
+ace.CH3      ace.HH33          680.0       1.09 # FFLD: high 0 => 0 CT-HC ==> HC-CT
+ash.C        ash.CA            634.0      1.522 # FFLD: high 0 => 0 CT1-C ==> CT1-C
+ash.C        ash.O            1140.0      1.229 # FFLD: high 0 => 0 C-O ==> O-C
+ash.C        nma.N             980.0      1.335 # FFLD: high 0 => 0 C-N ==> N-C
+ash.CA       ash.CB            536.0      1.529 # FFLD: high 0 => 0 CT1-CT ==> CT1-CT
+ash.CA       ash.HA            680.0       1.09 # FFLD: high 0 => 0 CT1-HC ==> HC-CT1
+ash.CA       ash.N             674.0      1.449 # FFLD: high 0 => 0 N-CT1 ==> N-CT1
+ash.CB       ash.CG            634.0      1.522 # FFLD: high 0 => 0 CT-C ==> CT-C
+ash.CB       ash.HB2           680.0       1.09 # FFLD: high 0 => 0 CT-HC ==> HC-CT
+ash.CB       ash.HB3           680.0       1.09 # FFLD: high 0 => 0 CT-HC ==> HC-CT
+ash.CG       ash.OD1          1140.0      1.229 # FFLD: high 0 => 0 C-OC3 ==> OC3-C
+ash.CG       ash.OD2           900.0      1.364 # FFLD: high 0 => 0 C-OH ==> OH-C
+ash.H        ash.N             868.0       1.01 # FFLD: high 0 => 0 N-H ==> N-H
+ash.HD2      ash.OD2          1106.0      0.945 # FFLD: high 0 => 0 OH-HO ==> OH-HO
+nma.CA       nma.HA1           680.0       1.09 # FFLD: high 0 => 0 CT-HC ==> HC-CT
+nma.CA       nma.HA2           680.0       1.09 # FFLD: high 0 => 0 CT-HC ==> HC-CT
+nma.CA       nma.HA3           680.0       1.09 # FFLD: high 0 => 0 CT-HC ==> HC-CT
+nma.CA       nma.N             674.0      1.449 # FFLD: high 0 => 0 N-CT ==> N-CT
+nma.H        nma.N             868.0       1.01 # FFLD: high 0 => 0 N-H ==> N-H
+
+[angles]
+ace.C        ace.CH3      ace.HH31           70.0      109.5 # FFLD: high 0 C-CT-HC ==> HC-CT-C
+ace.C        ace.CH3      ace.HH32           70.0      109.5 # FFLD: high 0 C-CT-HC ==> HC-CT-C
+ace.C        ace.CH3      ace.HH33           70.0      109.5 # FFLD: high 0 C-CT-HC ==> HC-CT-C
+ace.C        ash.N        ash.CA            100.0      121.9 # FFLD: high 0 C-N-CT1 ==> CT1-N-C
+ace.C        ash.N        ash.H              70.0      119.8 # FFLD: high 0 C-N-H ==> H-N-C
+ace.CH3      ace.C        ace.O             160.0      120.4 # FFLD: high 0 CT-C-O ==> O-C-CT
+ace.CH3      ace.C        ash.N             140.0      116.6 # FFLD: high 0 CT-C-N ==> N-C-CT
+ace.HH31     ace.CH3      ace.HH32           66.0      107.8 # FFLD: high 0 HC-CT-HC ==> HC-CT-HC
+ace.HH31     ace.CH3      ace.HH33           66.0      107.8 # FFLD: high 0 HC-CT-HC ==> HC-CT-HC
+ace.HH32     ace.CH3      ace.HH33           66.0      107.8 # FFLD: high 0 HC-CT-HC ==> HC-CT-HC
+ace.O        ace.C        ash.N             160.0      122.9 # FFLD: high 0 O-C-N ==> O-C-N
+ash.C        ash.CA       ash.CB            126.0      111.1 # FFLD: high 0 C-CT1-CT ==> CT-CT1-C
+ash.C        ash.CA       ash.HA             70.0      109.5 # FFLD: high 0 C-CT1-HC ==> HC-CT1-C
+ash.C        ash.CA       ash.N             126.0      110.1 # FFLD: high 0 N-CT1-C ==> N-CT1-C
+ash.C        nma.N        nma.CA            100.0      121.9 # FFLD: high 0 C-N-CT ==> CT-N-C
+ash.C        nma.N        nma.H              70.0      119.8 # FFLD: high 0 C-N-H ==> H-N-C
+ash.CA       ash.C        ash.O             160.0      120.4 # FFLD: high 0 CT1-C-O ==> O-C-CT1
+ash.CA       ash.C        nma.N             140.0      116.6 # FFLD: high 0 CT1-C-N ==> N-C-CT1
+ash.CA       ash.CB       ash.CG            126.0      111.1 # FFLD: high 0 CT1-CT-C ==> CT1-CT-C
+ash.CA       ash.CB       ash.HB2            75.0      110.7 # FFLD: high 0 CT1-CT-HC ==> HC-CT-CT1
+ash.CA       ash.CB       ash.HB3            75.0      110.7 # FFLD: high 0 CT1-CT-HC ==> HC-CT-CT1
+ash.CA       ash.N        ash.H              76.0      118.4 # FFLD: high 0 CT1-N-H ==> H-N-CT1
+ash.CB       ash.CA       ash.HA             75.0      110.7 # FFLD: high 0 CT-CT1-HC ==> HC-CT1-CT
+ash.CB       ash.CA       ash.N             160.0      109.7 # FFLD: high 0 N-CT1-CT ==> N-CT1-CT
+ash.CB       ash.CG       ash.OD1           160.0      120.4 # FFLD: high 0 CT-C-OC3 ==> OC3-C-CT
+ash.CB       ash.CG       ash.OD2           140.0      108.0 # FFLD: high 0 CT-C-OH ==> OH-C-CT
+ash.CG       ash.CB       ash.HB2            70.0      109.5 # FFLD: high 0 C-CT-HC ==> HC-CT-C
+ash.CG       ash.CB       ash.HB3            70.0      109.5 # FFLD: high 0 C-CT-HC ==> HC-CT-C
+ash.CG       ash.OD2      ash.HD2            70.0      113.0 # FFLD: high 0 C-OH-HO ==> HO-OH-C
+ash.HA       ash.CA       ash.N              70.0      109.5 # FFLD: high 0 N-CT1-HC ==> N-CT1-HC
+ash.HB2      ash.CB       ash.HB3            66.0      107.8 # FFLD: high 0 HC-CT-HC ==> HC-CT-HC
+ash.O        ash.C        nma.N             160.0      122.9 # FFLD: high 0 O-C-N ==> O-C-N
+ash.OD1      ash.CG       ash.OD2           160.0      121.0 # FFLD: high 0 OC3-C-OH ==> OH-C-OC3
+nma.CA       nma.N        nma.H              76.0      118.4 # FFLD: high 0 CT-N-H ==> H-N-CT
+nma.HA1      nma.CA       nma.HA2            66.0      107.8 # FFLD: high 0 HC-CT-HC ==> HC-CT-HC
+nma.HA1      nma.CA       nma.HA3            66.0      107.8 # FFLD: high 0 HC-CT-HC ==> HC-CT-HC
+nma.HA1      nma.CA       nma.N              70.0      109.5 # FFLD: high 0 N-CT-HC ==> N-CT-HC
+nma.HA2      nma.CA       nma.HA3            66.0      107.8 # FFLD: high 0 HC-CT-HC ==> HC-CT-HC
+nma.HA2      nma.CA       nma.N              70.0      109.5 # FFLD: high 0 N-CT-HC ==> N-CT-HC
+nma.HA3      nma.CA       nma.N              70.0      109.5 # FFLD: high 0 N-CT-HC ==> N-CT-HC
+
+[torsions]
+ace.C        ash.N        ash.CA       ash.C           -2.4565  -3.0        0.0   1.0 # FFLD: high 0 C-N-CT1-C ==> C-N-CT1-C
+ace.C        ash.N        ash.CA       ash.C            0.1395  -2.0      180.0   1.0 # FFLD: high 0 C-N-CT1-C ==> C-N-CT1-C
+ace.C        ash.N        ash.CA       ash.C            -0.298   1.0        0.0   1.0 # FFLD: high 0 C-N-CT1-C ==> C-N-CT1-C
+ace.C        ash.N        ash.CA       ash.CB           2.6165  -3.0        0.0   1.0 # FFLD: high 0 C-N-CT1-CT ==> C-N-CT1-CT
+ace.C        ash.N        ash.CA       ash.CB           0.4385  -2.0      180.0   1.0 # FFLD: high 0 C-N-CT1-CT ==> C-N-CT1-CT
+ace.C        ash.N        ash.CA       ash.CB           0.2595   1.0        0.0   1.0 # FFLD: high 0 C-N-CT1-CT ==> C-N-CT1-CT
+ace.C        ash.N        ash.CA       ash.HA              0.0   1.0        0.0   1.0 # FFLD: high 0 C-N-CT1-HC ==> C-N-CT1-HC
+ace.CH3      ace.C        ash.N        ash.CA           3.0445  -2.0      180.0   1.0 # FFLD: high 0 CT-C-N-CT1 ==> CT1-N-C-CT
+ace.CH3      ace.C        ash.N        ash.CA             1.15   1.0        0.0   1.0 # FFLD: high 0 CT-C-N-CT1 ==> CT1-N-C-CT
+ace.CH3      ace.C        ash.N        ash.H              2.45   2.0      180.0   1.0 # FFLD: high 0 CT-C-N-H ==> H-N-C-CT
+ace.HH31     ace.CH3      ace.C        ace.O               0.0   1.0        0.0   1.0 # FFLD: high 0 HC-CT-C-O ==> HC-CT-C-O
+ace.HH31     ace.CH3      ace.C        ash.N               0.0   1.0        0.0   1.0 # FFLD: high 0 HC-CT-C-N ==> HC-CT-C-N
+ace.HH32     ace.CH3      ace.C        ace.O               0.0   1.0        0.0   1.0 # FFLD: high 0 HC-CT-C-O ==> HC-CT-C-O
+ace.HH32     ace.CH3      ace.C        ash.N               0.0   1.0        0.0   1.0 # FFLD: high 0 HC-CT-C-N ==> HC-CT-C-N
+ace.HH33     ace.CH3      ace.C        ace.O               0.0   1.0        0.0   1.0 # FFLD: high 0 HC-CT-C-O ==> HC-CT-C-O
+ace.HH33     ace.CH3      ace.C        ash.N               0.0   1.0        0.0   1.0 # FFLD: high 0 HC-CT-C-N ==> HC-CT-C-N
+ace.O        ace.C        ash.N        ash.CA           3.0445   2.0      180.0   1.0 # FFLD: high 0 O-C-N-CT1 ==> CT1-N-C-O
+ace.O        ace.C        ash.N        ash.H              2.45   2.0      180.0   1.0 # FFLD: high 0 O-C-N-H ==> H-N-C-O
+ash.C        ash.CA       ash.CB       ash.CG           0.2925  -3.0        0.0   1.0 # FFLD: high 0 C-CT1-CT-C ==> C-CT1-CT-C
+ash.C        ash.CA       ash.CB       ash.CG           -0.228  -2.0      180.0   1.0 # FFLD: high 0 C-CT1-CT-C ==> C-CT1-CT-C
+ash.C        ash.CA       ash.CB       ash.CG          -0.8485   1.0        0.0   1.0 # FFLD: high 0 C-CT1-CT-C ==> C-CT1-CT-C
+ash.C        ash.CA       ash.CB       ash.HB2          -0.038   3.0        0.0   1.0 # FFLD: high 0 C-CT1-CT-HC ==> C-CT1-CT-HC
+ash.C        ash.CA       ash.CB       ash.HB3          -0.038   3.0        0.0   1.0 # FFLD: high 0 C-CT1-CT-HC ==> C-CT1-CT-HC
+ash.C        ash.CA       ash.N        ash.H               0.0   1.0        0.0   1.0 # FFLD: high 0 H-N-CT1-C ==> H-N-CT1-C
+ash.C        nma.N        nma.CA       nma.HA1             0.0   1.0        0.0   1.0 # FFLD: high 0 C-N-CT-HC ==> C-N-CT-HC
+ash.C        nma.N        nma.CA       nma.HA2             0.0   1.0        0.0   1.0 # FFLD: high 0 C-N-CT-HC ==> C-N-CT-HC
+ash.C        nma.N        nma.CA       nma.HA3             0.0   1.0        0.0   1.0 # FFLD: high 0 C-N-CT-HC ==> C-N-CT-HC
+ash.CA       ash.C        nma.N        nma.CA           3.0445  -2.0      180.0   1.0 # FFLD: high 0 CT1-C-N-CT ==> CT-N-C-CT1
+ash.CA       ash.C        nma.N        nma.CA             1.15   1.0        0.0   1.0 # FFLD: high 0 CT1-C-N-CT ==> CT-N-C-CT1
+ash.CA       ash.C        nma.N        nma.H              2.45   2.0      180.0   1.0 # FFLD: high 0 CT1-C-N-H ==> H-N-C-CT1
+ash.CA       ash.CB       ash.CG       ash.OD1           0.273   2.0      180.0   1.0 # FFLD: high 0 CT1-CT-C-OC3 ==> CT1-CT-C-OC3
+ash.CA       ash.CB       ash.CG       ash.OD2           0.225  -3.0        0.0   1.0 # FFLD: high 0 CT1-CT-C-OH ==> CT1-CT-C-OH
+ash.CA       ash.CB       ash.CG       ash.OD2           0.273  -2.0      180.0   1.0 # FFLD: high 0 CT1-CT-C-OH ==> CT1-CT-C-OH
+ash.CA       ash.CB       ash.CG       ash.OD2             0.5   1.0        0.0   1.0 # FFLD: high 0 CT1-CT-C-OH ==> CT1-CT-C-OH
+ash.CB       ash.CA       ash.C        ash.O               0.0   1.0        0.0   1.0 # FFLD: high 0 CT-CT1-C-O ==> CT-CT1-C-O
+ash.CB       ash.CA       ash.C        nma.N            0.1755  -3.0        0.0   1.0 # FFLD: high 0 CT-CT1-C-N ==> CT-CT1-C-N
+ash.CB       ash.CA       ash.C        nma.N            0.0445  -2.0      180.0   1.0 # FFLD: high 0 CT-CT1-C-N ==> CT-CT1-C-N
+ash.CB       ash.CA       ash.C        nma.N            0.9325   1.0        0.0   1.0 # FFLD: high 0 CT-CT1-C-N ==> CT-CT1-C-N
+ash.CB       ash.CA       ash.N        ash.H               0.0   1.0        0.0   1.0 # FFLD: high 0 H-N-CT1-CT ==> H-N-CT1-CT
+ash.CB       ash.CG       ash.OD2      ash.HD2            2.45  -2.0      180.0   1.0 # FFLD: high 0 CT-C-OH-HO ==> HO-OH-C-CT
+ash.CB       ash.CG       ash.OD2      ash.HD2             1.5   1.0        0.0   1.0 # FFLD: high 0 CT-C-OH-HO ==> HO-OH-C-CT
+ash.CG       ash.CB       ash.CA       ash.HA           -0.038   3.0        0.0   1.0 # FFLD: high 0 HC-CT1-CT-C ==> HC-CT1-CT-C
+ash.CG       ash.CB       ash.CA       ash.N            0.3565  -3.0        0.0   1.0 # FFLD: high 0 N-CT1-CT-C ==> N-CT1-CT-C
+ash.CG       ash.CB       ash.CA       ash.N            -0.481  -2.0      180.0   1.0 # FFLD: high 0 N-CT1-CT-C ==> N-CT1-CT-C
+ash.CG       ash.CB       ash.CA       ash.N            0.4225   1.0        0.0   1.0 # FFLD: high 0 N-CT1-CT-C ==> N-CT1-CT-C
+ash.H        ash.N        ash.CA       ash.HA              0.0   1.0        0.0   1.0 # FFLD: high 0 H-N-CT1-HC ==> H-N-CT1-HC
+ash.HA       ash.CA       ash.C        ash.O               0.0   1.0        0.0   1.0 # FFLD: high 0 HC-CT1-C-O ==> HC-CT1-C-O
+ash.HA       ash.CA       ash.C        nma.N               0.0   1.0        0.0   1.0 # FFLD: high 0 HC-CT1-C-N ==> HC-CT1-C-N
+ash.HA       ash.CA       ash.CB       ash.HB2            0.15   3.0        0.0   1.0 # FFLD: high 0 HC-CT1-CT-HC ==> HC-CT1-CT-HC
+ash.HA       ash.CA       ash.CB       ash.HB3            0.15   3.0        0.0   1.0 # FFLD: high 0 HC-CT1-CT-HC ==> HC-CT1-CT-HC
+ash.HB2      ash.CB       ash.CA       ash.N             0.232   3.0        0.0   1.0 # FFLD: high 0 N-CT1-CT-HC ==> N-CT1-CT-HC
+ash.HB2      ash.CB       ash.CG       ash.OD1             0.0   1.0        0.0   1.0 # FFLD: high 0 HC-CT-C-OC3 ==> HC-CT-C-OC3
+ash.HB2      ash.CB       ash.CG       ash.OD2             0.0   1.0        0.0   1.0 # FFLD: high 0 HC-CT-C-OH ==> HC-CT-C-OH
+ash.HB3      ash.CB       ash.CA       ash.N             0.232   3.0        0.0   1.0 # FFLD: high 0 N-CT1-CT-HC ==> N-CT1-CT-HC
+ash.HB3      ash.CB       ash.CG       ash.OD1             0.0   1.0        0.0   1.0 # FFLD: high 0 HC-CT-C-OC3 ==> HC-CT-C-OC3
+ash.HB3      ash.CB       ash.CG       ash.OD2             0.0   1.0        0.0   1.0 # FFLD: high 0 HC-CT-C-OH ==> HC-CT-C-OH
+ash.HD2      ash.OD2      ash.CG       ash.OD1            2.45   2.0      180.0   1.0 # FFLD: high 0 OC3-C-OH-HO ==> HO-OH-C-OC3
+ash.N        ash.CA       ash.C        ash.O               0.0   1.0        0.0   1.0 # FFLD: high 0 N-CT1-C-O ==> N-CT1-C-O
+ash.N        ash.CA       ash.C        nma.N           -0.4025  -3.0        0.0   1.0 # FFLD: high 0 N-CT1-C-N ==> N-CT1-C-N
+ash.N        ash.CA       ash.C        nma.N             1.254  -2.0      180.0   1.0 # FFLD: high 0 N-CT1-C-N ==> N-CT1-C-N
+ash.N        ash.CA       ash.C        nma.N            0.3715   1.0        0.0   1.0 # FFLD: high 0 N-CT1-C-N ==> N-CT1-C-N
+ash.O        ash.C        nma.N        nma.CA           3.0445   2.0      180.0   1.0 # FFLD: high 0 O-C-N-CT ==> CT-N-C-O
+ash.O        ash.C        nma.N        nma.H              2.45   2.0      180.0   1.0 # FFLD: high 0 O-C-N-H ==> H-N-C-O
+nma.H        nma.N        nma.CA       nma.HA1             0.0   1.0        0.0   1.0 # FFLD: high 0 H-N-CT-HC ==> H-N-CT-HC
+nma.H        nma.N        nma.CA       nma.HA2             0.0   1.0        0.0   1.0 # FFLD: high 0 H-N-CT-HC ==> H-N-CT-HC
+nma.H        nma.N        nma.CA       nma.HA3             0.0   1.0        0.0   1.0 # FFLD: high 0 H-N-CT-HC ==> H-N-CT-HC
+
+[impropers]
+ace.C        ash.N        ash.CA       ash.H               1.0      180.0 # FFLD: high amide, amidine-,guanidinium
+ace.CH3      ace.C        ace.O        ash.N              10.5      180.0 # FFLD: high carbonyl and analogs
+ash.C        nma.N        nma.CA       nma.H               1.0      180.0 # FFLD: high amide, amidine-,guanidinium
+ash.CA       ash.C        ash.O        nma.N              10.5      180.0 # FFLD: high carbonyl and analogs
+ash.CB       ash.CG       ash.OD1      ash.OD2            10.5      180.0 # FFLD: high carbonyl and analogs
+

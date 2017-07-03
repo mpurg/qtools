@@ -209,7 +209,7 @@ class TestOplsaa:
         assert len(qlib.residue_dict["ASH"].atoms) == 13
         assert len(qlib.residue_dict["NMA"].atoms) == 6
         ash = qlib.residue_dict["ASH"]
-        assert ash.atoms[1].atom_type == "CT1_C1_224"
+        assert ash.atoms[1].atom_type == "ash.CA"
         assert is_close(ash.atoms[1].charge, 0.14)
         assert "tail C" in ash.connections
         assert "head N" in ash.connections
