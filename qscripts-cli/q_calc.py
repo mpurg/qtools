@@ -36,8 +36,6 @@ from Qpyl.qgroupcontrib import QGroupContrib, QGroupContribError
 from Qpyl import plotdata
 from Qpyl.common import backup_file, init_logger
 
-logger = init_logger('Qpyl')
-
 def gc(args):
 
     if not os.path.lexists(args.pdb):
@@ -158,6 +156,14 @@ Top group contributions:
     print "Wrote '{}'... (q_plot.py is your "\
           "friend)".format(fn_out)
 
+    # writeout the pdbgc if requested
+    if args.pdbgc_out:
+        backup = backup_file(args.pdbgc_out)
+        if backup:
+            print "# Backed up '{}' to '{}'".format(args.pdbgc_out, backup)
+        open(args.pdbgc_out, 'w').write(qgc.get_pdbgc())
+        print "Wrote '{}'... (use Pymol/Chimera/VMD and color by B-factor)"\
+            "".format(args.pdbgc_out)
 
 
 def main():
@@ -232,6 +238,12 @@ def main():
                            help="Output filename (default='{}')."
                                 "".format(QScfg.get("files", "calcs_log")),
                            default=QScfg.get("files", "calcs_log"))
+
+    gc_optarg.add_argument("--pdbgc", dest="pdbgc_out",
+                           help="Output filename of PDB structure file "
+                                "with group contributions in place of the "
+                                "B-factor. Default=Don't output.",
+                           default=None)
 
     gc_optarg.add_argument("--writeout", action="store_true", default=False,
                            help="Write out QCalc inputs and outputs."

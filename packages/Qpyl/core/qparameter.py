@@ -134,9 +134,8 @@ class QPrm(object):
                         key, value = line.split()
                     except ValueError:
                         raise QPrmError("Malformed key/value pair in "
-                                        "[options] section of parm file: "
-                                        "{line}"
-                                        .format(line))
+                                        "[options] section of parm file: {}"
+                                        "".format(line))
                     self.options[key] = value
 
 

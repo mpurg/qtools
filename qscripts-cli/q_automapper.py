@@ -55,9 +55,6 @@ from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl.qmapping import QMapper, QMapperError
 from Qpyl.common import backup_file, init_logger
 
-logger = init_logger('Qpyl')
-
-
 def main():
     logger = init_logger('Qpyl')
 

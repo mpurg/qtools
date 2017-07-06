@@ -242,7 +242,8 @@ class QGroupContrib(object):
 
         # iterate through each residue and calculate
         # means and stdevs
-        for res_key in sorted(gcs.keys()):
+        # (sort by residue index)
+        for res_key in sorted(gcs.keys(), key=lambda x: int(x.split(".")[0])):
             rc = gcs[res_key]
             resid, resname = res_key.split(".")
             # get mean and stdev
@@ -522,5 +523,29 @@ Fails:
         return plots
 
 
+    def get_pdbgc(self):
+        """Return the pdb structure (string) with added GC values.
 
-
+        Fill the 'Temperature factor' fields with the calculated GC values,
+        and return the whole pdb structure in string format.
+        """
+        resids, _, _, _, _, els, _ = self.gcs_stats.get_columns()
+        gcs = dict(zip(resids, els))
+        pdb = []
+        for mol in self._pdb_qstruct.molecules:
+            for res in mol.residues:
+                for atom in res.atoms:
+                    x, y, z = atom.coordinates
+                    try:
+                        gc = gcs[atom.residue.index]
+                    except KeyError:
+                        gc = 0
+                    finally:
+                        pdb.append("ATOM  {:>5d} {:<4s} {:3s}  {:>4d}    "\
+                                "{:>8.3f}{:>8.3f}{:>8.3f}{:>6}{:>6.2f}"\
+                                "".format(atom.index, atom.name,
+                                          atom.residue.name,
+                                          atom.residue.index,
+                                          x, y, z, "", gc))
+            pdb.append("GAP")
+        return "\n".join(pdb)
