@@ -38,7 +38,7 @@ import logging
 
 from Qpyl.qanalysis import QAnalyseDyns, QAnalyseDynError
 from Qpyl import plotdata
-from Qpyl.common import backup_file, init_logger
+from Qpyl.common import backup_file, init_logger, get_version_full
 
 logger = init_logger('Qpyl')
 
@@ -68,6 +68,8 @@ optarg.add_argument("--stride", dest="stride", type=int, default=1,
 optarg.add_argument("--skip", dest="skip", type=int, default=0,
                     help="Skip percentage of data points in each log. "
                          "Default=0") 
+optarg.add_argument("-v", "--version", action="version",
+                    version=get_version_full())
 optarg.add_argument("-h", "--help", action="help", help="show this help "
                     "  message and exit")
 

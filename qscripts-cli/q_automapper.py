@@ -25,25 +25,8 @@
 #
 #
 #
-# Automapper for Q
-# Run the script with no arguments first.
-#
-# Varies EVB parameters Hij and Gas_shift until desired (experiment or qm)
-# activation and reaction free energies are obtained.
-# This script should be run in the directory that contains
-# the reference reaction's replicas (gas or water), each in its own directory
-# (by default all subdirectories in the current dir are used for mapping
-# or if there are no subdirectories, the current dir is mapped.
-# This can be changed with --dirs dir1 dir2 dir3 ...
-#
-# Initial guess values for Hij and gas_shift should be relatively close to
-# their correct values (+-50) otherwise qfep crashes. If it doesn't converge,
-# change the step size (--step), number of iterations (--iter) or the threshold
-# (--threshold). For information about other parameters (bins, nt, skip,
-# temperature...) see q_mapper.py
-#
 
-from qscripts_config import QScriptsConfig as QScfg
+from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
 import os
@@ -53,16 +36,23 @@ import inspect
 
 from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl.qmapping import QMapper, QMapperError
-from Qpyl.common import backup_file, init_logger
+from Qpyl.common import backup_file, init_logger, get_version_full
 
 def main():
     logger = init_logger('Qpyl')
 
     parser = argparse.ArgumentParser(description="""
-    Bored of changing your Hij and alpha manually when calibrating 
-    your EVB potential? Look no further, this script will do it for you.
-    Give it the two reference values (activation and reaction free 
-    energy), and initial guesses for hij and alpha and enjoy reddit.
+    Fits EVB parameters Hij and alpha to reproduce
+    reference activation and reaction free energies.
+
+    By default, all subdirectories in current dir will be used
+    for mapping, or current dir if no subdirs are found.
+    This can be changed with --dirs.
+
+    Initial guess values for Hij and alpha should be relatively close to
+    their correct values (+-50) otherwise qfep crashes. If it doesn't converge,
+    change the step size (--step), number of iterations (--iter) or the threshold
+    (--threshold).
     """, add_help=False)
     reqarg = parser.add_argument_group("Required")
     reqarg.add_argument("ref_dga", type=float,
@@ -139,6 +129,8 @@ def main():
                         default=QScfg.get("qexec", "qfep"),
                         help="qfep5 executable path (default={})."
                              "".format(QScfg.get("qexec", "qfep")))
+    optarg.add_argument("-v", "--version", action="version",
+                        version=get_version_full())
     optarg.add_argument("-h", "--help", action="help", help="show this help "
                         "  message and exit")
 

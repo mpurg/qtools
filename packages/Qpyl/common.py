@@ -2,19 +2,19 @@
 # -*- coding: utf-8 -*-
 #
 # MIT License
-# 
+#
 # Copyright (c) 2017  Miha Purg <miha.purg@gmail.com>
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
 # in the Software without restriction, including without limitation the rights
 # to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 # copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
+#
 # The above copyright notice and this permission notice shall be included in all
 # copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 # IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 # FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -35,8 +35,19 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+__version__ = "0.5.9"
 
-__version__ = "0.5.8"
+
+def get_version_full():
+    try:
+        gitdir = os.path.join(os.environ["QTOOLS_HOME"], ".git")
+        head = open(os.path.join(gitdir, "HEAD")).read().split()[1]
+        branch = head.split("/")[-1]
+        ref = open(os.path.join(gitdir, head)).read().strip()[:8]
+    except:
+        ref, branch = "Unknown", "Unknown"
+    return "Qtools version: {}, git id: {} ({})"\
+           "".format(__version__, ref, branch)
 
 
 class SpecialFormatter(logging.Formatter):
@@ -226,14 +237,19 @@ class DataContainer(object):
     Example of usage:
     >>> dg_de = DataContainer( ['Energy_gap', 'dG'] )
     >>> dg_de.add_row( [-300.0, 10.0 ]
-    >>> rows = dg_de.get_rows( reversed(dg_de.get_column_titles()) )  # reversed rows
+    # reversed rows
+    >>> rows = dg_de.get_rows( reversed(dg_de.get_column_titles()) )
     >>> cols = dg_de.get_columns( columns=[0, 1] )
     """
 
     def __init__(self, coltitles):
-        if not isinstance(coltitles, (list,tuple)): coltitles = [ coltitles, ]
-        self._column_titles = list(coltitles)    
-        self._rows = [] # a list containing rows of values (each row is a list with length = len(coltitles))
+        if not isinstance(coltitles, (list, tuple)):
+            coltitles = [coltitles,]
+
+        self._column_titles = list(coltitles)
+        # a list containing rows of values
+        # (each row is a list with length = len(coltitles))
+        self._rows = []
         self.comment = None
 
 
@@ -242,31 +258,33 @@ class DataContainer(object):
         Transposes the array and returns the columns instead of rows.
 
         Args:
-            columns (list), optional: return only columns with these indices and/or titles
+            columns (list), optional: return only columns with
+                                      these indices and/or titles
 
         Returns:
             list of columns (list of lists)
         """
-        if not columns: columns = []
+        if not columns:
+            columns = []
         col_inds = []
         for col in columns:
-            if type(col) == int: 
+            if type(col) == int:
                 col_inds.append(col)
             else:
                 col_inds.append(self._column_titles.index(str(col)))
         cols = zip(*self._rows)   # transpose
         if col_inds:
-            return [ cols[i] for i in col_inds]
+            return [cols[i] for i in col_inds]
         else:
             return cols
 
 
     def get_rows(self, columns=None):
-        """
-        Returns the rows.
+        """Return the rows.
 
         Args:
-            columns (list), optional: return only columns with these indices and/or titles
+            columns (list), optional: return only columns with
+                                      these indices and/or titles
 
         Returns:
             list of rows (list of lists)
@@ -279,24 +297,25 @@ class DataContainer(object):
 
 
     def get_column_titles(self):
-        """
-        Returns:
-            list of column names (list)
-        """
-           
+        """Return the list of column titles."""
+
         return self._column_titles
 
 
     def add_row(self, row):
-        """
+        """Add a row.
+
         Args:
             row (list): a list of values
 
         Raises:
-            ValueError: if number of elements in row is not equal to number of column titles
+            ValueError: if number of elements in row is not equal to
+                        number of column titles
         """
+
         if len(row) != len(self._column_titles):
-            raise ValueError("Number of elements is not equal to number of columns, in row:\n%s" % row)
+            raise ValueError("Number of elements is not equal to number "
+                             "of columns, in row:\n{}".format(row))
         self._rows.append(list(row))
 
 
@@ -308,26 +327,26 @@ class DataContainer(object):
 
     def __str__(self):
         if self.comment:
-            s = "#" + self.comment + "\n"
+            outs = "#" + self.comment + "\n"
         else:
-            s = ""
-        for name in self._column_titles:     
+            outs = ""
+        for name in self._column_titles:
             width = len(name)
-            if width<10:
-                width=10
-            s += " {name:{width}} ".format(name=name, width=width)
+            if width < 10:
+                width = 10
+            outs += " {name:{width}} ".format(name=name, width=width)
         for row in self._rows:
-            s += "\n"
-            for i,val in enumerate(row): 
+            outs += "\n"
+            for i, val in enumerate(row):
                 try:
-                    width=len(self._column_titles[i])
-                    if width<10:
-                        width=10
+                    width = len(self._column_titles[i])
+                    if width < 10:
+                        width = 10
                 except IndexError:
-                    width=20
-                if type(val) == float:    
-                    s+=" {val:{width}.2f} ".format(val=val, width=width )
-                else: 
-                    s+=" {val:{width}} ".format(val=str(val), width=width)
-        return s    
+                    width = 20
+                if type(val) == float:
+                    outs += " {val:{width}.2f} ".format(val=val, width=width)
+                else:
+                    outs += " {val:{width}} ".format(val=str(val), width=width)
+        return outs
 

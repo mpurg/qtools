@@ -23,11 +23,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-#
-#
-#
 
-from qscripts_config import QScriptsConfig as QScfg
+from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
 import os
@@ -35,7 +32,7 @@ import argparse
 import logging
 
 from Qpyl.qmakefep import make_fep, QMakeFepError
-from Qpyl.common import backup_file, init_logger
+from Qpyl.common import backup_file, init_logger, get_version_full
 
 
 if __name__ == "__main__":
@@ -78,6 +75,8 @@ if __name__ == "__main__":
                              "(from MCPB.py for instance), or other weird "
                              "stuff, but PLEASE don't ignore the output "
                              "messages and PLEASE triple check your outputs.")
+    optarg.add_argument("-v", "--version", action="version",
+                        version=get_version_full())
     optarg.add_argument("-h", "--help", action="help", help="show this "
                         "help message and exit")
 

@@ -25,7 +25,8 @@
 #
 #
 #
-from qscripts_config import __version__
+
+from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import os
 import sys
@@ -34,7 +35,7 @@ import argparse
 import logging
 
 from Qpyl.core.qlibrary import QLib, QLibError
-from Qpyl.common import backup_file, init_logger
+from Qpyl.common import backup_file, init_logger, get_version_full
 
 logger = init_logger('Qpyl')
 
@@ -53,6 +54,9 @@ optarg.add_argument("-t", dest="threshold", type=float, default=0.3,
                          "will fail. Default=0.3")
 optarg.add_argument("--ignore_errors", action="store_true", default=False,
                     help="Use if nothing else works")
+
+optarg.add_argument("-v", "--version", action="version",
+                    version=get_version_full())
 optarg.add_argument("-h", "--help", action="help", help="show this "
                     "help message and exit")
 

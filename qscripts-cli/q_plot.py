@@ -34,6 +34,7 @@ import argparse
 from collections import OrderedDict as ODict
 
 from Qpyl.plotdata import PlotData, PlotDataError, PlotDataJSONDecoder
+from Qpyl.common import get_version_full
 
 class PlotApp():
 
@@ -324,6 +325,8 @@ if __name__ == "__main__":
                         help="Export plots in Grace format to this directory: "
                              "'{}'. Try without args, to see available plots."
                              "".format(QScfg.get("files", "plot_export_dir")))
+    optarg.add_argument("-v", "--version", action="version",
+                        version=get_version_full())
     optarg.add_argument("-h", "--help", action="help", help="show this "
                         "help message and exit")
 

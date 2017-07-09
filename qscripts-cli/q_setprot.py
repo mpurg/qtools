@@ -39,7 +39,7 @@ from qscripts_config import __version__, QScriptsConfig as QScfg
 import sys
 import os
 import argparse
-from Qpyl.common import backup_file
+from Qpyl.common import backup_file, get_version_full
 
 parser = argparse.ArgumentParser(description="""
 Simple script for ionizing residues. It basically changes all the specified
@@ -54,6 +54,8 @@ reqarg.add_argument("resids", help="Text file with space or newline separated "
 reqarg.add_argument("outfn", help="Output filename")
 
 optarg = parser.add_argument_group("Optional")
+optarg.add_argument("-v", "--version", action="version",
+                    version=get_version_full())
 optarg.add_argument("-h", "--help", action="help", help="show this "
                     "help message and exit")
 

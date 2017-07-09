@@ -30,15 +30,14 @@
 # extra keyword that can be used instead of the placeholder is 'LAST.ID' (no explanation needed)
 
 
-from qscripts_config import __version__
+from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
 import os
 import argparse
-import logging
 
 from Qpyl.core.qstructure import QStruct, QStructError
-from Qpyl.common import backup_file, init_logger
+from Qpyl.common import backup_file, init_logger, get_version_full
 
 logger = init_logger('Qpyl')
 
@@ -47,23 +46,27 @@ Command-line tool for converting atom placeholders to indexes. The
 placeholders have the following format: $RESID.ATOM_NAME$
 """, add_help=False)
 reqarg = parser.add_argument_group("Required")
-reqarg.add_argument("pdb", 
+reqarg.add_argument("pdb",
                     help="pdb structure file (created with qprep)")
-reqarg.add_argument("inp", 
+reqarg.add_argument("inp",
                     help="input/fep file containing the placeholders")
-reqarg.add_argument("out", 
+reqarg.add_argument("out",
                     help="output filename")
 optarg = parser.add_argument_group("Optional")
 optarg.add_argument("--ignore_errors", action="store_true", default=False,
                     help="Don't use this unless it's an emergency")
+optarg.add_argument("-v", "--version", action="version",
+                    version=get_version_full())
+optarg.add_argument("-h", "--help", action="help", help="show this "
+                    "help message and exit")
 
-if len(sys.argv) < 3:
+if len(sys.argv) == 1:
     parser.print_help()
     sys.exit(1)
 
 args = parser.parse_args()
 
-for k,v in vars(args).iteritems():
+for k, v in vars(args).iteritems():
     if k in ["inp", "pdb"] and not os.path.lexists(v):
         print "FATAL! File '{}' doesn't exist.".format(v)
         sys.exit(1)

@@ -36,7 +36,7 @@ import logging
 
 from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl import plotdata
-from Qpyl.common import backup_file, init_logger
+from Qpyl.common import backup_file, init_logger, get_version_full
 
 
 def main():
@@ -89,6 +89,8 @@ every mapping.
                              "Default={}".format(QScfg.get("files", \
                                                  "analysefeps_subcalc_dir")),
                         default=QScfg.get("files", "analysefeps_subcalc_dir"))
+    optarg.add_argument("-v", "--version", action="version",
+                        version=get_version_full())
     optarg.add_argument("-h", "--help", action="help", help="show this help "
                         "  message and exit")
 

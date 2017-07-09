@@ -24,7 +24,7 @@
 # SOFTWARE.
 #
 
-from qscripts_config import QScriptsConfig as QScfg
+from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
 import os
@@ -33,7 +33,7 @@ import logging
 
 from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl.qmapping import QMapper
-from Qpyl.common import backup_file, init_logger
+from Qpyl.common import backup_file, init_logger, get_version_full
 
 def main():
     logger = init_logger('Qpyl')
@@ -42,6 +42,10 @@ def main():
     Command-line interface for mapping EVB (or just plain old FEP) simulations
     with QFep. At the moment, supports only single Hij (constant) and alpha.
     For FEP, use Hij=alpha=0.
+
+    By default, all subdirectories in current dir will be used
+    for mapping, or current dir if no subdirs are found.
+    This can be changed with --dirs.
     """, add_help=False)
 
     reqarg = parser.add_argument_group("Required")
@@ -89,6 +93,9 @@ def main():
                         default=QScfg.get("qexec", "qfep"),
                         help="qfep5 executable path (default={})."
                              "".format(QScfg.get("qexec", "qfep")))
+
+    optarg.add_argument("-v", "--version", action="version",
+                        version=get_version_full())
     optarg.add_argument("-h", "--help", action="help", help="show this "
                         "help message and exit")
 

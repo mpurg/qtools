@@ -24,7 +24,6 @@
 # SOFTWARE.
 #
 
-
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -34,7 +33,7 @@ import argparse
 
 from Qpyl.qgroupcontrib import QGroupContrib, QGroupContribError
 from Qpyl import plotdata
-from Qpyl.common import backup_file, init_logger
+from Qpyl.common import backup_file, init_logger, get_version_full
 
 def gc(args):
 
@@ -59,7 +58,7 @@ def gc(args):
             if lamb < 0 or lamb > 1:
                 raise ValueError
         except ValueError:
-            print "FATAL! Lambda values make no sense. 0<lambda<1 please."
+            print "FATAL! Lambda values make no sense. 0 <= lambda <= 1 please."
             sys.exit(1)
         lambdas.append((lamb, 1-lamb))
 
@@ -171,10 +170,13 @@ def main():
 
     parser = argparse.ArgumentParser(description="""
     A friendly command-line interface for calculating distances, angles, rmsds,
-    group contributions, etc. with Qcalc. To get help on a sub-command, just run
-    it without additional arguments.""")
+    group contributions, etc. with Qcalc.
+    """)
 
     subp = parser.add_subparsers(title="subcommands", dest="command")
+
+    parser.add_argument("-v", "--version", action="version",
+                        version=get_version_full())
 
     subps = {}
     subps["gc"] = subp.add_parser("gc", help="Group contribution calculation.",
@@ -188,7 +190,7 @@ def main():
     gc_reqarg.add_argument("pdb", help="PDB structure created with Qprep.")
 
     gc_reqarg.add_argument("resid_first", type=int,
-                           help="Indexes of first residue to be "
+                           help="Index of first residue to be "
                                 "included in the calculation.")
 
     gc_reqarg.add_argument("resid_last", type=int,
@@ -240,14 +242,14 @@ def main():
                            default=QScfg.get("files", "calcs_log"))
 
     gc_optarg.add_argument("--pdbgc", dest="pdbgc_out",
-                           help="Output filename of PDB structure file "
-                                "with group contributions in place of the "
-                                "B-factor. Default=Don't output.",
+                           help="Output filename of PDB structure "
+                                "with group contributions in place of "
+                                "B-factors. Default=Don't output.",
                            default=None)
 
     gc_optarg.add_argument("--writeout", action="store_true", default=False,
-                           help="Write out QCalc inputs and outputs."
-                                "Default=Don't")
+                           help="Write out QCalc inputs and outputs. "
+                                "Default=Don't writeout.")
 
     gc_optarg.add_argument("--qcalc_exec", dest="qcalc_exec",
                            default=QScfg.get("qexec", "qcalc"),
@@ -260,19 +262,18 @@ def main():
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
-    elif len(sys.argv) == 2 and sys.argv[1] not in ['-h', '--help']:
+    elif len(sys.argv) == 2 and sys.argv[1] not in ["-h", "--help",
+                                                    "-v", "--version"]:
         try:
             subps[sys.argv[1]].print_help()
         except KeyError:
-            print "Subcommand '{}' not available...".format(sys.argv[1])
-            print
+            print "Subcommand '{}' not available...\n".format(sys.argv[1])
         sys.exit(1)
 
     args = parser.parse_args()
 
     if args.command == "gc":
         gc(args)
-
 
 
 if __name__ == "__main__":

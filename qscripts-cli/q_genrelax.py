@@ -25,14 +25,7 @@
 #
 #
 #
-#
-# 2015-11-04
-#
-# Generate relaxation inputs for qdyn5
-#
-# An example of a procedure file (only required argument) can be
-# found in qscripts/template_examples/
-#
+
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -40,7 +33,7 @@ import argparse
 import logging
 
 from Qpyl.qgeninp import genrelax, QGenrelaxError
-from Qpyl.common import init_logger
+from Qpyl.common import init_logger, get_version_full
 
 logger = init_logger('Qpyl')
 
@@ -89,6 +82,9 @@ optarg.add_argument("--outdir", dest="outdir",
 optarg.add_argument("--ignore_errors", action="store_true", default=False,
                     help="Keyword/parameter checks will no longer be fatal."
                          "Use with care.")
+
+optarg.add_argument("-v", "--version", action="version",
+                    version=get_version_full())
 
 optarg.add_argument("-h", "--help", action="help", help="show this "
                     "help message and exit")

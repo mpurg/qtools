@@ -35,7 +35,7 @@ import argparse
 import logging
 
 from Qpyl.qgeninp import genfeps, QGenfepsError
-from Qpyl.common import init_logger
+from Qpyl.common import init_logger, get_version_full
 
 logger = init_logger('Qpyl')
 
@@ -112,6 +112,9 @@ optarg.add_argument("--first_frame_eq", dest="first_frame_eq",
 optarg.add_argument("--ignore_errors", action="store_true", default=False,
                     help="Keyword/parameter checks will no longer be fatal."
                          "Use with care.")
+
+optarg.add_argument("-v", "--version", action="version",
+                    version=get_version_full())
 
 optarg.add_argument("-h", "--help", action="help", help="show this "
                     "help message and exit")

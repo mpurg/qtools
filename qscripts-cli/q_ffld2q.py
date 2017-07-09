@@ -50,7 +50,7 @@ from Qpyl.core.qparameter import QPrm, QPrmError
 from Qpyl.core.qpotential import torsion_energy
 from Qpyl.core.qstructure import QStruct, QStructError
 from Qpyl.core.qtopology import QTopology, QTopologyError
-from Qpyl.common import backup_file, init_logger
+from Qpyl.common import backup_file, init_logger, get_version_full
 
 logger = init_logger('Qpyl')
 
@@ -79,6 +79,8 @@ optarg.add_argument("--ignore_errors", action="store_true", default=False,
                          "instance), or other weird stuff, but PLEASE don't "
                          "ignore the output message and triple check your "
                          "outputs.")
+optarg.add_argument("-v", "--version", action="version",
+                    version=get_version_full())
 optarg.add_argument("-h", "--help", action="help", help="show this "
                     "help message and exit")
 
