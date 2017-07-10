@@ -104,7 +104,7 @@ qlib = QLib("oplsaa", ignore_errors=args.ignore_errors)
 qprm = QPrm("oplsaa", ignore_errors=args.ignore_errors)
 
 try:
-    qstruct = QStruct(args.pdb, "pdb")
+    qstruct = QStruct(args.pdb, "pdb", ignore_errors=args.ignore_errors)
 except QStructError as err:
     print "FATAL! Problem with pdb: {}".format(err)
     sys.exit(1)

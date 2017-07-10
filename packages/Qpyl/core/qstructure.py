@@ -209,6 +209,12 @@ class QStruct(object):
                     self.residues.append(residue)
                     molecule.add_residue(residue)
 
+                if aname in [a.name for a in residue.atoms]:
+                    raise_or_log("Bad PDB format - two atoms with same name "
+                                 "({}) in residue {}.{}"
+                                 "".format(aname, rname, rindex),
+                                 QStructError, logger, self.ignore_errors)
+
                 atom = _StructAtom(aindex, aname, x, y, z, residue, self)
                 self.atoms.append(atom)
                 residue.add_atom(atom)
