@@ -18,6 +18,7 @@ user-control over *Q* (i.e., relatively low abstraction level) and the ease-of-u
 
 *Disclaimer: qtools is not affiliated with *Q* nor should it be considered an official toolset for Q.*
 
+
 #### Available features
 
 - Converting parameters to Q format (OPLS, Amber/GAFF).
@@ -76,9 +77,9 @@ More documentation will be added as soon as possible.
 #### Testing
 
 Testing is done [here](https://travis-ci.org/mpurg/qtools),
-with [pytest](https://docs.pytest.org/en/latest/) for Qpyl (code coverage on top),
+with [pytest](https://docs.pytest.org/en/latest/) for Qpyl
+([code coverage](https://coveralls.io/github/mpurg/qtools?branch=master)).
 and simple regression tests for CLI tools.
-
 To run the tests locally, make sure you have `pytest` installed and simply type:
 ```
 cd tests
@@ -90,9 +91,19 @@ Parts of the code rely on (at the moment still proprietary) Q
 binaries and are thus tested elsewhere.*
 
 
-##### Author
+#### Citations
+
+To acknowledge the use of qtools in scientific publications, please specify the version and the
+DOI of the latest release:  
+[![DOI](https://zenodo.org/badge/80016679.svg)](https://zenodo.org/badge/latestdoi/80016679)  
+
+*Example:*  
+*...analysis was performed with qtools v0.5.9 (DOI: 10.5281/zenodo.842003).*
+
+
+#### Author
 Miha Purg (miha.purg@gmail.com)  
 
-###### Contributors
+##### Contributors
 Paul Bauer (paul.bauer@icm.uu.se)  
 
