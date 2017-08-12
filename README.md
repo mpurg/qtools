@@ -7,23 +7,28 @@
 
 #### Description
 
-A Python interface library (Qpyl) and a bunch of useful command line tools for [Q](http://xray.bmc.uu.se/~aqwww/q/), your friendly EVB simulation package.
+qtools is a Python interface library (Qpyl) and a set of useful
+command line tools for working with the [*Q* molecular dynamics 
+simulation package](http://xray.bmc.uu.se/~aqwww/q/).
+This open-source project was created by Miha Purg
+(currently at Uppsala University) in order to provide Q-users with a set of well tested
+tools for automating repetitive and/or tedious tasks, debugging simulations, and analysing results.
+The author strives to achieve a good balance between the level of
+user-control over *Q* (i.e., relatively low abstraction level) and the ease-of-use provided by qtools.
 
-###### Useful?
+*Disclaimer: qtools is not affiliated with *Q* nor should it be considered an official toolset for Q.*
 
-- Library/parameter file conversion (oplsaa, amber).
+#### Available features
+
+- Converting parameters to Q format (OPLS, Amber/GAFF).
 - FEP file generation for EVB simulations.
-- Input generation (MD, FEP, EVB).
-- EVB mapping and automatic fitting of EVB parameters.
-- Output parsing/analysis (MD, FEP, EVB).
-
-###### Tests?
-
-Working on it, jeez...
-
-###### Documentation?
-
-*Please* contribute, I pay in beer/pizza/karma points...
+- Input generation for MD/FEP simulations and EVB calculations.
+- EVB mapping and automatic fitting of off-diagonal and gas shift parameters.
+- Output parsing and analysis of MD, FEP and EVB.
+- Graphical tool for visualizing results and debugging simulations:
+  - Free energy profiles
+  - LRA, REORG, Group contributions
+  - Energy breakdown (VDW, El, Bonds, ...)
 
 
 #### Requirements
@@ -36,17 +41,19 @@ The only requirement is *Python, version 2.7*
 
 *Note: The tools will likely fail misserably on Windows,
 since development (and testing) is done exclusively on GNU/Linux.*
+  
 
-#### Installation (\*nix, Bash)
-Clone this repository to your favourite directory:  
+
+
+#### Installation (Linux)
+
+Clone the repository to your local directory:  
 ```
 mkdir -p ~/bin && cd ~/bin
 git clone https://github.com/mpurg/qtools
 ```
 
-
-
-Add this to your `~/.bashrc` or `~/.bash_profile`:  
+Add this line to your `~/.bashrc` or `~/.bash_profile`:  
 ```
 source $HOME/bin/qtools/qtools_init.sh
 ```
@@ -56,14 +63,36 @@ Run the config script:
 qscripts_config.py
 ```
 
+#### Documentation
+
+The starting point should be the `docs/tutorials` folder.
+For now, it contains one working example of how you can use the command line tools to prepare, simulate and analyse a simple SN2 reaction with EVB.  
+  
+For python developers, jupyter-notebook examples of interfacing Qpyl can be found in `docs/examples`. Additionally the tests, qscripts_cli and the Sphinx API reference (in `docs/manual`) can be useful to explore the API.
+
+More documentation will be added as soon as possible.
 
 
-#### Other
-Bugs, suggestions and questions: miha.purg@gmail.com
+#### Testing
 
+Testing is done [here](https://travis-ci.org/mpurg/qtools),
+with [pytest](https://docs.pytest.org/en/latest/) for Qpyl (code coverage on top),
+and simple regression tests for CLI tools.
+
+To run the tests locally, make sure you have `pytest` installed and simply type:
+```
+cd tests
+./run_tests.sh
+```
+
+*Note:
+Parts of the code rely on (at the moment still proprietary) Q
+binaries and are thus tested elsewhere.*
+
+
+##### Author
+Miha Purg (miha.purg@gmail.com)  
 
 ###### Contributors
-Paul Bauer (paul.bauer@icm.uu.se)
-
-
+Paul Bauer (paul.bauer@icm.uu.se)  
 
