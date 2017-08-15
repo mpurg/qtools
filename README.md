@@ -98,7 +98,7 @@ DOI of the latest release:
 [![DOI](https://zenodo.org/badge/80016679.svg)](https://zenodo.org/badge/latestdoi/80016679)  
 
 *Example:*  
-*...analysis was performed with qtools v0.5.9 (DOI: 10.5281/zenodo.842003).*
+*...analysis was performed with qtools v0.5.10 (DOI: 10.5281/zenodo.842003).*
 
 
 #### Author

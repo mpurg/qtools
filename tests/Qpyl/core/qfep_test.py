@@ -55,8 +55,12 @@ class TestQFepOutput:
         assert is_close(qfo1.part1.dg, -10.204)
 
     def test_lra1(self, qfo1):
-        # LRA of EQbond
-        # pen&paper:
+        # LRA of EQbond (1.0 -> 0.0)
+        # pen&paper
+        # E1_10 = 1.0*-65.90 + 0.0*-8.21
+        # E2_10 = 0.0*-65.90 + 1.0*-8.21
+        # E1_01 = 1.0*-6.81  + 0.0*-77.97
+        # E2_01 = 0.0*-6.81  + 1.0*-77.97
         # E = 0.5*( <E2-E1>_10 + <E2-E1>_01 )
         # E = 0.5*( (-8.21 --65.90) + (-77.97 --6.81) )
         # E = -6.7350
@@ -71,6 +75,29 @@ class TestQFepOutput:
         lras = " ".join(["{:.2f}".format(x) for x in lras.get_columns()[3]])
         expected = "206.07 139.64 -2.59 -6.68 -0.01 69.30 6.41 "\
                    "43.62 6.75 30.10 -0.61 -4.43 0.29 0.00"
+        assert lras == expected
+
+    def test_lra3(self, qfo1):
+        # LRA of EQbond (0.9 -> 0.6)
+        # pen&paper
+        # E1_10 = 0.9*-65.52 + 0.1*-11.18 = -60.086
+        # E2_10 = 0.6*-65.52 + 0.4*-11.18 = -43.784
+        # E1_01 = 0.9*-56.26 + 0.1*-28.54 = -53.488
+        # E2_01 = 0.6*-56.26 + 0.4*-28.54 = -45.172
+        # E = 0.5*( <E2-E1>_10 + <E2-E1>_01 )
+        # E = 0.5*( (-43.784 --60.086) + (-45.172 --53.488) )
+        # E = 12.309
+        lras = qfo1.part0.calc_lra(0.9, 0.6)
+        print lras
+        lra_eqbond = lras.get_columns(["LRA"])[0][1]
+        assert is_close(lra_eqbond, 12.309)
+
+    def test_lra4(self, qfo2):
+        lras = qfo2.part0.calc_lra(0.9, 0.6)
+        print lras
+        lras = " ".join(["{:.2f}".format(x) for x in lras.get_columns()[3]])
+        expected = "187.28 89.52 51.98 0.27 -0.00 30.78 14.74 19.51 14.87 "\
+                   "10.84 -0.20 0.42 0.07 0.00"
         assert lras == expected
 
     def test_dgs1(self, qfo2):

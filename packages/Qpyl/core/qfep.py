@@ -187,34 +187,41 @@ class _QFepPart0(object):
         lra = DataContainer(["E_type", "(E2-E1)_10", "(E2-E1)_01",
                              "LRA", "REORG"])
 
-        e1_st1, e1_st2, e2_st1, e2_st2 = None, None, None, None
+        e1_a, e1_b, e2_a, e2_b = None, None, None, None
         # get the appropriate rows of energies
+        # note that these energies are not scaled by lambda
         # [4:] ignores 'file', 'state', 'points' and 'lambda'
         for row in self.data_state[0].get_rows():
             if abs(row[3] - lambda_a) < 1e-7:
-                e1_st1 = row[4:]
+                e1_a = row[4:]
             if abs(row[3] - lambda_b) < 1e-7:
-                e1_st2 = row[4:]
+                e1_b = row[4:]
         # lambda2 in data_state[1] is actually (1-lambda), correct for that
         for row in self.data_state[1].get_rows():
             if abs((1 - row[3]) - lambda_a) < 1e-7:
-                e2_st1 = row[4:]
+                e2_a = row[4:]
             if abs((1 - row[3]) - lambda_b) < 1e-7:
-                e2_st2 = row[4:]
+                e2_b = row[4:]
 
-        if not e1_st1:
+        if not e1_a:
             raise QFepOutputError("LRA: No energy values for lambda == '{}'"
                                   "".format(lambda_a))
-        if not e1_st2:
+        if not e1_b:
             raise QFepOutputError("LRA: No energy values for lambda == '{}'"
                                   "".format(lambda_b))
 
+        la, lb = lambda_a, lambda_b
+        # calculate total E=(l1*E1 + l2*E2) energies
+        e1_state1 = [la*e1a + (1-la)*e2a for e1a, e2a in zip(e1_a, e2_a)]
+        e1_state2 = [la*e1b + (1-la)*e2b for e1b, e2b in zip(e1_b, e2_b)]
 
+        e2_state1 = [lb*e1a + (1-lb)*e2a for e1a, e2a in zip(e1_a, e2_a)]
+        e2_state2 = [lb*e1b + (1-lb)*e2b for e1b, e2b in zip(e1_b, e2_b)]
 
         # (E2-E1)_10    (reactant state) = First row E2 - E1
         # (E2-E1)_01    (products state) = Last row E2 - E1
-        des_st1 = [e2 - e1 for e1, e2 in zip(e1_st1, e2_st1)]
-        des_st2 = [e2 - e1 for e1, e2 in zip(e1_st2, e2_st2)]
+        des_st1 = [e2 - e1 for e1, e2 in zip(e1_state1, e2_state1)]
+        des_st2 = [e2 - e1 for e1, e2 in zip(e1_state2, e2_state2)]
 
         # LRA=0.5*(<E2-E1>_10+<E2-E1>_01)
         # REO=0.5*(<E2-E1>_10-<E2-E1>_01)
