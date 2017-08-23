@@ -587,7 +587,7 @@ class QFepOutput(object):
                               "of atoms \s+(\d+)")
 
     # Header regular expression
-    _HEADER_RE = re.compile("(# Qfep.*?)# Part 0", re.DOTALL)
+    _HEADER_RE = re.compile("(# Qfep.*?|qfep version.*?)# Part 0", re.DOTALL)
 
 
     def __init__(self, qfep_output, _calc_index=0):
