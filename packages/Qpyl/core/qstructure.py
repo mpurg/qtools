@@ -138,7 +138,7 @@ class QStruct(object):
                 aindex, aname = int(lf[0]), lf[1]
                 x, y, z = map(float, lf[2:5])
                 rindex = int(lf[6])
-                rname = lf[7][0:4].upper()
+                rname = lf[7][0:3].upper()
 
                 if old_aindex != None and aindex - old_aindex != 1:
                     raise_or_log("Bad Mol2 format - atom "

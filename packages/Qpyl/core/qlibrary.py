@@ -342,7 +342,7 @@ class QLib(object):
                 aindex, aname = int(lf[0]), lf[1]
                 atype = lf[5]
                 rindex = int(lf[6])
-                rname = lf[7][0:4].upper()
+                rname = lf[7][0:3].upper()
                 charge = float(lf[8])
 
 
