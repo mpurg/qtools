@@ -98,12 +98,6 @@ optarg.add_argument("--prefix", dest="prefix",
                                                            "prefix_rep")),
                     default=QScfg.get("inputs", "prefix_rep"))
 
-optarg.add_argument("--energy_list_fn", dest="energy_list_fn",
-                    default=QScfg.get("files", "en_list_fn"),
-                    help="Filename where the proper order of the energy "
-                         "files will be stored. Default='{}'."
-                         "".format(QScfg.get("files", "en_list_fn")))
-
 optarg.add_argument("--first_frame_eq", dest="first_frame_eq",
                     action="store_true", default=False,
                     help="If set, the first FEP frame will be replaced "
@@ -128,7 +122,7 @@ args = parser.parse_args()
 kwargs = {"fep_proc_file": args.fep_proc,
           "relax_input_file": args.relax_input,
           "restraint": args.restraint,
-          "energy_list_fn": args.energy_list_fn,
+          "energy_list_fn": QScfg.get("files", "en_list_fn"),
           "pdb_file": args.pdb,
           "fep_file": args.fep,
           "runscript_file": args.runscript,

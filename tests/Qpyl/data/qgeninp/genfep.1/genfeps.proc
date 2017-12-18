@@ -28,8 +28,6 @@ SEQ_REST1
 SEQ_REST2
 
 [distance_restraints]
-DIST_REST1
-DIST_REST2
 
 #######################################################
 {STEPS_EQUIL}
@@ -40,9 +38,18 @@ steps                 10000
 initial_temperature      10
 temperature              10
 random_seed             457
+
+[distance_restraints]
+DIST_REST1
+DIST_REST2
 ______________________________________________________
+
 [MD]
 steps                 50000
+
+[distance_restraints]
+DIST_REST1
+DIST_REST2
 
 #######################################################
 {FEP}
@@ -52,3 +59,7 @@ steps                 10000
 
 [intervals]
 energy                   10
+
+[distance_restraints]
+DIST_REST1
+DIST_REST2

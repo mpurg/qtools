@@ -791,8 +791,8 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
     for placeholder, value in script_variables:
         gen_inp_s = gen_inp_s.replace(placeholder, value)
         fep_inp_s = fep_inp_s.replace(placeholder, value)
-        for eq_step_inp_s in eq_steps_inps_s:
-            eq_step_inp_s = eq_step_inp_s.replace(placeholder, value)
+        for step_i, eq_step_inp_s in enumerate(eq_steps_inps_s):
+            eq_steps_inps_s[step_i] = eq_step_inp_s.replace(placeholder, value)
 
 
     ####################

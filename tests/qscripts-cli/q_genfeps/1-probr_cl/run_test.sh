@@ -20,7 +20,6 @@ q_genfeps.py ./input/genfeps.proc \
              --frames 51 \
              --fromlambda 0.5 \
              --pdb ./input/0-topol/probr_cl_start.pdb \
-             --energy_list_fn random_name.list \
              --prefix test_ >> ${STDOUT}
 
 for i in test_000/*

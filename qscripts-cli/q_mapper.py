@@ -156,18 +156,18 @@ def main():
     # analyse the outputs
     output_files = [os.path.join(md, qfep_out_fn) for md in qmapper.mapped]
     qafs = QAnalyseFeps(output_files)
-    fails = "\n".join(["{}: {}".format(qfo, err) for qfo, err in
-                                        qafs.failed.iteritems()])
 
     outstr = """
 {mapper_details}
 Analysis Stats:
 {analysis_stats}
 Analysis Fails:
-{analysis_fails}
-""".format(mapper_details=qmapper.details, analysis_stats=qafs.stats_str,
-           analysis_fails=fails or "None")
+FEP: {fails}, EVB: {fails_dg}
 
+Run q_analysefeps.py for more info...
+""".format(mapper_details=qmapper.details, analysis_stats=qafs.stats_str,
+           fails=len(qafs.failed) or "None",
+           fails_dg=len(qafs.failed_dg) or "None")
 
     print outstr
     backup = backup_file(args.outfile)
@@ -175,6 +175,7 @@ Analysis Fails:
         print "# Backed up '{}' to '{}'".format(args.outfile, backup)
     open(args.outfile, "w").write(outstr)
     print "Wrote '{}'...".format(args.outfile)
+
 
 
 if __name__ == "__main__":
