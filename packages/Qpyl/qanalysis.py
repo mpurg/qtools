@@ -277,12 +277,11 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
                                       ylabel="Potential energy  [kcal/mol]",
                                       plot_type="bar")
 
-        plots["lambda_egap"] = PlotData("Sampling (binning): "
+        plots["egap_lambda"] = PlotData("Sampling (binning): "
                                         "Check the overlap between lambda "
                                         "frames in each bin",
-                                        xlabel="Egap [kcal/mol]",
-                                        ylabel="Lambda",
-                                        plot_type="scatter")
+                                        xlabel="Lambda",
+                                        ylabel="Egap [kcal/mol]")
         plots["pts_egap"] = PlotData("Sampling (total counts): "
                                      "Check for breaks.",
                                      xlabel="Egap [kcal/mol]",
@@ -363,7 +362,7 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
 
             # Part 2 (sampling/binning)
             data = qfo.part2.data.get_columns(["Lambda", "Egap", "points"])
-            plots["lambda_egap"].add_subplot(relp, data[1], data[0])
+            plots["egap_lambda"].add_subplot(relp, data[0], data[1])
 
             ## use only the first one, too much data otherwise
             if not plots["pts_egap_hists"].subplots:

@@ -17,6 +17,7 @@ class TestAnalyseFeps:
                      "data/qfep.out.2"]
         qafs = QAnalyseFeps(qfep_outs, lra_lambdas=(1.0, 0.0))
         jsonenc = plotdata.PlotDataJSONEncoder(indent=2)
+        #open("data/qaf.tmp.json", "w").write(jsonenc.encode(qafs.plotdata))
         assert jsonenc.encode(qafs.plotdata) == ref_values
 
     def test_lra_stats(self):
