@@ -237,10 +237,10 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
         - All energies from part 0
         - FEP back, forward and average dG profiles vs lambda
         - FEP delta (forward - reverse) vs lambda
-        - Sampling profiles
+        - Binning overlap/histograms
+        - Full dGg profile (not bin-averaged) for first output
         - LRA contributions (statistics)
         - Free energy profiles vs Egap (bin-averaged)
-        - Coefficients vs Egap (part3)
         """
 
         plots = ODict()
@@ -250,9 +250,55 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
             return plots
 
         # make PlotData objects
-        plots["dgde"] = PlotData("Free energy profile",
+
+        # Part 3 (bin-averaged profile)
+        plots["dgde"] = PlotData("Free-energy profile (bin-averaged, norm.)",
                                  xlabel="E1-E2  [kcal/mol]",
                                  ylabel="Free energy  [kcal/mol]")
+        plots["dgde_unnorm"] = PlotData("Free-energy profile (bin-averaged)",
+                                        xlabel="E1-E2  [kcal/mol]",
+                                        ylabel="Free energy  [kcal/mol]")
+        plots["rxy"] = PlotData("Off-diagonal distance",
+                                xlabel="E1-E2  [kcal/mol]",
+                                ylabel=u"Rxy  [Å]")
+        plots["pts_egap"] = PlotData("Binning (total counts)",
+                                     xlabel="E1-E2 [kcal/mol]",
+                                     ylabel="Number of points")
+
+        # Part 2 (dGg/binning)
+        plots["egap_lambda"] = PlotData("Binning (overlap)",
+                                        xlabel="Lambda (state 1)",
+                                        ylabel="E1-E2 [kcal/mol]")
+        plots["pts_egap_hists"] = PlotData("Binning (histograms, "
+                                           "1st output only)",
+                                           xlabel="E1-E2",
+                                           ylabel="Number of points,")
+        plots["pts_egap_l"] = PlotData("Binning3D (1st output only)",
+                                       xlabel="E1-E2",
+                                       ylabel="Lambda (state 1)",
+                                       zlabel="Number of points",
+                                       plot_type="wireframe")
+        plots["dgg_egap"] = PlotData("Full dGg profile (1st output only)",
+                                     xlabel="E1-E2 [kcal/mol]",
+                                     ylabel="Lambda (state 1)",
+                                     zlabel="Free energy [kcal/mol]",
+                                     plot_type="wireframe")
+
+        # Part 1 (FEP)
+        plots["dgl"] = PlotData("FEP (dG_sum)",
+                                xlabel="Lambda (state 1)",
+                                ylabel="Free energy  [kcal/mol]")
+        plots["dgl_delta"] = PlotData("FEP (dGf-dGr)",
+                                      xlabel="Lambda (state 1)",
+                                      ylabel="Free energy  [kcal/mol]")
+        plots["dgl_forw"] = PlotData("FEP (dG_forward)",
+                                     xlabel="Lambda (state 1)",
+                                     ylabel="Free energy  [kcal/mol]")
+        plots["dgl_rev"] = PlotData("FEP (dG_reverse)",
+                                    xlabel="Lambda (state 1)",
+                                    ylabel="Free energy  [kcal/mol]")
+
+        # Part 0 (Avg. energies / LRAs)
         if self._lra_lambdas:
             l1, l2 = self._lra_lambdas 
             lra_de_st1 = "lra_de_st1_{}".format(l1)
@@ -261,55 +307,21 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
             lra_reo = "lra_reo_{}{}".format(l1, l2)
             plots[lra_de_st1] = PlotData("E2-E1 (lambda={})".format(l1),
                                          xlabel="Energy type",
-                                         ylabel="Potential energy  [kcal/mol]",
+                                         ylabel="Free energy  [kcal/mol]",
                                          plot_type="bar")
             plots[lra_de_st2] = PlotData("E2-E1 (lambda={})".format(l2),
                                          xlabel="Energy type",
-                                         ylabel="Potential energy  [kcal/mol]",
+                                         ylabel="Free energy  [kcal/mol]",
                                          plot_type="bar")
             plots[lra_lra] = PlotData("LRA (l={} -> l={})".format(l1, l2),
                                       xlabel="Energy type",
-                                      ylabel="Potential energy  [kcal/mol]",
+                                      ylabel="Free energy  [kcal/mol]",
                                       plot_type="bar")
             plots[lra_reo] = PlotData("Reorganization energy (l={} -> "
                                       "l={})".format(l1, l2),
                                       xlabel="Energy type",
-                                      ylabel="Potential energy  [kcal/mol]",
+                                      ylabel="Free energy  [kcal/mol]",
                                       plot_type="bar")
-
-        plots["egap_lambda"] = PlotData("Sampling (binning): "
-                                        "Check the overlap between lambda "
-                                        "frames in each bin",
-                                        xlabel="Lambda",
-                                        ylabel="Egap [kcal/mol]")
-        plots["pts_egap"] = PlotData("Sampling (total counts): "
-                                     "Check for breaks.",
-                                     xlabel="Egap [kcal/mol]",
-                                     ylabel="Number of points")
-        plots["pts_egap_hists"] = PlotData("Sampling (histograms, 1st output "
-                                           "only): Check overlap ",
-                                           xlabel="Egap",
-                                           ylabel="Number of points,")
-        plots["pts_egap_l"] = PlotData("Sampling3D (1st output only)",
-                                       xlabel="Egap",
-                                       ylabel="Lambda",
-                                       zlabel="Number of points",
-                                       plot_type="wireframe")
-        plots["dgl"] = PlotData("dG vs Lambda",
-                                xlabel="Lambda",
-                                ylabel="Free energy  [kcal/mol]")
-        plots["dgl_delta"] = PlotData("(dGf-dGr) vs Lambda: Lower, better",
-                                      xlabel="Lambda",
-                                      ylabel="Free energy  [kcal/mol]")
-        plots["dgl_forw"] = PlotData("dG vs Lambda (forward)",
-                                     xlabel="Lambda",
-                                     ylabel="Free energy  [kcal/mol]")
-        plots["dgl_rev"] = PlotData("dG vs Lambda (reverse)",
-                                    xlabel="Lambda",
-                                    ylabel="Free energy  [kcal/mol]")
-        plots["rxy"] = PlotData("Reactive distance",
-                                xlabel="E1-E2  [kcal/mol]",
-                                ylabel=u"Rxy  [Å]")
 
         # get the column names from the first output (0th is lambda)
         qfo0 = self.qfos.values()[0]
@@ -361,29 +373,31 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
 
 
             # Part 2 (sampling/binning)
-            data = qfo.part2.data.get_columns(["Lambda", "Egap", "points"])
+            data = qfo.part2.data.get_columns(["Lambda", "Egap",
+                                               "dGg", "points"])
             plots["egap_lambda"].add_subplot(relp, data[0], data[1])
 
             ## use only the first one, too much data otherwise
             if not plots["pts_egap_hists"].subplots:
                 rows = zip(*data) #transpose columns to rows
                 for l in sorted(set(data[0])):
-                    rows_f = [(eg, pts) for lam, eg, pts in rows if lam == l]
+                    rows_f = [(eg, pts) for lam, eg, dgg, pts in rows if lam == l]
                     eg, pts = zip(*rows_f) #transpose rows to columns
 
                     plots["pts_egap_hists"].add_subplot("{}_{}".format(relp, l),
                                                         eg, pts)
-            ## use only the first one, too much data otherwise
-            if not plots["pts_egap_l"].subplots:
-                plots["pts_egap_l"].add_subplot(relp, data[1], data[0], data[2])
+
+                plots["dgg_egap"].add_subplot(relp, data[1], data[0], data[2])
+                plots["pts_egap_l"].add_subplot(relp, data[1], data[0], data[3])
 
 
             # Part 3
-            data = qfo.part3.data.get_columns(["Egap", "dGg_norm",
+            data = qfo.part3.data.get_columns(["Egap", "dGg", "dGg_norm",
                                                "r_xy", "points"])
-            plots["dgde"].add_subplot(relp, data[0], data[1])
-            plots["rxy"].add_subplot(relp, data[0], data[2])
-            plots["pts_egap"].add_subplot(relp, data[0], data[3])
+            plots["dgde"].add_subplot(relp, data[0], data[2])
+            plots["dgde_unnorm"].add_subplot(relp, data[0], data[1])
+            plots["rxy"].add_subplot(relp, data[0], data[3])
+            plots["pts_egap"].add_subplot(relp, data[0], data[4])
 
         if self.lras:
             data = self.lra_stats.get_columns()

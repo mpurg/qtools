@@ -1,7 +1,7 @@
 #
 @type xy
-@title "Sampling (total counts): Check for breaks."
-@xaxis label "Egap [kcal/mol]"
+@title "Binning (total counts)"
+@xaxis label "E1-E2 [kcal/mol]"
 @yaxis label "Number of points"
 @s0 legend "data/qfep.out.1" 
 @s1 legend "data/qfep.out.2" 

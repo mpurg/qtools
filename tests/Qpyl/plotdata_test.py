@@ -16,13 +16,13 @@ class TestPlotData:
         qaf_data = open("data/qaf.PlotData.json").read()
         jsondec = PlotDataJSONDecoder()
         plots = jsondec.decode(qaf_data)
-        assert len(plots) == 42
+        assert len(plots) == 44
 
         dgde = plots["dgde"]
         assert dgde.xlabel == "E1-E2  [kcal/mol]"
         assert dgde.ylabel == "Free energy  [kcal/mol]"
         assert dgde.zlabel == None
-        assert dgde.title == "Free energy profile"
+        assert dgde.title == "Free-energy profile (bin-averaged, norm.)"
         assert dgde.plot_type == "line"
 
         sub1 = dgde.subplots["data/qfep.out.1"]
