@@ -34,7 +34,7 @@ import threading
 from collections import OrderedDict as ODict
 
 from Qpyl.core.qcalc import QCalc, QCalcError, QCalcInput, QCalcOutput
-from Qpyl.core.qdyninp import QDynInput, QDynInputError
+from Qpyl.core.qdyn import QDynInput, QDynInputError
 from Qpyl.core.qstructure import QStruct, QStructError
 from Qpyl.common import __version__, np, DataContainer
 from Qpyl.plotdata import PlotData
@@ -129,13 +129,37 @@ class QGroupContrib(object):
         colnames = ["Residue id",
                     "Residue name",
                     "N",
-                    "VdW(l={:5.4f}->l={:5.4f})_mean"
+                    "<E2-E1>1_VdW(l={:5.4f}->l={:5.4f})_mean"
                     "".format(lambda1_st1, lambda2_st1),
-                    "VdW(l={:5.4f}->l={:5.4f})_stdev"
+                    "<E2-E1>1_VdW(l={:5.4f}->l={:5.4f})_stdev"
                     "".format(lambda1_st1, lambda2_st1),
-                    "El(l={:5.4f}->l={:5.4f})_(scale={})_mean"
+                    "<E2-E1>1_El(l={:5.4f}->l={:5.4f})_mean"
+                    "".format(lambda1_st1, lambda2_st1),
+                    "<E2-E1>1_El(l={:5.4f}->l={:5.4f})_stdev"
+                    "".format(lambda1_st1, lambda2_st1),
+                    "<E2-E1>2_VdW(l={:5.4f}->l={:5.4f})_mean"
+                    "".format(lambda1_st1, lambda2_st1),
+                    "<E2-E1>2_VdW(l={:5.4f}->l={:5.4f})_stdev"
+                    "".format(lambda1_st1, lambda2_st1),
+                    "<E2-E1>2_El(l={:5.4f}->l={:5.4f})_mean"
+                    "".format(lambda1_st1, lambda2_st1),
+                    "<E2-E1>2_El(l={:5.4f}->l={:5.4f})_stdev"
+                    "".format(lambda1_st1, lambda2_st1),
+                    "LRA_VdW(l={:5.4f}->l={:5.4f})_mean"
+                    "".format(lambda1_st1, lambda2_st1),
+                    "LRA_VdW(l={:5.4f}->l={:5.4f})_stdev"
+                    "".format(lambda1_st1, lambda2_st1),
+                    "LRA_El(l={:5.4f}->l={:5.4f})_(iscale={})_mean"
                     "".format(lambda1_st1, lambda2_st1, sci),
-                    "El(l={:5.4f}->l={:5.4f})_(scale={})_stdev"
+                    "LRA_El(l={:5.4f}->l={:5.4f})_(iscale={})_stdev"
+                    "".format(lambda1_st1, lambda2_st1, sci),
+                    "REORG_VdW(l={:5.4f}->l={:5.4f})_mean"
+                    "".format(lambda1_st1, lambda2_st1),
+                    "REORG_VdW(l={:5.4f}->l={:5.4f})_stdev"
+                    "".format(lambda1_st1, lambda2_st1),
+                    "REORG_El(l={:5.4f}->l={:5.4f})_(iscale={})_mean"
+                    "".format(lambda1_st1, lambda2_st1, sci),
+                    "REORG_El(l={:5.4f}->l={:5.4f})_(iscale={})_stdev"
                     "".format(lambda1_st1, lambda2_st1, sci)]
         self.gcs_stats = DataContainer(colnames)
 
@@ -197,31 +221,58 @@ class QGroupContrib(object):
             resnames = [self._pdb_qstruct.residues[ri-1].name for ri in resids]
 
             # do the LRA thingy
-            # LRA=0.5*(<E2-E1>_conf1+<E2-E1>_conf2)
+            # LRA = 0.5*(<E2-E1>_conf1+<E2-E1>_conf2)
+            # REORG = <E2-E1>_conf1 - LRA
             e2e1_st1_vdw = [gcs[1][key]["vdw"] - gcs[0][key]["vdw"] for key in resids]
             e2e1_st1_el = [gcs[1][key]["el"] - gcs[0][key]["el"] for key in resids]
             e2e1_st2_vdw = [gcs[3][key]["vdw"] - gcs[2][key]["vdw"] for key in resids] 
             e2e1_st2_el = [gcs[3][key]["el"] - gcs[2][key]["el"] for key in resids]
 
+            # super efficient stuff here
             vdw_lra = [0.5*(a + b) for a, b in zip(e2e1_st1_vdw, e2e1_st2_vdw)]
             el_lra = [0.5*(a + b) for a, b in zip(e2e1_st1_el, e2e1_st2_el)]
+            vdw_reorg = [0.5*(a - b) for a, b in zip(e2e1_st1_vdw, e2e1_st2_vdw)]
+            el_reorg = [0.5*(a - b) for a, b in zip(e2e1_st1_el, e2e1_st2_el)]
 
             # scale the ionized residues
-            for i, resname in enumerate(resnames):
-                if resname in ("ARG", "LYS", "HIP", "ASP", "GLU"):
-                    el_lra[i] = el_lra[i] / self._scale_ionized
+            if abs(self._scale_ionized - 1.0) > 1e-7:
+                for i, resname in enumerate(resnames):
+                    if resname in ("ARG", "LYS", "HIP", "ASP", "GLU"):
+                        e2e1_st1_el[i] = e2e1_st1_el / self._scale_ionized
+                        e2e1_st2_el[i] = e2e1_st2_el / self._scale_ionized
+                        el_lra[i] = el_lra[i] / self._scale_ionized
+                        el_reorg[i] = el_reorg[i] / self._scale_ionized
 
             # write the DataContainer
             lambda1_st1 = self._lambdas_A[0]
             lambda2_st1 = self._lambdas_B[0]
             gc_lra = DataContainer(["Residue_id", "Residue name",
-                                    "VdW(l={:5.4f}->l={:5.4f})"
+                                    "<E2-E1>1_VdW(l={:5.4f}->l={:5.4f})"
                                     "".format(lambda1_st1, lambda2_st1),
-                                    "El(l={:5.4f}->l={:5.4f})_(scale={})"
+                                    "<E2-E1>1_El(l={:5.4f}->l={:5.4f})_(iscale={})"
+                                    "".format(lambda1_st1, lambda2_st1,
+                                              self._scale_ionized),
+                                    "<E2-E1>2_VdW(l={:5.4f}->l={:5.4f})"
+                                    "".format(lambda1_st1, lambda2_st1),
+                                    "<E2-E1>2_El(l={:5.4f}->l={:5.4f})_(iscale={})"
+                                    "".format(lambda1_st1, lambda2_st1,
+                                              self._scale_ionized),
+                                    "LRA_VdW(l={:5.4f}->l={:5.4f})"
+                                    "".format(lambda1_st1, lambda2_st1),
+                                    "LRA_El(l={:5.4f}->l={:5.4f})_(iscale={})"
+                                    "".format(lambda1_st1, lambda2_st1,
+                                              self._scale_ionized),
+                                    "REORG_VdW(l={:5.4f}->l={:5.4f})"
+                                    "".format(lambda1_st1, lambda2_st1),
+                                    "REORG_El(l={:5.4f}->l={:5.4f})_(iscale={})"
                                     "".format(lambda1_st1, lambda2_st1,
                                               self._scale_ionized)])
 
-            for row in zip(resids, resnames, vdw_lra, el_lra):
+            for row in zip(resids, resnames,
+                           e2e1_st1_vdw, e2e1_st1_el,
+                           e2e1_st2_vdw, e2e1_st2_el,
+                           vdw_lra, el_lra,
+                           vdw_reorg, el_reorg):
                 gc_lra.add_row(row)
 
             self.gcs[_dir] = gc_lra
@@ -248,8 +299,14 @@ class QGroupContrib(object):
             resid, resname = res_key.split(".")
             # get mean and stdev
             rc_stats = [int(resid), resname, len(rc[0]),
-                        np.mean(rc[0]), np.std(rc[0]), # vdw
-                        np.mean(rc[1]), np.std(rc[1])] # el
+                        np.mean(rc[0]), np.std(rc[0]), # <E2-E1>1 vdw
+                        np.mean(rc[1]), np.std(rc[1]), # <E2-E1>1 el
+                        np.mean(rc[2]), np.std(rc[2]), # <E2-E1>2 vdw
+                        np.mean(rc[3]), np.std(rc[3]), # <E2-E1>2 el
+                        np.mean(rc[4]), np.std(rc[4]), # LRA vdw
+                        np.mean(rc[5]), np.std(rc[5]), # LRA el
+                        np.mean(rc[6]), np.std(rc[6]), # REORG vdw
+                        np.mean(rc[7]), np.std(rc[7])] # REORG el
 
             self.gcs_stats.add_row(rc_stats)
 
@@ -260,9 +317,9 @@ class QGroupContrib(object):
         # (and correct energy files)
         # extract information and run qcalc for each combination
         #   fep_000_1.000.dcd, "1.00 0.00"
-        #   fep_000_1.000.dcd, "0.50 0.50"
-        #   fep_025_0.500.dcd, "1.00 0.00"
-        #   fep_025_0.500.dcd, "0.50 0.50"
+        #   fep_000_1.000.dcd, "0.00 0.00"
+        #   fep_050_0.000.dcd, "1.00 0.00"
+        #   fep_050_0.000.dcd, "0.00 0.00"
         # return input output strings as a tuple of lists of strings
         # ( [inp1, inp2, inp3, inp4], [out1, out2, out3, out4] )
         # or raise QGroupContribError on failure
@@ -455,18 +512,23 @@ Fails:
         """Return GC data as a dictionary of PlotData objects.
 
         Example keys in returned dictionary:
-            'gc_el': PlotData of electrostatic GCs, one subplot with means vs
-                  residues index
+            'gc_lra_el': PlotData of electrostatic LRA group contributions,
+                         one subplot - means vs residue index
 
-            'gc_el_top': 'el', sorted by absolute contribution, only first 20
-                      means vs "resid.resname"
+            'gc_lra_el_top': PlotData of top 20 electrostatic LRA GCs
+                             one subplot - means vs "resid.resname"
 
-            'gc_vdw': PlotData of electrostatic GCs, one subplot with means vs
-                   residue indexes
+            'gc_lra_vdw': PlotData of vdw LRA GCs,
+                          one subplot - means vs residue indexes
 
-            'gc_vdw_top': 'vdw', sorted by absolute contribution, only first 20
-                       means vs "resid.resname"
+            'gc_reorg_el': PlotData of el. 'REORG' group contributions,
+                           one subplot - means vs residue index
 
+            'gc_de1_el': PlotData of electrostatic <E1 - E2>_1,
+                         one subplot - means vs residue index
+
+            'gc_de2_el': PlotData of electrostatic <E1 - E2>_2,
+                         one subplot - means vs residue index
         """
 
         plots = ODict()
@@ -476,76 +538,141 @@ Fails:
             return plots
 
         lamb1, lamb2 = self._lambdas_A[0], self._lambdas_B[0]
+
         # make PlotData objects
+        plots["gc_lra_el_top"] = PlotData("Top LRA GC (El, {}->{}, iscale={}),"
+                                          " top 20".format(lamb1, lamb2,
+                                                    self._scale_ionized),
+                                          xlabel="Residue",
+                                          ylabel="Free energy  [kcal/mol]",
+                                          plot_type="bar")
 
-        cols = self.gcs_stats.get_columns()
-        resids, _, _, vdws, vdwss, els, elss = cols
+        plots["gc_reorg_el_top"] = PlotData("Top REORG GC (El, {}->{}, iscale={}),"
+                                            " top 20".format(lamb1, lamb2,
+                                                      self._scale_ionized),
+                                            xlabel="Residue",
+                                            ylabel="Free energy  [kcal/mol]",
+                                            plot_type="bar")
 
-        N = len(self.gcs)
-        plots["gc_el"] = PlotData("LRA GC (electrostatic): "
-                                  "dG( l={} -> l={} ) (iscale={})"
-                                  "".format(lamb1, lamb2,
-                                            self._scale_ionized),
-                                  xlabel="Residue index",
-                                  ylabel="Free energy  [kcal/mol]",
-                                  plot_type="bar")
-        plots["gc_el"].add_subplot("mean_N={}".format(N),
-                                   resids, els, yerror=elss)
-
-        plots["gc_vdw"] = PlotData("LRA GC (VdW): "
-                                   "dG( l={} -> l={} )".format(lamb1, lamb2),
-                                   xlabel="Residue index",
-                                   ylabel="Free energy  [kcal/mol]",
-                                   plot_type="bar")
-        plots["gc_vdw"].add_subplot("mean_N={}".format(N),
-                                    resids, vdws, yerror=vdwss)
-
-
-        sorted_rows = sorted(self.gcs_stats.get_rows(), \
-                                            key=lambda x: -abs(x[5]))
-
-        resids, resnames, _, _, _, els, elss = zip(*sorted_rows[:20])
-
-        keys = ["{}_{}".format(rn.capitalize(), ri) \
-                                for ri, rn in zip(resids, resnames)]
-
-        plots["gc_el_top"] = PlotData("LRA GC (electrostatic): "
-                                      "dG( l={} -> l={} ) (iscale={}), top 20"
+        plots["gc_lra_el"] = PlotData("LRA GC (El, {}->{}, iscale={})"
                                       "".format(lamb1, lamb2,
                                                 self._scale_ionized),
-                                      xlabel="Residue",
-                                      ylabel="Free energy  [kcal/mol]",
+                                      xlabel="Residue index",
+                                      ylabel="Energy  [kcal/mol]",
                                       plot_type="bar")
-        plots["gc_el_top"].add_subplot("mean_N={}".format(N),
-                                       keys, els,
-                                       yerror=elss)
+
+        plots["gc_lra_vdw"] = PlotData("LRA GC (VdW, {}->{})"
+                                       "".format(lamb1, lamb2),
+                                       xlabel="Residue index",
+                                       ylabel="Energy  [kcal/mol]",
+                                       plot_type="bar")
+
+        plots["gc_reorg_el"] = PlotData("REORG GC (El, {}->{}, iscale={})"
+                                        "".format(lamb1, lamb2,
+                                                  self._scale_ionized),
+                                        xlabel="Residue index",
+                                        ylabel="Energy  [kcal/mol]",
+                                        plot_type="bar")
+
+        plots["gc_reorg_vdw"] = PlotData("REORG GC (VdW, {}->{})"
+                                         "".format(lamb1, lamb2),
+                                         xlabel="Residue index",
+                                         ylabel="Energy  [kcal/mol]",
+                                         plot_type="bar")
+
+        plots["gc_de1_el"] = PlotData("<E1-E2>_1 (El, {}->{})"
+                                      "".format(lamb1, lamb2),
+                                      xlabel="Residue index",
+                                      ylabel="Energy  [kcal/mol]",
+                                      plot_type="bar")
+
+        plots["gc_de1_vdw"] = PlotData("<E1-E2>_1 (VdW, {}->{})"
+                                       "".format(lamb1, lamb2),
+                                       xlabel="Residue index",
+                                       ylabel="Energy  [kcal/mol]",
+                                       plot_type="bar")
+
+        plots["gc_de2_el"] = PlotData("<E1-E2>_2 (El, {}->{})"
+                                      "".format(lamb1, lamb2),
+                                      xlabel="Residue index",
+                                      ylabel="Energy  [kcal/mol]",
+                                      plot_type="bar")
+
+        plots["gc_de2_vdw"] = PlotData("<E1-E2>_2 (VdW, {}->{})"
+                                       "".format(lamb1, lamb2),
+                                       xlabel="Residue index",
+                                       ylabel="Energy  [kcal/mol]",
+                                       plot_type="bar")
+
+        cols = self.gcs_stats.get_columns()
+        resids = cols[0]
+        title = "mean_N={}".format(len(self.gcs))
+
+        plots["gc_de1_vdw"].add_subplot(title, resids, cols[3], yerror=cols[4])
+        plots["gc_de1_el"].add_subplot(title, resids, cols[5], yerror=cols[6])
+
+        plots["gc_de2_vdw"].add_subplot(title, resids, cols[7], yerror=cols[8])
+        plots["gc_de2_el"].add_subplot(title, resids, cols[9], yerror=cols[10])
+
+        plots["gc_lra_vdw"].add_subplot(title, resids, cols[11], yerror=cols[12])
+        plots["gc_lra_el"].add_subplot(title, resids, cols[13], yerror=cols[14])
+
+        plots["gc_reorg_vdw"].add_subplot(title, resids, cols[15], yerror=cols[16])
+        plots["gc_reorg_el"].add_subplot(title, resids, cols[17], yerror=cols[18])
+
+
+        # top 20 LRA el
+        sorted_rows = sorted(self.gcs_stats.get_rows(),
+                             key=lambda x: -abs(x[5]))[:20]
+        cols = zip(*sorted_rows)
+        resids, resnames = cols[0], cols[1]
+        keys = ["{}_{}".format(rn.capitalize(), ri) \
+                                for ri, rn in zip(resids, resnames)]
+        els, elstd = cols[13], cols[14]
+        plots["gc_lra_el_top"].add_subplot(title, keys, els, yerror=elstd)
+
+        # top 20 reorg el
+        sorted_rows = sorted(self.gcs_stats.get_rows(),
+                             key=lambda x: -abs(x[9]))[:20]
+        cols = zip(*sorted_rows)
+        resids, resnames = cols[0], cols[1]
+        keys = ["{}_{}".format(rn.capitalize(), ri) \
+                                for ri, rn in zip(resids, resnames)]
+        els, elstd = cols[17], cols[18]
+        plots["gc_reorg_el_top"].add_subplot(title, keys, els, yerror=elstd)
 
         return plots
 
 
-    def get_pdbgc(self):
-        """Return the pdb structure (string) with added GC values.
 
-        Fill the 'Temperature factor' fields with the calculated GC values,
-        and return the whole pdb structure in string format.
+
+    def get_pdbgc(self):
+        """Return the structure in PDB format (string) with added GC values.
+
+        Fill the Occupancy fields with LRA contributions and
+        Temperature factor fields with REORG contributions.
         """
-        resids, _, _, _, _, els, _ = self.gcs_stats.get_columns()
-        gcs = dict(zip(resids, els))
+        resids, lras, reorgs = self.gcs_stats.get_columns([0, 13, 17])
         pdb = []
         for mol in self._pdb_qstruct.molecules:
             for res in mol.residues:
+                try:
+                    i = resids.index(res.index)
+                    lra_gc, reorg_gc = lras[i], reorgs[i]
+                except ValueError:
+                    lra_gc, reorg_gc = 0, 0
+
                 for atom in res.atoms:
                     x, y, z = atom.coordinates
-                    try:
-                        gc = gcs[atom.residue.index]
-                    except KeyError:
-                        gc = 0
-                    finally:
-                        pdb.append("ATOM  {:>5d} {:<4s} {:3s}  {:>4d}    "\
-                                "{:>8.3f}{:>8.3f}{:>8.3f}{:>6}{:>6.2f}"\
+                    pdb.append("ATOM  {:>5d} {:<4s} {:3s}  {:>4d}    "\
+                                "{:>8.3f}{:>8.3f}{:>8.3f}{:>6.2f}{:>6.2f}"\
                                 "".format(atom.index, atom.name,
                                           atom.residue.name,
                                           atom.residue.index,
-                                          x, y, z, "", gc))
+                                          x, y, z, lra_gc, reorg_gc))
             pdb.append("GAP")
         return "\n".join(pdb)
+
+
+
+

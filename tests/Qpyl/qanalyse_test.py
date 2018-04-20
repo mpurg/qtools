@@ -5,7 +5,7 @@
 import re
 import pytest
 
-from Qpyl.qanalysis import QAnalyseFeps
+from Qpyl.qanalysis import QAnalyseFeps, QAnalyseDyns
 from Qpyl import plotdata
 
 class TestAnalyseFeps:
@@ -50,3 +50,18 @@ class TestAnalyseFeps:
         assert str(qafs.dg_all).split() == """Qfep_output  dG*         dG0         dG_lambda   QCP_dG*     QCP_dG0     QCP_dG_lambda  QCP_mass_dG*  QCP_mass_dG0  QCP_mass_dG_lambda  ex_el_49_200_221_dG*  ex_el_49_200_221_dG0  ex_el_49_200_221_dG_lambda  ex_full_200_dG*  ex_full_200_dG0  ex_full_200_dG_lambda  ex_full_221_dG*  ex_full_221_dG0  ex_full_221_dG_lambda  ex_full_49_dG*  ex_full_49_dG0  ex_full_49_dG_lambda  ex_full_49_200_221_dG*  ex_full_49_200_221_dG0  ex_full_49_200_221_dG_lambda  ex_vdw_49_200_221_dG*  ex_vdw_49_200_221_dG0  ex_vdw_49_200_221_dG_lambda
  data/qfep.out.1       12.21       -6.44      -10.20  None        None        None           None          None          None                None                  None                  None                        None             None             None                   None             None             None                   None            None            None                  None                    None                    None                          None                   None                   None
  data/qfep.out.2       23.98      -21.98      -46.71       23.31      -22.12         -48.33         23.60        -21.95              -47.31                 10.64                -47.71                      -83.24            25.82           -15.95                 -38.98             9.77           -52.08                 -88.85           23.28          -23.45                -48.75                   10.69                  -47.67                        -83.16                  24.04                 -21.94                       -46.63""".split()
+
+
+class TestAnalyseDyns:
+    def test_plotdata(self):
+        # regression test, see if the data outputed is the same
+        ref_values = open("data/qad.PlotData.json").read().strip()
+
+        qdyn_outs = ["data/qdyn5.log",
+                     "data/qdyn6.log"]
+        qads = QAnalyseDyns(qdyn_outs)
+        jsonenc = plotdata.PlotDataJSONEncoder(indent=2)
+        pd = jsonenc.encode(qads.get_plotdata(stride=10))
+#        open("data/qad.tmp.json", "w").write(pd)
+        assert pd == ref_values
+

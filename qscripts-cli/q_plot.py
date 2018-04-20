@@ -243,6 +243,9 @@ class PlotApp():
             except TypeError:
                 # rect doesn't exist in ancient matplotlib versions
                 self.figure.tight_layout()
+            except ValueError:
+                pass
+                
 
             self.canvas.draw()
         self.blocked_draw = False

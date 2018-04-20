@@ -235,18 +235,18 @@ class DataContainer(object):
         coltitles (list): column titles
 
     Example of usage:
-    >>> dg_de = DataContainer( ['Energy_gap', 'dG'] )
-    >>> dg_de.add_row( [-300.0, 10.0 ]
-    # reversed rows
-    >>> rows = dg_de.get_rows( reversed(dg_de.get_column_titles()) )
-    >>> cols = dg_de.get_columns( columns=[0, 1] )
+        >>> dg_de = DataContainer( ['Energy_gap', 'dG'] )
+        >>> dg_de.add_row( [-300.0, 10.0 ]
+        # reversed rows
+        >>> rows = dg_de.get_rows( reversed(dg_de.column_titles) )
+        >>> cols = dg_de.get_columns( columns=[0, 1] )
     """
 
     def __init__(self, coltitles):
         if not isinstance(coltitles, (list, tuple)):
             coltitles = [coltitles,]
 
-        self._column_titles = list(coltitles)
+        self.column_titles = list(coltitles)
         # a list containing rows of values
         # (each row is a list with length = len(coltitles))
         self._rows = []
@@ -271,7 +271,7 @@ class DataContainer(object):
             if type(col) == int:
                 col_inds.append(col)
             else:
-                col_inds.append(self._column_titles.index(str(col)))
+                col_inds.append(self.column_titles.index(str(col)))
         cols = zip(*self._rows)   # transpose
         if col_inds:
             return [cols[i] for i in col_inds]
@@ -296,12 +296,6 @@ class DataContainer(object):
             return self._rows
 
 
-    def get_column_titles(self):
-        """Return the list of column titles."""
-
-        return self._column_titles
-
-
     def add_row(self, row):
         """Add a row.
 
@@ -313,7 +307,7 @@ class DataContainer(object):
                         number of column titles
         """
 
-        if len(row) != len(self._column_titles):
+        if len(row) != len(self.column_titles):
             raise ValueError("Number of elements is not equal to number "
                              "of columns, in row:\n{}".format(row))
         self._rows.append(list(row))
@@ -330,7 +324,7 @@ class DataContainer(object):
             outs = "#" + self.comment + "\n"
         else:
             outs = ""
-        for name in self._column_titles:
+        for name in self.column_titles:
             width = len(name)
             if width < 10:
                 width = 10
@@ -339,7 +333,7 @@ class DataContainer(object):
             outs += "\n"
             for i, val in enumerate(row):
                 try:
-                    width = len(self._column_titles[i])
+                    width = len(self.column_titles[i])
                     if width < 10:
                         width = 10
                 except IndexError:

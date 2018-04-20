@@ -36,7 +36,7 @@ import os
 from collections import OrderedDict as ODict
 import logging
 
-from Qpyl.qanalysis import QAnalyseDyns, QAnalyseDynError
+from Qpyl.qanalysis import QAnalyseDyns, QAnalyseDynsError
 from Qpyl import plotdata
 from Qpyl.common import backup_file, init_logger, get_version_full
 
@@ -55,19 +55,16 @@ optarg.add_argument("--plots_out", dest="plots_out",
                     default=QScfg.get("files", "analysedyns_plots"))
 
 optarg.add_argument("--stepsize", dest="stepsize", default=None, type=float,
-                    help="If the stepsize in your log is 0.000, define it "
-                         "with this flag.")
+                    help="If the stepsize in your Qdyn output is 0.000, "
+                         "define it with this flag.")
 
 optarg.add_argument("--timeunit", dest="timeunit", default="ps",
-                    help="Which units of time should the results be in? fs, "
-                         "ps or ns? Default is ps.")
+                    help="Time unit. Options are 'fs', 'ps', 'ns'. "
+                         "Default is ps.")
 
 optarg.add_argument("--stride", dest="stride", type=int, default=1,
                     help="Read only every Nth point. Default=1")
 
-optarg.add_argument("--skip", dest="skip", type=int, default=0,
-                    help="Skip percentage of data points in each log. "
-                         "Default=0") 
 optarg.add_argument("-v", "--version", action="version",
                     version=get_version_full())
 optarg.add_argument("-h", "--help", action="help", help="show this help "
@@ -86,66 +83,15 @@ for qdynout in args.outputs:
 
 try:
     qads = QAnalyseDyns(args.outputs,
-                        timeunit=args.timeunit,
-                        stepsize=args.stepsize)
-except QAnalyseDynError as e:
-    print "Error: " + str(e)
+                        time_unit=args.timeunit,
+                        step_size=args.stepsize)
+except QAnalyseDynsError as e:
+    print "Error: {}".format(e)
     sys.exit(1)
-
 
 print qads.get_temp_stats()
 
-time_label = "Time [{}]".format(args.timeunit)
-plots = ODict()
-plots["temp"] = plotdata.PlotData("Temperature",
-                                  xlabel=time_label,
-                                  ylabel="T [K]")
-
-plots["offdiags"] = plotdata.PlotData("Offdiagonal distances",
-                                      xlabel=time_label,
-                                      ylabel="Distance [A]")
-
-t_dc = qads.get_temps(percent_skip=args.skip, stride=args.stride)
-t_cs, t_cts = t_dc.get_columns(), t_dc.get_column_titles()
-for i, t_ct in enumerate(t_cts[1:]):
-    plots["temp"].add_subplot(t_ct, t_cs[0], t_cs[i+1])   # 0==Time
-
-
-d_dc = qads.get_offdiags(percent_skip=args.skip, stride=args.stride)
-d_cs, d_cts = d_dc.get_columns(), d_dc.get_column_titles()
-for i, d_ct in enumerate(d_cts[1:]):
-    plots["offdiags"].add_subplot(d_ct, d_cs[0], d_cs[i+1])   # 0==Time
-
-
-for k in qads.en_section_keys:
-    key = "E_{}".format(k)
-    plots[key] = plotdata.PlotData("Energy: " + k,
-                                   xlabel=time_label,
-                                   ylabel="Energy [kcal/mol]")
-    e_dc = qads.get_energies(k, percent_skip=args.skip,
-                             stride=args.stride)
-    e_cs, e_cts = e_dc.get_columns(), e_dc.get_column_titles()
-    if e_cs:
-        for i, e_ct in enumerate(e_cts[1:]):
-            plots[key].add_subplot(e_ct, e_cs[0], e_cs[i+1])   # 0==Time
-
-
-for k in qads.qen_section_keys:
-    for evb_state in range(1, qads.n_evb_states + 1):
-        key = "EQ{}_{}".format(evb_state, k)
-        plots[key] = plotdata.PlotData("Q Energy: {} (state {})"
-                                       "".format(k, evb_state),
-                                       xlabel=time_label,
-                                       ylabel="Energy [kcal/mol]")
-        qe_dc = qads.get_q_energies(k, evb_state,
-                                    percent_skip=args.skip,
-                                    stride=args.stride)
-        qe_cs, qe_cts = qe_dc.get_columns(), qe_dc.get_column_titles()
-        if qe_cs:
-            for i, qe_ct in enumerate(qe_cts[1:]):
-                plots[key].add_subplot(qe_ct, qe_cs[0], qe_cs[i+1]) # 0==Time
-
-
+plots = qads.get_plotdata(stride=args.stride)
 
 jsonenc = plotdata.PlotDataJSONEncoder(indent=2)
 backup = backup_file(args.plots_out)

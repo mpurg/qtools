@@ -112,29 +112,47 @@ def gc(args):
 
 
 
-    # write out details and top 20 El GCs to stdout and outfile
+    # write out details and top 10 GCs to stdout and outfile
     if not qgc.gcs:
         top_gcs = "None, all directories failed..."
+        top_gcs_reorg = "None, all directories failed..."
     else:
         top_rows = sorted(qgc.gcs_stats.get_rows(),
                           key=lambda x: -abs(x[5]))[:10]
 
-        out_l = ["{:<15} {:>15} {:>15}".format("Residue",
-                                               "GC_El_mean",
-                                               "GC_El_std")]
+        out_l = ["{:<10} {:>10} {:>10}".format("# Residue", "Mean", "Stdev")]
 
-        for rid, rn, _, _, _, el, els in top_rows:
+        for row in top_rows:
+            rid, rn, el, elstd = row[0], row[1], row[5], row[6]
+
             tmp = "{}_{}".format(rn.capitalize(), rid)
-            tmp2 = "{:<15} {:15.2f} {:15.2f}"\
-                   "".format(tmp, el, els)
+            tmp2 = "{:<10} {:10.2f} {:10.2f}".format(tmp, el, elstd)
             out_l.append(tmp2)
+                                     
         top_gcs = "\n".join(out_l)
+
+        top_rows = sorted(qgc.gcs_stats.get_rows(),
+                          key=lambda x: -abs(x[9]))[:10]
+
+        out_l = ["{:<10} {:>10} {:>10}".format("# Residue", "Mean", "Stdev")]
+
+        for row in top_rows:
+            rid, rn, el, elstd = row[0], row[1], row[9], row[10]
+
+            tmp = "{}_{}".format(rn.capitalize(), rid)
+            tmp2 = "{:<10} {:10.2f} {:10.2f}".format(tmp, el, elstd)
+            out_l.append(tmp2)
+                                     
+        top_gcs_reorg = "\n".join(out_l)
 
     outstr = """
 {gc_details}
-Top group contributions:
+Top LRA (el) contributions:
 {top_gcs}
-""".format(gc_details=qgc.details, top_gcs=top_gcs)
+
+Top REORG (el) contributions:
+{top_gcs_reorg}
+""".format(gc_details=qgc.details, top_gcs=top_gcs, top_gcs_reorg=top_gcs_reorg)
 
     print outstr
     fn_out = args.output_fn

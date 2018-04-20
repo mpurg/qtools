@@ -57,16 +57,16 @@ class _QFepHeader(object):
     """
 
     # TODO: works only for 2 states and Hij=const 
-    _MAP_PRMS_RE = {"qfep_version": re.compile("version\s*(\S+)"),
-                    "qfep_moddate": re.compile("modified on\s*(\d+)"),
-                    "nfiles": re.compile("Number of files\s*=\s*(\d+)"),
-                    "nstates": re.compile("Number of states\s*=\s*(\d+)"),
-                    "kT": re.compile("kT\s*=\s*(\S+)"),
-                    "pts_skip": re.compile("points to skip\s*=\s*(\d+)"),
-                    "bins": re.compile("Number of gap-bins\s*=\s*(\d+)"),
-                    "min_pts_bin": re.compile("points per bin=\s*(\d+)"),
-                    "alpha": re.compile("Alpha for state  2\s*=\s*(\S+)"),
-                    "Hij": re.compile("eta_ij, r_xy0: #\s*\d+\s*\d+\s*(\S+)")  }
+    _MAP_PRMS_RE = {"qfep_version": re.compile(r"version\s*(\S+)"),
+                    "qfep_moddate": re.compile(r"modified on\s*(\d+)"),
+                    "nfiles": re.compile(r"Number of files\s*=\s*(\d+)"),
+                    "nstates": re.compile(r"Number of states\s*=\s*(\d+)"),
+                    "kT": re.compile(r"kT\s*=\s*(\S+)"),
+                    "pts_skip": re.compile(r"points to skip\s*=\s*(\d+)"),
+                    "bins": re.compile(r"Number of gap-bins\s*=\s*(\d+)"),
+                    "min_pts_bin": re.compile(r"points per bin=\s*(\d+)"),
+                    "alpha": re.compile(r"Alpha for state  2\s*=\s*(\S+)"),
+                    "Hij": re.compile(r"eta_ij, r_xy0: #\s*\d+\s*\d+\s*(\S+)")  }
 
     def __init__(self, header_string):
         self._header_string = header_string
@@ -229,7 +229,7 @@ class _QFepPart0(object):
         es_lra = [0.5 * (de_st1 + de_st2) for de_st1, de_st2 in des_st1_st2]
         es_reo = [0.5 * (de_st1 - de_st2) for de_st1, de_st2 in des_st1_st2]
 
-        e_types = self.data_state[0].get_column_titles()[4:]
+        e_types = self.data_state[0].column_titles[4:]
 
         for row in zip(e_types, des_st1, des_st2, es_lra, es_reo):
             lra.add_row(row)
@@ -539,7 +539,7 @@ class _QFepPart3(object):
         self._maxima_bins = [bins[maxi] for maxi in maxima]
 
         # adjust the values in data so that the reactants are zero
-        colindex = self.data.get_column_titles().index("dGg_norm")
+        colindex = self.data.column_titles.index("dGg_norm")
         for row in self.data.get_rows():
             row[colindex] = row[colindex] - dgs[minima[0]]
 
@@ -548,9 +548,9 @@ class _QFepPart3(object):
 
 
 class QFepOutput(object):
-    """Class for parsing and analysing data in qfep output.
+    """Class for parsing and analysing Qfep output.
 
-    All of the data is stored in DataContainer objects in separate
+    All data is stored in DataContainer objects in separate
     _QFepPart0/1/2/3 objects:
         QFepOutput.part0.data[1].get_rows(columns=["EQtot"])
         QFepOutput.part2.data.get_rows(columns=["Egap", "dGg"])
@@ -561,33 +561,32 @@ class QFepOutput(object):
         QFepOutput.dG0  # reaction free energy
 
     Results of exclusion and QCP calculations are stored in dictionaries
-    QFepOutput.exclusions and QanalyseMap.QCP as normal QFepOutput
-    objects.
+    QFepOutput.exclusions and QanalyseMap.QCP as QFepOutput objects.
 
     Args:
         qfep_output (string):  qfep output
         _calc_index (int):  used internally for exclusions and QCP
     """
 
-    _PART0_RE = re.compile("(# Part 0.*?)# Part 1", re.DOTALL)
-    _PART1_RE = re.compile("(# Part 1.*?)# Part 2", re.DOTALL)
-    _PART2_RE = re.compile("(# Part 2.*?)# Part 3", re.DOTALL)
-    _PART3_RE = re.compile("(# Part 3.*)", re.DOTALL)
+    _PART0_RE = re.compile(r"(# Part 0.*?)# Part 1", re.DOTALL)
+    _PART1_RE = re.compile(r"(# Part 1.*?)# Part 2", re.DOTALL)
+    _PART2_RE = re.compile(r"(# Part 2.*?)# Part 3", re.DOTALL)
+    _PART3_RE = re.compile(r"(# Part 3.*)", re.DOTALL)
 
     # To extract the full, exclusions and QCP results separately
     # '# Part 1' is added manually to the end of the logfile
-    _PART1to1_RE = re.compile("(# Part 1.*?)(?=# Part 1)", re.DOTALL)
+    _PART1to1_RE = re.compile(r"(# Part 1.*?)(?=# Part 1)", re.DOTALL)
 
-    _EXCL_RE = re.compile("Calculation for system with (\w+) exclusion, "
+    _EXCL_RE = re.compile(r"Calculation for system with (\w+) exclusion, "
                           "residues (.*)")
 
-    _QCP_RE = re.compile("Calculation for QCP, number of atoms \s+(\d+)")
+    _QCP_RE = re.compile(r"Calculation for QCP, number of atoms \s+(\d+)")
 
-    _QCP_MASS_RE = re.compile("Calculation for QCP Mass Perturbation, number "
-                              "of atoms \s+(\d+)")
+    _QCP_MASS_RE = re.compile(r"Calculation for QCP Mass Perturbation, number "
+                              r"of atoms \s+(\d+)")
 
     # Header regular expression
-    _HEADER_RE = re.compile("(# Qfep.*?|qfep version.*?)# Part 0", re.DOTALL)
+    _HEADER_RE = re.compile(r"(# Qfep.*?|qfep version.*?)# Part 0", re.DOTALL)
 
 
     def __init__(self, qfep_output, _calc_index=0):

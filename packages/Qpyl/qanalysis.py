@@ -35,13 +35,11 @@ import logging
 from collections import OrderedDict as ODict
 
 from Qpyl.core.qfep import QFepOutput, QFepOutputError
+from Qpyl.core.qdyn import QDynOutput, QDynOutputError
 from Qpyl.common import DataContainer, np
 from Qpyl.plotdata import PlotData
 
 logger = logging.getLogger(__name__)
-
-class QAnalyseDynError(Exception):
-    pass
 
 class QAnalyseFeps(object):
     """Wrapper class for QFepOutput for analysing multiple outputs.
@@ -326,7 +324,7 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
         # get the column names from the first output (0th is lambda)
         qfo0 = self.qfos.values()[0]
         evb_states = qfo0.header.nstates
-        part0_coltitles = qfo0.part0.data_state[0].get_column_titles()
+        part0_coltitles = qfo0.part0.data_state[0].column_titles
 
         for col in part0_coltitles[4:]:
             for evb_state in range(evb_states):
@@ -469,83 +467,72 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
 
 
 
+class QAnalyseDynsError(Exception):
+    pass
 
-
-
-# TODO: refactor most of the code below to qdyn.QDynOutput
-# (same principle as qfep.QFepOutput)
 class QAnalyseDyns(object):
-    def __init__(self, logfiles, timeunit="ps", stepsize=None):
-        """
-        Wrapper class for QanalyseDyn for analysing a sequence of log files.
-        Args:
-           logfile (list):  paths/filenames of Q logfiles
-           timeunit (string):  fs,ps,ns (optional, default is ps)
-           stepsize (float):  in case the on in Q is 0.000 (Q printout is a work of art)
+    """Wrapper class for QanalyseDyn for parsing a sequence of Qdyn outputs.
 
-        Usage:
+    Args:
+        qdyn_outputs (list): Qdyn output pathnames
+        time_unit (string): fs,ps,ns (optional, default is ps)
+        step_size (float): use in case the output reads 0.000
 
-        qads = QAnalyseDyns(["fep_000.log", "fep_001.log", ...], timeunit="ps")
+    Usage:
+        >>> qads = QAnalyseDyns(["fep_000.log", "fep_001.log"], timeunit="ps")
+        # get average temperatures by combining all outputs
+        >>> print qads.get_temp_stats()
 
-        # get average temperatures by combining all logs and skipping 10% in each one
-        temps_dc = qads.get_temps(percent_skip=10)   # returns Datacontainer with all logs combined
-        temps = temps_dc.get_columns()   # returns the columns
-        coltitles = temps_dc.get_column_titles()       # "Time", "T_tot", "T_free", "T_free_solute", "T_free_solvent"
+    Raises QAnalyseDynsError if it fails to parse an output.
 
-        for i,colt in coltitles[1:]:
-            print colt, np.mean( [ x for j,x in enumerate(temps[i]) if temps[0][j] >= midpoint ] )
-
-        """
-
-        logger.warning("QAnalyseDyns is under development. "
-                       "Use at your own risk!")
-
-        if not logfiles:
-            raise QAnalyseDynError("No logfiles given")
+    """ 
+    def __init__(self, qdyn_outputs, time_unit="ps", step_size=None):
         self.analysed = []
-        starttime = 0
-        for i,logfile in enumerate(logfiles):
+        start_time = 0
+        self.time_unit = time_unit
+
+        for i, output in enumerate(qdyn_outputs):
             try:
-                qad = _QAnalyseDyn(logfile, timeunit, stepsize=stepsize, starttime=starttime)
-                self.analysed.append(qad)
-            except QAnalyseDynError as e:
-                raise QAnalyseDynError("%s: %s" % (logfile, str(e)))
-            starttime = qad.get_endtime()
-        self.n_evb_states = self.analysed[0]._evb_states
+                qdo = QDynOutput(output, time_unit,
+                                 step_size=step_size,
+                                 start_time=start_time)
+                self.analysed.append(qdo)
+            except QDynOutputError as e:
+                raise QAnalyseDynsError("{}: {}".format(output, e))
+
+            start_time = qdo.time_end
+
+        self.n_evb_states = self.analysed[0].header.nstates
         self.en_section_keys = self.analysed[0].map_en_section.keys()
         self.qen_section_keys = self.analysed[0].map_qen_section.keys()
 
 
-    def get_temps(self, percent_skip=0, stride=1):
+    def get_temps(self, stride=1):
         """
         Get temperatures from all logfiles combined.
         Args:
-           percent_skip (int, optional):  percent of datapoints in each
-                                          logfile to skip, default=0
            stride (int, optional):  use only every Nth point, default=1
         Returns:
            temperatures (DataContainer)
         """
 
         # "Time", "T_tot", "T_free", "T_free_solute", "T_free_solvent"
-        cts = list(self.analysed[0].data_temp.get_column_titles())
+        cts = self.analysed[0].data_temp.column_titles
         temps = DataContainer(cts)
 
-        for qad in self.analysed:
-            rows = qad.data_temp.get_rows()
-            skip = int(round(len(rows)*percent_skip/100.0))
-            for row in rows[skip::stride]:
+        for qdo in self.analysed:
+            rows = qdo.data_temp.get_rows()
+            for row in rows[::stride]:
                 temps.add_row(row)
         return temps
 
 
 
-    def get_temp_stats(self, percent_skip=0, stride=1):
-        """
-        Returns temperature stats in string format (used for cmdline printout)
+    def get_temp_stats(self, stride=1):
+        """Returns temperature stats in string format (used for cmdline printout)
         for all logfiles combined
         """
-        temps = self.get_temps(percent_skip=percent_skip, stride=stride)
+        temps = self.get_temps(stride=stride)
         tt, tf, tf_solu, tf_solv = temps.get_columns(("T_tot", "T_free",
                                                       "T_free_solute",
                                                       "T_free_solvent"))
@@ -560,11 +547,11 @@ class QAnalyseDyns(object):
 
         outstr = """\
 Temperature stats:
-{0:20s}{1:>20s}{2:>20s}{3:>20s}
-{4:20s}{5:>20.2f}{6:>20.2f}{7:>20.2f}
-{8:20s}{9:>20.2f}{10:>20.2f}{11:>20.2f}
-{12:20s}{13:>20.2f}{14:>20.2f}{15:>20.2f}
-{16:20s}{17:>20.2f}{18:>20.2f}{19:>20.2f}
+{0:20s}{1:>15s}{2:>15s}{3:>15s}
+{4:20s}{5:>15.2f}{6:>15.2f}{7:>15.2f}
+{8:20s}{9:>15.2f}{10:>15.2f}{11:>15.2f}
+{12:20s}{13:>15.2f}{14:>15.2f}{15:>15.2f}
+{16:20s}{17:>15.2f}{18:>15.2f}{19:>15.2f}
 """.format("", "Mean", "Stdev", "Max.Abs.Dev.",
            "T_total", tt_mean, tt_std, tt_max_dev,
            "T_free", tf_mean, tf_std, tf_max_dev,
@@ -575,341 +562,135 @@ Temperature stats:
 
 
 
-    def get_offdiags(self, percent_skip=0, stride=1):
-        """
-        Get distances from all logfiles combined.
+    def get_offdiags(self, stride=1):
+        """Get distances from all logfiles combined.
+
         Args:
-           percent_skip (int, optional):  percent of datapoints in each
-                                          logfile to skip, default=0
            stride (int, optional):  use only every Nth point, default=1
+
         Returns:
            distances (dict):  e.g: { "13_31": DataContainer,
                                      "13_18": DataContainer }
         """
 
-        coltitles = list(self.analysed[0].data_offdiags.get_column_titles())
+        coltitles = self.analysed[0].data_offdiags.column_titles
         dists = DataContainer(coltitles)
 
-        for qad in self.analysed:
-            rows = qad.data_offdiags.get_rows()
-            skip = int(round(len(rows)*percent_skip/100.0))
-            for row in rows[skip::stride]:
+        for qdo in self.analysed:
+            rows = qdo.data_offdiags.get_rows()
+            for row in rows[::stride]:
                 dists.add_row(row)
         return dists
 
 
-    def get_energies(self, e_type, percent_skip=0, stride=1):
-        """
-        Get energies from all logfiles combined.
+    def get_energies(self, e_type, stride=1):
+        """Get energies from all logfiles combined.
+
         Args:
-           e_type (string):  keys in QAnalyseDyn.map_en_section dictionary
-           percent_skip (int, optional):  percent of datapoints in each
-                                          logfile to skip, default=0
+           e_type (string):  keys in QDynOutput.map_en_section dictionary
            stride (int, optional):  use only every Nth point, default=1
+
         Returns:
            energies (DataContainer)
         """
 
-        cts = list(self.analysed[0].map_en_section[e_type].get_column_titles())
+        cts = self.analysed[0].map_en_section[e_type].column_titles
         energies = DataContainer(cts)
 
-        for qad in self.analysed:
-            rows = qad.map_en_section[ e_type ].get_rows()
-            skip = int(round(len(rows)*percent_skip/100.0))
-            for row in rows[skip::stride]:
+        for qdo in self.analysed:
+            rows = qdo.map_en_section[e_type].get_rows()
+            for row in rows[::stride]:
                 energies.add_row(row)
         return energies
 
 
-    def get_q_energies(self, qe_type, evb_state, percent_skip=0, stride=1):
-        """
-        Get Q energies from all logfiles combined.
+    def get_q_energies(self, qe_type, evb_state, stride=1):
+        """Get Q energies from all logfiles combined.
+
         Args:
-           qe_type (string):  keys in QAnalyseDyn.map_qen_section dictionary
+           qe_type (string):  keys in QDynOutput.map_qen_section dictionary
            evb_state (int):  1 or 2 or 3...
-           percent_skip (int, optional):  percent of datapoints in each
-                                          logfile to skip, default=0
            stride (int, optional):  use only every Nth point, default=1
+
         Returns:
            energies (DataContainer)
         """
 
-        cts = list(self.analysed[0].map_qen_section[qe_type][evb_state-1]\
-                                                        .get_column_titles())
+        cts = self.analysed[0].map_qen_section[qe_type][evb_state-1]\
+                                                        .column_titles
         energies = DataContainer(cts)
 
-        for qad in self.analysed:
-            rows = qad.map_qen_section[qe_type][evb_state-1].get_rows()
-            skip = int(round(len(rows)*percent_skip/100.0))
-            for row in rows[skip::stride]:
+        for qdo in self.analysed:
+            rows = qdo.map_qen_section[qe_type][evb_state-1].get_rows()
+            for row in rows[::stride]:
                 energies.add_row(row)
         return energies
 
 
+    def get_plotdata(self, stride=1):
+        """Return 'useful data' as a dictionary of PlotData objects.
 
-
-class _QAnalyseDyn(object):
-    def __init__(self, logfile, timeunit="ps", stepsize=None, starttime=0):
-        """
-        Parses a Q dynamics logfile and extracts data (temperature, energies...)
-        For interfacing, use QAnalyseDyns.
+        Useful data:
+        - Temperatures
+        - Offdiagonal distances
+        - Energies (Q and non-Q)
 
         Args:
-           logfile (string):  path/filename of Q logfile
-           timeunit (string):  fs,ps,ns (optional, default is ps)
-           stepsize (float):  in case the one in Q is 0.000 (Q printout is a work of art)
-
-
-        Usage looks like this:
-
-        # parse
-        qad = QAnalyseDyns(.....).analysed[0]
-
-        # print out nicely formatted temperature stats
-        print qad.get_temp_stats()
-
-        # get averages for seconds half (step >= 50% of steps) of all the temperatures
-        temps = qad.data_temp.get_columns()
-
-        coltitles = qad.data_temp.get_column_titles()
-        # [ "Time", "T_tot", "T_free", "T_free_solute", "T_free_solvent" ]
-
-        midpoint = int(temps[0][-1])/2        # 0 == "Time", -1 == last frame
-        for i,colt in coltitles[1:]:
-            print colt, np.mean( [ x for j,x in enumerate(temps[i]) if temps[0][j] >= midpoint ] )
-
-        # get the potential energy data and just print it out
-        Epot = qad.data_E_SUM.get_columns( ["Time", "Potential"] )
-        print Epot
-
+           stride (int, optional):  use only every Nth point, default=1
         """
 
-        # parse the logfile:
-        # first the header using RE
-        # then dynamics (_parse_dyn()) line by line using the lazy generator in 'open' (less memory consumption and faster than regular expressions)
+        plots = ODict()
 
-        self._logfile = logfile
-        self._starttime = starttime
+        # make PlotData objects
 
-        self.MAP_TIME = {"fs": 1.0, "ps": 1e-3, "ns": 1e-6}
-        if timeunit not in self.MAP_TIME:
-            raise QAnalyseDynError("Timeunit has to be either 'fs', 'ps' or 'ns'")
-        self._timeconv = self.MAP_TIME[timeunit]
+        time_label = "Time [{}]".format(self.time_unit)
+        plots = ODict()
+        plots["temp"] = PlotData("Temperature",
+                                 xlabel=time_label,
+                                 ylabel="T [K]")
 
-        self._header=""
-        try:
-            with open(self._logfile,'r') as lf:
-                for line in lf:
-                    self._header += line
-                    if "Initialising dynamics" in line:
-                        break
-        except IOError as e:
-            raise QAnalyseDynError("Could not read the logfile: " + str(e))
+        plots["offdiags"] = PlotData("Offdiagonal distances",
+                                     xlabel=time_label,
+                                     ylabel="Distance [A]")
 
-        # use RE to get some info about the simulations
-        m = re.search("Build number\s*([\d\.]+)", self._header)
-        if m: self._qversion = m.group(1)
-        else:
-            m = re.search('QDyn version 5.06', self._header)
-            if m:
-                self._qversion = '5.06'
-            else:
-                raise QAnalyseDynError("Not a valid Q log file or Q version "
-                                       "is very old...")
-
-        m = re.search("Topology file      =\s*(\S+)", self._header)
-        if m: self._topfile = m.group(1)
-        else: raise QAnalyseDynError("Couldn't find the topology filename!?")
-
-        m = re.search("Number of MD steps =\s*(\d+)", self._header)
-        if m: self._md_steps = int(m.group(1))
-        else: raise QAnalyseDynError("Couldn't find number of steps!?")
-
-        m = re.search("Stepsize \(fs\)    =\s*([\d\.]+)", self._header)
-        if m: self._stepsize = float(m.group(1))
-        else: raise QAnalyseDynError("Couldn't find the stepsize!?")
-
-        if not stepsize:
-            if abs(self._stepsize - 0.0) < 1e-8:
-                raise QAnalyseDynError("Can't convert steps to time, stepsize "
-                                       "is 0.0 in the logfile (Q sucks). Set "
-                                       "the stepsize please.")
-        else:
-            if self._stepsize:
-                raise QAnalyseDynError("Will not override the non-zero "
-                                       "stepsize in the logfile...")
-            else:
-                self._stepsize = stepsize
-
-        m = re.search("FEP input file     =\s*(\S+)", self._header)
-        if m: self._fepfile = m.group(1)
-        else: self._fepfile = None
-
-        if self._fepfile:
-            m = re.search("No. of fep/evb states    =\s*(\d+)", self._header)
-            if m: self._evb_states = int(m.group(1))
-            else: raise QAnalyseDynError("Couldn't find the number of states!?")
-
-        offdsection = re.search("(No. of offdiagonal \(Hij\) functions =.*?^$)",
-                                self._header,
-                                re.MULTILINE | re.DOTALL).group(1)
-        offdgs = re.findall("\s+\d+\s+\d+\s+(\d+)\s+(\d+)\s+[\d\.]+\s+[\d\.]+",
-                            offdsection)
-
-        #
-        # make datacontainer variables for storing all the data
-
-        # offdiags
-        offdiags = ["{}_{}".format(a1, a2) for a1, a2 in offdgs]
-        self._tmp_offdiags = {}
-        for k in offdiags:
-            self._tmp_offdiags[k] = DataContainer(["Time", "Distance"])
-
-        # temperature
-        self.data_temp = DataContainer(["Time", "T_tot", "T_free",
-                                        "T_free_solute", "T_free_solvent"])
-
-        # energies
-        self.data_E_solute = DataContainer(["Time", "El", "VdW", "Bond",
-                                            "Angle", "Torsion", "Improper"])
-        self.data_E_solvent = DataContainer(["Time", "El", "VdW", "Bond",
-                                             "Angle", "Torsion", "Improper"])
-        self.data_E_solute_solvent = DataContainer(["Time", "El", "VdW"])
-        self.data_E_LRF = DataContainer(["Time", "El"])
-        self.data_E_Q_atom = DataContainer(["Time", "El", "VdW", "Bond",
-                                            "Angle", "Torsion", "Improper"])
-        self.data_E_restraints = DataContainer(["Time", "Total", "Fix",
-                                                "Solvent_rad", "Solvent_pol",
-                                                "Shell", "Solute"])
-        self.data_E_SUM = DataContainer(["Time", "Total",
-                                         "Potential", "Kinetic"])
-
-        # Q energies
-        q_columns1 = ("Time", "Lambda", "El", "VdW")
-        q_columns2 = ("Time", "Lambda", "El", "VdW", "Bond",
-                      "Angle", "Torsion", "Improper")
-        q_columns3 = ("Time", "Lambda", "Total", "Restraint")
-
-        self.data_EQ_Q, self.data_EQ_prot = [], []
-        self.data_EQ_wat, self.data_EQ_surr = [], []
-        self.data_EQ_any, self.data_EQ_SUM = [], []
-        for i in range(self._evb_states):
-            self.data_EQ_Q.append(DataContainer(q_columns1))
-            self.data_EQ_prot.append(DataContainer(q_columns1))
-            self.data_EQ_wat.append(DataContainer(q_columns1))
-            self.data_EQ_surr.append(DataContainer(q_columns1))
-            self.data_EQ_any.append(DataContainer(q_columns2))
-            self.data_EQ_SUM.append(DataContainer(q_columns3))
-
-        # mapping of energy types (label in the output) with containers
-        self.map_en_section = {"solute": self.data_E_solute,
-                               "solvent": self.data_E_solvent,
-                               "solute-solvent": self.data_E_solute_solvent,
-                               "LRF": self.data_E_LRF,
-                               "Q-atom": self.data_E_Q_atom,
-                               "SUM": self.data_E_SUM}
-
-        self.map_qen_section = {"Q-Q": self.data_EQ_Q,
-                                "Q-prot": self.data_EQ_prot,
-                                "Q-wat": self.data_EQ_wat,
-                                "Q-surr.": self.data_EQ_surr,
-                                "Q-any": self.data_EQ_any,
-                                "Q-SUM": self.data_EQ_SUM}
-
-        self._parse_dyn()
-        d_dcs = self._tmp_offdiags.values()
-        cts = ["Time",] + self._tmp_offdiags.keys()
-        self.data_offdiags = DataContainer(cts)
-        # TODO: clean up this magic below
-        for d_row in zip(* [d_dcs[0].get_columns([0,])[0],]  + [d_dc.get_columns([1,])[0] for d_dc in d_dcs ]):
-            self.data_offdiags.add_row(d_row)
-
-        self._endtime = self._md_steps * self._stepsize * self._timeconv \
-                      + self._starttime
+        t_dc = self.get_temps(stride=stride)
+        t_cs, t_cts = t_dc.get_columns(), t_dc.column_titles
+        for i, t_ct in enumerate(t_cts[1:]):
+            plots["temp"].add_subplot(t_ct, t_cs[0], t_cs[i+1]) # 0==Time
 
 
-    def get_endtime(self):
-        return self._endtime
+        d_dc = self.get_offdiags(stride=stride)
+        d_cs, d_cts = d_dc.get_columns(), d_dc.column_titles
+        for i, d_ct in enumerate(d_cts[1:]):
+            plots["offdiags"].add_subplot(d_ct, d_cs[0], d_cs[i+1]) # 0==Time
 
 
-    def _parse_dyn(self):
-        """
-        Parses the dynamics part of the logfile (used by init)
-        """
-        time = self._starttime
-        t_free, t_tot = None, None
-        insection = False
-        with open(self._logfile, 'r') as logfile:
-            logfile.seek(len(self._header))
-            for line in logfile:
-                lf = line.split()
-                if not lf:
-                    continue
-                if "Initialising dynamics" in line:
-                    raise QAnalyseDynError("Found more than one logfile...",
-                                           "Don't concatenate man...")
+        for k in self.en_section_keys:
+            key = "E_{}".format(k)
+            plots[key] = PlotData("Energy: " + k,
+                                  xlabel=time_label,
+                                  ylabel="Energy [kcal/mol]")
+            e_dc = self.get_energies(k, stride=stride)
+            e_cs, e_cts = e_dc.get_columns(), e_dc.column_titles
+            if e_cs:
+                for i, e_ct in enumerate(e_cts[1:]):
+                    plots[key].add_subplot(e_ct, e_cs[0], e_cs[i+1]) # 0==Time
 
-                if t_free != None: # second line with temps
-                    try:
-                        tf_solute = float(lf[1])
-                    except: # gas phase
-                        tf_solute = 0
-                    try:
-                        tf_solvent = float(lf[3])
-                    except: # gas phase
-                        tf_solvent = 0
 
-                    self.data_temp.add_row((time, t_tot, t_free,
-                                            tf_solute, tf_solvent))
-                    t_free, t_tot = None, None
+        for k in self.qen_section_keys:
+            for evb_state in range(1, self.n_evb_states + 1):
+                key = "EQ{}_{}".format(evb_state, k)
+                plots[key] = PlotData("Q Energy: {} (state {})"
+                                      "".format(k, evb_state),
+                                      xlabel=time_label,
+                                      ylabel="Energy [kcal/mol]")
+                qe_dc = self.get_q_energies(k, evb_state, stride=stride)
+                qe_cs, qe_cts = qe_dc.get_columns(), qe_dc.column_titles
+                if qe_cs:
+                    for i, qe_ct in enumerate(qe_cts[1:]):
+                        plots[key].add_subplot(qe_ct, qe_cs[0], qe_cs[i+1])
 
-                # first line with temps
-                elif "Temperature at step" in line:
-                    # fix for large step numbers
-                    line = line.replace("step", "step ")
-                    lf = line.split()
-                    step = int(lf[3].strip(":"))
-                    time = step * self._stepsize * self._timeconv \
-                         + self._starttime
-                    t_tot, t_free = float(lf[5]), float(lf[7])
-
-                elif "Energy summary at step" in line or \
-                        "Q-atom energies at step" in line:
-                    insection = True
-                    step = int(lf[5])
-                    time = step * self._stepsize * self._timeconv \
-                         + self._starttime
-
-                elif "FINAL  Energy summary" in line or \
-                        "FINAL Q-atom energies" in line:
-                    insection = True
-                    time = self._md_steps * self._stepsize * self._timeconv \
-                         + self._starttime
-
-                elif "===================================================="\
-                     "======================" in line:
-                    insection = False
-
-                if not insection:
-                    continue
-
-                # always skip the 0th step
-                if step == 0:
-                    continue
-
-                key = lf[0]
-                if key in self.map_en_section:
-                    row = [time,] + [float(x) for x in lf[1:]]
-                    self.map_en_section[key].add_row(row)
-                elif key in self.map_qen_section:
-                    evb_index = int(lf[1]) - 1
-                    row = [time,] + [float(x) for x in lf[2:]]
-                    self.map_qen_section[key][evb_index].add_row(row)
-                elif "dist. between" in line:
-                    atom1, atom2, dist = lf[8], lf[9], float(lf[11])
-                    k = "{}_{}".format(atom1, atom2)
-                    self._tmp_offdiags[k].add_row([time, dist])
-
+        return plots
 
 
 

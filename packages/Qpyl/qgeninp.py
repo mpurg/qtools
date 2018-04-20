@@ -42,7 +42,7 @@ import random
 import logging
 from collections import OrderedDict as ODict
 
-from Qpyl.core.qdyninp import QDynInput, QDynInputError
+from Qpyl.core.qdyn import QDynInput, QDynInputError
 from Qpyl.core.qstructure import QStruct, QStructError, find_placeholders
 from Qpyl.common import __version__, raise_or_log
 
