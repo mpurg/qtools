@@ -1,0 +1,39 @@
+# Generated with QTools, version 0.5.12
+# Date: Sun Apr 22 17:36:26 2018
+# CWD: /home/mpurg/bin/qtools_tests/probr_cl/tmp-run/asd
+# Cmdline: /home/mpurg/bin/qtools/qscripts-cli/q_genfeps.py genfeps.proc ../1-relax/relax_cont/relax_002.inp relax --pdb ../0-topol/probr_cl.pdb --frames 21 --rs run_feps_q.sh
+[md]
+steps                                          1000
+temperature                                     300
+stepsize                                          1
+bath_coupling                                   100
+
+[cut-offs]
+q_atom                                           99
+
+[intervals]
+non_bond                                         30
+output                                        10000
+temperature                                    1000
+energy                                          100
+trajectory                                       10
+
+[files]
+topology                               probr_cl.top
+restart                            fep_010_0.500.re
+final                              fep_011_0.450.re
+trajectory                        fep_011_0.450.dcd
+energy                             fep_011_0.450.en
+fep                                    probr_cl.fep
+restraint                    cont_relax_002.re.rest
+
+[lambdas]
+0.4500000 0.5500000
+
+[sequence_restraints]
+1      6      0.1    0      0     
+11     12     0.1    0      0     
+
+[distance_restraints]
+1      11     0.0    3.5    3.0    2     
+1      12     0.0    3.5    3.0    1     

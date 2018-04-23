@@ -1,5 +1,6 @@
 *pyc
 tmp-run/
+qbins/
 qscripts.cfg
 *swp
 .cache

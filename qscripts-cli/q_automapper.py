@@ -127,7 +127,7 @@ def main():
 
     optarg.add_argument("--qfep_exec", dest="qfep_exec",
                         default=QScfg.get("qexec", "qfep"),
-                        help="qfep5 executable path (default={})."
+                        help="qfep executable path (default={})."
                              "".format(QScfg.get("qexec", "qfep")))
     optarg.add_argument("-v", "--version", action="version",
                         version=get_version_full())
@@ -218,7 +218,7 @@ Attempting to fit to dG# = {} and dG0 = {}
 
     if not rcode:
         print "Did not converge. Try changing the step (--step), increasing "\
-              "number of iterations (--iter) or lowering the treshold "\
+              "number of iterations (--iter) or raising the threshold "\
               "(--threshold)\n"
 
 

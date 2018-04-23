@@ -1,0 +1,29 @@
+
+
+------------------------------- Mapping details -------------------------------
+# Mapped with: Qtools (0.5.12), Qfep (6.0.8)
+# Qfep path: /home/mpurg/bin/Q6/bin/Qfep6
+# Work dir: /tmp/1-probrcl_tlL
+# Date: Sun Apr 22 18:07:48 2018
+# CMDline: /home/mpurg/bin/qtools/qscripts-cli/q_mapper.py 0 0 --dirs testrep1 testrep2 testrep3 --skip 1 --min 1 --bins 20 --temp 298 --out qmapper1.out
+
+Directories:
+testrep1, testrep2, testrep3
+
+Input:
+q_mapper.py 0.0 0.0 --bins 20 --skip 1 --min 1 --temp 298.0 
+
+Fails:
+testrep3: Energy file 'fep_000_1.000.en' missing.
+-------------------------------------------------------------------------------
+
+Analysis Stats:
+#                 Mean      Std.dev    Median    Std.error       N
+dG*                nan        nan        nan        nan          0
+dG0                nan        nan        nan        nan          0
+dG_lambda       -13.16       0.19     -13.16       0.13          2
+
+Analysis Fails:
+FEP: None, EVB: 2
+
+Run q_analysefeps.py for more info...

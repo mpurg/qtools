@@ -44,7 +44,8 @@ def gc(args):
     if args.qmaskfile:
         try:
             qmask = open(args.qmaskfile, "r").read().split()
-            if not qmask: raise IOError
+            if not qmask:
+                raise IOError
         except IOError:
             print "Can't read '{}' or file empty".format(args.qmaskfile)
             sys.exit(1)
@@ -118,31 +119,31 @@ def gc(args):
         top_gcs_reorg = "None, all directories failed..."
     else:
         top_rows = sorted(qgc.gcs_stats.get_rows(),
-                          key=lambda x: -abs(x[5]))[:10]
+                          key=lambda x: -abs(x[13]))[:10]
 
         out_l = ["{:<10} {:>10} {:>10}".format("# Residue", "Mean", "Stdev")]
 
         for row in top_rows:
-            rid, rn, el, elstd = row[0], row[1], row[5], row[6]
+            rid, rn, el, elstd = row[0], row[1], row[13], row[14]
 
             tmp = "{}_{}".format(rn.capitalize(), rid)
             tmp2 = "{:<10} {:10.2f} {:10.2f}".format(tmp, el, elstd)
             out_l.append(tmp2)
-                                     
+
         top_gcs = "\n".join(out_l)
 
         top_rows = sorted(qgc.gcs_stats.get_rows(),
-                          key=lambda x: -abs(x[9]))[:10]
+                          key=lambda x: -abs(x[17]))[:10]
 
         out_l = ["{:<10} {:>10} {:>10}".format("# Residue", "Mean", "Stdev")]
 
         for row in top_rows:
-            rid, rn, el, elstd = row[0], row[1], row[9], row[10]
+            rid, rn, el, elstd = row[0], row[1], row[17], row[18]
 
             tmp = "{}_{}".format(rn.capitalize(), rid)
             tmp2 = "{:<10} {:10.2f} {:10.2f}".format(tmp, el, elstd)
             out_l.append(tmp2)
-                                     
+
         top_gcs_reorg = "\n".join(out_l)
 
     outstr = """
@@ -179,8 +180,8 @@ Top REORG (el) contributions:
         if backup:
             print "# Backed up '{}' to '{}'".format(args.pdbgc_out, backup)
         open(args.pdbgc_out, 'w').write(qgc.get_pdbgc())
-        print "Wrote '{}'... (use Pymol/Chimera/VMD and color by B-factor)"\
-            "".format(args.pdbgc_out)
+        print "Wrote '{}'... (use Pymol/Chimera/VMD and color by occupancy "\
+              "(LRA) or B-factor (reorg))".format(args.pdbgc_out)
 
 
 def main():
@@ -212,8 +213,8 @@ def main():
                                 "included in the calculation.")
 
     gc_reqarg.add_argument("resid_last", type=int,
-                             help="Index of last residue to be "
-                                  "included in the calculation. ")
+                           help="Index of last residue to be "
+                                "included in the calculation. ")
 
     gc_optarg = subps["gc"].add_argument_group("Optional")
     gc_optarg.add_argument("--iscale", dest="scale_ionized",
@@ -271,7 +272,7 @@ def main():
 
     gc_optarg.add_argument("--qcalc_exec", dest="qcalc_exec",
                            default=QScfg.get("qexec", "qcalc"),
-                           help="qcalc5 executable path (default={})."
+                           help="qcalc executable path (default={})."
                                 "".format(QScfg.get("qexec", "qcalc")))
 
     gc_optarg.add_argument("-h", "--help", action="help", help="show this "

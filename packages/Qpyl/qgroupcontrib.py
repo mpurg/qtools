@@ -238,8 +238,8 @@ class QGroupContrib(object):
             if abs(self._scale_ionized - 1.0) > 1e-7:
                 for i, resname in enumerate(resnames):
                     if resname in ("ARG", "LYS", "HIP", "ASP", "GLU"):
-                        e2e1_st1_el[i] = e2e1_st1_el / self._scale_ionized
-                        e2e1_st2_el[i] = e2e1_st2_el / self._scale_ionized
+                        e2e1_st1_el[i] = e2e1_st1_el[i] / self._scale_ionized
+                        e2e1_st2_el[i] = e2e1_st2_el[i] / self._scale_ionized
                         el_lra[i] = el_lra[i] / self._scale_ionized
                         el_reorg[i] = el_reorg[i] / self._scale_ionized
 
@@ -652,7 +652,11 @@ Fails:
         Fill the Occupancy fields with LRA contributions and
         Temperature factor fields with REORG contributions.
         """
-        resids, lras, reorgs = self.gcs_stats.get_columns([0, 13, 17])
+
+        try:
+            resids, lras, reorgs = self.gcs_stats.get_columns([0, 13, 17])
+        except IndexError:
+            resids, lras, reorgs = [], [], []
         pdb = []
         for mol in self._pdb_qstruct.molecules:
             for res in mol.residues:

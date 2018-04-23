@@ -91,7 +91,7 @@ def main():
 
     optarg.add_argument("--qfep_exec", dest="qfep_exec",
                         default=QScfg.get("qexec", "qfep"),
-                        help="qfep5 executable path (default={})."
+                        help="qfep executable path (default={})."
                              "".format(QScfg.get("qexec", "qfep")))
 
     optarg.add_argument("-v", "--version", action="version",

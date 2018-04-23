@@ -1,0 +1,33 @@
+
+
+------------------------------- Mapping details -------------------------------
+# Mapped with: Qtools (0.5.12), Qfep (Unknown, likely ancient)
+# Qfep path: /home/mpurg/bin/Q6/bin/Qfep6
+# Work dir: /tmp/1-probrcl_tlL
+# Date: Sun Apr 22 18:07:48 2018
+# CMDline: /home/mpurg/bin/qtools/qscripts-cli/q_mapper.py 100 10 --dirs testrep1 testrep2 testrep3 --skip 100 --min 1 --bins 20 --temp 298 --out qmapper2.out
+
+Directories:
+testrep1, testrep2, testrep3
+
+Input:
+q_mapper.py 100.0 10.0 --bins 20 --skip 100 --min 1 --temp 298.0 
+
+Fails:
+testrep1: QFep wrote to STDERR: STOP Qfep5 terminated abnormally: Too few data points in file.
+
+testrep2: QFep wrote to STDERR: STOP Qfep5 terminated abnormally: Too few data points in file.
+
+testrep3: Energy file 'fep_000_1.000.en' missing.
+-------------------------------------------------------------------------------
+
+Analysis Stats:
+#                 Mean      Std.dev    Median    Std.error       N
+dG*                nan        nan        nan        nan          0
+dG0                nan        nan        nan        nan          0
+dG_lambda          nan        nan        nan        nan          0
+
+Analysis Fails:
+FEP: None, EVB: None
+
+Run q_analysefeps.py for more info...

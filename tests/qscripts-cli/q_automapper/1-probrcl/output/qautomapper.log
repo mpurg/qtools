@@ -1,0 +1,27 @@
+
+
+------------------------------- Mapping details -------------------------------
+# Mapped with: Qtools (0.5.12), Qfep (6.0.8)
+# Qfep path: /home/mpurg/bin/Q6/bin/Qfep6
+# Work dir: /tmp/1-probrcl_mE2
+# Date: Mon Apr 23 10:40:46 2018
+# CMDline: /home/mpurg/bin/qtools/qscripts-cli/q_automapper.py 12 -5 0 0 --dirs testrep1 testrep2 --skip 1 --min 1 --bins 50 --temp 298 --step 10 --threshold 0.001 --iter 10 --nosingle --out qautomapper.log
+
+Directories:
+testrep1, testrep2
+
+Input:
+q_mapper.py 82.1201056503 4.56708284345 --bins 50 --skip 1 --min 1 --temp 298.0 
+
+Fails:
+None
+-------------------------------------------------------------------------------
+
+Analysis Stats:
+#                 Mean      Std.dev    Median    Std.error       N
+dG*              12.00       0.07      12.00       0.05          2
+dG0              -5.00       0.14      -5.00       0.10          2
+dG_lambda        -8.60       0.19      -8.60       0.13          2
+
+Analysis Fails:
+None

@@ -1,6 +1,6 @@
 [qexec]
-qfep =   ; qfep5 binary path
-qcalc =   ; qcalc5 binary path
+qfep =   ; qfep binary path
+qcalc =   ; qcalc binary path
 
 [gc]
 lambdas_state1   = 1.0, 0.5    ; LRA between A (1.0, 0.0) and B (0.5, 0.5)

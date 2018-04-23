@@ -14,7 +14,7 @@ source ../../qtools_init.sh
 # run the config script
 qscripts_config.py 2>&1 >/dev/null
 
-for i in */
+for i in q_*/
 do
     cd ${TESTS_ROOT}/${i}
     for j in */

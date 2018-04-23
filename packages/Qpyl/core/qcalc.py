@@ -40,10 +40,10 @@ class QCalcError(Exception):
     pass
 
 class QCalc(object):
-    """Class for running QCalc5.
+    """Class for running Qcalc.
 
     Args:
-        qcalc_exec (string):  Qcalc5 executable filename
+        qcalc_exec (string):  Qcalc executable filename
     """
 
     def __init__(self, qcalc_exec):
@@ -54,10 +54,10 @@ class QCalc(object):
         """Run the calculation and parse the output.
 
         Args:
-            qcalc_input_str (string):  qcalc5 input
+            qcalc_input_str (string):  qcalc input
             workdir (string, optional):  working directory
         Returns:
-            qcalc_output_str (string):  qcalc5 stdour
+            qcalc_output_str (string):  qcalc stdout
 
         Raises QCalcError.
         """
@@ -69,18 +69,18 @@ class QCalc(object):
                                             cwd=workdir)
 
         except OSError as error_msg:
-            raise QCalcError("Problem when running qcalc5: {}"
+            raise QCalcError("Problem when running qcalc: {}"
                              "".format(error_msg))
 
-        # "\n" is added to fix the blocking qcalc5 issue 
+        # "\n" is added to fix the blocking qcalc issue 
         stdout, stderr = self.process.communicate(qcalc_input_str + "\n")
 
-        # stderr is useless in qcalc5
+        # stderr is useless in qcalc
         return stdout
 
 
 class QCalcInput(object):
-    """Class for creating qcalc5 inputs.
+    """Class for creating qcalc inputs.
 
     Args:
         top (string): topology filename
@@ -173,7 +173,7 @@ class QCalcInput(object):
 
 
     def get_string(self):
-        """Return string representation of qcalc5 input.
+        """Return string representation of qcalc input.
 
         Raises QCalcError if no actions were defined.
         """
@@ -204,13 +204,13 @@ class QCalcInput(object):
 
 
 class QCalcOutput(object):
-    """Class for parsing qcalc5 output.
+    """Class for parsing qcalc output.
 
     It stores all the data in DataContainer objects inside the
     dictionary 'results'.
 
     Args:
-        qcalc_output (string):  qcalc5 output
+        qcalc_output (string):  qcalc output
 
     """
     _CALCLIST_RE = re.compile("List of defined calculations.*?"
@@ -241,7 +241,7 @@ class QCalcOutput(object):
         # look for errors
         err = "\n".join(re.findall("ERROR.*", self.qcalc_output))
         if err:
-            QCalcError("Errors in qcalc output: {}".format(err))
+            raise QCalcError("Errors in qcalc output: {}".format(err))
 
         # parse the list of calculations
         calc_list = self._CALCLIST_RE.findall(self.qcalc_output)

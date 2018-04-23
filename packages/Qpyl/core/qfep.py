@@ -244,7 +244,7 @@ class _QFepPart0(object):
         # comment with column names
         header = lines.pop(0).strip()
         if header != self._PART0_HEADER:
-            raise QFepOutputError("Part0 has a wrong header, did the qfep5 "
+            raise QFepOutputError("Part0 has a wrong header, did the qfep "
                                   "binary change?")
         n_lines_parsed = 0
         lines_to_read = range(calc_index*self._num_evb_states,
@@ -332,7 +332,7 @@ class _QFepPart1(object):
         # comment with column names
         header = lines.pop(0).strip()
         if header != self._PART1_HEADER:
-            raise QFepOutputError("Part1 has a wrong header, did the qfep5 "
+            raise QFepOutputError("Part1 has a wrong header, did the qfep "
                                   "binary change?")
         for line in lines:
             line = re.split("#|\!", line)[0].strip()
@@ -389,7 +389,7 @@ class _QFepPart2(object):
         # comment with column names
         header = lines.pop(0).strip()
         if header != self._PART2_HEADER:
-            raise QFepOutputError("Part2 has a wrong header, did the qfep5 "
+            raise QFepOutputError("Part2 has a wrong header, did the qfep "
                                   "binary change?")
         for line in lines:
             line = re.split("#|\!", line)[0].strip()
@@ -448,7 +448,7 @@ class _QFepPart3(object):
         # comment with column names
         header = lines.pop(0).strip()
         if header != self._PART3_HEADER:
-            raise QFepOutputError("Part3 has a wrong header, did the qfep5 "
+            raise QFepOutputError("Part3 has a wrong header, did the qfep "
                                   "binary change?")
         for line in lines:
             line = re.split("#|\!", line)[0].strip()
@@ -683,10 +683,10 @@ class QFepOutput(object):
 
 
 class QFep(object):
-    """Class for running QFep5.
+    """Class for running Qfep.
 
     Args:
-        qfep_exec (string):  Qfep5 executable path
+        qfep_exec (string):  Qfep executable path
 
     """
 
@@ -698,10 +698,10 @@ class QFep(object):
         """Run qfep on the input string and return output.
 
         Args:
-            qfep_input_str (string):  qfep5 input
+            qfep_input_str (string):  qfep input
             workdir (string, optional):  working directory
         Returns:
-            qfep_output_str  (string):  qfep5 stdout
+            qfep_output_str  (string):  qfep stdout
 
         Raises QFepError on OSError or stderr.
         """
@@ -712,7 +712,7 @@ class QFep(object):
                                             stderr=subprocess.PIPE,
                                             cwd=workdir)
         except OSError as error_msg:
-            raise QFepError("Problem when running qfep5: {}"
+            raise QFepError("Problem when running qfep: {}"
                             "".format(error_msg))
 
         stdout, stderr = self.process.communicate(qfep_input_str)
@@ -726,7 +726,7 @@ class QFep(object):
 ###############################################################################
 
 class QFepInput(object):
-    """Class for creating qfep5 inputs.
+    """Class for creating qfep inputs.
 
     At the moment, supports only:
     - 2 states
@@ -758,7 +758,7 @@ class QFepInput(object):
         self.minpts_bin = int(minpts_bin)
 
     def get_string(self):
-        """Return input string for Qfep5
+        """Return input string for Qfep
         """
 
         return """\

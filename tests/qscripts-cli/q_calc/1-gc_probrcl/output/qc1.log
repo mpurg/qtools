@@ -1,0 +1,33 @@
+
+
+---------------------------------- GC details ---------------------------------
+# Calculated with: Qtools (0.5.12), Qcalc (6.0.8)
+# Qcalc path: /home/mpurg/bin/Q6/bin/Qcalc6
+# Work dir: /tmp/1-gc_probrcl_zs5
+# Date: Mon Apr 23 18:18:10 2018
+# CMDline: /home/mpurg/bin/qtools/qscripts-cli/q_calc.py gc dfpase_dfp_start.pdb 15 20 --iscale 1 --dirs testrep1 testrep2 testrep3 --lra_l 0.86 0.46 --plots_out qgc1.pd.json --out qc1.log --pdbgc gc1.pdb --writeout
+
+Directories:
+testrep1, testrep2, testrep3
+
+Fails:
+testrep3: QDyn input with lambda=='0.86' (and energy file in 'testrep3/q_enfiles.list') not found.
+-------------------------------------------------------------------------------
+
+Top LRA (el) contributions:
+# Residue        Mean      Stdev
+Glu_19         -12.11       0.35
+Ala_18          -0.54       0.06
+Gly_20           0.40       0.00
+Ile_15          -0.07       0.00
+Pro_16           0.06       0.01
+Gly_17           0.00       0.07
+
+Top REORG (el) contributions:
+# Residue        Mean      Stdev
+Glu_19           0.83       0.51
+Gly_17           0.05       0.11
+Ile_15           0.02       0.00
+Gly_20          -0.01       0.01
+Pro_16           0.00       0.00
+Ala_18           0.00       0.12

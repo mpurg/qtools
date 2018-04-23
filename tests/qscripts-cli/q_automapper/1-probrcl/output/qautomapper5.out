@@ -1,0 +1,35 @@
+Attempting to fit to dG# = 12.0 and dG0 = 15.0
+(stepsize = 10.0, threshold = 0.001, max iterations = 10)
+
+Will use these directories for mapping (use --dirs to change this): testrep1, testrep2
+# Iteration #1
+#        Hij      Alpha        dG#        dG0
+#       0.00       0.00      57.07     -13.21
+#       0.00      10.00      60.72      -3.21
+#      10.00       0.00      48.00     -13.10
+#      60.80      27.54      28.18      12.54
+# Iteration #2
+#        Hij      Alpha        dG#        dG0
+#      60.80      37.54      32.61      20.62
+#      70.80      27.54      24.02      11.84
+#     107.15      34.60      16.00      13.28
+# Iteration #3
+#        Hij      Alpha        dG#        dG0
+#     107.15      44.60      19.77      18.81
+#     117.15      34.60      13.97      12.35
+#     144.17      43.94      12.48      12.16
+# Iteration #4
+#        Hij      Alpha        dG#        dG0
+#     144.17      53.94      15.27      15.03
+#     154.17      43.94      11.30      11.00
+#     854.43     343.89       2.95       2.92
+# Iteration #5
+#        Hij      Alpha        dG#        dG0
+#     854.43     353.89       3.08       3.06
+#     864.43     343.89       2.90       2.85
+# Failed to analyse 'testrep1': Bad reaction free energy profile - 1 local minima (instead of 2)
+# Failed to analyse 'testrep2': Bad reaction free energy profile - 1 local minima (instead of 2)
+
+Massive fail:
+All directories failed to analyse! Try changing the initial-guess values (Hij and alpha) or step_size...
+

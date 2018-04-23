@@ -1,0 +1,49 @@
+Attempting to fit to dG# = 12.0 and dG0 = -5.0
+(stepsize = 1.0, threshold = 0.001, max iterations = 10)
+
+Will use these directories for mapping (use --dirs to change this): testrep1, testrep2
+# Iteration #1
+#        Hij      Alpha        dG#        dG0
+#       0.00       0.00      57.07     -13.21
+#       0.00       1.00      57.17     -12.21
+#       1.00       0.00      56.29     -13.21
+#       1.00       1.00      56.62     -12.21
+# Iteration #2
+#        Hij      Alpha        dG#        dG0
+#       1.00       2.00      56.80     -11.21
+#       2.00       1.00      55.76     -12.21
+#       2.00       2.00      56.05     -11.21
+# Iteration #3
+#        Hij      Alpha        dG#        dG0
+#       2.00       3.00      56.25     -10.21
+#       3.00       2.00      55.19     -11.21
+#      54.97       7.95      22.63      -3.62
+# Iteration #4
+#        Hij      Alpha        dG#        dG0
+#      54.97       8.95      23.03      -2.77
+#      55.97       7.95      22.18      -3.58
+#      76.39       5.42      13.85      -4.73
+# Iteration #5
+#        Hij      Alpha        dG#        dG0
+#      76.39       6.42      14.19      -4.00
+#      77.39       5.42      13.56      -4.67
+#      81.91       4.63      12.07      -4.97
+# Iteration #6
+#        Hij      Alpha        dG#        dG0
+#      81.91       5.63      12.41      -4.27
+#      82.91       4.63      11.82      -4.91
+#      82.11       4.57      12.00      -5.00
+# Iteration #7
+#        Hij      Alpha        dG#        dG0
+#      82.11       5.57      12.34      -4.30
+#      83.11       4.57      11.75      -4.94
+#      82.12       4.57      12.00      -5.00
+
+
+Well done! Use this on your non-reference simulations:
+q_mapper.py 82.1215253387 4.56566374318 --bins 50 --skip 1 --min 1 --temp 298.0 
+
+
+Writting out the logfile...
+# Backed up 'asd' to '#asd.1#'
+Wrote 'asd'...
