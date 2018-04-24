@@ -11,4 +11,6 @@ script:
 after_success:
   - cd Qpyl
   - coveralls
+env:
+    - QBIN_DIR=$TRAVIS_BUILD_DIR/tests/qbin
 
