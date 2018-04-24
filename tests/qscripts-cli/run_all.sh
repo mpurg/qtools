@@ -9,6 +9,8 @@ fi
 export QTOOLS_TMPDIR=$(mktemp -d --tmpdir QTOOLS_TESTS_XXX)
 TESTS_ROOT=$(pwd)
 
+echo $QBIN_DIR
+
 # make sure we are running this copy of the scripts
 source ../../qtools_init.sh
 # run the config script
