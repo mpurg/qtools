@@ -4,6 +4,7 @@ python:
 before_install:
   - pip install pytest pytest-cov
   - pip install coveralls
+  - sudo apt-get install -y gfortran
 before_script:
   - cd tests
 script:
@@ -11,6 +12,3 @@ script:
 after_success:
   - cd Qpyl
   - coveralls
-env:
-    - QBIN_DIR=$TRAVIS_BUILD_DIR/tests/qbin
-
