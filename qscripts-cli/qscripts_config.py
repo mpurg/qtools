@@ -3,7 +3,7 @@
 #
 # MIT License
 # 
-# Copyright (c) 2017  Miha Purg <miha.purg@gmail.com>
+# Copyright (c) 2018  Miha Purg <miha.purg@gmail.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -113,11 +113,7 @@ def get_exec_path(name):
                 if not ex in paths:
                     paths.append(ex)
 
-    if not paths:
-        print "No '{}' executable was found in your PATH. "\
-              "Please add the path to qfep to the config file "\
-              "manually.".format(name)
-    else:
+    if paths:
         print "These '{}' executables were found in your PATH. "\
               "Choose the correct one (select number).".format(name)
         for i, path in enumerate(paths):
@@ -144,11 +140,28 @@ def main():
     QScriptsConfig = _QScriptsConfig(_CFG_FILE_DEFAULT)
     print "Creating a new configuration file...\n"
 
-    print "Qfep executable:"
-    qfep_path = get_exec_path("qfep")
+    print "Looking for Qfep6 executables in PATH..."
+    qfep_path = get_exec_path("Qfep6")
+    if not qfep_path:
+        print "Not found, looking for qfep (v5) instead..."
+        qfep_path = get_exec_path("qfep")
+    if not qfep_path:
+        print "No Qfep executable was found in your PATH. "\
+              "Please set the path manually in the config file."\
+              "".format(name)
+
     QScriptsConfig.set("qexec", "qfep", qfep_path)
-    print "Qcalc executable:"
-    qcalc_path = get_exec_path("qcalc")
+
+    print "Looking for Qcalc6 executables in PATH..."
+    qcalc_path = get_exec_path("Qcalc6")
+    if not qcalc_path:
+        print "Not found, looking for qcalc (v5) instead..."
+        qcalc_path = get_exec_path("qcalc")
+    if not qcalc_path:
+        print "No Qcalc executable was found in your PATH. "\
+              "Please set the path manually in the config file."\
+              "".format(name)
+
     QScriptsConfig.set("qexec", "qcalc", qcalc_path)
 
     QScriptsConfig.config.write(open(_CFG_FILE, "w+"))

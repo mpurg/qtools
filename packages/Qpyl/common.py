@@ -3,7 +3,7 @@
 #
 # MIT License
 #
-# Copyright (c) 2017  Miha Purg <miha.purg@gmail.com>
+# Copyright (c) 2018  Miha Purg <miha.purg@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__version__ = "0.5.12"
+__version__ = "0.6.0"
 
 
 def get_version_full():
