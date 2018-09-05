@@ -1,0 +1,580 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Qpyl.core.qstructure &mdash; Qpyl 0.6.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Qpyl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Qpyl.html">Qpyl package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Qpyl</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>Qpyl.core.qstructure</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Qpyl.core.qstructure</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># MIT License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2018  Miha Purg &lt;miha.purg@gmail.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains the QStruct class for handling Q structure files (PDB, mol2).</span>
+<span class="sd">Additionally, it implements methods for finding and replacing atom</span>
+<span class="sd">placeholders (e.g. $1.N$)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">namedtuple</span>
+
+<span class="kn">from</span> <span class="nn">Qpyl.common</span> <span class="k">import</span> <span class="n">raise_or_log</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="n">PosVector</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;PosVector&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">])</span>
+
+
+<span class="n">_PLACEHOLDER_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">&quot;\$\S+\.\S+\$&quot;</span><span class="p">)</span>
+<span class="n">_COMMENTS_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;[#\!].*&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="find_placeholders"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qstructure.find_placeholders">[docs]</a><span class="k">def</span> <span class="nf">find_placeholders</span><span class="p">(</span><span class="n">inputstring</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Find atom placeholders of the form $514.C3$</span>
+
+<span class="sd">    It ignores comments (characters following # or !)</span>
+<span class="sd">    </span>
+<span class="sd">    See also QStruct.convert_placeholders</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="n">_COMMENTS_RE</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">inputstring</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_PLACEHOLDER_RE</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QStructError"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qstructure.QStructError">[docs]</a><span class="k">class</span> <span class="nc">QStructError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="QStruct"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qstructure.QStruct">[docs]</a><span class="k">class</span> <span class="nc">QStruct</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for processing the structure (coordinates)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      filename (path to the structure file)</span>
+<span class="sd">      filetype (type of structure file:  &#39;pdb&#39; or &#39;mol2&#39;)</span>
+<span class="sd">      ignore_errors (boolean):  Optional, default is False.\</span>
+<span class="sd">                                If set to True, some non-vital\</span>
+<span class="sd">                                exceptions are logged instead.</span>
+
+<span class="sd">    In contrast to QLib and QPrm, the &#39;read&#39; methods in this</span>
+<span class="sd">    class should not be called since the object should</span>
+<span class="sd">    contain data from only one structure file.</span>
+
+<span class="sd">    The structure data is stored in three lists:</span>
+<span class="sd">    atoms, residues, molecules</span>
+<span class="sd">    which contain _StructAtom, _StructResidue and _StructMolecule</span>
+<span class="sd">    objects.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">filetype</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span> <span class="o">=</span> <span class="n">ignore_errors</span>
+        <span class="n">FILE_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pdb&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_pdb</span><span class="p">,</span>
+                      <span class="s1">&#39;mol2&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_mol2</span><span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filetype</span> <span class="o">=</span> <span class="n">filetype</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filetype</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">FILE_TYPES</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">QStructError</span><span class="p">(</span><span class="s2">&quot;Filetype </span><span class="si">{}</span><span class="s2"> not supported. Use </span><span class="si">{}</span><span class="s2">&quot;</span>
+                               <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filetype</span><span class="p">,</span>
+                                       <span class="s2">&quot; or &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">FILE_TYPES</span><span class="o">.</span><span class="n">keys</span><span class="p">())))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">residues</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">molecules</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="c1"># TODO: some sort of lookup hashes if needed</span>
+
+        <span class="c1"># run the parser function</span>
+        <span class="n">FILE_TYPES</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">filetype</span><span class="p">](</span><span class="n">filename</span><span class="p">)</span>
+
+        <span class="c1"># check if we actually got something</span>
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">,</span> <span class="s2">&quot;residues&quot;</span><span class="p">,</span> <span class="s2">&quot;molecules&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">t</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QStructError</span><span class="p">(</span><span class="s2">&quot;No </span><span class="si">{}</span><span class="s2"> found, check file &#39;</span><span class="si">{}</span><span class="s2">&#39; and&quot;</span>
+                                   <span class="s2">&quot; filetype &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">,</span>
+                                                           <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span>
+                                                           <span class="bp">self</span><span class="o">.</span><span class="n">filetype</span><span class="p">))</span>
+
+
+
+
+    <span class="k">def</span> <span class="nf">_read_mol2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mol2_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read and parse a mol2 file for coordinates.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mol2_file (string):  name/path of file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">molecule</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">residue</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">aindex</span><span class="p">,</span> <span class="n">old_aindex</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">mol2_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;@&lt;TRIPOS&gt;&quot;</span><span class="p">):</span>
+                <span class="n">section</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;@&lt;TRIPOS&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;MOLECULE&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">molecule</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">molecules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">molecule</span><span class="p">)</span>
+
+                    <span class="n">molecule</span> <span class="o">=</span> <span class="n">_StructMolecule</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;ATOM&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">aindex</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">old_aindex</span> <span class="o">=</span> <span class="n">aindex</span>
+
+                <span class="n">lf</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+                <span class="n">aindex</span><span class="p">,</span> <span class="n">aname</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lf</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">lf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">lf</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
+                <span class="n">rindex</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lf</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+                <span class="n">rname</span> <span class="o">=</span> <span class="n">lf</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">old_aindex</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">aindex</span> <span class="o">-</span> <span class="n">old_aindex</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;Bad Mol2 format - atom &quot;</span>
+                                 <span class="s2">&quot;index </span><span class="si">{}</span><span class="s2"> followed by </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">old_aindex</span><span class="p">,</span> <span class="n">aindex</span><span class="p">),</span>
+                                 <span class="n">QStructError</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">residue</span> <span class="ow">or</span> <span class="n">residue</span><span class="o">.</span><span class="n">index_struct</span> <span class="o">!=</span> <span class="n">rindex</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">residue</span> <span class="ow">and</span> <span class="n">rindex</span> <span class="o">-</span> <span class="n">residue</span><span class="o">.</span><span class="n">index_struct</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;Bad Mol2 format - residue &quot;</span>
+                                     <span class="s2">&quot;index </span><span class="si">{}</span><span class="s2"> followed by </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">residue</span><span class="o">.</span><span class="n">index_struct</span><span class="p">,</span> <span class="n">rindex</span><span class="p">),</span>
+                                     <span class="n">QStructError</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span>
+                    <span class="n">residue</span> <span class="o">=</span> <span class="n">_StructResidue</span><span class="p">(</span><span class="n">rindex</span><span class="p">,</span> <span class="n">rname</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">residue</span><span class="p">)</span>
+                    <span class="n">molecule</span><span class="o">.</span><span class="n">add_residue</span><span class="p">(</span><span class="n">residue</span><span class="p">)</span>
+
+                <span class="n">atom</span> <span class="o">=</span> <span class="n">_StructAtom</span><span class="p">(</span><span class="n">aindex</span><span class="p">,</span> <span class="n">aname</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">residue</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+                <span class="n">residue</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+
+        <span class="c1"># append last one after parsing</span>
+        <span class="k">if</span> <span class="n">molecule</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">molecule</span><span class="o">.</span><span class="n">residues</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">molecules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">molecule</span><span class="p">)</span>
+
+
+
+
+    <span class="k">def</span> <span class="nf">_read_pdb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pdb_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read and parse a PDB file for coordinates.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pdb_file (string):  name/path of file</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># make a new _StructMolecule object</span>
+        <span class="n">molecule</span> <span class="o">=</span> <span class="n">_StructMolecule</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1"># parse the PDB file</span>
+        <span class="n">residue</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">aindex</span><span class="p">,</span> <span class="n">old_aindex</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;ATOM&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;HETATM&quot;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">aindex</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">old_aindex</span> <span class="o">=</span> <span class="n">aindex</span>
+
+                <span class="n">aindex</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">12</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">old_aindex</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">aindex</span> <span class="o">-</span> <span class="n">old_aindex</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;Bad PDB format - atom &quot;</span>
+                                 <span class="s2">&quot;index </span><span class="si">{}</span><span class="s2"> followed by </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">old_aindex</span><span class="p">,</span> <span class="n">aindex</span><span class="p">),</span>
+                                 <span class="n">QStructError</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span>
+
+
+                <span class="n">aname</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">17</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="n">rname</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="mi">17</span><span class="p">:</span><span class="mi">20</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                <span class="n">rindex</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">22</span><span class="p">:</span><span class="mi">26</span><span class="p">])</span>
+                <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">30</span><span class="p">:</span><span class="mi">38</span><span class="p">],</span> <span class="n">line</span><span class="p">[</span><span class="mi">38</span><span class="p">:</span><span class="mi">46</span><span class="p">],</span> <span class="n">line</span><span class="p">[</span><span class="mi">46</span><span class="p">:</span><span class="mi">54</span><span class="p">]))</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">residue</span> <span class="ow">or</span> <span class="n">residue</span><span class="o">.</span><span class="n">index_struct</span> <span class="o">!=</span> <span class="n">rindex</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">residue</span> <span class="ow">and</span> <span class="n">rindex</span> <span class="o">-</span> <span class="n">residue</span><span class="o">.</span><span class="n">index_struct</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;Bad PDB format - residue &quot;</span>
+                                     <span class="s2">&quot;index </span><span class="si">{}</span><span class="s2"> followed by </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">residue</span><span class="o">.</span><span class="n">index_struct</span><span class="p">,</span> <span class="n">rindex</span><span class="p">),</span>
+                                     <span class="n">QStructError</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span>
+
+                    <span class="n">residue</span> <span class="o">=</span> <span class="n">_StructResidue</span><span class="p">(</span><span class="n">rindex</span><span class="p">,</span> <span class="n">rname</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">residue</span><span class="p">)</span>
+                    <span class="n">molecule</span><span class="o">.</span><span class="n">add_residue</span><span class="p">(</span><span class="n">residue</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">aname</span> <span class="ow">in</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">residue</span><span class="o">.</span><span class="n">atoms</span><span class="p">]:</span>
+                    <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;Bad PDB format - two atoms with same name &quot;</span>
+                                 <span class="s2">&quot;(</span><span class="si">{}</span><span class="s2">) in residue </span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span>
+                                 <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aname</span><span class="p">,</span> <span class="n">rname</span><span class="p">,</span> <span class="n">rindex</span><span class="p">),</span>
+                                 <span class="n">QStructError</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span>
+
+                <span class="n">atom</span> <span class="o">=</span> <span class="n">_StructAtom</span><span class="p">(</span><span class="n">aindex</span><span class="p">,</span> <span class="n">aname</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">residue</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+                <span class="n">residue</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;TER&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;GAP&quot;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">molecules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">molecule</span><span class="p">)</span>
+                <span class="n">residue</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="n">molecule</span> <span class="o">=</span> <span class="n">_StructMolecule</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="c1"># append last one if it didn&#39;t gave a TER/GAP</span>
+        <span class="k">if</span> <span class="n">molecule</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">molecule</span><span class="o">.</span><span class="n">residues</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">molecules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">molecule</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="QStruct.convert_placeholders"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qstructure.QStruct.convert_placeholders">[docs]</a>    <span class="k">def</span> <span class="nf">convert_placeholders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputstring</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Convert atom placeholders ($514.C3$) to indexes.</span>
+
+<span class="sd">        Placeholders are a combination of the residue id and</span>
+<span class="sd">          atom name, encapsulated in $$ - $RESID.ATOM_NAME$</span>
+<span class="sd">        In addition,there are some special values:</span>
+<span class="sd">          $LAST.ID$ - id of last atom in the system</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">          inputstring (string):  string with placeholders (input file contents)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">          outputstring (string):  converted string</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">id_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">):</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+                                                         <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">}</span>
+        <span class="n">last_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">outputstring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">inputstring</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+            <span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+            <span class="k">if</span> <span class="s2">&quot;#&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)</span>
+                <span class="n">line</span><span class="p">,</span> <span class="n">comment</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="n">i</span><span class="p">],</span> <span class="n">line</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
+
+            <span class="n">c</span> <span class="o">=</span> <span class="n">find_placeholders</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">pid</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+                <span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;$&quot;</span><span class="p">)</span>
+                <span class="n">pid2</span> <span class="o">=</span> <span class="n">pid</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;LAST.ID&quot;</span><span class="p">,</span> <span class="n">last_id</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">padding</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pid2</span><span class="p">)</span><span class="o">+</span><span class="mi">2</span>  <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">id_map</span><span class="p">[</span><span class="n">pid2</span><span class="p">]))</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">QStructError</span><span class="p">(</span><span class="s2">&quot;Atom &#39;$</span><span class="si">{}</span><span class="s2">$&#39; does not exist in the pdb &quot;</span>
+                                       <span class="s2">&quot;structure.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pid2</span><span class="p">))</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;\$&quot;</span> <span class="o">+</span> <span class="n">pid</span> <span class="o">+</span> <span class="s2">&quot;\$&quot;</span><span class="p">,</span> <span class="n">id_map</span><span class="p">[</span><span class="n">pid2</span><span class="p">]</span> <span class="o">+</span> <span class="n">padding</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+
+            <span class="n">outputstring</span> <span class="o">+=</span> <span class="n">line</span> <span class="o">+</span> <span class="n">comment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">outputstring</span></div></div>
+
+
+
+
+
+<span class="k">class</span> <span class="nc">_StructAtom</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Contains structural information for an atom.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">      index_struct (int):  index as written in pdb or mol2</span>
+<span class="sd">      name (string):  atom name</span>
+<span class="sd">      x,y,z (float):  coordinates</span>
+<span class="sd">      residue (_StructResidue):  parent residue object</span>
+<span class="sd">      structure (_QStruct):  parent structure object</span>
+
+<span class="sd">    Property &#39;index&#39; (int) is the actual 1-based index of the atom</span>
+<span class="sd">    in the atom list (as opposed to index_struct which was read from</span>
+<span class="sd">    the file). It should correspond to the index in the generated topology.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_struct</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">residue</span><span class="p">,</span> <span class="n">structure</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_struct</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">index_struct</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">PosVector</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">residue</span> <span class="o">=</span> <span class="n">residue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="n">structure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residue</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">molecule</span>
+        <span class="k">return</span> <span class="s2">&quot;_StructAtom: </span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                                              <span class="n">res</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_StructResidue</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Contains structural information for a residue.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">      index_struct (int):  index as written in pdb or mol2</span>
+<span class="sd">      name (string):  residue name</span>
+<span class="sd">      molecule (_StructMolecule):  parent molecule object</span>
+<span class="sd">      structure (_QStruct):  parent structure object</span>
+
+<span class="sd">    Property &#39;index&#39; (int) is the actual 1-based index of the residue</span>
+<span class="sd">    in the residue list (as opposed to index_struct which was read from</span>
+<span class="sd">    the file). It should correspond to the index in the generated topology.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_struct</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">molecule</span><span class="p">,</span> <span class="n">structure</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index_struct</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">index_struct</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">molecule</span> <span class="o">=</span> <span class="n">molecule</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="n">structure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">add_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mol</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">molecule</span>
+        <span class="k">return</span> <span class="s2">&quot;_StructResidue: </span><span class="si">{}</span><span class="s2">.</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mol</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_StructMolecule</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Contains structural information for a molecule.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">      structure (_QStruct):  parent structure object</span>
+
+<span class="sd">    Special property is &#39;index&#39; (int). It is the actual</span>
+<span class="sd">    1-based index of the molecule in the residue list (as it was appended).</span>
+<span class="sd">    This should corresponds to the index in the generated topology.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">structure</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">residues</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">structure</span> <span class="o">=</span> <span class="n">structure</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="o">.</span><span class="n">molecules</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">add_residue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">residue</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">residue</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;_StructMolecule: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Miha Purg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.6.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

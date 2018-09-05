@@ -1,0 +1,615 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Qpyl.qmapping &mdash; Qpyl 0.6.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Qpyl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Qpyl.html">Qpyl package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Qpyl</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>Qpyl.qmapping</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Qpyl.qmapping</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># MIT License</span>
+<span class="c1"># </span>
+<span class="c1"># Copyright (c) 2018  Miha Purg &lt;miha.purg@gmail.com&gt;</span>
+<span class="c1"># </span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1"># </span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+<span class="c1"># </span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains the QMapper class for automating the calculation and</span>
+<span class="sd">calibration of EVB reaction free profiles (via Qfep). </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span> <span class="k">as</span> <span class="n">ODict</span>
+
+<span class="kn">from</span> <span class="nn">Qpyl.core.qfep</span> <span class="k">import</span> <span class="n">QFep</span><span class="p">,</span> <span class="n">QFepError</span><span class="p">,</span> <span class="n">QFepInput</span>
+<span class="kn">from</span> <span class="nn">Qpyl.core.qfep</span> <span class="k">import</span> <span class="n">QFepOutput</span><span class="p">,</span> <span class="n">QFepOutputError</span>
+<span class="kn">from</span> <span class="nn">Qpyl.common</span> <span class="k">import</span> <span class="n">__version__</span><span class="p">,</span> <span class="n">np</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">_QMapperThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="c1"># threading class used for calling QMapper._mapsingle</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qmapperinstance</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">,</span> <span class="n">mapdir</span><span class="p">,</span> <span class="n">supress_info</span><span class="p">):</span>
+        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qm</span> <span class="o">=</span> <span class="n">qmapperinstance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semaphore</span> <span class="o">=</span> <span class="n">semaphore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapdir</span> <span class="o">=</span> <span class="n">mapdir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qfep</span> <span class="o">=</span> <span class="n">QFep</span><span class="p">(</span><span class="n">qmapperinstance</span><span class="o">.</span><span class="n">_qfep</span><span class="o">.</span><span class="n">qfep_exec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">supress_info</span> <span class="o">=</span> <span class="n">supress_info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qinp</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qout</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">semaphore</span><span class="p">:</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qm</span><span class="o">.</span><span class="n">kill_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+                <span class="k">return</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">qinp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qout</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qm</span><span class="o">.</span><span class="n">mapsingle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapdir</span><span class="p">,</span>
+                                                         <span class="n">_qfep</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qfep</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">supress_info</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> mapped.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapdir</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> mapped.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapdir</span><span class="p">))</span>
+
+            <span class="k">except</span> <span class="n">QMapperError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">error_msg</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">supress_info</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> failed.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapdir</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> failed.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapdir</span><span class="p">))</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">error_msg</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: Uncaught exception in mapping thread: &quot;</span>
+                                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mapdir</span><span class="p">,</span> <span class="n">error_msg</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="QMapperError"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qmapping.QMapperError">[docs]</a><span class="k">class</span> <span class="nc">QMapperError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="QMapper"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qmapping.QMapper">[docs]</a><span class="k">class</span> <span class="nc">QMapper</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;&#39;Maps&#39; EVB simulations in specified directories.</span>
+
+<span class="sd">    Basically a wrapper around Qpyl.qfep.QFep</span>
+
+<span class="sd">    At the moment, supports only:</span>
+<span class="sd">    - 2 states</span>
+<span class="sd">    - no predefined Hij</span>
+<span class="sd">    - single, constant Hij (mu=eta=r0 = 0)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        qfep_exec (string): qfep executable path</span>
+<span class="sd">        mapdirs (list of strings): list of directories</span>
+<span class="sd">        en_list_fn (string): energy-files-list filename</span>
+<span class="sd">        hij (float): H12_A offdiagonal constant</span>
+<span class="sd">        alpha (float): state2 alpha shift</span>
+<span class="sd">        temperature (float): temperature in Kelvin</span>
+<span class="sd">        gas_const (float): gas_constant in kcal/mol/K</span>
+<span class="sd">        points_skip (int): number of energy points to skip in each frame</span>
+<span class="sd">        gap_bins (int): number of gap-bins</span>
+<span class="sd">        minpts_bin (int): minimum number of points per bin</span>
+<span class="sd">        nthreads (int): number of threads</span>
+
+<span class="sd">    QMapper.parms contains mapping parameters, any direct change will be</span>
+<span class="sd">    applied in the mapping.</span>
+<span class="sd">    QMapper.mapped contains the inputs and outputs of succesfully mapped dirs</span>
+<span class="sd">    # { &#39;directory_path1&#39;: (qfep_input_string, qfep_output_string), ... }</span>
+<span class="sd">    QMapper.failed contains the error messages of failed dirs</span>
+<span class="sd">    # { &#39;directory_path2&#39;: &#39;error_message&#39;, ... }</span>
+
+<span class="sd">    QMapper.mapall() maps the directories and updates .mapped and .failed</span>
+<span class="sd">    QMapper.fit_to_reference() fits and updates &#39;hij&#39; and &#39;alpha&#39; parameters</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qfep_exec</span><span class="p">,</span> <span class="n">mapdirs</span><span class="p">,</span> <span class="n">en_list_fn</span><span class="p">,</span> <span class="n">hij</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span>
+                 <span class="n">gas_const</span><span class="p">,</span> <span class="n">points_skip</span><span class="p">,</span> <span class="n">gap_bins</span><span class="p">,</span> <span class="n">minpts_bin</span><span class="p">,</span> <span class="n">nthreads</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_en_list_fn</span> <span class="o">=</span> <span class="n">en_list_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qfep</span> <span class="o">=</span> <span class="n">QFep</span><span class="p">(</span><span class="n">qfep_exec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mapdirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mapdirs</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nthreads</span> <span class="o">=</span> <span class="n">nthreads</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">parms</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hij&quot;</span><span class="p">:</span> <span class="n">hij</span><span class="p">,</span>
+                      <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">alpha</span><span class="p">,</span>
+                      <span class="s2">&quot;temperature&quot;</span><span class="p">:</span> <span class="n">temperature</span><span class="p">,</span>
+                      <span class="s2">&quot;gas_const&quot;</span><span class="p">:</span> <span class="n">gas_const</span><span class="p">,</span>
+                      <span class="s2">&quot;points_skip&quot;</span><span class="p">:</span> <span class="n">points_skip</span><span class="p">,</span>
+                      <span class="s2">&quot;gap_bins&quot;</span><span class="p">:</span> <span class="n">gap_bins</span><span class="p">,</span>
+                      <span class="s2">&quot;minpts_bin&quot;</span><span class="p">:</span> <span class="n">minpts_bin</span><span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapped</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failed</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kill_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="QMapper.mapall"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qmapping.QMapper.mapall">[docs]</a>    <span class="k">def</span> <span class="nf">mapall</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_supress_info</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&#39;Map&#39; all directories and update QMapper.mapped and QMapper.failed</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">semaphore</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">BoundedSemaphore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nthreads</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapped</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failed</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">mapdir</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mapdirs</span><span class="p">:</span>
+            <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_QMapperThread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">,</span>
+                                          <span class="n">mapdir</span><span class="p">,</span> <span class="n">_supress_info</span><span class="p">))</span>
+            <span class="n">threads</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+            <span class="k">while</span> <span class="n">t</span><span class="o">.</span><span class="n">isAlive</span><span class="p">():</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kill_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">t</span><span class="o">.</span><span class="n">qfep</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+                    <span class="k">except</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">return</span>
+
+            <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">failed</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">mapdir</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">error</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mapped</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">mapdir</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">qinp</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">qout</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QMapper.mapsingle"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qmapping.QMapper.mapsingle">[docs]</a>    <span class="k">def</span> <span class="nf">mapsingle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mapdir</span><span class="p">,</span> <span class="n">_qfep</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;&#39;Map&#39; a single directory.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mapdir (string):  directory path</span>
+<span class="sd">            _qfep (QFep): internal, for threading</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            qfep_inp_str (string):  QFep input string used</span>
+<span class="sd">            qfep_out_str (string):  QFep output string returned</span>
+
+<span class="sd">        Raises QMapperError</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">qfep</span> <span class="o">=</span> <span class="n">_qfep</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qfep</span>
+
+        <span class="c1"># get the list of energy-files</span>
+        <span class="n">en_list_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mapdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_en_list_fn</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">en_fn_str</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">en_list_fn</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QMapperError</span><span class="p">(</span><span class="s2">&quot;No energy-files list &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span>
+                               <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_en_list_fn</span><span class="p">))</span>
+
+        <span class="n">en_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">enf</span> <span class="k">for</span> <span class="n">enf</span> <span class="ow">in</span> <span class="n">en_fn_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">enf</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">en_list</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QMapperError</span><span class="p">(</span><span class="s2">&quot;No energy files in &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span>
+                               <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_en_list_fn</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">enf</span> <span class="ow">in</span> <span class="n">en_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">lexists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mapdir</span><span class="p">,</span> <span class="n">enf</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="n">QMapperError</span><span class="p">(</span><span class="s2">&quot;Energy file &#39;</span><span class="si">{}</span><span class="s2">&#39; missing.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">enf</span><span class="p">))</span>
+
+        <span class="c1"># make qfep input</span>
+        <span class="n">qfep_inp_str</span> <span class="o">=</span> <span class="n">QFepInput</span><span class="p">(</span><span class="n">en_list</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">)</span><span class="o">.</span><span class="n">get_string</span><span class="p">()</span>
+
+        <span class="c1"># run qfep</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">qfep_out_str</span> <span class="o">=</span> <span class="n">qfep</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">qfep_inp_str</span><span class="p">,</span> <span class="n">workdir</span><span class="o">=</span><span class="n">mapdir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">QFepError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QMapperError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">qfep_inp_str</span><span class="p">,</span> <span class="n">qfep_out_str</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="QMapper.fit_to_reference"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qmapping.QMapper.fit_to_reference">[docs]</a>    <span class="k">def</span> <span class="nf">fit_to_reference</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dga_ref</span><span class="p">,</span> <span class="n">dg0_ref</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+                         <span class="n">threshold</span><span class="o">=</span><span class="mf">0.005</span><span class="p">,</span> <span class="n">max_iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Fit Hij and alpha to obtain desired dG* and dG0 values.</span>
+
+<span class="sd">        Updates &#39;hij&#39; and &#39;alpha&#39; parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dga_ref (float): reference activation free energy</span>
+<span class="sd">            dg0_ref (float): reference reaction free energy</span>
+<span class="sd">            step_size (float, optional): step size for calculating the\</span>
+<span class="sd">                                         gradient, default=10.0</span>
+<span class="sd">            threshold (float, optional): convergence threshold, default=0.005</span>
+<span class="sd">            max_iterations (int, optional): max number of iterations,\</span>
+<span class="sd">                                            default=10</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            (boolean):  True if succeeded, False if max_iterations was\</span>
+<span class="sd">                        reached.</span>
+
+<span class="sd">        Raises QMapperError if all of the directories fail to map.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">iteration</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">while</span> <span class="n">iteration</span> <span class="o">&lt;=</span> <span class="n">max_iterations</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Iteration #</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">iteration</span><span class="p">))</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;Hij&quot;</span><span class="p">,</span> <span class="s2">&quot;Alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;dG#&quot;</span><span class="p">,</span> <span class="s2">&quot;dG0&quot;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">iteration</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">dga_mean</span><span class="p">,</span> <span class="n">dg0_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getmeans</span><span class="p">()</span>
+                <span class="k">except</span> <span class="n">QMapperError</span><span class="p">:</span>
+                    <span class="k">raise</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:10.2f}</span><span class="s2"> </span><span class="si">{:10.2f}</span><span class="s2"> </span><span class="si">{:10.2f}</span><span class="s2"> </span><span class="si">{:10.2f}</span><span class="s2">&quot;</span>
+                            <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;hij&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
+                                      <span class="n">dga_mean</span><span class="p">,</span> <span class="n">dg0_mean</span><span class="p">))</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dga_mean</span><span class="p">,</span> <span class="n">dg0_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_do_iteration</span><span class="p">(</span><span class="n">dga_mean</span><span class="p">,</span> <span class="n">dg0_mean</span><span class="p">,</span>
+                                                        <span class="n">dga_ref</span><span class="p">,</span> <span class="n">dg0_ref</span><span class="p">,</span>
+                                                        <span class="n">step_size</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">QMapperError</span><span class="p">:</span>
+                <span class="k">raise</span>
+
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dga_mean</span> <span class="o">-</span> <span class="n">dga_ref</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">threshold</span> <span class="ow">and</span> \
+                   <span class="nb">abs</span><span class="p">(</span><span class="n">dg0_mean</span> <span class="o">-</span> <span class="n">dg0_ref</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="n">iteration</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+    <span class="k">def</span> <span class="nf">_getmeans</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># called by fit_to_reference and _do_iteration</span>
+        <span class="c1"># calls map_all()</span>
+        <span class="c1"># analyses the outputs and returns dG* and dG0 means</span>
+        <span class="c1"># raises QMapperError on total failure</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapall</span><span class="p">(</span><span class="n">_supress_info</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">qfo</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">failed</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Failed to map &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qfo</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapped</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QMapperError</span><span class="p">(</span><span class="s2">&quot;All directories failed to map! Try changing &quot;</span>
+                               <span class="s2">&quot;the initial-guess values (Hij and alpha) &quot;</span>
+                               <span class="s2">&quot;or step_size... Also, check the mapping &quot;</span>
+                               <span class="s2">&quot;parameters (skip, bins, ...).&quot;</span><span class="p">)</span>
+
+        <span class="n">dga</span><span class="p">,</span> <span class="n">dg0</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">mapdir</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">qfo_str</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapped</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">qfo</span> <span class="o">=</span> <span class="n">QFepOutput</span><span class="p">(</span><span class="n">qfo_str</span><span class="p">)</span>
+                <span class="n">dga</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qfo</span><span class="o">.</span><span class="n">part3</span><span class="o">.</span><span class="n">dga</span><span class="p">)</span>
+                <span class="n">dg0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qfo</span><span class="o">.</span><span class="n">part3</span><span class="o">.</span><span class="n">dg0</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">QFepOutputError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Failed to analyse &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                            <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mapdir</span><span class="p">,</span> <span class="n">error_msg</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Uncaught exception when analysing &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                               <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mapdir</span><span class="p">,</span> <span class="n">error_msg</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dga</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">dg0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QMapperError</span><span class="p">(</span><span class="s2">&quot;All directories failed to analyse! Try &quot;</span>
+                               <span class="s2">&quot;changing the initial-guess values (Hij and &quot;</span>
+                               <span class="s2">&quot;alpha) or step_size...&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dga</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dg0</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span> <span class="nf">_do_iteration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dga_init</span><span class="p">,</span> <span class="n">dg0_init</span><span class="p">,</span> <span class="n">dga_ref</span><span class="p">,</span> <span class="n">dg0_ref</span><span class="p">,</span> <span class="n">step_size</span><span class="p">):</span>
+        <span class="c1"># called by fit_to_reference</span>
+        <span class="c1"># changes Hij and alpha and calls _getmeans</span>
+        <span class="c1"># calculates the gradients of the changes and updates the variables</span>
+
+        <span class="n">hij_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;hij&quot;</span><span class="p">]</span>
+        <span class="n">alpha_init</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Step1, changing alpha=alpha+step_size,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;hij&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hij_init</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha_init</span> <span class="o">+</span> <span class="n">step_size</span>
+        <span class="n">means1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getmeans</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:10.2f}</span><span class="s2"> </span><span class="si">{:10.2f}</span><span class="s2"> </span><span class="si">{:10.2f}</span><span class="s2"> </span><span class="si">{:10.2f}</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;hij&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
+                              <span class="n">means1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">means1</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="c1"># Step2, changing hij=hij+step_size,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;hij&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hij_init</span> <span class="o">+</span> <span class="n">step_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha_init</span>
+        <span class="n">means2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getmeans</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:10.2f}</span><span class="s2"> </span><span class="si">{:10.2f}</span><span class="s2"> </span><span class="si">{:10.2f}</span><span class="s2"> </span><span class="si">{:10.2f}</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;hij&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
+                              <span class="n">means2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">means2</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="c1"># calculate gradients for hij and gs</span>
+        <span class="n">ka1</span> <span class="o">=</span> <span class="p">(</span><span class="n">means1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">dga_init</span><span class="p">)</span> <span class="o">/</span> <span class="n">step_size</span>
+        <span class="n">ka2</span> <span class="o">=</span> <span class="p">(</span><span class="n">means2</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">dga_init</span><span class="p">)</span> <span class="o">/</span> <span class="n">step_size</span>
+        <span class="n">k01</span> <span class="o">=</span> <span class="p">(</span><span class="n">means1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">dg0_init</span><span class="p">)</span> <span class="o">/</span> <span class="n">step_size</span>
+        <span class="n">k02</span> <span class="o">=</span> <span class="p">(</span><span class="n">means2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">dg0_init</span><span class="p">)</span> <span class="o">/</span> <span class="n">step_size</span>
+
+        <span class="c1"># get the shifts</span>
+        <span class="n">delta_dga</span> <span class="o">=</span> <span class="n">dga_ref</span> <span class="o">-</span> <span class="n">dga_init</span>
+        <span class="n">delta_dg0</span> <span class="o">=</span> <span class="n">dg0_ref</span> <span class="o">-</span> <span class="n">dg0_init</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">dalpha</span> <span class="o">=</span> <span class="p">((</span><span class="n">delta_dga</span><span class="o">/</span><span class="n">ka1</span><span class="p">)</span><span class="o">-</span><span class="p">(</span><span class="n">delta_dg0</span><span class="o">*</span><span class="n">ka2</span><span class="o">/</span><span class="n">ka1</span><span class="o">/</span><span class="n">k02</span><span class="p">))</span> \
+                   <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">k01</span><span class="o">*</span><span class="n">ka2</span><span class="o">/</span><span class="n">ka1</span><span class="o">/</span><span class="n">k02</span><span class="p">)</span>
+            <span class="n">dhij</span> <span class="o">=</span> <span class="p">(</span><span class="n">delta_dg0</span> <span class="o">-</span> <span class="n">dalpha</span><span class="o">*</span><span class="n">k01</span><span class="p">)</span><span class="o">/</span><span class="n">k02</span>
+        <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+            <span class="n">dalpha</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span>
+            <span class="n">dhij</span> <span class="o">=</span> <span class="o">+</span><span class="mi">1</span>
+
+        <span class="c1"># Step 3, get results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;hij&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">hij_init</span> <span class="o">+</span> <span class="n">dhij</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha_init</span> <span class="o">+</span> <span class="n">dalpha</span>
+        <span class="n">means3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getmeans</span><span class="p">()</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:10.2f}</span><span class="s2"> </span><span class="si">{:10.2f}</span><span class="s2"> </span><span class="si">{:10.2f}</span><span class="s2"> </span><span class="si">{:10.2f}</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;hij&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
+                              <span class="n">means3</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">means3</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">means3</span>
+
+
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">input_parms_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># TODO: CLI script doesn&#39;t belong in here</span>
+        <span class="n">inp_parms</span> <span class="o">=</span> <span class="s2">&quot;q_mapper.py </span><span class="si">{hij}</span><span class="s2"> </span><span class="si">{alpha}</span><span class="s2"> &quot;</span>\
+                    <span class="s2">&quot;--bins </span><span class="si">{gap_bins}</span><span class="s2"> --skip </span><span class="si">{points_skip}</span><span class="s2"> &quot;</span>\
+                    <span class="s2">&quot;--min </span><span class="si">{minpts_bin}</span><span class="s2"> --temp </span><span class="si">{temperature}</span><span class="s2"> &quot;</span>\
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">parms</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">inp_parms</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">fails</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">md</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> \
+                                                 <span class="bp">self</span><span class="o">.</span><span class="n">failed</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()])</span>
+
+        <span class="n">qfep_version</span> <span class="o">=</span> <span class="s2">&quot;Unknown, likely ancient&quot;</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">qfep_out</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapped</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">qfo</span> <span class="o">=</span> <span class="n">QFepOutput</span><span class="p">(</span><span class="n">qfep_out</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">qfep_version</span> <span class="o">=</span> <span class="n">qfo</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">qfep_version</span>
+                <span class="k">break</span>
+
+        <span class="n">mapdirs</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mapdirs</span><span class="p">)</span>
+        <span class="n">outstr</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">------------------------------- Mapping details -------------------------------</span>
+<span class="s2"># Mapped with: Qtools (</span><span class="si">{version}</span><span class="s2">), Qfep (</span><span class="si">{qfep_version}</span><span class="s2">)</span>
+<span class="s2"># Qfep path: </span><span class="si">{qfep_exec}</span><span class="s2"></span>
+<span class="s2"># Work dir: </span><span class="si">{cwd}</span><span class="s2"></span>
+<span class="s2"># Date: </span><span class="si">{date}</span><span class="s2"></span>
+<span class="s2"># CMDline: </span><span class="si">{cmdline}</span><span class="s2"></span>
+
+<span class="s2">Directories:</span>
+<span class="si">{dirs}</span><span class="s2"></span>
+
+<span class="s2">Input:</span>
+<span class="si">{inp_parms}</span><span class="s2"></span>
+
+<span class="s2">Fails:</span>
+<span class="si">{fails}</span><span class="s2"></span>
+<span class="s2">-------------------------------------------------------------------------------</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">__version__</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">date</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">(),</span>
+           <span class="n">inp_parms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">input_parms_str</span><span class="p">,</span> <span class="n">cmdline</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">),</span>
+           <span class="n">fails</span><span class="o">=</span><span class="n">fails</span> <span class="ow">or</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="n">dirs</span><span class="o">=</span><span class="n">mapdirs</span><span class="p">,</span> <span class="n">qfep_version</span><span class="o">=</span><span class="n">qfep_version</span><span class="p">,</span>
+           <span class="n">qfep_exec</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qfep</span><span class="o">.</span><span class="n">qfep_exec</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">outstr</span></div>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Miha Purg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.6.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -25,6 +25,11 @@
 #
 #
 #
+"""
+Module for wrapping Qcalc functionality.
+Contains classes for running Qcalc (QCalc), generating inputs (QCalcInput),
+parsing output (QCalcOutput).
+"""
 
 import subprocess
 import logging
@@ -162,7 +167,7 @@ class QCalcInput(object):
         Args:
             resid_first (int):  index of first residue
             resid_las (int) : index of last residue
-            masks (list of strings):  masks used to describe the Q region
+            masks (list of strings):  masks used to describe the Q region\
                                       (eg. ["res 314", "1245", "1246", ...])
 
         """

@@ -25,6 +25,13 @@
 #
 #
 #
+"""
+Module for wrapping Qdyn functionality.
+Contains classes for generating and parsing Qdyn inputs (QDynInput)
+and parsing Qdyn output (QDynOutput).
+"""
+
+
 import re
 import copy
 import logging
@@ -145,36 +152,30 @@ class QDynInput(object):
 
     Args:
         input_string (str):   string of a qdyn input file
-        parameters (dict):   { "MD": { "steps":10000,
-                                       "stepsize":1.00, ... },
+        parameters (dict):   { "MD": { "steps":10000, \
+                                       "stepsize":1.00, ... }, \
                                        ... }
-        ignore_errors (boolean, optional):   if set, write error messages to
-                                             logger.warning instead of raising
+        ignore_errors (boolean, optional):   if set, write error messages to \
+                                             logger.warning instead of raising\
                                              QDynInputError
 
-    Usage:
-
-    try:
+    Examples:
+        >>> try:
         # load and parse
-        inp = QDynInput( input_file_string )
+        >>>     inp = QDynInput( input_file_string )
         # or inp=QDynInput( parameters={ "md": ... } )
-
         # update with another input and save the overridden paramaters
-        overridden_parms = inp.update( input_file_2_string )
-
+        >>>     overridden_parms = inp.update(input_file_2_string)
         # update with a dictionary
-        new_parameters = { "md":  { "steps" : 100000 },
-                                  { "temperature" : 50 } } )
-        inp.update( new_parameters )
-
-        # check the input
-        inp.check()
-
-        # get the input string
-        new_inp_str = inp.get_string()
-    except QDynInputError as e:
-        print "Problem with input file: " + str(e)
-
+        >>>     new_parameters = { "md":  { "steps" : 100000 },\
+                                          { "temperature" : 50 } } )
+        >>>     inp.update(new_parameters)
+        >>>     # check the input
+        >>>     inp.check()
+        >>>     # get the input string
+        >>>     new_inp_str = inp.get_string()
+        >>> except QDynInputError as e:
+        >>>     print "Problem with input file:", str(e)
 
     """
 
@@ -356,11 +357,12 @@ class QDynInput(object):
     def get_string(self, check=True, sort=True):
         """Returns the input as a string.
 
-        Arguments:
+        Args:
             check (boolean, optional):  if True (default), call self.check()
-            sort (boolean, optional):  if True (default), sort the sections and
-                                       keywords according to the order in which
-                                       they appear in Q_PARAMETERS
+            sort (boolean, optional):  if True (default), sort the sections \
+                                       and keywords according to the order \
+                                       in which they appear in Q_PARAMETERS
+
         """
 
         if check:
@@ -411,8 +413,7 @@ class _QDynHeader(object):
     Contains the Qdyn version, modification date, various MD parameters.
 
     Args:
-        header_string (string): Qdyn output header
-                                (to "Initializing dynamics")
+        header_string (string): Qdyn output header (to "Initializing dynamics")
         step_size (float): use in case the output reads 0.000
 
     """
@@ -488,16 +489,14 @@ class QDynOutput(object):
         qdyn_output (string): Qdyn output filename
         time_unit (string): fs,ps,ns (optional, default is ps)
         step_size (float): use in case the output reads 0.000
-        start_time (float): redefine the start time in given units
+        start_time (float): redefine the start time in given units\
                             in case of continuation simulation (default is 0)
 
-    Usage:
+    Examples:
         # Load a qdyn output
         >>> qdo = QDynOutput("qdyn.log")
-
         # list 
         >>> print qdo.data_EQ_Q[0].get_rows(["Time", "El"])
-
         # print out the Q-Q electrostatic energy
         >>> print qdo.data_EQ_Q[0].get_rows(["Time", "El"])
     """

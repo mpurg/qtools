@@ -26,6 +26,12 @@
 #
 #
 
+"""
+This module contains the class for custom data structure PlotData
+used for storing various analysis data.
+It also contains custom JSON encoder and decoder classes 
+which allow saving the objects in JSON format.
+"""
 
 import json
 import sys

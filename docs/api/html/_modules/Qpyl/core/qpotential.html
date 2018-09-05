@@ -1,0 +1,430 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Qpyl.core.qpotential &mdash; Qpyl 0.6.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Qpyl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Qpyl.html">Qpyl package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Qpyl</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>Qpyl.core.qpotential</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Qpyl.core.qpotential</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># MIT License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2018  Miha Purg &lt;miha.purg@gmail.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module implements several force-field potential energy functions,</span>
+<span class="sd">and functions for calculating distances, angles and dihedral angles, as</span>
+<span class="sd">implemented in Q.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">from</span> <span class="nn">Qpyl.core</span> <span class="k">import</span> <span class="n">qstructure</span>
+<span class="kn">from</span> <span class="nn">Qpyl.common</span> <span class="k">import</span> <span class="n">__version__</span><span class="p">,</span> <span class="n">raise_or_log</span>
+
+
+<div class="viewcode-block" id="bond_distance"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qpotential.bond_distance">[docs]</a><span class="k">def</span> <span class="nf">bond_distance</span><span class="p">(</span><span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the bond distance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      ac1, ac2 (qstructure.PosVector):   atom coordinates</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      r (float):   distance in Angstrom</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">r21</span> <span class="o">=</span> <span class="n">qstructure</span><span class="o">.</span><span class="n">PosVector</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ac1</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                               <span class="n">y</span><span class="o">=</span><span class="n">ac1</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                               <span class="n">z</span><span class="o">=</span><span class="n">ac1</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">r21</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="angle_angle"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qpotential.angle_angle">[docs]</a><span class="k">def</span> <span class="nf">angle_angle</span><span class="p">(</span><span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">,</span> <span class="n">ac3</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the angle (of the angle).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      ac1, ac2, ac3 (qstructure.PosVector):   atom coordinates</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      theta (float):   angle in Degrees</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">r21</span> <span class="o">=</span> <span class="n">qstructure</span><span class="o">.</span><span class="n">PosVector</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ac1</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                               <span class="n">y</span><span class="o">=</span><span class="n">ac1</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                               <span class="n">z</span><span class="o">=</span><span class="n">ac1</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">r23</span> <span class="o">=</span> <span class="n">qstructure</span><span class="o">.</span><span class="n">PosVector</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ac3</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                               <span class="n">y</span><span class="o">=</span><span class="n">ac3</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                               <span class="n">z</span><span class="o">=</span><span class="n">ac3</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="c1"># get the angle from the dot product equation</span>
+    <span class="c1"># ( A*B = |A|*|B|*cos(theta) )</span>
+    <span class="c1"># where A and B are vectors bewteen atoms (2-&gt;1 and 2-&gt;3)</span>
+    <span class="n">dr21</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">r21</span><span class="p">]))</span>
+    <span class="n">dr23</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">r23</span><span class="p">]))</span>
+    <span class="n">dot_product</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">a</span><span class="o">*</span><span class="n">b</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">r21</span><span class="p">,</span> <span class="n">r23</span><span class="p">)])</span>
+    <span class="n">cos_theta</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">*</span><span class="n">dot_product</span><span class="o">/</span><span class="p">(</span><span class="n">dr21</span><span class="o">*</span><span class="n">dr23</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">cos_theta</span><span class="p">)</span>   <span class="c1"># in radians</span>
+    <span class="k">return</span> <span class="mf">180.0</span> <span class="o">*</span> <span class="n">theta</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span></div>
+
+
+<div class="viewcode-block" id="torsion_angle"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qpotential.torsion_angle">[docs]</a><span class="k">def</span> <span class="nf">torsion_angle</span><span class="p">(</span><span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">,</span> <span class="n">ac3</span><span class="p">,</span> <span class="n">ac4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the dihedral angle.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      ac1, ac2, ac3, ac4 (qstructure.PosVector):  atom coordinates</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      theta (float):   angle in Degrees</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">r21</span> <span class="o">=</span> <span class="n">qstructure</span><span class="o">.</span><span class="n">PosVector</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ac1</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                               <span class="n">y</span><span class="o">=</span><span class="n">ac1</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                               <span class="n">z</span><span class="o">=</span><span class="n">ac1</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">r23</span> <span class="o">=</span> <span class="n">qstructure</span><span class="o">.</span><span class="n">PosVector</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ac3</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                               <span class="n">y</span><span class="o">=</span><span class="n">ac3</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                               <span class="n">z</span><span class="o">=</span><span class="n">ac3</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">ac2</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">r34</span> <span class="o">=</span> <span class="n">qstructure</span><span class="o">.</span><span class="n">PosVector</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">ac4</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">ac3</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+                               <span class="n">y</span><span class="o">=</span><span class="n">ac4</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">ac3</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                               <span class="n">z</span><span class="o">=</span><span class="n">ac4</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">ac3</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="c1"># vector product n2 = r21 x r23</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="n">qstructure</span><span class="o">.</span><span class="n">PosVector</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">r21</span><span class="o">.</span><span class="n">y</span><span class="o">*</span><span class="n">r23</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">r21</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="n">r23</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                              <span class="n">y</span><span class="o">=</span><span class="n">r21</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="n">r23</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">r21</span><span class="o">.</span><span class="n">x</span><span class="o">*</span><span class="n">r23</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+                              <span class="n">z</span><span class="o">=</span><span class="n">r21</span><span class="o">.</span><span class="n">x</span><span class="o">*</span><span class="n">r23</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">r21</span><span class="o">.</span><span class="n">y</span><span class="o">*</span><span class="n">r23</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="c1"># vector product n3 = r34 x r23</span>
+    <span class="n">n3</span> <span class="o">=</span> <span class="n">qstructure</span><span class="o">.</span><span class="n">PosVector</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">r34</span><span class="o">.</span><span class="n">y</span><span class="o">*</span><span class="n">r23</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">r34</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="n">r23</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+                              <span class="n">y</span><span class="o">=</span><span class="n">r34</span><span class="o">.</span><span class="n">z</span><span class="o">*</span><span class="n">r23</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">r34</span><span class="o">.</span><span class="n">x</span><span class="o">*</span><span class="n">r23</span><span class="o">.</span><span class="n">z</span><span class="p">,</span>
+                              <span class="n">z</span><span class="o">=</span><span class="n">r34</span><span class="o">.</span><span class="n">x</span><span class="o">*</span><span class="n">r23</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">r34</span><span class="o">.</span><span class="n">y</span><span class="o">*</span><span class="n">r23</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="c1"># get the angle from the dot product equation ( A*B = |A|*|B|*cos(phi) )</span>
+    <span class="c1"># where A and B are normal vectors n2 and n3</span>
+    <span class="n">dn2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">n2</span><span class="p">]))</span>
+    <span class="n">dn3</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="n">a</span><span class="o">**</span><span class="mi">2</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">n3</span><span class="p">]))</span>
+    <span class="n">dot_product</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">a</span><span class="o">*</span><span class="n">b</span> <span class="k">for</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">n2</span><span class="p">,</span> <span class="n">n3</span><span class="p">)])</span>
+
+    <span class="n">cos_phi</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">*</span><span class="n">dot_product</span><span class="o">/</span><span class="p">(</span><span class="n">dn2</span><span class="o">*</span><span class="n">dn3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">cos_phi</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span> <span class="n">cos_phi</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">cos_phi</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> <span class="n">cos_phi</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span><span class="n">cos_phi</span><span class="p">)</span> <span class="c1"># in radians</span>
+    <span class="k">return</span> <span class="mf">180.0</span> <span class="o">*</span> <span class="n">phi</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span></div>
+
+
+<div class="viewcode-block" id="improper_angle"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qpotential.improper_angle">[docs]</a><span class="k">def</span> <span class="nf">improper_angle</span><span class="p">(</span><span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">,</span> <span class="n">ac3</span><span class="p">,</span> <span class="n">ac4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the dihedral angle.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      ac1, ac2, ac3, ac4 (qstructure.PosVector):  atom coordinates</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      theta (float):   angle in Degrees</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">torsion_angle</span><span class="p">(</span><span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">,</span> <span class="n">ac3</span><span class="p">,</span> <span class="n">ac4</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="bond_energy"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qpotential.bond_energy">[docs]</a><span class="k">def</span> <span class="nf">bond_energy</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">r0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the bond energy using the harmonic potential.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      r (float):  distance between atoms [angstrom]</span>
+<span class="sd">      fc (float):  force constant [kcal/mol]</span>
+<span class="sd">      r0 (float):  equilibrium distance [angstrom]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      e_bond (float):  energy of bond [kcal/mol]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">fc</span> <span class="o">*</span> <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">r0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="angle_energy"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qpotential.angle_energy">[docs]</a><span class="k">def</span> <span class="nf">angle_energy</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">theta0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the angle energy using the harmonic potential.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      theta (float):  angle between atoms [degrees]</span>
+<span class="sd">      fc (float):  force constant [kcal/mol]</span>
+<span class="sd">      theta0 (float):  equilibrium angle [degrees]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      e_angle (float):  energy of angle [kcal/mol]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span> <span class="o">*</span> <span class="n">theta</span>   <span class="c1"># degrees to radians</span>
+    <span class="n">theta0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span> <span class="o">*</span> <span class="n">theta0</span>   <span class="c1"># degrees to radians</span>
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">fc</span> <span class="o">*</span> <span class="p">(</span><span class="n">theta</span> <span class="o">-</span> <span class="n">theta0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="torsion_energy"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qpotential.torsion_energy">[docs]</a><span class="k">def</span> <span class="nf">torsion_energy</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">multiplicity</span><span class="p">,</span> <span class="n">npaths</span><span class="p">,</span> <span class="n">phi0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the torsion energy using the periodic potential.</span>
+
+<span class="sd">    One torsion term at a time, using this function:</span>
+<span class="sd">    E = fc/npaths * [1 + cos(multiplicity*phi - phi0)]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      phi (float):  dihedral angle [degrees]</span>
+<span class="sd">      fc (float):  force constant [kcal/mol]</span>
+<span class="sd">      multiplicity (float):  multiplicity [/]</span>
+<span class="sd">      npaths (float):  division factor [/]</span>
+<span class="sd">      phi0 (float):  phase shift [degrees]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      e_torsion (float):  energy of torsion [kcal/mol]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span> <span class="o">*</span> <span class="n">phi</span>   <span class="c1"># degrees to radians</span>
+    <span class="n">phi0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span> <span class="o">*</span> <span class="n">phi0</span>   <span class="c1"># degrees to radians</span>
+    <span class="k">return</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">fc</span><span class="o">/</span><span class="n">npaths</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">multiplicity</span><span class="o">*</span><span class="n">phi</span> <span class="o">-</span> <span class="n">phi0</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="improper_energy_periodic"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qpotential.improper_energy_periodic">[docs]</a><span class="k">def</span> <span class="nf">improper_energy_periodic</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">multiplicity</span><span class="p">,</span> <span class="n">phi0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the improper energy using the periodic potential.</span>
+
+<span class="sd">    Using the same potential as torsion_energy(), with npaths==1.</span>
+<span class="sd">    E = fc/npaths * [1 + cos(multiplicity*phi - phi0)]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      phi (float):  dihedral angle [degrees]</span>
+<span class="sd">      fc (float):  force constant [kcal/mol]</span>
+<span class="sd">      multiplicity (float):  multiplicity [/]</span>
+<span class="sd">      phi0 (float):  phase shift [degrees]</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">      e_improper (float):  energy of improper [kcal/mol]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span> <span class="o">*</span> <span class="n">phi</span>   <span class="c1"># degrees to radians</span>
+    <span class="n">phi0</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">180.0</span> <span class="o">*</span> <span class="n">phi0</span>   <span class="c1"># degrees to radians</span>
+    <span class="k">return</span> <span class="n">fc</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">multiplicity</span><span class="o">*</span><span class="n">phi</span> <span class="o">-</span> <span class="n">phi0</span><span class="p">))</span></div>
+
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Miha Purg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.6.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

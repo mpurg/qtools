@@ -1,0 +1,994 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Qpyl.core.qfep &mdash; Qpyl 0.6.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Qpyl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Qpyl.html">Qpyl package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Qpyl</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>Qpyl.core.qfep</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Qpyl.core.qfep</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># MIT License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2018  Miha Purg &lt;miha.purg@gmail.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for wrapping Qfep functionality.</span>
+<span class="sd">Contains classes for generating Qfep inputs (QFepInput),</span>
+<span class="sd">performing system calls to Qfep (QFep), and parsing Qfep output (QFepOutput).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">Qpyl.common</span> <span class="k">import</span> <span class="n">__version__</span><span class="p">,</span> <span class="n">DataContainer</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QFepError"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qfep.QFepError">[docs]</a><span class="k">class</span> <span class="nc">QFepError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="QFepOutputError"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qfep.QFepOutputError">[docs]</a><span class="k">class</span> <span class="nc">QFepOutputError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<span class="k">class</span> <span class="nc">_QFepHeader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for parsing and storing data from the Qfep output header.</span>
+
+<span class="sd">    Contains the Qfep version, modification date, mapping parameters.</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">    version = _QFepHeader.qfep_version</span>
+<span class="sd">    nstates = _QFepHeader.nstates</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        header_string (string):  header string in qfep output</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># TODO: works only for 2 states and Hij=const </span>
+    <span class="n">_MAP_PRMS_RE</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;qfep_version&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;version\s*(\S+)&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;qfep_moddate&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;modified on\s*(\d+)&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;nfiles&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;Number of files\s*=\s*(\d+)&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;nstates&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;Number of states\s*=\s*(\d+)&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;kT&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;kT\s*=\s*(\S+)&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;pts_skip&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;points to skip\s*=\s*(\d+)&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;bins&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;Number of gap-bins\s*=\s*(\d+)&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;min_pts_bin&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;points per bin=\s*(\d+)&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;alpha&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;Alpha for state  2\s*=\s*(\S+)&quot;</span><span class="p">),</span>
+                    <span class="s2">&quot;Hij&quot;</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;eta_ij, r_xy0: #\s*\d+\s*\d+\s*(\S+)&quot;</span><span class="p">)</span>  <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header_string</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_header_string</span> <span class="o">=</span> <span class="n">header_string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qfep_version</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qfep_moddate</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nfiles</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nstates</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kT</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pts_skip</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bins</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_pts_bin</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Hij</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">map_prm_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MAP_PRMS_RE</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MAP_PRMS_RE</span><span class="p">[</span><span class="n">map_prm_key</span><span class="p">]</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_header_string</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">c</span><span class="p">:</span>
+                <span class="n">mprm</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">map_prm_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;nfiles&quot;</span><span class="p">,</span> <span class="s2">&quot;nstates&quot;</span><span class="p">,</span> <span class="s2">&quot;pts_skip&quot;</span><span class="p">,</span>
+                                       <span class="s2">&quot;bins&quot;</span><span class="p">,</span> <span class="s2">&quot;min_pts_bin&quot;</span><span class="p">]:</span>
+                        <span class="n">mprm</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mprm</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">map_prm_key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;kT&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="s2">&quot;Hij&quot;</span><span class="p">]:</span>
+                        <span class="n">mprm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mprm</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">map_prm_key</span><span class="p">,</span> <span class="n">mprm</span><span class="p">)</span>
+
+        <span class="c1"># nstates is a must-have</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nstates</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Failed to read number of states.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># set version to more informative than None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">qfep_version</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qfep_version</span> <span class="o">=</span> <span class="s2">&quot;Unknown, likely ancient&quot;</span>
+
+        
+
+
+<span class="c1">###############################################################################</span>
+
+
+<span class="k">class</span> <span class="nc">_QFepPart0</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for parsing and storing data from Part0 in Qfep output.</span>
+
+<span class="sd">    Part0 contains average energies and number of points for every</span>
+<span class="sd">    EVB state in every frame (energy file).</span>
+
+<span class="sd">    If parsing is unsuccessful QFepOutputError is raised,</span>
+<span class="sd">    else all the data is stored in DataContainer object &#39;data_state&#39;.</span>
+<span class="sd">    LRA and reorganization energies can be calculated with functions</span>
+<span class="sd">    calc_lra.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        part0_string (string):  string of Part0 in qfep output</span>
+<span class="sd">        num_evb_states (int):  number of EVB states</span>
+<span class="sd">        calc_index (int):  calculation index (0 for normal full calc,\</span>
+<span class="sd">                           1,2... for whatever follows (exclusion, qcp,..)</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; state1_data = _QFepPart0.data_state[0].get_rows()</span>
+<span class="sd">        &gt;&gt;&gt; cols = [&quot;Lambda&quot;, &quot;EQtot&quot;]</span>
+<span class="sd">        &gt;&gt;&gt; state2_EQtot_lambda = _QFepPart0.data_state[1].get_rows(columns=cols)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_PART0_HEADER</span> <span class="o">=</span> <span class="s2">&quot;# file             state   pts   lambda    EQtot   &quot;</span>\
+                    <span class="s2">&quot;EQbond  EQang   EQtor   EQimp    EQel   EQvdW  Eel_qq  &quot;</span>\
+                    <span class="s2">&quot;EvdW_qq Eel_qp  EvdW_qp Eel_qw EvdW_qw Eqrstr&quot;</span>
+
+    <span class="n">_COLUMN_TITLES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;file&quot;</span><span class="p">,</span> <span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;pts&quot;</span><span class="p">,</span> <span class="s2">&quot;Lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;EQtot&quot;</span><span class="p">,</span> <span class="s2">&quot;EQbond&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;EQang&quot;</span><span class="p">,</span> <span class="s2">&quot;EQtor&quot;</span><span class="p">,</span> <span class="s2">&quot;EQimp&quot;</span><span class="p">,</span> <span class="s2">&quot;EQel&quot;</span><span class="p">,</span> <span class="s2">&quot;EQvdW&quot;</span><span class="p">,</span> <span class="s2">&quot;Eel_qq&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;EvdW_qq&quot;</span><span class="p">,</span> <span class="s2">&quot;Eel_qp&quot;</span><span class="p">,</span> <span class="s2">&quot;EvdW_qp&quot;</span><span class="p">,</span> <span class="s2">&quot;Eel_qw&quot;</span><span class="p">,</span> <span class="s2">&quot;EvdW_qw&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;Eqrstr&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part0_string</span><span class="p">,</span> <span class="n">num_evb_states</span><span class="p">,</span> <span class="n">calc_index</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_part0_string</span> <span class="o">=</span> <span class="n">part0_string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_evb_states</span> <span class="o">=</span> <span class="n">num_evb_states</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calc_index</span> <span class="o">=</span> <span class="n">calc_index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_state</span> <span class="o">=</span> <span class="p">[</span><span class="n">DataContainer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_COLUMN_TITLES</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span>
+                                                        <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">(</span><span class="n">calc_index</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">e_dc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_state</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">e_dc</span><span class="o">.</span><span class="n">get_rows</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Part0 is empty (no rows).&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">calc_lra</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lambda_a</span><span class="p">,</span> <span class="n">lambda_b</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate LRA and reorganization energies between two states.</span>
+
+<span class="sd">        LRA = 0.5*(&lt;E2-E1&gt;_10+&lt;E2-E1&gt;_01)</span>
+<span class="sd">        REO = 0.5*(&lt;E2-E1&gt;_10-&lt;E2-E1&gt;_01)</span>
+
+<span class="sd">        E1 == Potential energy of state A</span>
+<span class="sd">        E2 == Potential energy of state B</span>
+<span class="sd">        &lt;&gt;_10 == Configuration space A (lambda_a)</span>
+<span class="sd">        &lt;&gt;_01 == Configuration space B (lambda_b)</span>
+
+<span class="sd">        E2_10 == Potential energy of state B at lambda_a</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            lambda_a (float):  lambda value of first state, usually 1.0</span>
+<span class="sd">            lambda_b (float):  lambda value of second state, usually 0.0</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            lra (DataContainer):  LRA and reorganization energies,\</span>
+<span class="sd">                                  as well as contributions from\</span>
+<span class="sd">                                  individual states</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_evb_states</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;LRA works only with two states&quot;</span><span class="p">)</span>
+
+        <span class="n">lra</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">([</span><span class="s2">&quot;E_type&quot;</span><span class="p">,</span> <span class="s2">&quot;(E2-E1)_10&quot;</span><span class="p">,</span> <span class="s2">&quot;(E2-E1)_01&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;LRA&quot;</span><span class="p">,</span> <span class="s2">&quot;REORG&quot;</span><span class="p">])</span>
+
+        <span class="n">e1_a</span><span class="p">,</span> <span class="n">e1_b</span><span class="p">,</span> <span class="n">e2_a</span><span class="p">,</span> <span class="n">e2_b</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="c1"># get the appropriate rows of energies</span>
+        <span class="c1"># note that these energies are not scaled by lambda</span>
+        <span class="c1"># [4:] ignores &#39;file&#39;, &#39;state&#39;, &#39;points&#39; and &#39;lambda&#39;</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_rows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">lambda_a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">7</span><span class="p">:</span>
+                <span class="n">e1_a</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="n">lambda_b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">7</span><span class="p">:</span>
+                <span class="n">e1_b</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
+        <span class="c1"># lambda2 in data_state[1] is actually (1-lambda), correct for that</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_state</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_rows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">-</span> <span class="n">lambda_a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">7</span><span class="p">:</span>
+                <span class="n">e2_a</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">row</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span> <span class="o">-</span> <span class="n">lambda_b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">7</span><span class="p">:</span>
+                <span class="n">e2_b</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">e1_a</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;LRA: No energy values for lambda == &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                  <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda_a</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">e1_b</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;LRA: No energy values for lambda == &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                  <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda_b</span><span class="p">))</span>
+
+        <span class="n">la</span><span class="p">,</span> <span class="n">lb</span> <span class="o">=</span> <span class="n">lambda_a</span><span class="p">,</span> <span class="n">lambda_b</span>
+        <span class="c1"># calculate total E=(l1*E1 + l2*E2) energies</span>
+        <span class="n">e1_state1</span> <span class="o">=</span> <span class="p">[</span><span class="n">la</span><span class="o">*</span><span class="n">e1a</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">la</span><span class="p">)</span><span class="o">*</span><span class="n">e2a</span> <span class="k">for</span> <span class="n">e1a</span><span class="p">,</span> <span class="n">e2a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e1_a</span><span class="p">,</span> <span class="n">e2_a</span><span class="p">)]</span>
+        <span class="n">e1_state2</span> <span class="o">=</span> <span class="p">[</span><span class="n">la</span><span class="o">*</span><span class="n">e1b</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">la</span><span class="p">)</span><span class="o">*</span><span class="n">e2b</span> <span class="k">for</span> <span class="n">e1b</span><span class="p">,</span> <span class="n">e2b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e1_b</span><span class="p">,</span> <span class="n">e2_b</span><span class="p">)]</span>
+
+        <span class="n">e2_state1</span> <span class="o">=</span> <span class="p">[</span><span class="n">lb</span><span class="o">*</span><span class="n">e1a</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">lb</span><span class="p">)</span><span class="o">*</span><span class="n">e2a</span> <span class="k">for</span> <span class="n">e1a</span><span class="p">,</span> <span class="n">e2a</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e1_a</span><span class="p">,</span> <span class="n">e2_a</span><span class="p">)]</span>
+        <span class="n">e2_state2</span> <span class="o">=</span> <span class="p">[</span><span class="n">lb</span><span class="o">*</span><span class="n">e1b</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">lb</span><span class="p">)</span><span class="o">*</span><span class="n">e2b</span> <span class="k">for</span> <span class="n">e1b</span><span class="p">,</span> <span class="n">e2b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e1_b</span><span class="p">,</span> <span class="n">e2_b</span><span class="p">)]</span>
+
+        <span class="c1"># (E2-E1)_10    (reactant state) = First row E2 - E1</span>
+        <span class="c1"># (E2-E1)_01    (products state) = Last row E2 - E1</span>
+        <span class="n">des_st1</span> <span class="o">=</span> <span class="p">[</span><span class="n">e2</span> <span class="o">-</span> <span class="n">e1</span> <span class="k">for</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e1_state1</span><span class="p">,</span> <span class="n">e2_state1</span><span class="p">)]</span>
+        <span class="n">des_st2</span> <span class="o">=</span> <span class="p">[</span><span class="n">e2</span> <span class="o">-</span> <span class="n">e1</span> <span class="k">for</span> <span class="n">e1</span><span class="p">,</span> <span class="n">e2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e1_state2</span><span class="p">,</span> <span class="n">e2_state2</span><span class="p">)]</span>
+
+        <span class="c1"># LRA=0.5*(&lt;E2-E1&gt;_10+&lt;E2-E1&gt;_01)</span>
+        <span class="c1"># REO=0.5*(&lt;E2-E1&gt;_10-&lt;E2-E1&gt;_01)</span>
+        <span class="n">des_st1_st2</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">des_st1</span><span class="p">,</span> <span class="n">des_st2</span><span class="p">)</span>
+        <span class="n">es_lra</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">de_st1</span> <span class="o">+</span> <span class="n">de_st2</span><span class="p">)</span> <span class="k">for</span> <span class="n">de_st1</span><span class="p">,</span> <span class="n">de_st2</span> <span class="ow">in</span> <span class="n">des_st1_st2</span><span class="p">]</span>
+        <span class="n">es_reo</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">de_st1</span> <span class="o">-</span> <span class="n">de_st2</span><span class="p">)</span> <span class="k">for</span> <span class="n">de_st1</span><span class="p">,</span> <span class="n">de_st2</span> <span class="ow">in</span> <span class="n">des_st1_st2</span><span class="p">]</span>
+
+        <span class="n">e_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">column_titles</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e_types</span><span class="p">,</span> <span class="n">des_st1</span><span class="p">,</span> <span class="n">des_st2</span><span class="p">,</span> <span class="n">es_lra</span><span class="p">,</span> <span class="n">es_reo</span><span class="p">):</span>
+            <span class="n">lra</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">lra</span>
+
+
+    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">calc_index</span><span class="p">):</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_part0_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># the first line is a comment</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># comment with column names</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PART0_HEADER</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Part0 has a wrong header, did the qfep &quot;</span>
+                                  <span class="s2">&quot;binary change?&quot;</span><span class="p">)</span>
+        <span class="n">n_lines_parsed</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">lines_to_read</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">calc_index</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_evb_states</span><span class="p">,</span>
+                              <span class="p">(</span><span class="n">calc_index</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_evb_states</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="c1"># fix for Q version df165865</span>
+            <span class="k">if</span> <span class="s2">&quot;Could not read file header!&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="c1"># remove comments</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#|\!&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="c1"># fix &#39;sticky&#39; values in old versions of Q</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s2">&quot;(\d)-(\d)&quot;</span><span class="p">,</span> <span class="s2">&quot;\g&lt;1&gt; -\g&lt;2&gt;&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="s2">&quot;--&gt;&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">n_lines_parsed</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">continue</span>
+            
+
+            <span class="k">if</span> <span class="n">n_lines_parsed</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">lines_to_read</span><span class="p">:</span>
+                <span class="n">n_lines_parsed</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+            <span class="n">n_lines_parsed</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">cols</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">enfile</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">state</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">lamb</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">energies</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">[</span><span class="mi">4</span><span class="p">:]]</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">enfile</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">points</span><span class="p">,</span> <span class="n">lamb</span><span class="p">,]</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">energies</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_state</span><span class="p">[</span><span class="n">state</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+
+<span class="c1">###############################################################################</span>
+
+
+<span class="k">class</span> <span class="nc">_QFepPart1</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for parsing and storing data from Part1 in Qfep output.</span>
+
+<span class="sd">    Part1 contains free energies vs. lambda (FEP).</span>
+
+<span class="sd">    If parsing is unsuccessful QFepOutputError is raised,</span>
+<span class="sd">    else all the data is stored in DataContainer object &#39;data&#39;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        part1_string (string):  string of Part1 in qfep output</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">    &gt;&gt;&gt; cols = [&quot;Lambda&quot;, &quot;dG&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; dG_lambda = _QFepPart1.data.get_rows(columns=cols)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_PART1_HEADER</span> <span class="o">=</span> <span class="s2">&quot;# lambda(1)      dGf sum(dGf)      dGr sum(dGr)     &lt;dG&gt;&quot;</span>
+    <span class="n">_COLUMN_TITLES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;dGf&quot;</span><span class="p">,</span> <span class="s2">&quot;sum_dGf&quot;</span><span class="p">,</span> <span class="s2">&quot;dGr&quot;</span><span class="p">,</span> <span class="s2">&quot;sum_dGr&quot;</span><span class="p">,</span> <span class="s2">&quot;dG&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part1_string</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_part1_string</span> <span class="o">=</span> <span class="n">part1_string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_COLUMN_TITLES</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_rows</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Part1 is empty (no rows).&quot;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return final dG(lambda)   (FEP)&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_columns</span><span class="p">([</span><span class="s2">&quot;dG&quot;</span><span class="p">])[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_part1_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># the first line is a comment</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1">## In newer versions of Q, two additional lines are printed</span>
+        <span class="c1"># to distinguish between &#39;full&#39;, &#39;exclusions&#39; and &#39;qcp&#39;</span>
+        <span class="c1"># check for the two extra lines and remove them</span>
+        <span class="k">if</span> <span class="s2">&quot;Calculation&quot;</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="c1"># comment with column names</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PART1_HEADER</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Part1 has a wrong header, did the qfep &quot;</span>
+                                  <span class="s2">&quot;binary change?&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#|\!&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+
+
+<span class="c1">###############################################################################</span>
+
+
+
+<span class="k">class</span> <span class="nc">_QFepPart2</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for parsing and storing data from Part2 in Qfep output.</span>
+
+<span class="sd">    Part2 contains the results of the binning process - EVB ground state</span>
+<span class="sd">    free energy vs. lambda and Egap, as well as the diabatic free energy</span>
+<span class="sd">    profiles.</span>
+
+<span class="sd">    If parsing is unsuccessful QFepOutputError is raised,</span>
+<span class="sd">    else all the data is stored in DataContainer object &#39;data&#39;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        part2_string (string):  string of Part2 in qfep output</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">    &gt;&gt;&gt; cols = [&quot;Lambda&quot;, &quot;dGg&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; dGg_lambda = _QFepPart2.data.get_rows(columns=cols)</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_PART2_HEADER</span> <span class="o">=</span> <span class="s2">&quot;# Lambda(1)  bin Energy gap      dGa     dGb     dGg    &quot;</span>\
+                    <span class="s2">&quot;# pts    c1**2    c2**2&quot;</span>
+
+    <span class="n">_COLUMN_TITLES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;bin&quot;</span><span class="p">,</span> <span class="s2">&quot;Egap&quot;</span><span class="p">,</span> <span class="s2">&quot;dGa&quot;</span><span class="p">,</span> <span class="s2">&quot;dGb&quot;</span><span class="p">,</span> <span class="s2">&quot;dGg&quot;</span><span class="p">,</span> <span class="s2">&quot;points&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;c1**2&quot;</span><span class="p">,</span> <span class="s2">&quot;c2**2&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part2_string</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_part2_string</span> <span class="o">=</span> <span class="n">part2_string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_COLUMN_TITLES</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_rows</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Part2 is empty (no rows).&quot;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_part2_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># the first line is a comment</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># comment with column names</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PART2_HEADER</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Part2 has a wrong header, did the qfep &quot;</span>
+                                  <span class="s2">&quot;binary change?&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#|\!&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+
+<span class="c1">###############################################################################</span>
+
+
+<span class="k">class</span> <span class="nc">_QFepPart3</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for parsing and storing data from Part3 in Qfep output.</span>
+
+<span class="sd">    Part3 contains the bin-averaged dGg values, points and squared</span>
+<span class="sd">    eigenvectors from Part2.</span>
+
+<span class="sd">    If parsing is unsuccessful QFepOutputError is raised,</span>
+<span class="sd">    else all the data is stored in DataContainer object &#39;data&#39;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        part3_string (string):  string of Part3 in qfep output</span>
+
+<span class="sd">    Usage:</span>
+<span class="sd">    &gt;&gt;&gt; cols = [&quot;Lambda&quot;, &quot;dGg&quot;]</span>
+<span class="sd">    &gt;&gt;&gt; dGg_lambda = _QFepPart3.data.get_rows(columns=cols)</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_PART3_HEADER</span> <span class="o">=</span> <span class="s2">&quot;# bin  energy gap  &lt;dGg&gt; &lt;dGg norm&gt; pts  &lt;c1**2&gt; &quot;</span>\
+                   <span class="s2">&quot;&lt;c2**2&gt; &lt;r_xy&gt;&quot;</span>
+
+    <span class="n">_COLUMN_TITLES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bin&quot;</span><span class="p">,</span> <span class="s2">&quot;Egap&quot;</span><span class="p">,</span> <span class="s2">&quot;dGg&quot;</span><span class="p">,</span> <span class="s2">&quot;dGg_norm&quot;</span><span class="p">,</span> <span class="s2">&quot;points&quot;</span><span class="p">,</span> <span class="s2">&quot;c1**2&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;c2**2&quot;</span><span class="p">,</span> <span class="s2">&quot;r_xy&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">part3_string</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_part3_string</span> <span class="o">=</span> <span class="n">part3_string</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_COLUMN_TITLES</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dga</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dg0</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maxima_bins</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minima_bins</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">warning</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_rows</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Part3 is empty (no rows).&quot;</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_part3_string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="c1"># the first line is a comment</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># comment with column names</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">header</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PART3_HEADER</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Part3 has a wrong header, did the qfep &quot;</span>
+                                  <span class="s2">&quot;binary change?&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#|\!&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dga</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dga</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_dgs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dga</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dg0</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dg0</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_dgs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dg0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">minima_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minima_bins</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_dgs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minima_bins</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">maxima_bins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxima_bins</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_dgs</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maxima_bins</span>
+
+    <span class="k">def</span> <span class="nf">_get_dgs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Get minima and maxima without any smoothing.</span>
+        <span class="c1"># If there is more than one maxima and less or more than 2 minima,</span>
+        <span class="c1"># raise an exception search for maxima only between 0.2*nbins and</span>
+        <span class="c1"># 0.8*nbins (bad sampling on the edges can raise an error)</span>
+        <span class="c1"># Also, save the bins of the minima.</span>
+
+        <span class="n">bins</span><span class="p">,</span> <span class="n">des</span><span class="p">,</span> <span class="n">dgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_columns</span><span class="p">([</span><span class="s2">&quot;bin&quot;</span><span class="p">,</span> <span class="s2">&quot;Egap&quot;</span><span class="p">,</span> <span class="s2">&quot;dGg_norm&quot;</span><span class="p">])</span>
+        <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="n">nbins</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nbins</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>     <span class="c1"># from the second to the second last</span>
+
+            <span class="n">dg</span><span class="p">,</span> <span class="n">dgnext</span><span class="p">,</span> <span class="n">dgprev</span> <span class="o">=</span> <span class="n">dgs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">dgs</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span> <span class="n">dgs</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">dgprev</span> <span class="o">&gt;=</span> <span class="n">dg</span> <span class="ow">and</span> <span class="n">dg</span> <span class="o">&lt;</span> <span class="n">dgnext</span><span class="p">:</span>
+                <span class="n">minima</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">dgprev</span> <span class="o">&lt;=</span> <span class="n">dg</span> <span class="ow">and</span> <span class="n">dg</span> <span class="o">&gt;</span> <span class="n">dgnext</span> <span class="ow">and</span> \
+                                 <span class="n">i</span> <span class="o">&gt;</span> <span class="n">nbins</span><span class="o">*</span><span class="mf">0.2</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">nbins</span><span class="o">*</span><span class="mf">0.8</span><span class="p">:</span>
+                <span class="n">maxima</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">minima</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">maxima</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1"># Bad sampling, more minima and maxima than wanted.</span>
+            <span class="c1"># Get the highest maxima from those found so far.</span>
+            <span class="c1"># Get the absolute minima to the left and to the right of this</span>
+            <span class="c1"># maxima. Save the warning.</span>
+            <span class="n">max1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">maxima</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">i</span><span class="p">:</span> <span class="n">dgs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">react</span> <span class="o">=</span> <span class="p">[(</span><span class="n">dgs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">minima</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">max1</span><span class="p">]</span>
+            <span class="n">prod</span> <span class="o">=</span> <span class="p">[(</span><span class="n">dgs</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">minima</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="n">max1</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">min1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">react</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>   <span class="c1"># min() will return tuple with lowest dg</span>
+                <span class="n">min2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">prod</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="c1"># multiple minima on one side, none on the other</span>
+                <span class="c1"># (starts/ends at the lowest point)</span>
+                <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Bad reaction free energy profile - &quot;</span>
+                                      <span class="s2">&quot;reactants minima: </span><span class="si">{}</span><span class="s2">, products minima: &quot;</span>
+                                      <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">react</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">prod</span><span class="p">)))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">warning</span> <span class="o">=</span> <span class="s2">&quot;Rough Free energy profile (</span><span class="si">{}</span><span class="s2"> minima and </span><span class="si">{}</span><span class="s2"> &quot;</span>\
+                           <span class="s2">&quot;maxima found), look at the graphs!&quot;</span>\
+                           <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">minima</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">maxima</span><span class="p">))</span>
+            <span class="n">maxima</span> <span class="o">=</span> <span class="p">[</span><span class="n">max1</span><span class="p">,]</span>
+            <span class="n">minima</span> <span class="o">=</span> <span class="p">[</span><span class="n">min1</span><span class="p">,</span> <span class="n">min2</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">minima</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Bad reaction free energy profile - </span><span class="si">{}</span><span class="s2"> &quot;</span>
+                                  <span class="s2">&quot;local minima (instead of 2)&quot;</span>
+                                  <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">minima</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">maxima</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Bad reaction free energy profile - </span><span class="si">{}</span><span class="s2"> &quot;</span>
+                                  <span class="s2">&quot;local maxima (instead of 1)&quot;</span>
+                                  <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">maxima</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dga</span> <span class="o">=</span> <span class="n">dgs</span><span class="p">[</span><span class="n">maxima</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">-</span> <span class="n">dgs</span><span class="p">[</span><span class="n">minima</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dg0</span> <span class="o">=</span> <span class="n">dgs</span><span class="p">[</span><span class="n">minima</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">-</span> <span class="n">dgs</span><span class="p">[</span><span class="n">minima</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minima_bins</span> <span class="o">=</span> <span class="p">[</span><span class="n">bins</span><span class="p">[</span><span class="n">mini</span><span class="p">]</span> <span class="k">for</span> <span class="n">mini</span> <span class="ow">in</span> <span class="n">minima</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maxima_bins</span> <span class="o">=</span> <span class="p">[</span><span class="n">bins</span><span class="p">[</span><span class="n">maxi</span><span class="p">]</span> <span class="k">for</span> <span class="n">maxi</span> <span class="ow">in</span> <span class="n">maxima</span><span class="p">]</span>
+
+        <span class="c1"># adjust the values in data so that the reactants are zero</span>
+        <span class="n">colindex</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">column_titles</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;dGg_norm&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_rows</span><span class="p">():</span>
+            <span class="n">row</span><span class="p">[</span><span class="n">colindex</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">colindex</span><span class="p">]</span> <span class="o">-</span> <span class="n">dgs</span><span class="p">[</span><span class="n">minima</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+
+<span class="c1">###############################################################################</span>
+
+
+<div class="viewcode-block" id="QFepOutput"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qfep.QFepOutput">[docs]</a><span class="k">class</span> <span class="nc">QFepOutput</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for parsing and analysing Qfep output.</span>
+
+<span class="sd">    All data is stored in DataContainer objects in separate</span>
+<span class="sd">    _QFepPart0/1/2/3 objects:</span>
+<span class="sd">    QFepOutput.part0.data[1].get_rows(columns=[&quot;EQtot&quot;])</span>
+<span class="sd">    QFepOutput.part2.data.get_rows(columns=[&quot;Egap&quot;, &quot;dGg&quot;])</span>
+
+<span class="sd">    Some special data can be obtained directly:</span>
+<span class="sd">    QFepOutput.dGa  # activation free energy</span>
+<span class="sd">    QFepOutput.dG0  # reaction free energy</span>
+
+<span class="sd">    Results of exclusion and QCP calculations are stored in dictionaries</span>
+<span class="sd">    QFepOutput.exclusions and QanalyseMap.QCP as QFepOutput objects.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        qfep_output (string):  qfep output</span>
+<span class="sd">        _calc_index (int):  used internally for exclusions and QCP</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_PART0_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;(# Part 0.*?)# Part 1&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+    <span class="n">_PART1_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;(# Part 1.*?)# Part 2&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+    <span class="n">_PART2_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;(# Part 2.*?)# Part 3&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+    <span class="n">_PART3_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;(# Part 3.*)&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+
+    <span class="c1"># To extract the full, exclusions and QCP results separately</span>
+    <span class="c1"># &#39;# Part 1&#39; is added manually to the end of the logfile</span>
+    <span class="n">_PART1to1_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;(# Part 1.*?)(?=# Part 1)&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+
+    <span class="n">_EXCL_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;Calculation for system with (\w+) exclusion, &quot;</span>
+                          <span class="s2">&quot;residues (.*)&quot;</span><span class="p">)</span>
+
+    <span class="n">_QCP_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;Calculation for QCP, number of atoms \s+(\d+)&quot;</span><span class="p">)</span>
+
+    <span class="n">_QCP_MASS_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;Calculation for QCP Mass Perturbation, number &quot;</span>
+                              <span class="s2">r&quot;of atoms \s+(\d+)&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Header regular expression</span>
+    <span class="n">_HEADER_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s2">r&quot;(# Qfep.*?|qfep version.*?)# Part 0&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qfep_output</span><span class="p">,</span> <span class="n">_calc_index</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qfep_output</span> <span class="o">=</span> <span class="n">qfep_output</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2"># Part 1&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calc_index</span> <span class="o">=</span> <span class="n">_calc_index</span>
+
+        <span class="c1"># parts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part0</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part2</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part3</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># exclusions and QCP</span>
+        <span class="c1"># {&quot;ex_full_386&quot; : QFepOutput_instance,</span>
+        <span class="c1">#  &quot;QCP&quot;: QFepOutput_instance, ... }</span>
+        <span class="c1">#  &quot;QCP_mass&quot;: QFepOutput_instance, ... }</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub_calcs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parse</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">_parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Parse the qfep output file.</span>
+        <span class="c1"># Assign _QFepPart0-3 objects to self.part0-3.</span>
+        <span class="c1"># Store exclusions and qcp as QFepOutput objects</span>
+
+        <span class="c1"># parse the header</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_HEADER_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qfep_output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Missing header, ancient Qfep &quot;</span>
+                                  <span class="s2">&quot;executable?&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header</span> <span class="o">=</span> <span class="n">_QFepHeader</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># Part 0</span>
+        <span class="c1"># All of the data (full, excl, qcp) is in one string,</span>
+        <span class="c1"># but is separated in QFepPart0 based on self._calc_index</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PART0_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qfep_output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">c</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Part 0 not found in qfep output.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part0</span> <span class="o">=</span> <span class="n">_QFepPart0</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">nstates</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">_calc_index</span><span class="p">)</span>
+
+        <span class="c1"># get the other parts as one string (for each calc)</span>
+        <span class="n">calcs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PART1to1_RE</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qfep_output</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">calcs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Couldn&#39;t parse qfep output.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># parse parts 1 to 3</span>
+        <span class="n">calc_this</span> <span class="o">=</span> <span class="n">calcs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">c1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PART1_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">calc_this</span><span class="p">)</span>
+        <span class="n">c2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PART2_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">calc_this</span><span class="p">)</span>
+        <span class="n">c3</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_PART3_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">calc_this</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">c1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Part 1 not found in qfep output.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">c2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Part 2 not found in qfep output.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">c3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Part 3 not found in qfep output.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part1</span> <span class="o">=</span> <span class="n">_QFepPart1</span><span class="p">(</span><span class="n">c1</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part2</span> <span class="o">=</span> <span class="n">_QFepPart2</span><span class="p">(</span><span class="n">c2</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part3</span> <span class="o">=</span> <span class="n">_QFepPart3</span><span class="p">(</span><span class="n">c3</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># parse sub-calcs (exclusions and qcp)</span>
+        <span class="n">calc_index</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">calc</span> <span class="ow">in</span> <span class="n">calcs</span><span class="p">:</span>
+            <span class="c1"># add header and part 0</span>
+            <span class="n">full_s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">_header_string</span><span class="p">,</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">part0</span><span class="o">.</span><span class="n">_part0_string</span><span class="p">,</span>
+                                         <span class="n">calc</span><span class="p">)</span>
+            <span class="n">excl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_EXCL_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">calc</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">excl</span><span class="p">:</span>
+                <span class="c1"># &quot;Calculation for system with full exclusion, &quot;</span>
+                <span class="c1"># &quot;residues    88  177 &quot; returns (&quot;full&quot;, &quot;    88 177&quot;)</span>
+                <span class="c1">#</span>
+                <span class="c1"># convert to &quot;ex_full_88_177&quot;, &quot;ex_el_100&quot;, &quot;ex_vdw_221&quot;,...</span>
+                <span class="n">typ</span><span class="p">,</span> <span class="n">residues</span> <span class="o">=</span> <span class="n">excl</span><span class="o">.</span><span class="n">groups</span><span class="p">()</span>
+                <span class="n">typ</span> <span class="o">=</span> <span class="n">typ</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;electrostatic&quot;</span><span class="p">,</span> <span class="s2">&quot;el&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">residues</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">residues</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="s2">&quot;ex_</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">typ</span><span class="p">,</span> <span class="n">residues</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sub_calcs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">QFepOutput</span><span class="p">(</span><span class="n">full_s</span><span class="p">,</span> <span class="n">_calc_index</span><span class="o">=</span><span class="n">calc_index</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_QCP_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">calc</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sub_calcs</span><span class="p">[</span><span class="s2">&quot;QCP&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QFepOutput</span><span class="p">(</span><span class="n">full_s</span><span class="p">,</span>
+                                                   <span class="n">_calc_index</span><span class="o">=</span><span class="n">calc_index</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_QCP_MASS_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">calc</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sub_calcs</span><span class="p">[</span><span class="s2">&quot;QCP_mass&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">QFepOutput</span><span class="p">(</span><span class="n">full_s</span><span class="p">,</span>
+                                                        <span class="n">_calc_index</span><span class="o">=</span><span class="n">calc_index</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QFepOutputError</span><span class="p">(</span><span class="s2">&quot;Impossible error - debug&quot;</span><span class="p">)</span>
+            <span class="n">calc_index</span> <span class="o">+=</span> <span class="mi">1</span></div>
+
+
+<span class="c1">###############################################################################</span>
+
+
+<div class="viewcode-block" id="QFep"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qfep.QFep">[docs]</a><span class="k">class</span> <span class="nc">QFep</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for running Qfep.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        qfep_exec (string):  Qfep executable path</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qfep_exec</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qfep_exec</span> <span class="o">=</span> <span class="n">qfep_exec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="QFep.run"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qfep.QFep.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qfep_input_str</span><span class="p">,</span> <span class="n">workdir</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run qfep on the input string and return output.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            qfep_input_str (string):  qfep input</span>
+<span class="sd">            workdir (string, optional):  working directory</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            qfep_output_str  (string):  qfep stdout</span>
+
+<span class="sd">        Raises QFepError on OSError or stderr.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qfep_exec</span><span class="p">,</span>
+                                            <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                                            <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                                            <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+                                            <span class="n">cwd</span><span class="o">=</span><span class="n">workdir</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">OSError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepError</span><span class="p">(</span><span class="s2">&quot;Problem when running qfep: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                            <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error_msg</span><span class="p">))</span>
+
+        <span class="n">stdout</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">communicate</span><span class="p">(</span><span class="n">qfep_input_str</span><span class="p">)</span>
+
+        <span class="c1"># not sure if this ever happens, but will keep it anyway</span>
+        <span class="k">if</span> <span class="n">stderr</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QFepError</span><span class="p">(</span><span class="s2">&quot;QFep wrote to STDERR: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stderr</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">stdout</span></div></div>
+
+<span class="c1">###############################################################################</span>
+
+<div class="viewcode-block" id="QFepInput"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qfep.QFepInput">[docs]</a><span class="k">class</span> <span class="nc">QFepInput</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for creating qfep inputs.</span>
+
+<span class="sd">    At the moment, supports only:</span>
+<span class="sd">    - 2 states</span>
+<span class="sd">    - no predefined Hij</span>
+<span class="sd">    - single, constant Hij (mu=eta=r0 = 0)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        energy_files (list of strings): list of energy files</span>
+<span class="sd">        hij (float): H12_A offdiagonal constant</span>
+<span class="sd">        alpha (float): state2 alpha shift</span>
+<span class="sd">        temperature (float): temperature in Kelvin</span>
+<span class="sd">        gas_const (float): gas_constant in kcal/mol/K</span>
+<span class="sd">        points_skip (int): number of energy points to skip in each frame</span>
+<span class="sd">        gap_bins (int): number of gap-bins</span>
+<span class="sd">        minpts_bin (int): minimum number of points per bin</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">energy_files</span><span class="p">,</span> <span class="n">hij</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">temperature</span><span class="p">,</span>
+                 <span class="n">gas_const</span><span class="p">,</span> <span class="n">points_skip</span><span class="p">,</span> <span class="n">gap_bins</span><span class="p">,</span> <span class="n">minpts_bin</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">energy_files</span> <span class="o">=</span> <span class="n">energy_files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hij</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">hij</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gas_const</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gas_const</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">points_skip</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points_skip</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gap_bins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gap_bins</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minpts_bin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">minpts_bin</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QFepInput.get_string"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qfep.QFepInput.get_string">[docs]</a>    <span class="k">def</span> <span class="nf">get_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return input string for Qfep</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="si">{frames}</span><span class="s2">         # number of files/frames</span>
+<span class="s2">2  0                 # number of states and predefined off-diagonals</span>
+<span class="si">{RT}</span><span class="s2"> </span><span class="si">{points_skip}</span><span class="s2">        # RT and number of points to skip</span>
+<span class="si">{gap_bins}</span><span class="s2">              # number of bins</span>
+<span class="si">{minpts_bin}</span><span class="s2">    # minimum points for bin</span>
+<span class="si">{alpha}</span><span class="s2">         # state2 shift (alpha)</span>
+<span class="s2">1                    # number of diagonal elements</span>
+<span class="s2">1 2 </span><span class="si">{hij}</span><span class="s2"> 0 0 0     # states 1 and 2, A=const=Hij, mu=eta=r0= 0</span>
+<span class="s2">1 -1                 # linear combination of states ( E = e1 - e2 )</span>
+<span class="si">{en_files}</span><span class="s2"></span>
+<span class="s2">stop&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frames</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energy_files</span><span class="p">),</span>
+               <span class="n">RT</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">temperature</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">gas_const</span><span class="p">,</span>
+               <span class="n">points_skip</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">points_skip</span><span class="p">,</span>
+               <span class="n">gap_bins</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">gap_bins</span><span class="p">,</span>
+               <span class="n">minpts_bin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">minpts_bin</span><span class="p">,</span>
+               <span class="n">alpha</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span>
+               <span class="n">hij</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hij</span><span class="p">,</span>
+               <span class="n">en_files</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energy_files</span><span class="p">))</span></div></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Miha Purg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.6.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

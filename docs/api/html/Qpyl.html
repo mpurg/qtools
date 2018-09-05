@@ -1,0 +1,1174 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Qpyl package &mdash; Qpyl 0.6.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Qpyl.core package" href="Qpyl.core.html" />
+    <link rel="prev" title="Welcome to Qpyl’s documentation!" href="index.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Qpyl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Qpyl package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Qpyl.core.html">Qpyl.core package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Qpyl.common">Qpyl.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Qpyl.plotdata">Qpyl.plotdata module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Qpyl.qanalysis">Qpyl.qanalysis module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Qpyl.qgeninp">Qpyl.qgeninp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Qpyl.qgroupcontrib">Qpyl.qgroupcontrib module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Qpyl.qmakefep">Qpyl.qmakefep module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-Qpyl.qmapping">Qpyl.qmapping module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Qpyl</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Qpyl package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/Qpyl.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-Qpyl">
+<span id="qpyl-package"></span><h1>Qpyl package<a class="headerlink" href="#module-Qpyl" title="Permalink to this headline">¶</a></h1>
+<p>Qpyl is a Python library for efficient setup, parametrization,
+calibration, and analysis of EVB simulations in software package Q.</p>
+<p>The core functionality related to Q input/ouput handling, parameter conversion
+and Q executable wrappers are implemented in the subpackage <em>Qpyl.core</em>.</p>
+<p>Modules on this level implement high-level functionality for analysis of
+simulations (<em>qanalysis</em>), generating simulation inputs (<em>geninp</em>),
+calculating and calibration free energy profiles (<em>qmapper</em>),
+calculating LRA group contributions (<em>qgroupcontrib</em>) and
+generating FEP files (<em>qmakefep</em>).</p>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Qpyl.core.html">Qpyl.core package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.core.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.core.html#module-Qpyl.core.qcalc">Qpyl.core.qcalc module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.core.html#module-Qpyl.core.qdyn">Qpyl.core.qdyn module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.core.html#module-Qpyl.core.qfep">Qpyl.core.qfep module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.core.html#module-Qpyl.core.qlibrary">Qpyl.core.qlibrary module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.core.html#module-Qpyl.core.qparameter">Qpyl.core.qparameter module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.core.html#module-Qpyl.core.qpotential">Qpyl.core.qpotential module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.core.html#module-Qpyl.core.qstructure">Qpyl.core.qstructure module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.core.html#module-Qpyl.core.qtopology">Qpyl.core.qtopology module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-Qpyl.common">
+<span id="qpyl-common-module"></span><h2>Qpyl.common module<a class="headerlink" href="#module-Qpyl.common" title="Permalink to this headline">¶</a></h2>
+<p>This module contains some common classes and functions,
+including simple statistical methods and data structures.</p>
+<dl class="class">
+<dt id="Qpyl.common.DataContainer">
+<em class="property">class </em><code class="descclassname">Qpyl.common.</code><code class="descname">DataContainer</code><span class="sig-paren">(</span><em>coltitles</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#DataContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.DataContainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Contains a two dimensional array of values:</p>
+<dl class="docutils">
+<dt>[ [ row1_column1, row1_column2, row1_column3, ...],</dt>
+<dd>[ row2_column1, row2_column2, row2_column3, ...],
+...                                               ]</dd>
+</dl>
+<p>and column titles.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>coltitles</strong> (<em>list</em>) &#8211; column titles</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dg_de</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span> <span class="p">[</span><span class="s1">&#39;Energy_gap&#39;</span><span class="p">,</span> <span class="s1">&#39;dG&#39;</span><span class="p">]</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dg_de</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span> <span class="p">[</span><span class="o">-</span><span class="mf">300.0</span><span class="p">,</span> <span class="mf">10.0</span> <span class="p">]</span>
+<span class="go"># reversed rows</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rows</span> <span class="o">=</span> <span class="n">dg_de</span><span class="o">.</span><span class="n">get_rows</span><span class="p">(</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">dg_de</span><span class="o">.</span><span class="n">column_titles</span><span class="p">)</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cols</span> <span class="o">=</span> <span class="n">dg_de</span><span class="o">.</span><span class="n">get_columns</span><span class="p">(</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span> <span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="Qpyl.common.DataContainer.add_row">
+<code class="descname">add_row</code><span class="sig-paren">(</span><em>row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#DataContainer.add_row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.DataContainer.add_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a row.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>row</strong> (<em>list</em>) &#8211; a list of values</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><code class="xref py py-exc docutils literal"><span class="pre">ValueError</span></code> &#8211; if number of elements in row is not equal to
+number of column titles</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.common.DataContainer.delete_rows">
+<code class="descname">delete_rows</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#DataContainer.delete_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.DataContainer.delete_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the rows.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.common.DataContainer.get_columns">
+<code class="descname">get_columns</code><span class="sig-paren">(</span><em>columns=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#DataContainer.get_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.DataContainer.get_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transposes the array and returns the columns instead of rows.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>columns</strong> (<em>list</em>) &#8211; return only columns with
+these indices and/or titles</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of columns (list of lists)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.common.DataContainer.get_rows">
+<code class="descname">get_rows</code><span class="sig-paren">(</span><em>columns=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#DataContainer.get_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.DataContainer.get_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the rows.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>columns</strong> (<em>list</em>) &#8211; return only columns with
+these indices and/or titles</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of rows (list of lists)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Qpyl.common.SpecialFormatter">
+<em class="property">class </em><code class="descclassname">Qpyl.common.</code><code class="descname">SpecialFormatter</code><span class="sig-paren">(</span><em>fmt=None</em>, <em>datefmt=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#SpecialFormatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.SpecialFormatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">logging.Formatter</span></code></p>
+<dl class="attribute">
+<dt id="Qpyl.common.SpecialFormatter.FORMATS">
+<code class="descname">FORMATS</code><em class="property"> = {'DEFAULT': '%(message)s', 10: 'DBG: %(module)s: %(lineno)d: %(message)s', 20: '# %(message)s', 50: '\nCRITICAL: %(message)s\n', 30: '\nWARNING: %(message)s\n'}</em><a class="headerlink" href="#Qpyl.common.SpecialFormatter.FORMATS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.common.SpecialFormatter.format">
+<code class="descname">format</code><span class="sig-paren">(</span><em>record</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#SpecialFormatter.format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.SpecialFormatter.format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.common.backup_file">
+<code class="descclassname">Qpyl.common.</code><code class="descname">backup_file</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#backup_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.backup_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if a file exists, make a backup (#filename.1#, #filename.2#...).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>filename</strong> (<em>string</em>) &#8211; name of file to backup</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>basename of the new filename or empty</dt>
+<dd>string if the file was not found.</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">backup_filename (string)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.common.get_version_full">
+<code class="descclassname">Qpyl.common.</code><code class="descname">get_version_full</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#get_version_full"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.get_version_full" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="Qpyl.common.gzopen">
+<em class="property">class </em><code class="descclassname">Qpyl.common.</code><code class="descname">gzopen</code><span class="sig-paren">(</span><em>fname</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#gzopen"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.gzopen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Generic opener that decompresses gzipped files
+if needed. Encapsulates an open file or a GzipFile.
+Use the same way you would use &#8216;open()&#8217;.</p>
+<dl class="method">
+<dt id="Qpyl.common.gzopen.next">
+<code class="descname">next</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#gzopen.next"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.gzopen.next" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.common.init_logger">
+<code class="descclassname">Qpyl.common.</code><code class="descname">init_logger</code><span class="sig-paren">(</span><em>name</em>, <em>level=None</em>, <em>handler=None</em>, <em>formatter=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#init_logger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.init_logger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function for initializing the logger.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>string</em>) &#8211; module name, usually root: &#8216;Qpyl&#8217;</li>
+<li><strong>level</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; logging level (DEBUG, INFO, WARNING...),                                 default is INFO</li>
+<li><strong>handler</strong> &#8211; (logging.Handler, optional):  default is                                                StreamHandler(sys.stdout)         formatter: (logging.Formatter, optional): default is                                                   SpecialFormatter</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">lg (logging.Logger)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="Qpyl.common.np">
+<em class="property">class </em><code class="descclassname">Qpyl.common.</code><code class="descname">np</code><a class="reference internal" href="_modules/Qpyl/common.html#np"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.np" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="staticmethod">
+<dt id="Qpyl.common.np.kendall_tau">
+<em class="property">static </em><code class="descname">kendall_tau</code><span class="sig-paren">(</span><em>list_a</em>, <em>list_b</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#np.kendall_tau"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.np.kendall_tau" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate Kendall&#8217;s tau-a correlation coefficient.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>list_a</strong> (<em>list</em>) &#8211; list of ints/floats</li>
+<li><strong>list_b</strong> (<em>list</em>) &#8211; list of ints/floats</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="Qpyl.common.np.mean">
+<em class="property">static </em><code class="descname">mean</code><span class="sig-paren">(</span><em>vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#np.mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.np.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate mean.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vals</strong> (<em>list of float</em>) &#8211; sample values</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="Qpyl.common.np.median">
+<em class="property">static </em><code class="descname">median</code><span class="sig-paren">(</span><em>vals</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#np.median"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.np.median" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate median</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>vals</strong> (<em>list of float</em>) &#8211; sample values</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="Qpyl.common.np.std">
+<em class="property">static </em><code class="descname">std</code><span class="sig-paren">(</span><em>vals</em>, <em>ddof=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#np.std"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.np.std" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate standard deviation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vals</strong> (<em>list of float</em>) &#8211; sample values</li>
+<li><strong>ddof</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; delta degrees of freedom (default is 1,                                    producing <em>sample</em> standard deviation)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="Qpyl.common.np.std_error">
+<em class="property">static </em><code class="descname">std_error</code><span class="sig-paren">(</span><em>vals</em>, <em>ddof=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#np.std_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.np.std_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates standard error of mean.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>vals</strong> (<em>list of float</em>) &#8211; sample values</li>
+<li><strong>ddof</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; see np.std()</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.common.raise_or_log">
+<code class="descclassname">Qpyl.common.</code><code class="descname">raise_or_log</code><span class="sig-paren">(</span><em>message</em>, <em>exception_class</em>, <em>logger</em>, <em>ignore_errors</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/common.html#raise_or_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.common.raise_or_log" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method used for raising exceptions or writting them to logger instead</p>
+<p>This way one can bypass certain exceptions like non-integer charge groups,
+that may occur in weird scenarios (Amber bonding metal model).</p>
+<p>Critical level is always used for logging.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.plotdata">
+<span id="qpyl-plotdata-module"></span><h2>Qpyl.plotdata module<a class="headerlink" href="#module-Qpyl.plotdata" title="Permalink to this headline">¶</a></h2>
+<p>This module contains the class for custom data structure PlotData
+used for storing various analysis data.
+It also contains custom JSON encoder and decoder classes
+which allow saving the objects in JSON format.</p>
+<dl class="class">
+<dt id="Qpyl.plotdata.PlotData">
+<em class="property">class </em><code class="descclassname">Qpyl.plotdata.</code><code class="descname">PlotData</code><span class="sig-paren">(</span><em>title</em>, <em>plot_type='line'</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>zlabel=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/plotdata.html#PlotData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.plotdata.PlotData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="Qpyl.plotdata.PlotData.add_subplot">
+<code class="descname">add_subplot</code><span class="sig-paren">(</span><em>label</em>, <em>xdata</em>, <em>ydata</em>, <em>zdata=None</em>, <em>yerror=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/plotdata.html#PlotData.add_subplot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.plotdata.PlotData.add_subplot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.plotdata.PlotData.export_grace">
+<code class="descname">export_grace</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/plotdata.html#PlotData.export_grace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.plotdata.PlotData.export_grace" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.plotdata.PlotDataError">
+<em class="property">exception </em><code class="descclassname">Qpyl.plotdata.</code><code class="descname">PlotDataError</code><a class="reference internal" href="_modules/Qpyl/plotdata.html#PlotDataError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.plotdata.PlotDataError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="Qpyl.plotdata.PlotDataJSONDecoder">
+<em class="property">class </em><code class="descclassname">Qpyl.plotdata.</code><code class="descname">PlotDataJSONDecoder</code><a class="reference internal" href="_modules/Qpyl/plotdata.html#PlotDataJSONDecoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.plotdata.PlotDataJSONDecoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">json.decoder.JSONDecoder</span></code></p>
+<dl class="method">
+<dt id="Qpyl.plotdata.PlotDataJSONDecoder.decode_plotdata">
+<code class="descname">decode_plotdata</code><span class="sig-paren">(</span><em>d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/plotdata.html#PlotDataJSONDecoder.decode_plotdata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.plotdata.PlotDataJSONDecoder.decode_plotdata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Qpyl.plotdata.PlotDataJSONEncoder">
+<em class="property">class </em><code class="descclassname">Qpyl.plotdata.</code><code class="descname">PlotDataJSONEncoder</code><span class="sig-paren">(</span><em>skipkeys=False</em>, <em>ensure_ascii=True</em>, <em>check_circular=True</em>, <em>allow_nan=True</em>, <em>sort_keys=False</em>, <em>indent=None</em>, <em>separators=None</em>, <em>encoding='utf-8'</em>, <em>default=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/plotdata.html#PlotDataJSONEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.plotdata.PlotDataJSONEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">json.encoder.JSONEncoder</span></code></p>
+<dl class="method">
+<dt id="Qpyl.plotdata.PlotDataJSONEncoder.default">
+<code class="descname">default</code><span class="sig-paren">(</span><em>obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/plotdata.html#PlotDataJSONEncoder.default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.plotdata.PlotDataJSONEncoder.default" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.qanalysis">
+<span id="qpyl-qanalysis-module"></span><h2>Qpyl.qanalysis module<a class="headerlink" href="#module-Qpyl.qanalysis" title="Permalink to this headline">¶</a></h2>
+<p>Module for analysing Qfep and Qdyn output (logfiles).
+Two main classes are QAnalyseFeps and QAnalyseDyns.
+See q_analysefeps.py and q_analysedyns.py for usage.</p>
+<dl class="class">
+<dt id="Qpyl.qanalysis.QAnalyseDyns">
+<em class="property">class </em><code class="descclassname">Qpyl.qanalysis.</code><code class="descname">QAnalyseDyns</code><span class="sig-paren">(</span><em>qdyn_outputs</em>, <em>time_unit='ps'</em>, <em>step_size=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qanalysis.html#QAnalyseDyns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseDyns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Wrapper class for QanalyseDyn for parsing a sequence of Qdyn outputs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>qdyn_outputs</strong> (<em>list</em>) &#8211; Qdyn output pathnames</li>
+<li><strong>time_unit</strong> (<em>string</em>) &#8211; fs,ps,ns (optional, default is ps)</li>
+<li><strong>step_size</strong> (<em>float</em>) &#8211; use in case the output reads 0.000</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">qads</span> <span class="o">=</span> <span class="n">QAnalyseDyns</span><span class="p">([</span><span class="s2">&quot;fep_000.log&quot;</span><span class="p">,</span> <span class="s2">&quot;fep_001.log&quot;</span><span class="p">],</span> <span class="n">timeunit</span><span class="o">=</span><span class="s2">&quot;ps&quot;</span><span class="p">)</span>
+<span class="go"># get average temperatures by combining all outputs</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">qads</span><span class="o">.</span><span class="n">get_temp_stats</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Raises QAnalyseDynsError  (if it fails to parse an output)</p>
+<dl class="method">
+<dt id="Qpyl.qanalysis.QAnalyseDyns.get_energies">
+<code class="descname">get_energies</code><span class="sig-paren">(</span><em>e_type</em>, <em>stride=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qanalysis.html#QAnalyseDyns.get_energies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseDyns.get_energies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get energies from all logfiles combined.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>e_type</strong> (<em>string</em>) &#8211; keys in QDynOutput.map_en_section dictionary</li>
+<li><strong>stride</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; use only every Nth point, default=1</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">energies (DataContainer)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.qanalysis.QAnalyseDyns.get_offdiags">
+<code class="descname">get_offdiags</code><span class="sig-paren">(</span><em>stride=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qanalysis.html#QAnalyseDyns.get_offdiags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseDyns.get_offdiags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get distances from all logfiles combined.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stride</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; use only every Nth point, default=1</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><dl class="docutils">
+<dt>e.g: { &#8220;13_31&#8221;: DataContainer,</dt>
+<dd>&#8220;13_18&#8221;: DataContainer }</dd>
+</dl>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">distances (dict)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.qanalysis.QAnalyseDyns.get_plotdata">
+<code class="descname">get_plotdata</code><span class="sig-paren">(</span><em>stride=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qanalysis.html#QAnalyseDyns.get_plotdata"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseDyns.get_plotdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return &#8216;useful data&#8217; as a dictionary of PlotData objects.</p>
+<p>Useful data:
+- Temperatures
+- Offdiagonal distances
+- Energies (Q and non-Q)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stride</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; use only every Nth point, default=1</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.qanalysis.QAnalyseDyns.get_q_energies">
+<code class="descname">get_q_energies</code><span class="sig-paren">(</span><em>qe_type</em>, <em>evb_state</em>, <em>stride=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qanalysis.html#QAnalyseDyns.get_q_energies"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseDyns.get_q_energies" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get Q energies from all logfiles combined.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>qe_type</strong> (<em>string</em>) &#8211; keys in QDynOutput.map_qen_section dictionary</li>
+<li><strong>evb_state</strong> (<em>int</em>) &#8211; 1 or 2 or 3...</li>
+<li><strong>stride</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; use only every Nth point, default=1</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">energies (DataContainer)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.qanalysis.QAnalyseDyns.get_temp_stats">
+<code class="descname">get_temp_stats</code><span class="sig-paren">(</span><em>stride=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qanalysis.html#QAnalyseDyns.get_temp_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseDyns.get_temp_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns temperature stats in string format (used for cmdline printout)
+for all logfiles combined</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.qanalysis.QAnalyseDyns.get_temps">
+<code class="descname">get_temps</code><span class="sig-paren">(</span><em>stride=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qanalysis.html#QAnalyseDyns.get_temps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseDyns.get_temps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get temperatures from all logfiles combined.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>stride</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; use only every Nth point, default=1</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">temperatures (DataContainer)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.qanalysis.QAnalyseDynsError">
+<em class="property">exception </em><code class="descclassname">Qpyl.qanalysis.</code><code class="descname">QAnalyseDynsError</code><a class="reference internal" href="_modules/Qpyl/qanalysis.html#QAnalyseDynsError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseDynsError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="Qpyl.qanalysis.QAnalyseFeps">
+<em class="property">class </em><code class="descclassname">Qpyl.qanalysis.</code><code class="descname">QAnalyseFeps</code><span class="sig-paren">(</span><em>qfep_outputs</em>, <em>lra_lambdas=None</em>, <em>_parent=None</em>, <em>_subcalc_key=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qanalysis.html#QAnalyseFeps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseFeps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Wrapper class for QFepOutput for analysing multiple outputs.</p>
+<p>Calculates statistics (mean, stdev,...), makes pretty summaries,
+extracts all data to PlotData objects via neat functions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>qfep_outputs</strong> (<em>list of strings</em><em> or </em><em>list of tuples</em><em>(</em><em>string</em><em>, </em><em>string</em><em>)</em><em></em>) &#8211; pathnames of qfep outputs or (name, output_string) tuples</li>
+<li><strong>lra_lambdas</strong> (<em>list of floats</em><em>, </em><em>optional</em>) &#8211; lambdas at which LRA energies                                                 should be calculated at.                                                 Usual case is (1.0, 0.0).                                                 Default = None (no LRA calcs)</li>
+<li><strong>_parent</strong> (<a class="reference internal" href="#Qpyl.qanalysis.QAnalyseFeps" title="Qpyl.qanalysis.QAnalyseFeps"><em>QAnalyseFeps</em></a>) &#8211; used internally for QCP and exclusions</li>
+<li><strong>_subcalcs</strong> (<em>string</em>) &#8211; used internally for QCP and exclusions</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">qos</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">md</span><span class="p">,</span> <span class="s2">&quot;qfep.log&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">md</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">mapdirs</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">qaf</span> <span class="o">=</span> <span class="n">QAnalyseFeps</span><span class="p">(</span><span class="n">qos</span><span class="p">,</span> <span class="n">lra_lambdas</span><span class="o">=</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">qaf</span><span class="o">.</span><span class="n">stats_str</span>
+<span class="go"># prints statistics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">sub_calc_key</span><span class="p">,</span> <span class="n">sub_calc</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">qaf</span><span class="o">.</span><span class="n">sub_calcs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span> <span class="n">sub_calc</span><span class="o">.</span><span class="n">stats_str</span>
+<span class="go"># prints subcalculation (QCP, GE) statistics</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">failed_path</span><span class="p">,</span> <span class="n">failed_msg</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">qaf</span><span class="o">.</span><span class="n">failed</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()):</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">relp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">failed_path</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span> <span class="s2">&quot;-&gt; </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">failed_msg</span><span class="p">)</span>
+<span class="go"># prints failed</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="Qpyl.qanalysis.QAnalyseFeps.dg_all">
+<code class="descname">dg_all</code><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseFeps.dg_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>DataContainer with all main and subcalc free energies.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.qanalysis.QAnalyseFeps.lra_stats">
+<code class="descname">lra_stats</code><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseFeps.lra_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate average and st.dev of LRA and reorg energies.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.qanalysis.QAnalyseFeps.plotdata">
+<code class="descname">plotdata</code><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseFeps.plotdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return &#8216;useful data&#8217; as a dictionary of PlotData objects.</p>
+<p>Each qfep_output will be a subplot in one PlotData, except in the case
+of LRA where there is only one subplot: the average and stdev over all
+outputs.</p>
+<p>Useful data:
+- All energies from part 0
+- FEP back, forward and average dG profiles vs lambda
+- FEP delta (forward - reverse) vs lambda
+- Binning overlap/histograms
+- Full dGg profile (not bin-averaged) for first output
+- LRA contributions (statistics)
+- Free energy profiles vs Egap (bin-averaged)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.qanalysis.QAnalyseFeps.stats_str">
+<code class="descname">stats_str</code><a class="headerlink" href="#Qpyl.qanalysis.QAnalyseFeps.stats_str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Free energy stats in string format.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.qgeninp">
+<span id="qpyl-qgeninp-module"></span><h2>Qpyl.qgeninp module<a class="headerlink" href="#module-Qpyl.qgeninp" title="Permalink to this headline">¶</a></h2>
+<p>This module contains functions for generating FEP and
+equilibration inputs for Qdyn.
+Example of procedure files can be found in
+qtools/template_examples/</p>
+<dl class="exception">
+<dt id="Qpyl.qgeninp.QGenfepsError">
+<em class="property">exception </em><code class="descclassname">Qpyl.qgeninp.</code><code class="descname">QGenfepsError</code><a class="reference internal" href="_modules/Qpyl/qgeninp.html#QGenfepsError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qgeninp.QGenfepsError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.qgeninp.QGenrelaxError">
+<em class="property">exception </em><code class="descclassname">Qpyl.qgeninp.</code><code class="descname">QGenrelaxError</code><a class="reference internal" href="_modules/Qpyl/qgeninp.html#QGenrelaxError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qgeninp.QGenrelaxError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.qgeninp.genfeps">
+<code class="descclassname">Qpyl.qgeninp.</code><code class="descname">genfeps</code><span class="sig-paren">(</span><em>fep_proc_file</em>, <em>relax_input_file</em>, <em>restraint</em>, <em>energy_list_fn</em>, <em>frames</em>, <em>repeats</em>, <em>fromlambda</em>, <em>prefix</em>, <em>first_frame_eq</em>, <em>pdb_file=None</em>, <em>fep_file=None</em>, <em>runscript_file=None</em>, <em>ignore_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qgeninp.html#genfeps"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qgeninp.genfeps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates inputs for a FEP/MD simulation with Q (Qdyn).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>fep_proc_file</strong> (<em>string</em>) &#8211; genfeps procedure file pathname</li>
+<li><strong>relax_input_file</strong> (<em>string</em>) &#8211; pathname of last relaxation step input</li>
+<li><strong>restraint</strong> (<em>string</em>) &#8211; restraint coordinate (a)</li>
+<li><strong>energy_list_fn</strong> (<em>string</em>) &#8211; name of file that will contain the en.f.list</li>
+<li><strong>frames</strong> (<em>int</em>) &#8211; number of FEP frames</li>
+<li><strong>repeats</strong> (<em>int</em>) &#8211; number of repeats/replicas</li>
+<li><strong>fromlambda</strong> (<em>float</em>) &#8211; starting lambda (0.0 - 1.0)</li>
+<li><strong>prefix</strong> (<em>string</em>) &#8211; prefix for repeat directories</li>
+<li><strong>first_frame_eq</strong> (<em>boolean</em>) &#8211; use equil instead of first frame (cadee)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Optional args:</dt>
+<dd>pdb_file (string):  pdb pathname (used to convert placeholders)
+fep_file (string):  alternate fep file pathname (ignoring input&#8217;s fep)
+runscript_file (string):  slurm/sge run script
+ignore_errors (boolean):  passed to QStruct and QDynInp - write to                                  logger instead of raising exceptions on                                  non-critical things</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of created replica folders</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">rep_dirs (list)</td>
+</tr>
+</tbody>
+</table>
+<p>(a) Restraint coordinate can be set to:
+&#8216;inp&#8217; - whatever is defined in relax_input_file
+&#8216;top&#8217; - topology
+&#8216;relax&#8217; - endpoint of relaxation</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.qgeninp.genrelax">
+<code class="descclassname">Qpyl.qgeninp.</code><code class="descname">genrelax</code><span class="sig-paren">(</span><em>relax_proc_file</em>, <em>outdir</em>, <em>restraint</em>, <em>top_file=None</em>, <em>fep_file=None</em>, <em>runscript_file=None</em>, <em>pdb_file=None</em>, <em>cont_file=None</em>, <em>ignore_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qgeninp.html#genrelax"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qgeninp.genrelax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates inputs for an MD simulation with Q (Qdyn).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>relax_proc_file</strong> (<em>string</em>) &#8211; genrelax procedure file pathname</li>
+<li><strong>outdir</strong> (<em>string</em>) &#8211; output directory</li>
+<li><strong>restraint</strong> (<em>string</em>) &#8211; restraint coordinate (a)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>Optional arguments (b)</dt>
+<dd>top_file (string):  Q topology pathname
+fep_file (string):  fep file pathname
+runscript_file (string):  slurm/sge run script
+pdb_file (string):  pdb pathname (used to convert placeholders)
+cont_file (string):  pathname of previous Qdyn input (continuation)
+ignore_errors (boolean):  passed to QStruct and QDynInp - write to                                  logger instead of raising exceptions on                                  non-critical things</dd>
+</dl>
+<p>(a) Restraint coordinate can be set to:
+&#8216;top&#8217; - topology
+&#8216;cont_inp&#8217; - whatever is defined in cont_file
+&#8216;cont_final&#8217; - endpoint of previous simulation                   (final restart of cont_file)</p>
+<ol class="loweralpha simple" start="2">
+<li>top_file and cont_file are mutually exclusive, one of them has to    be provided</li>
+</ol>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.qgroupcontrib">
+<span id="qpyl-qgroupcontrib-module"></span><h2>Qpyl.qgroupcontrib module<a class="headerlink" href="#module-Qpyl.qgroupcontrib" title="Permalink to this headline">¶</a></h2>
+<p>This module contains the QGroupContrib class for calculating
+LRA group contributions.
+It also defines a custom exception class - QGroupContribError.</p>
+<dl class="class">
+<dt id="Qpyl.qgroupcontrib.QGroupContrib">
+<em class="property">class </em><code class="descclassname">Qpyl.qgroupcontrib.</code><code class="descname">QGroupContrib</code><span class="sig-paren">(</span><em>qcalc_exec</em>, <em>calcdirs</em>, <em>pdb_file</em>, <em>en_list_fn</em>, <em>lambdas_A</em>, <em>lambdas_B</em>, <em>resid_first</em>, <em>resid_last</em>, <em>scale_ionized</em>, <em>nthreads</em>, <em>qmask=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qgroupcontrib.html#QGroupContrib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qgroupcontrib.QGroupContrib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for calculating LRA group contributions from EVB trajectories.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>qcalc_exec</strong> (<em>string</em>) &#8211; path of qcalc executable</li>
+<li><strong>calcdirs</strong> (<em>list of strings</em>) &#8211; list of directories</li>
+<li><strong>pdb_file</strong> (<em>string</em>) &#8211; PDB created with qprep</li>
+<li><strong>en_list_fn</strong> (<em>string</em>) &#8211; energy-files-list filename</li>
+<li><strong>lambdas_A</strong> (<em>tuple of floats</em>) &#8211; lambdas of state A (1.0, 0.0)</li>
+<li><strong>lambdas_B</strong> (<em>tuple of floats</em>) &#8211; lambdas of state B (0.5, 0.5)</li>
+<li><strong>resid_first</strong> (<em>int</em>) &#8211; index of first residue used for calcs</li>
+<li><strong>resid_last</strong> (<em>int</em>) &#8211; index of last residue used for calcs</li>
+<li><strong>scale_ionized</strong> (<em>float</em>) &#8211; scale down ionized residues (ARG, LYS,                                HIP, GLU, ASP) by this factor                                (see doi:10.1021/jp962478o)</li>
+<li><strong>nthreads</strong> (<em>int</em>) &#8211; number of threads</li>
+<li><strong>qmask</strong> (<em>list of ints</em>) &#8211; list of atom indexes to be used as the                              Q mask for the GC calculations. By default,                              this is obtained from the FEP file.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Qpyl.qgroupcontrib.QGroupContrib.calcall">
+<code class="descname">calcall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qgroupcontrib.html#QGroupContrib.calcall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qgroupcontrib.QGroupContrib.calcall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the GC calcs, update .gcs, .failed and .gcs_stats.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.qgroupcontrib.QGroupContrib.details">
+<code class="descname">details</code><a class="headerlink" href="#Qpyl.qgroupcontrib.QGroupContrib.details" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.qgroupcontrib.QGroupContrib.get_pdbgc">
+<code class="descname">get_pdbgc</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qgroupcontrib.html#QGroupContrib.get_pdbgc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qgroupcontrib.QGroupContrib.get_pdbgc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the structure in PDB format (string) with added GC values.</p>
+<p>Fill the Occupancy fields with LRA contributions and
+Temperature factor fields with REORG contributions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.qgroupcontrib.QGroupContrib.plotdata">
+<code class="descname">plotdata</code><a class="headerlink" href="#Qpyl.qgroupcontrib.QGroupContrib.plotdata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return GC data as a dictionary of PlotData objects.</p>
+<dl class="docutils">
+<dt>Example keys in returned dictionary:</dt>
+<dd><dl class="first last docutils">
+<dt>&#8216;gc_lra_el&#8217;: PlotData of electrostatic LRA group contributions,</dt>
+<dd>one subplot - means vs residue index</dd>
+<dt>&#8216;gc_lra_el_top&#8217;: PlotData of top 20 electrostatic LRA GCs</dt>
+<dd>one subplot - means vs &#8220;resid.resname&#8221;</dd>
+<dt>&#8216;gc_lra_vdw&#8217;: PlotData of vdw LRA GCs,</dt>
+<dd>one subplot - means vs residue indexes</dd>
+<dt>&#8216;gc_reorg_el&#8217;: PlotData of el. &#8216;REORG&#8217; group contributions,</dt>
+<dd>one subplot - means vs residue index</dd>
+<dt>&#8216;gc_de1_el&#8217;: PlotData of electrostatic &lt;E1 - E2&gt;_1,</dt>
+<dd>one subplot - means vs residue index</dd>
+<dt>&#8216;gc_de2_el&#8217;: PlotData of electrostatic &lt;E1 - E2&gt;_2,</dt>
+<dd>one subplot - means vs residue index</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.qgroupcontrib.QGroupContribError">
+<em class="property">exception </em><code class="descclassname">Qpyl.qgroupcontrib.</code><code class="descname">QGroupContribError</code><a class="reference internal" href="_modules/Qpyl/qgroupcontrib.html#QGroupContribError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qgroupcontrib.QGroupContribError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.qmakefep">
+<span id="qpyl-qmakefep-module"></span><h2>Qpyl.qmakefep module<a class="headerlink" href="#module-Qpyl.qmakefep" title="Permalink to this headline">¶</a></h2>
+<p>This module contains the make_fep() function for generating Q FEP-files,
+and implements a custom exception class QMakeFepError.</p>
+<dl class="exception">
+<dt id="Qpyl.qmakefep.QMakeFepError">
+<em class="property">exception </em><code class="descclassname">Qpyl.qmakefep.</code><code class="descname">QMakeFepError</code><a class="reference internal" href="_modules/Qpyl/qmakefep.html#QMakeFepError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qmakefep.QMakeFepError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.qmakefep.make_fep">
+<code class="descclassname">Qpyl.qmakefep.</code><code class="descname">make_fep</code><span class="sig-paren">(</span><em>qmap_file</em>, <em>pdb_file</em>, <em>forcefield</em>, <em>parm_files</em>, <em>lib_files</em>, <em>ignore_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qmakefep.html#make_fep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qmakefep.make_fep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate a template FEP file for EVB simulations in Q.</p>
+<p>Parses a QMAP file (see below), state 1 structure file (PDB) and
+all states libraries and parameters, and determines the changes
+in connectivity/charges/parameters that occur between the states.</p>
+<p>QMAP is a text file that defines mappings of library ids (for each state)
+to state 1 structure/topology ids, best explained on an example:</p>
+<p>q   315.O     OHH.O     OHH.O
+q   315.H1    OHH.H1    HIP.HE2
+q   315.H2    OHH.H2    OHH.H2
+q   155.NE2   HID.NE2   HIP.NE2
+...
+n   155.CA    HID.CA    HIP.CA</p>
+<p>The first column defines the atom as being a &#8216;Q&#8217; atom or a &#8216;neighbouring&#8217;
+atom. The latter will not be included in the &#8216;Q-region&#8217; but will be
+included in the &#8216;change_bonds/change_angles...&#8217; sections in case there is a
+change in bonding/parameters outside the Q region. Additionally, you can
+define a &#8216;q&#8217; atom with &#8216;q_qcp&#8217;, which will create an additional section for
+isotopically clean masses used in QCP calculations.
+The second column is the PDB ID, comprised of residue index and atom name,
+separated by a dot.
+The third column is the library ID of this atom in state 1, comprised of
+residue name and atom name (should be the same as in the structure).
+The fourth column is the library ID of this atom in state 2.
+Additional columns can be added for other states.</p>
+<p>The returned template string contains several missing parts, denoted with
+&lt;FIX&gt;, which have to be manually replaced with appropriate values. These
+include the softpair C parameters, Morse parameters, Hij parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>qmap_file</strong> (<em>string</em>) &#8211; QMAP file path</li>
+<li><strong>pdb_file</strong> (<em>string</em>) &#8211; state 1 PDB file path (the one built with qprep)</li>
+<li><strong>forcefield</strong> (<em>string</em>) &#8211; forcefield type (see SUPPORTED_FF)</li>
+<li><strong>prms_files</strong> (<em>list</em>) &#8211; Q parameter-file paths</li>
+<li><strong>libs_files</strong> (<em>list</em>) &#8211; Q library-file paths</li>
+<li><strong>ignore_errors</strong> (<em>boolean</em><em>, </em><em>optional</em>) &#8211; don&#8217;t fail on certain non critical                                           errors</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">fepfile template</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first">fepstr (string)</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last"><a class="reference internal" href="#Qpyl.qmakefep.QMakeFepError" title="Qpyl.qmakefep.QMakeFepError"><code class="xref py py-exc docutils literal"><span class="pre">QMakeFepError</span></code></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.qmapping">
+<span id="qpyl-qmapping-module"></span><h2>Qpyl.qmapping module<a class="headerlink" href="#module-Qpyl.qmapping" title="Permalink to this headline">¶</a></h2>
+<p>This module contains the QMapper class for automating the calculation and
+calibration of EVB reaction free profiles (via Qfep).</p>
+<dl class="class">
+<dt id="Qpyl.qmapping.QMapper">
+<em class="property">class </em><code class="descclassname">Qpyl.qmapping.</code><code class="descname">QMapper</code><span class="sig-paren">(</span><em>qfep_exec</em>, <em>mapdirs</em>, <em>en_list_fn</em>, <em>hij</em>, <em>alpha</em>, <em>temperature</em>, <em>gas_const</em>, <em>points_skip</em>, <em>gap_bins</em>, <em>minpts_bin</em>, <em>nthreads</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qmapping.html#QMapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qmapping.QMapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>&#8216;Maps&#8217; EVB simulations in specified directories.</p>
+<p>Basically a wrapper around Qpyl.qfep.QFep</p>
+<p>At the moment, supports only:
+- 2 states
+- no predefined Hij
+- single, constant Hij (mu=eta=r0 = 0)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>qfep_exec</strong> (<em>string</em>) &#8211; qfep executable path</li>
+<li><strong>mapdirs</strong> (<em>list of strings</em>) &#8211; list of directories</li>
+<li><strong>en_list_fn</strong> (<em>string</em>) &#8211; energy-files-list filename</li>
+<li><strong>hij</strong> (<em>float</em>) &#8211; H12_A offdiagonal constant</li>
+<li><strong>alpha</strong> (<em>float</em>) &#8211; state2 alpha shift</li>
+<li><strong>temperature</strong> (<em>float</em>) &#8211; temperature in Kelvin</li>
+<li><strong>gas_const</strong> (<em>float</em>) &#8211; gas_constant in kcal/mol/K</li>
+<li><strong>points_skip</strong> (<em>int</em>) &#8211; number of energy points to skip in each frame</li>
+<li><strong>gap_bins</strong> (<em>int</em>) &#8211; number of gap-bins</li>
+<li><strong>minpts_bin</strong> (<em>int</em>) &#8211; minimum number of points per bin</li>
+<li><strong>nthreads</strong> (<em>int</em>) &#8211; number of threads</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>QMapper.parms contains mapping parameters, any direct change will be
+applied in the mapping.
+QMapper.mapped contains the inputs and outputs of succesfully mapped dirs
+# { &#8216;directory_path1&#8217;: (qfep_input_string, qfep_output_string), ... }
+QMapper.failed contains the error messages of failed dirs
+# { &#8216;directory_path2&#8217;: &#8216;error_message&#8217;, ... }</p>
+<p>QMapper.mapall() maps the directories and updates .mapped and .failed
+QMapper.fit_to_reference() fits and updates &#8216;hij&#8217; and &#8216;alpha&#8217; parameters</p>
+<dl class="attribute">
+<dt id="Qpyl.qmapping.QMapper.details">
+<code class="descname">details</code><a class="headerlink" href="#Qpyl.qmapping.QMapper.details" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.qmapping.QMapper.fit_to_reference">
+<code class="descname">fit_to_reference</code><span class="sig-paren">(</span><em>dga_ref</em>, <em>dg0_ref</em>, <em>step_size=10.0</em>, <em>threshold=0.005</em>, <em>max_iterations=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qmapping.html#QMapper.fit_to_reference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qmapping.QMapper.fit_to_reference" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit Hij and alpha to obtain desired dG* and dG0 values.</p>
+<p>Updates &#8216;hij&#8217; and &#8216;alpha&#8217; parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>dga_ref</strong> (<em>float</em>) &#8211; reference activation free energy</li>
+<li><strong>dg0_ref</strong> (<em>float</em>) &#8211; reference reaction free energy</li>
+<li><strong>step_size</strong> (<em>float</em><em>, </em><em>optional</em>) &#8211; step size for calculating the                                         gradient, default=10.0</li>
+<li><strong>threshold</strong> (<em>float</em><em>, </em><em>optional</em>) &#8211; convergence threshold, default=0.005</li>
+<li><strong>max_iterations</strong> (<em>int</em><em>, </em><em>optional</em>) &#8211; max number of iterations,                                            default=10</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">True if succeeded, False if max_iterations was                        reached.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">(boolean)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Raises QMapperError if all of the directories fail to map.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.qmapping.QMapper.input_parms_str">
+<code class="descname">input_parms_str</code><a class="headerlink" href="#Qpyl.qmapping.QMapper.input_parms_str" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.qmapping.QMapper.mapall">
+<code class="descname">mapall</code><span class="sig-paren">(</span><em>_supress_info=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qmapping.html#QMapper.mapall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qmapping.QMapper.mapall" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8216;Map&#8217; all directories and update QMapper.mapped and QMapper.failed</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.qmapping.QMapper.mapsingle">
+<code class="descname">mapsingle</code><span class="sig-paren">(</span><em>mapdir</em>, <em>_qfep=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/qmapping.html#QMapper.mapsingle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qmapping.QMapper.mapsingle" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#8216;Map&#8217; a single directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>mapdir</strong> (<em>string</em>) &#8211; directory path</li>
+<li><strong>_qfep</strong> (<a class="reference internal" href="Qpyl.core.html#Qpyl.core.qfep.QFep" title="Qpyl.core.qfep.QFep"><em>QFep</em></a>) &#8211; internal, for threading</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">QFep input string used
+qfep_out_str (string):  QFep output string returned</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">qfep_inp_str (string)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Raises QMapperError</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.qmapping.QMapperError">
+<em class="property">exception </em><code class="descclassname">Qpyl.qmapping.</code><code class="descname">QMapperError</code><a class="reference internal" href="_modules/Qpyl/qmapping.html#QMapperError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.qmapping.QMapperError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Qpyl.core.html" class="btn btn-neutral float-right" title="Qpyl.core package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to Qpyl’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Miha Purg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.6.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -23,11 +23,12 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-#
-# Module for analysing Q fep and Q dynamics output (logfiles).
-# Two main classes are QAnalyseFeps and QAnalyseDyns.
-# See q_analysefeps.py and q_analysedyns.py for usage examples.
-#
+"""
+Module for analysing Qfep and Qdyn output (logfiles).
+Two main classes are QAnalyseFeps and QAnalyseDyns.
+See q_analysefeps.py and q_analysedyns.py for usage.
+"""
+
 
 import os
 import re
@@ -48,33 +49,28 @@ class QAnalyseFeps(object):
     extracts all data to PlotData objects via neat functions.
 
     Args:
-        qfep_outputs (list of strings or list of tuples(string, string)): 
+        qfep_outputs (list of strings or list of tuples(string, string)): \
                     pathnames of qfep outputs or (name, output_string) tuples
 
-        lra_lambdas (list of floats, optional):  lambdas at which LRA energies
-                                                 should be calculated at.
-                                                 Usual case is (1.0, 0.0).
+        lra_lambdas (list of floats, optional):  lambdas at which LRA energies\
+                                                 should be calculated at.\
+                                                 Usual case is (1.0, 0.0).\
                                                  Default = None (no LRA calcs)
-                                                                   instead of 
         _parent (QAnalyseFeps): used internally for QCP and exclusions
-        _subcalcs (string): used internally for QCP and exclusions
+        _subcalcs (string): used internally for QCP and exclusions 
 
-
-    Usage (printing statistics and failures, see q_analysefeps.py):
-
-    qos = [os.path.join(md, "qfep.log") for md in sorted(mapdirs)]
-    qaf = QAnalyseFeps(qos, lra_lambdas=(1.0, 0.0))
-
-    print "Statistics"
-    print qaf.stats_str
-    for sub_calc_key, sub_calc in sorted(qaf.sub_calcs.iteritems()):
-        print sub_calc.stats_str
-
-    if qaf.failed:
-        print "Failed to parse:"
-    for failed_path, failed_msg in sorted(qaf.failed.iteritems()):
-        relp = os.path.relpath(failed_path)
-        print "-> {}: {}".format(relp, failed_msg)
+    Examples:
+        >>> qos = [os.path.join(md, "qfep.log") for md in sorted(mapdirs)]
+        >>> qaf = QAnalyseFeps(qos, lra_lambdas=(1.0, 0.0))
+        >>> print qaf.stats_str
+        # prints statistics
+        >>> for sub_calc_key, sub_calc in sorted(qaf.sub_calcs.iteritems()):
+        >>>     print sub_calc.stats_str
+        # prints subcalculation (QCP, GE) statistics
+        >>> for failed_path, failed_msg in sorted(qaf.failed.iteritems()):
+        >>>     relp = os.path.relpath(failed_path)
+        >>>     print "-> {}: {}".format(relp, failed_msg)
+        # prints failed
 
     """
 
@@ -478,12 +474,12 @@ class QAnalyseDyns(object):
         time_unit (string): fs,ps,ns (optional, default is ps)
         step_size (float): use in case the output reads 0.000
 
-    Usage:
+    Examples:
         >>> qads = QAnalyseDyns(["fep_000.log", "fep_001.log"], timeunit="ps")
         # get average temperatures by combining all outputs
         >>> print qads.get_temp_stats()
 
-    Raises QAnalyseDynsError if it fails to parse an output.
+    Raises QAnalyseDynsError  (if it fails to parse an output)
 
     """ 
     def __init__(self, qdyn_outputs, time_unit="ps", step_size=None):
@@ -508,12 +504,13 @@ class QAnalyseDyns(object):
 
 
     def get_temps(self, stride=1):
-        """
-        Get temperatures from all logfiles combined.
+        """Get temperatures from all logfiles combined.
+
         Args:
-           stride (int, optional):  use only every Nth point, default=1
+            stride (int, optional):  use only every Nth point, default=1
+
         Returns:
-           temperatures (DataContainer)
+            temperatures (DataContainer)
         """
 
         # "Time", "T_tot", "T_free", "T_free_solute", "T_free_solvent"

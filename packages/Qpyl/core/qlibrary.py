@@ -25,6 +25,10 @@
 #
 #
 #
+"""
+This module implements the QLib class for reading and writing Q (and other)
+library files.
+"""
 
 import re
 import logging
@@ -45,8 +49,8 @@ class QLib(object):
 
     Args:
        ff_type (string):  Either 'oplsaa' or 'amber'
-       ignore_errors (boolean):  Optional, default is False.
-                                 If set to True, some non-vital
+       ignore_errors (boolean):  Optional, default is False.\
+                                 If set to True, some non-vital\
                                  exceptions are logged instead.
     """
 
@@ -395,6 +399,9 @@ class QLib(object):
         NOTE: Extracts only improper definitions for residues already
               defined in QLib.residue_dict
               (usually obtained with read_amber_lib or read_mol2)
+
+        Args:
+            prepin_file (string): Amber prepin file pathname
         """
 
         if self.ff_type != "amber":
@@ -466,7 +473,7 @@ class QLib(object):
 
         Args:
             ffld_file (string):  path/name of ffld file
-            qstruct (qstructure.QStruct):  object created with the same
+            qstruct (qstructure.QStruct):  object created with the same\
                                            structure file as the ffld
 
         The second argument is a QStruct object created with
@@ -614,7 +621,7 @@ class QLib(object):
         Return the whole Q library in string format.
 
         To print specific residues, use
-          self.residue_dict[name].get_str()
+        self.residue_dict[name].get_str()
         """
         out = ""
         for residue in sorted(self.residue_dict.values(),
@@ -664,10 +671,10 @@ class _LibResidue(object):
     """Class containing library residue entries.
 
     Provides direct access to properties of specific
-      residues (atoms, charges, bonds, impropers...) and
-      several useful functions for checking the
-      integrity of the entry, rescaling charges and for
-      printing it out.
+    residues (atoms, charges, bonds, impropers...) and
+    several useful functions for checking the
+    integrity of the entry, rescaling charges and for
+    printing it out.
 
     Args:
         resname (string):   three letter residue identifier (GLY, ARG...)
@@ -801,8 +808,8 @@ class _LibResidue(object):
 
         Args:
             atoms (list):  List of atom names
-            threshold:  Maximum difference between sum and nearest integer.
-                        If the difference is greater than this value,
+            threshold:  Maximum difference between sum and nearest integer.\
+                        If the difference is greater than this value,\
                         QLibError, is raised.
 
         Used primarily in oplsaa for charge groups, or to fix rounding errors.

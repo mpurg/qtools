@@ -1,0 +1,1324 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Qpyl.core package &mdash; Qpyl 0.6.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Qpyl package" href="Qpyl.html" /> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Qpyl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="Qpyl.html">Qpyl package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="Qpyl.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Qpyl.core package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-Qpyl.core.qcalc">Qpyl.core.qcalc module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-Qpyl.core.qdyn">Qpyl.core.qdyn module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-Qpyl.core.qfep">Qpyl.core.qfep module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-Qpyl.core.qlibrary">Qpyl.core.qlibrary module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-Qpyl.core.qparameter">Qpyl.core.qparameter module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-Qpyl.core.qpotential">Qpyl.core.qpotential module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-Qpyl.core.qstructure">Qpyl.core.qstructure module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-Qpyl.core.qtopology">Qpyl.core.qtopology module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.html#module-Qpyl.common">Qpyl.common module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.html#module-Qpyl.plotdata">Qpyl.plotdata module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.html#module-Qpyl.qanalysis">Qpyl.qanalysis module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.html#module-Qpyl.qgeninp">Qpyl.qgeninp module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.html#module-Qpyl.qgroupcontrib">Qpyl.qgroupcontrib module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.html#module-Qpyl.qmakefep">Qpyl.qmakefep module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Qpyl.html#module-Qpyl.qmapping">Qpyl.qmapping module</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Qpyl</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="Qpyl.html">Qpyl package</a> &raquo;</li>
+        
+      <li>Qpyl.core package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/Qpyl.core.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-Qpyl.core">
+<span id="qpyl-core-package"></span><h1>Qpyl.core package<a class="headerlink" href="#module-Qpyl.core" title="Permalink to this headline">¶</a></h1>
+<p>This subpackage contains the core functionality of Qpyl.</p>
+<p>Modules <em>qdyn</em>, <em>qfep</em>, and <em>qcalc</em> are used for wrapping Q executables,
+generating inputs and parsing outputs.
+Modules  <em>qparameter</em> and <em>qlibrary</em> are used for generating, converting,
+and parsing Q parameter files. Reading of Amber and Macromodel formats is
+also supported.
+<em>qstructure</em> contains classes for reading and writing structure files.
+<em>qtopology</em> implements an internal topology builder for mapping the system&#8217;s bonding
+patterns with the parameters. In conjunction with the force-field potential
+functions implemented in <em>qpotential</em> one can use the topology object for direct
+evaluation of individual topological components of the system.</p>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-Qpyl.core.qcalc">
+<span id="qpyl-core-qcalc-module"></span><h2>Qpyl.core.qcalc module<a class="headerlink" href="#module-Qpyl.core.qcalc" title="Permalink to this headline">¶</a></h2>
+<p>Module for wrapping Qcalc functionality.
+Contains classes for running Qcalc (QCalc), generating inputs (QCalcInput),
+parsing output (QCalcOutput).</p>
+<dl class="class">
+<dt id="Qpyl.core.qcalc.QCalc">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qcalc.</code><code class="descname">QCalc</code><span class="sig-paren">(</span><em>qcalc_exec</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qcalc.html#QCalc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qcalc.QCalc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for running Qcalc.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qcalc_exec</strong> (<em>string</em>) &#8211; Qcalc executable filename</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Qpyl.core.qcalc.QCalc.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>qcalc_input_str</em>, <em>workdir=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qcalc.html#QCalc.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qcalc.QCalc.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run the calculation and parse the output.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>qcalc_input_str</strong> (<em>string</em>) &#8211; qcalc input</li>
+<li><strong>workdir</strong> (<em>string</em><em>, </em><em>optional</em>) &#8211; working directory</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">qcalc stdout</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">qcalc_output_str (string)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Raises QCalcError.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.core.qcalc.QCalcError">
+<em class="property">exception </em><code class="descclassname">Qpyl.core.qcalc.</code><code class="descname">QCalcError</code><a class="reference internal" href="_modules/Qpyl/core/qcalc.html#QCalcError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qcalc.QCalcError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="Qpyl.core.qcalc.QCalcInput">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qcalc.</code><code class="descname">QCalcInput</code><span class="sig-paren">(</span><em>top</em>, <em>dcds</em>, <em>fep=None</em>, <em>lambdas=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qcalc.html#QCalcInput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for creating qcalc inputs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>top</strong> (<em>string</em>) &#8211; topology filename</li>
+<li><strong>dcds</strong> (<em>list of strings</em>) &#8211; trajectory filenames</li>
+<li><strong>fep</strong> (<em>string</em><em>, </em><em>optional</em>) &#8211; FEP file filename</li>
+<li><strong>lambdas</strong> (<em>list of floats</em><em>, </em><em>optional</em>) &#8211; lambda values</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="Qpyl.core.qcalc.QCalcInput.CALC_ANGLE">
+<code class="descname">CALC_ANGLE</code><em class="property"> = 4</em><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput.CALC_ANGLE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.core.qcalc.QCalcInput.CALC_DIST">
+<code class="descname">CALC_DIST</code><em class="property"> = 3</em><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput.CALC_DIST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.core.qcalc.QCalcInput.CALC_RES_NB">
+<code class="descname">CALC_RES_NB</code><em class="property"> = 8</em><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput.CALC_RES_NB" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.core.qcalc.QCalcInput.CALC_RMSD">
+<code class="descname">CALC_RMSD</code><em class="property"> = 1</em><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput.CALC_RMSD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.core.qcalc.QCalcInput.CALC_RMSF">
+<code class="descname">CALC_RMSF</code><em class="property"> = 13</em><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput.CALC_RMSF" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.core.qcalc.QCalcInput.CALC_TORSION">
+<code class="descname">CALC_TORSION</code><em class="property"> = 5</em><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput.CALC_TORSION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qcalc.QCalcInput.add_angle">
+<code class="descname">add_angle</code><span class="sig-paren">(</span><em>atom1</em>, <em>atom2</em>, <em>atom3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qcalc.html#QCalcInput.add_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput.add_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a angle/angle_energy calculation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>atom1</strong> (<em>int</em>) &#8211; index of atom in topology</li>
+<li><strong>atom2</strong> (<em>int</em>) &#8211; index of atom in topology</li>
+<li><strong>atom3</strong> (<em>int</em>) &#8211; index of atom in topology</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qcalc.QCalcInput.add_dist">
+<code class="descname">add_dist</code><span class="sig-paren">(</span><em>atom1</em>, <em>atom2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qcalc.html#QCalcInput.add_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput.add_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a distance/bond_energy calculation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>atom1</strong> (<em>int</em>) &#8211; index of atom in topology</li>
+<li><strong>atom2</strong> (<em>int</em>) &#8211; index of atom in topology</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qcalc.QCalcInput.add_residue_nb_mon">
+<code class="descname">add_residue_nb_mon</code><span class="sig-paren">(</span><em>resid_first</em>, <em>resid_last</em>, <em>masks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qcalc.html#QCalcInput.add_residue_nb_mon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput.add_residue_nb_mon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a residue nonbond monitor calculation.</p>
+<p>This is used mostly for calculating LRA group contributions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>resid_first</strong> (<em>int</em>) &#8211; index of first residue</li>
+<li><strong>resid_las</strong> (<em>int</em>) &#8211; index of last residue</li>
+<li><strong>masks</strong> (<em>list of strings</em>) &#8211; masks used to describe the Q region                                      (eg. [&#8220;res 314&#8221;, &#8220;1245&#8221;, &#8220;1246&#8221;, ...])</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qcalc.QCalcInput.add_rmsd">
+<code class="descname">add_rmsd</code><span class="sig-paren">(</span><em>masks</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qcalc.html#QCalcInput.add_rmsd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput.add_rmsd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a RMSD calculation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>masks</strong> (<em>list of strings</em>) &#8211; masks used for the calculation
+(eg. [&#8220;res 314&#8221;, &#8220;1245&#8221;, &#8220;1246&#8221;, ...])</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qcalc.QCalcInput.add_torsion">
+<code class="descname">add_torsion</code><span class="sig-paren">(</span><em>atom1</em>, <em>atom2</em>, <em>atom3</em>, <em>atom4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qcalc.html#QCalcInput.add_torsion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput.add_torsion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a torsion/torsion_energy calculation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>atom1</strong> (<em>int</em>) &#8211; index of atom in topology</li>
+<li><strong>atom2</strong> (<em>int</em>) &#8211; index of atom in topology</li>
+<li><strong>atom3</strong> (<em>int</em>) &#8211; index of atom in topology</li>
+<li><strong>atom4</strong> (<em>int</em>) &#8211; index of atom in topology</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qcalc.QCalcInput.get_string">
+<code class="descname">get_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qcalc.html#QCalcInput.get_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qcalc.QCalcInput.get_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return string representation of qcalc input.</p>
+<p>Raises QCalcError if no actions were defined.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Qpyl.core.qcalc.QCalcOutput">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qcalc.</code><code class="descname">QCalcOutput</code><span class="sig-paren">(</span><em>qcalc_output</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qcalc.html#QCalcOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qcalc.QCalcOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for parsing qcalc output.</p>
+<p>It stores all the data in DataContainer objects inside the
+dictionary &#8216;results&#8217;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qcalc_output</strong> (<em>string</em>) &#8211; qcalc output</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.core.qdyn">
+<span id="qpyl-core-qdyn-module"></span><h2>Qpyl.core.qdyn module<a class="headerlink" href="#module-Qpyl.core.qdyn" title="Permalink to this headline">¶</a></h2>
+<p>Module for wrapping Qdyn functionality.
+Contains classes for generating and parsing Qdyn inputs (QDynInput)
+and parsing Qdyn output (QDynOutput).</p>
+<dl class="class">
+<dt id="Qpyl.core.qdyn.QDynInput">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qdyn.</code><code class="descname">QDynInput</code><span class="sig-paren">(</span><em>input_string=''</em>, <em>parameters={}</em>, <em>ignore_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qdyn.html#QDynInput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qdyn.QDynInput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Used for parsing, modifying and generating QDyn inputs.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_string</strong> (<em>str</em>) &#8211; string of a qdyn input file</li>
+<li><strong>parameters</strong> (<em>dict</em>) &#8211; { &#8220;MD&#8221;: { &#8220;steps&#8221;:10000,                                        &#8220;stepsize&#8221;:1.00, ... },                                        ... }</li>
+<li><strong>ignore_errors</strong> (<em>boolean</em><em>, </em><em>optional</em>) &#8211; if set, write error messages to                                              logger.warning instead of raising                                             QDynInputError</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">try</span><span class="p">:</span>
+<span class="go"># load and parse</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">inp</span> <span class="o">=</span> <span class="n">QDynInput</span><span class="p">(</span> <span class="n">input_file_string</span> <span class="p">)</span>
+<span class="go"># or inp=QDynInput( parameters={ &quot;md&quot;: ... } )</span>
+<span class="go"># update with another input and save the overridden paramaters</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">overridden_parms</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">input_file_2_string</span><span class="p">)</span>
+<span class="go"># update with a dictionary</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">new_parameters</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;md&quot;</span><span class="p">:</span>  <span class="p">{</span> <span class="s2">&quot;steps&quot;</span> <span class="p">:</span> <span class="mi">100000</span> <span class="p">},</span>                                          <span class="p">{</span> <span class="s2">&quot;temperature&quot;</span> <span class="p">:</span> <span class="mi">50</span> <span class="p">}</span> <span class="p">}</span> <span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">inp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">new_parameters</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># check the input</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">inp</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="c1"># get the input string</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">new_inp_str</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">get_string</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">except</span> <span class="n">QDynInputError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="nb">print</span> <span class="s2">&quot;Problem with input file:&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="Qpyl.core.qdyn.QDynInput.check">
+<code class="descname">check</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qdyn.html#QDynInput.check"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qdyn.QDynInput.check" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for missing parameters.</p>
+<p>Raises QDynInputError if required parameters are missing.
+(is not all knowing, please don&#8217;t rely to much on it)
+If &#8216;ignore_errors&#8217; is set, it logs warnings instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qdyn.QDynInput.get_string">
+<code class="descname">get_string</code><span class="sig-paren">(</span><em>check=True</em>, <em>sort=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qdyn.html#QDynInput.get_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qdyn.QDynInput.get_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the input as a string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>check</strong> (<em>boolean</em><em>, </em><em>optional</em>) &#8211; if True (default), call self.check()</li>
+<li><strong>sort</strong> (<em>boolean</em><em>, </em><em>optional</em>) &#8211; if True (default), sort the sections                                        and keywords according to the order                                        in which they appear in Q_PARAMETERS</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qdyn.QDynInput.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>input_string=None</em>, <em>parameters=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qdyn.html#QDynInput.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qdyn.QDynInput.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update/modify the parameters.</p>
+<p>Updates the parameters with either (or both) an input string or
+a parameter dictionary. Either argument works, parameters
+overwrites, no argument fails.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.core.qdyn.QDynInputError">
+<em class="property">exception </em><code class="descclassname">Qpyl.core.qdyn.</code><code class="descname">QDynInputError</code><a class="reference internal" href="_modules/Qpyl/core/qdyn.html#QDynInputError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qdyn.QDynInputError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="Qpyl.core.qdyn.QDynOutput">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qdyn.</code><code class="descname">QDynOutput</code><span class="sig-paren">(</span><em>qdyn_output</em>, <em>time_unit='ps'</em>, <em>step_size=None</em>, <em>start_time=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qdyn.html#QDynOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qdyn.QDynOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for parsing Qdyn output and storing the data.</p>
+<p>Supports Qdyn versions 5.10 or higher.
+Typically used indirectly by wrapper QAnalyseDyns.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>qdyn_output</strong> (<em>string</em>) &#8211; Qdyn output filename</li>
+<li><strong>time_unit</strong> (<em>string</em>) &#8211; fs,ps,ns (optional, default is ps)</li>
+<li><strong>step_size</strong> (<em>float</em>) &#8211; use in case the output reads 0.000</li>
+<li><strong>start_time</strong> (<em>float</em>) &#8211; redefine the start time in given units                            in case of continuation simulation (default is 0)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p># Load a qdyn output
+&gt;&gt;&gt; qdo = QDynOutput(&#8220;qdyn.log&#8221;)
+# list
+&gt;&gt;&gt; print qdo.data_EQ_Q[0].get_rows([&#8220;Time&#8221;, &#8220;El&#8221;])
+# print out the Q-Q electrostatic energy
+&gt;&gt;&gt; print qdo.data_EQ_Q[0].get_rows([&#8220;Time&#8221;, &#8220;El&#8221;])</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.core.qdyn.QDynOutputError">
+<em class="property">exception </em><code class="descclassname">Qpyl.core.qdyn.</code><code class="descname">QDynOutputError</code><a class="reference internal" href="_modules/Qpyl/core/qdyn.html#QDynOutputError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qdyn.QDynOutputError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.core.qfep">
+<span id="qpyl-core-qfep-module"></span><h2>Qpyl.core.qfep module<a class="headerlink" href="#module-Qpyl.core.qfep" title="Permalink to this headline">¶</a></h2>
+<p>Module for wrapping Qfep functionality.
+Contains classes for generating Qfep inputs (QFepInput),
+performing system calls to Qfep (QFep), and parsing Qfep output (QFepOutput).</p>
+<dl class="class">
+<dt id="Qpyl.core.qfep.QFep">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qfep.</code><code class="descname">QFep</code><span class="sig-paren">(</span><em>qfep_exec</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qfep.html#QFep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qfep.QFep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for running Qfep.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>qfep_exec</strong> (<em>string</em>) &#8211; Qfep executable path</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Qpyl.core.qfep.QFep.run">
+<code class="descname">run</code><span class="sig-paren">(</span><em>qfep_input_str</em>, <em>workdir=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qfep.html#QFep.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qfep.QFep.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run qfep on the input string and return output.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>qfep_input_str</strong> (<em>string</em>) &#8211; qfep input</li>
+<li><strong>workdir</strong> (<em>string</em><em>, </em><em>optional</em>) &#8211; working directory</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">qfep stdout</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">qfep_output_str  (string)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Raises QFepError on OSError or stderr.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.core.qfep.QFepError">
+<em class="property">exception </em><code class="descclassname">Qpyl.core.qfep.</code><code class="descname">QFepError</code><a class="reference internal" href="_modules/Qpyl/core/qfep.html#QFepError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qfep.QFepError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="Qpyl.core.qfep.QFepInput">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qfep.</code><code class="descname">QFepInput</code><span class="sig-paren">(</span><em>energy_files</em>, <em>hij</em>, <em>alpha</em>, <em>temperature</em>, <em>gas_const</em>, <em>points_skip</em>, <em>gap_bins</em>, <em>minpts_bin</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qfep.html#QFepInput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qfep.QFepInput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for creating qfep inputs.</p>
+<p>At the moment, supports only:
+- 2 states
+- no predefined Hij
+- single, constant Hij (mu=eta=r0 = 0)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>energy_files</strong> (<em>list of strings</em>) &#8211; list of energy files</li>
+<li><strong>hij</strong> (<em>float</em>) &#8211; H12_A offdiagonal constant</li>
+<li><strong>alpha</strong> (<em>float</em>) &#8211; state2 alpha shift</li>
+<li><strong>temperature</strong> (<em>float</em>) &#8211; temperature in Kelvin</li>
+<li><strong>gas_const</strong> (<em>float</em>) &#8211; gas_constant in kcal/mol/K</li>
+<li><strong>points_skip</strong> (<em>int</em>) &#8211; number of energy points to skip in each frame</li>
+<li><strong>gap_bins</strong> (<em>int</em>) &#8211; number of gap-bins</li>
+<li><strong>minpts_bin</strong> (<em>int</em>) &#8211; minimum number of points per bin</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Qpyl.core.qfep.QFepInput.get_string">
+<code class="descname">get_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qfep.html#QFepInput.get_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qfep.QFepInput.get_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return input string for Qfep</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Qpyl.core.qfep.QFepOutput">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qfep.</code><code class="descname">QFepOutput</code><span class="sig-paren">(</span><em>qfep_output</em>, <em>_calc_index=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qfep.html#QFepOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qfep.QFepOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for parsing and analysing Qfep output.</p>
+<p>All data is stored in DataContainer objects in separate
+_QFepPart0/1/2/3 objects:
+QFepOutput.part0.data[1].get_rows(columns=[&#8220;EQtot&#8221;])
+QFepOutput.part2.data.get_rows(columns=[&#8220;Egap&#8221;, &#8220;dGg&#8221;])</p>
+<p>Some special data can be obtained directly:
+QFepOutput.dGa  # activation free energy
+QFepOutput.dG0  # reaction free energy</p>
+<p>Results of exclusion and QCP calculations are stored in dictionaries
+QFepOutput.exclusions and QanalyseMap.QCP as QFepOutput objects.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>qfep_output</strong> (<em>string</em>) &#8211; qfep output</li>
+<li><strong>_calc_index</strong> (<em>int</em>) &#8211; used internally for exclusions and QCP</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.core.qfep.QFepOutputError">
+<em class="property">exception </em><code class="descclassname">Qpyl.core.qfep.</code><code class="descname">QFepOutputError</code><a class="reference internal" href="_modules/Qpyl/core/qfep.html#QFepOutputError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qfep.QFepOutputError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.core.qlibrary">
+<span id="qpyl-core-qlibrary-module"></span><h2>Qpyl.core.qlibrary module<a class="headerlink" href="#module-Qpyl.core.qlibrary" title="Permalink to this headline">¶</a></h2>
+<p>This module implements the QLib class for reading and writing Q (and other)
+library files.</p>
+<dl class="class">
+<dt id="Qpyl.core.qlibrary.QLib">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qlibrary.</code><code class="descname">QLib</code><span class="sig-paren">(</span><em>ff_type</em>, <em>ignore_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qlibrary.html#QLib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qlibrary.QLib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for reading and writing Q library files.</p>
+<p>Also supports parsing oplsaa_ffld and amber_lib.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ff_type</strong> (<em>string</em>) &#8211; Either &#8216;oplsaa&#8217; or &#8216;amber&#8217;</li>
+<li><strong>ignore_errors</strong> (<em>boolean</em>) &#8211; Optional, default is False.                                 If set to True, some non-vital                                 exceptions are logged instead.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Qpyl.core.qlibrary.QLib.check_valid">
+<code class="descname">check_valid</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qlibrary.html#QLib.check_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qlibrary.QLib.check_valid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call &#8216;check_valid&#8217; on each _LibResidue object.</p>
+<p>Raises QLibError if something is not cool with the residues.
+(see _LibResidue for more info)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qlibrary.QLib.get_string">
+<code class="descname">get_string</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qlibrary.html#QLib.get_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qlibrary.QLib.get_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the whole Q library in string format.</p>
+<p>To print specific residues, use
+self.residue_dict[name].get_str()</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qlibrary.QLib.read_amber_lib">
+<code class="descname">read_amber_lib</code><span class="sig-paren">(</span><em>libfile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qlibrary.html#QLib.read_amber_lib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qlibrary.QLib.read_amber_lib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and parse an Amber library (.lib) file</p>
+<p>Add new residues to QLib.residue_dict as _LibResidue objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>libfile</strong> (<em>string</em>) &#8211; name/path of Amber lib file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qlibrary.QLib.read_ffld">
+<code class="descname">read_ffld</code><span class="sig-paren">(</span><em>ffld_file</em>, <em>qstruct</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qlibrary.html#QLib.read_ffld"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qlibrary.QLib.read_ffld" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and parse a Macromodel FFLD file for oplsaa parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ffld_file</strong> (<em>string</em>) &#8211; path/name of ffld file</li>
+<li><strong>qstruct</strong> (<a class="reference internal" href="#Qpyl.core.qstructure.QStruct" title="Qpyl.core.qstructure.QStruct"><em>qstructure.QStruct</em></a>) &#8211; object created with the same                                           structure file as the ffld</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The second argument is a QStruct object created with
+the pdb or mol2 file that was used to create the ffld file.
+It&#8217;s needed to map atoms and residue to their names in the structure.</p>
+<p>Atom-types have the following format: resisduename.ATOMNAME
+Eg. asp.CA</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qlibrary.QLib.read_lib">
+<code class="descname">read_lib</code><span class="sig-paren">(</span><em>libfile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qlibrary.html#QLib.read_lib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qlibrary.QLib.read_lib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and parse a Q library (.lib) file</p>
+<p>Add new residues to QLib.residue_dict as _LibResidue objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>libfile</strong> (<em>string</em>) &#8211; name/path of Q lib file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qlibrary.QLib.read_mol2">
+<code class="descname">read_mol2</code><span class="sig-paren">(</span><em>mol2_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qlibrary.html#QLib.read_mol2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qlibrary.QLib.read_mol2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and parse a mol2 file.</p>
+<p>Add the residues to QLib.residue_dict as _LibResidue objects</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>mol2_file</strong> (<em>string</em>) &#8211; name/path of mol2 file</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qlibrary.QLib.read_prepin_impropers">
+<code class="descname">read_prepin_impropers</code><span class="sig-paren">(</span><em>prepin_file</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qlibrary.html#QLib.read_prepin_impropers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qlibrary.QLib.read_prepin_impropers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and parse an Amber prepin (.prepi) file</p>
+<dl class="docutils">
+<dt>NOTE: Extracts only improper definitions for residues already</dt>
+<dd>defined in QLib.residue_dict
+(usually obtained with read_amber_lib or read_mol2)</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prepin_file</strong> (<em>string</em>) &#8211; Amber prepin file pathname</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.core.qlibrary.QLibError">
+<em class="property">exception </em><code class="descclassname">Qpyl.core.qlibrary.</code><code class="descname">QLibError</code><a class="reference internal" href="_modules/Qpyl/core/qlibrary.html#QLibError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qlibrary.QLibError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.core.qparameter">
+<span id="qpyl-core-qparameter-module"></span><h2>Qpyl.core.qparameter module<a class="headerlink" href="#module-Qpyl.core.qparameter" title="Permalink to this headline">¶</a></h2>
+<p>This module implements the QPrm class for reading and writing Q (and other)
+parameter files.</p>
+<dl class="class">
+<dt id="Qpyl.core.qparameter.QPrm">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qparameter.</code><code class="descname">QPrm</code><span class="sig-paren">(</span><em>ff_type</em>, <em>ignore_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qparameter.html#QPrm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qparameter.QPrm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for reading and writing Q parameter files.</p>
+<p>Also supports parsing oplsaa_ffld, amber_parm and amber_frcmod files.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ff_type</strong> (<em>string</em>) &#8211; Either &#8216;oplsaa&#8217; or &#8216;amber&#8217;</li>
+<li><strong>ignore_errors</strong> (<em>boolean</em>) &#8211; Optional, default is False.                                 If set to True, some non-vital                                 exceptions are logged instead.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="Qpyl.core.qparameter.QPrm.get_string">
+<code class="descname">get_string</code><span class="sig-paren">(</span><em>atom_types=None</em>, <em>bonds=None</em>, <em>angles=None</em>, <em>torsions=None</em>, <em>impropers=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qparameter.html#QPrm.get_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qparameter.QPrm.get_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the Q parameter file in string format.</p>
+<p>Optional arguments are lists of _PrmAtom, _PrmBond,
+_PrmAngle, _PrmTorsion and _PrmImproper objects.
+If unset, all parameters will be printed.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_string</span><span class="p">(</span><span class="n">atom_types</span><span class="o">=</span><span class="p">[</span><span class="n">_PrmAtom</span><span class="p">,</span> <span class="n">_PrmAtom</span><span class="p">],</span>                           <span class="n">bonds</span><span class="o">=</span><span class="p">[</span><span class="n">_PrmBond</span><span class="p">,</span> <span class="n">_PrmBond</span><span class="p">,</span> <span class="n">_PrmBond</span><span class="p">],</span>                           <span class="n">angles</span><span class="o">=</span><span class="p">[],</span> <span class="n">torsions</span><span class="o">=</span><span class="p">[],</span> <span class="n">impropers</span><span class="o">=</span><span class="p">[])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qparameter.QPrm.read_amber_frcmod">
+<code class="descname">read_amber_frcmod</code><span class="sig-paren">(</span><em>frcmodfile</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qparameter.html#QPrm.read_amber_frcmod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qparameter.QPrm.read_amber_frcmod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and parse an Amber parameter file (.frcmod).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parm_fn</strong> (<em>string</em>) &#8211; name of parameter file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of overwritten parameters</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">overwritten_prms (list)</td>
+</tr>
+</tbody>
+</table>
+<p>Same parameters with equal values (duplicates) are overwritten,
+same parameters with different values raise QPrmError, unless
+QPrm.ignore_errors is set to True.</p>
+<p>At the moment, all comments are ignored.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qparameter.QPrm.read_amber_parm">
+<code class="descname">read_amber_parm</code><span class="sig-paren">(</span><em>parm_fn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qparameter.html#QPrm.read_amber_parm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qparameter.QPrm.read_amber_parm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and parse an Amber parameter file (.parm).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parm_fn</strong> (<em>string</em>) &#8211; name of parameter file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of overwritten parameters</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">overwritten_prms (list)</td>
+</tr>
+</tbody>
+</table>
+<p>Same parameters with equal values (duplicates) are overwritten,
+same parameters with different values raise QPrmError, unless
+QPrm.ignore_errors is set to True.</p>
+<p>At the moment, all comments are ignored.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qparameter.QPrm.read_ffld">
+<code class="descname">read_ffld</code><span class="sig-paren">(</span><em>ffld_file</em>, <em>qstruct</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qparameter.html#QPrm.read_ffld"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qparameter.QPrm.read_ffld" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and parse a Macromodel&#8217;s FFLD file for oplsaa parameters.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ffld_file</strong> (<em>string</em>) &#8211; path/name of ffld file</li>
+<li><strong>qstruct</strong> (<a class="reference internal" href="#Qpyl.core.qstructure.QStruct" title="Qpyl.core.qstructure.QStruct"><em>qstructure.QStruct</em></a>) &#8211; object created with the same                                           structure file as the ffld</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of overwritten parameters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">overwritten_prms (list)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The second argument is a QStruct object created with
+the pdb or mol2 file that was used to create the ffld file.
+It&#8217;s needed to map atoms and residue to their names in the structure.</p>
+<p>Same parameters with equal values (duplicates) are overwritten,
+same parameters with different values raise QPrmError, unless
+QPrm.ignore_errors is set to True.</p>
+<p>Created atom-types have the following format: resisduename.ATOMNAME
+Eg. asp.CA, pxn.OP</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Qpyl.core.qparameter.QPrm.read_prm">
+<code class="descname">read_prm</code><span class="sig-paren">(</span><em>parm_fn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qparameter.html#QPrm.read_prm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qparameter.QPrm.read_prm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and parse a Q parameter file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parm_fn</strong> (<em>string</em>) &#8211; name of parameter file</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of overwritten parameters</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">overwritten_prms (list)</td>
+</tr>
+</tbody>
+</table>
+<p>Same parameters with equal values (duplicates) are overwritten,
+same parameters with different values raise QPrmError, unless
+QPrm.ignore_errors is set to True.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.core.qparameter.QPrmError">
+<em class="property">exception </em><code class="descclassname">Qpyl.core.qparameter.</code><code class="descname">QPrmError</code><a class="reference internal" href="_modules/Qpyl/core/qparameter.html#QPrmError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qparameter.QPrmError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.core.qpotential">
+<span id="qpyl-core-qpotential-module"></span><h2>Qpyl.core.qpotential module<a class="headerlink" href="#module-Qpyl.core.qpotential" title="Permalink to this headline">¶</a></h2>
+<p>This module implements several force-field potential energy functions,
+and functions for calculating distances, angles and dihedral angles, as
+implemented in Q.</p>
+<dl class="function">
+<dt id="Qpyl.core.qpotential.angle_angle">
+<code class="descclassname">Qpyl.core.qpotential.</code><code class="descname">angle_angle</code><span class="sig-paren">(</span><em>ac1</em>, <em>ac2</em>, <em>ac3</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qpotential.html#angle_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qpotential.angle_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the angle (of the angle).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ac2</strong><strong>, </strong><strong>ac3</strong> (<em>ac1</em><em>,</em><em></em>) &#8211; atom coordinates</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">angle in Degrees</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">theta (float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.core.qpotential.angle_energy">
+<code class="descclassname">Qpyl.core.qpotential.</code><code class="descname">angle_energy</code><span class="sig-paren">(</span><em>theta</em>, <em>fc</em>, <em>theta0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qpotential.html#angle_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qpotential.angle_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the angle energy using the harmonic potential.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>theta</strong> (<em>float</em>) &#8211; angle between atoms [degrees]</li>
+<li><strong>fc</strong> (<em>float</em>) &#8211; force constant [kcal/mol]</li>
+<li><strong>theta0</strong> (<em>float</em>) &#8211; equilibrium angle [degrees]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">energy of angle [kcal/mol]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">e_angle (float)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.core.qpotential.bond_distance">
+<code class="descclassname">Qpyl.core.qpotential.</code><code class="descname">bond_distance</code><span class="sig-paren">(</span><em>ac1</em>, <em>ac2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qpotential.html#bond_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qpotential.bond_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the bond distance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ac2</strong> (<em>ac1</em><em>,</em><em></em>) &#8211; atom coordinates</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">distance in Angstrom</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">r (float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.core.qpotential.bond_energy">
+<code class="descclassname">Qpyl.core.qpotential.</code><code class="descname">bond_energy</code><span class="sig-paren">(</span><em>r</em>, <em>fc</em>, <em>r0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qpotential.html#bond_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qpotential.bond_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the bond energy using the harmonic potential.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>r</strong> (<em>float</em>) &#8211; distance between atoms [angstrom]</li>
+<li><strong>fc</strong> (<em>float</em>) &#8211; force constant [kcal/mol]</li>
+<li><strong>r0</strong> (<em>float</em>) &#8211; equilibrium distance [angstrom]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">energy of bond [kcal/mol]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">e_bond (float)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.core.qpotential.improper_angle">
+<code class="descclassname">Qpyl.core.qpotential.</code><code class="descname">improper_angle</code><span class="sig-paren">(</span><em>ac1</em>, <em>ac2</em>, <em>ac3</em>, <em>ac4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qpotential.html#improper_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qpotential.improper_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the dihedral angle.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ac2</strong><strong>, </strong><strong>ac3</strong><strong>, </strong><strong>ac4</strong> (<em>ac1</em><em>,</em><em></em>) &#8211; atom coordinates</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">angle in Degrees</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">theta (float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.core.qpotential.improper_energy_periodic">
+<code class="descclassname">Qpyl.core.qpotential.</code><code class="descname">improper_energy_periodic</code><span class="sig-paren">(</span><em>phi</em>, <em>fc</em>, <em>multiplicity</em>, <em>phi0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qpotential.html#improper_energy_periodic"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qpotential.improper_energy_periodic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the improper energy using the periodic potential.</p>
+<p>Using the same potential as torsion_energy(), with npaths==1.
+E = fc/npaths * [1 + cos(multiplicity*phi - phi0)]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>phi</strong> (<em>float</em>) &#8211; dihedral angle [degrees]</li>
+<li><strong>fc</strong> (<em>float</em>) &#8211; force constant [kcal/mol]</li>
+<li><strong>multiplicity</strong> (<em>float</em>) &#8211; multiplicity [/]</li>
+<li><strong>phi0</strong> (<em>float</em>) &#8211; phase shift [degrees]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">energy of improper [kcal/mol]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">e_improper (float)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.core.qpotential.torsion_angle">
+<code class="descclassname">Qpyl.core.qpotential.</code><code class="descname">torsion_angle</code><span class="sig-paren">(</span><em>ac1</em>, <em>ac2</em>, <em>ac3</em>, <em>ac4</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qpotential.html#torsion_angle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qpotential.torsion_angle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the dihedral angle.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ac2</strong><strong>, </strong><strong>ac3</strong><strong>, </strong><strong>ac4</strong> (<em>ac1</em><em>,</em><em></em>) &#8211; atom coordinates</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">angle in Degrees</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">theta (float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.core.qpotential.torsion_energy">
+<code class="descclassname">Qpyl.core.qpotential.</code><code class="descname">torsion_energy</code><span class="sig-paren">(</span><em>phi</em>, <em>fc</em>, <em>multiplicity</em>, <em>npaths</em>, <em>phi0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qpotential.html#torsion_energy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qpotential.torsion_energy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the torsion energy using the periodic potential.</p>
+<p>One torsion term at a time, using this function:
+E = fc/npaths * [1 + cos(multiplicity*phi - phi0)]</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>phi</strong> (<em>float</em>) &#8211; dihedral angle [degrees]</li>
+<li><strong>fc</strong> (<em>float</em>) &#8211; force constant [kcal/mol]</li>
+<li><strong>multiplicity</strong> (<em>float</em>) &#8211; multiplicity [/]</li>
+<li><strong>npaths</strong> (<em>float</em>) &#8211; division factor [/]</li>
+<li><strong>phi0</strong> (<em>float</em>) &#8211; phase shift [degrees]</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">energy of torsion [kcal/mol]</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">e_torsion (float)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.core.qstructure">
+<span id="qpyl-core-qstructure-module"></span><h2>Qpyl.core.qstructure module<a class="headerlink" href="#module-Qpyl.core.qstructure" title="Permalink to this headline">¶</a></h2>
+<p>This module contains the QStruct class for handling Q structure files (PDB, mol2).
+Additionally, it implements methods for finding and replacing atom
+placeholders (e.g. $1.N$)</p>
+<dl class="class">
+<dt id="Qpyl.core.qstructure.PosVector">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qstructure.</code><code class="descname">PosVector</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>z</em><span class="sig-paren">)</span><a class="headerlink" href="#Qpyl.core.qstructure.PosVector" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">tuple</span></code></p>
+<dl class="attribute">
+<dt id="Qpyl.core.qstructure.PosVector.x">
+<code class="descname">x</code><a class="headerlink" href="#Qpyl.core.qstructure.PosVector.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.core.qstructure.PosVector.y">
+<code class="descname">y</code><a class="headerlink" href="#Qpyl.core.qstructure.PosVector.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="Qpyl.core.qstructure.PosVector.z">
+<code class="descname">z</code><a class="headerlink" href="#Qpyl.core.qstructure.PosVector.z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="Qpyl.core.qstructure.QStruct">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qstructure.</code><code class="descname">QStruct</code><span class="sig-paren">(</span><em>filename</em>, <em>filetype</em>, <em>ignore_errors=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qstructure.html#QStruct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qstructure.QStruct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for processing the structure (coordinates)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>filename</strong> (<em>path to the structure file</em>) &#8211; </li>
+<li><strong></strong><strong>(</strong><strong>type of structure file</strong> (<em>filetype</em>) &#8211; &#8216;pdb&#8217; or &#8216;mol2&#8217;)</li>
+<li><strong>ignore_errors</strong> (<em>boolean</em>) &#8211; Optional, default is False.                                If set to True, some non-vital                                exceptions are logged instead.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>In contrast to QLib and QPrm, the &#8216;read&#8217; methods in this
+class should not be called since the object should
+contain data from only one structure file.</p>
+<p>The structure data is stored in three lists:
+atoms, residues, molecules
+which contain _StructAtom, _StructResidue and _StructMolecule
+objects.</p>
+<dl class="method">
+<dt id="Qpyl.core.qstructure.QStruct.convert_placeholders">
+<code class="descname">convert_placeholders</code><span class="sig-paren">(</span><em>inputstring</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qstructure.html#QStruct.convert_placeholders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qstructure.QStruct.convert_placeholders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert atom placeholders ($514.C3$) to indexes.</p>
+<dl class="docutils">
+<dt>Placeholders are a combination of the residue id and</dt>
+<dd>atom name, encapsulated in $$ - $RESID.ATOM_NAME$</dd>
+<dt>In addition,there are some special values:</dt>
+<dd>$LAST.ID$ - id of last atom in the system</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inputstring</strong> (<em>string</em>) &#8211; string with placeholders (input file contents)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">converted string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">outputstring (string)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.core.qstructure.QStructError">
+<em class="property">exception </em><code class="descclassname">Qpyl.core.qstructure.</code><code class="descname">QStructError</code><a class="reference internal" href="_modules/Qpyl/core/qstructure.html#QStructError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qstructure.QStructError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="Qpyl.core.qstructure.find_placeholders">
+<code class="descclassname">Qpyl.core.qstructure.</code><code class="descname">find_placeholders</code><span class="sig-paren">(</span><em>inputstring</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qstructure.html#find_placeholders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qstructure.find_placeholders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find atom placeholders of the form $514.C3$</p>
+<p>It ignores comments (characters following # or !)</p>
+<p>See also QStruct.convert_placeholders</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Qpyl.core.qtopology">
+<span id="qpyl-core-qtopology-module"></span><h2>Qpyl.core.qtopology module<a class="headerlink" href="#module-Qpyl.core.qtopology" title="Permalink to this headline">¶</a></h2>
+<p>This module implements an internal topology builder class QTopology.
+QTopology creates a mapping between the system&#8217;s structure (QStruct),
+bonding patterns/charges (QLib), and the parameters (Qrm), allowing
+evaluation of individual topological components of the system.</p>
+<dl class="class">
+<dt id="Qpyl.core.qtopology.QTopology">
+<em class="property">class </em><code class="descclassname">Qpyl.core.qtopology.</code><code class="descname">QTopology</code><span class="sig-paren">(</span><em>qlib</em>, <em>qprm</em>, <em>qstruct</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/Qpyl/core/qtopology.html#QTopology"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qtopology.QTopology" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Class for storing topology information.</p>
+<p>(mashup of library, parameter and structure data)
+Contains lists of atoms, bonds, angles, torsions
+and impropers, along with their parameters.</p>
+<dl class="docutils">
+<dt>The constructor takes in three arguments:</dt>
+<dd>qlib (qlibrary.QLib object)
+qprm (qparameter.QPrm object)
+qstruct (qstructure.QStruct object)</dd>
+</dl>
+<p>Typical usage:</p>
+<p>qlib = qlibrary.QLib(&#8220;amber&#8221;)
+qprm = qparameter.QPrm(&#8220;amber&#8221;)
+qstruct = qstructure.QStruct()
+qlib.read_lib(&#8221;.../qamber14.lib&#8221;)
+qprm.read_prm(&#8221;.../qamber14.prm&#8221;)
+qstruct.read_pdb(&#8221;.../14u3.pdb&#8221;)</p>
+<dl class="docutils">
+<dt>try:</dt>
+<dd>qtopo = QTopology(qlib, qprm, qstruct)</dd>
+<dt>except QTopologyError as e:</dt>
+<dd>print &#8220;Failed to make topology: &#8221; + str(e)</dd>
+<dt>for bond in qtopo.bonds:</dt>
+<dd><dl class="first last docutils">
+<dt>print &#8220;%s: fk %.2f, r0 %.2f, r %.2f, E(r) %.2f&#8221; %</dt>
+<dd>(bond, bond.prm.fc, bond.prm.r0, bond.r, bond.energy)</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="exception">
+<dt id="Qpyl.core.qtopology.QTopologyError">
+<em class="property">exception </em><code class="descclassname">Qpyl.core.qtopology.</code><code class="descname">QTopologyError</code><a class="reference internal" href="_modules/Qpyl/core/qtopology.html#QTopologyError"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#Qpyl.core.qtopology.QTopologyError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">exceptions.Exception</span></code></p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="Qpyl.html" class="btn btn-neutral" title="Qpyl package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Miha Purg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.6.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -25,6 +25,11 @@
 #
 #
 #
+"""
+Module for wrapping Qfep functionality.
+Contains classes for generating Qfep inputs (QFepInput),
+performing system calls to Qfep (QFep), and parsing Qfep output (QFepOutput).
+"""
 
 
 import subprocess
@@ -124,17 +129,16 @@ class _QFepPart0(object):
     LRA and reorganization energies can be calculated with functions
     calc_lra.
 
-    Usage:
-    state1_data = _QFepPart0.data_state[0].get_rows()
-    cols=["Lambda", "EQtot"]
-    state2_EQtot_lambda = _QFepPart0.data_state[1].get_rows(columns=cols)
-
-
     Args:
         part0_string (string):  string of Part0 in qfep output
         num_evb_states (int):  number of EVB states
-        calc_index (int):  calculation index (0 for normal full calc,
+        calc_index (int):  calculation index (0 for normal full calc,\
                            1,2... for whatever follows (exclusion, qcp,..)
+
+    Examples:
+        >>> state1_data = _QFepPart0.data_state[0].get_rows()
+        >>> cols = ["Lambda", "EQtot"]
+        >>> state2_EQtot_lambda = _QFepPart0.data_state[1].get_rows(columns=cols)
 
     """
 
@@ -176,8 +180,8 @@ class _QFepPart0(object):
             lambda_b (float):  lambda value of second state, usually 0.0
 
         Returns:
-            lra (DataContainer):  LRA and reorganization energies,
-                                  as well as contributions from
+            lra (DataContainer):  LRA and reorganization energies,\
+                                  as well as contributions from\
                                   individual states
         """
 
@@ -292,13 +296,12 @@ class _QFepPart1(object):
     If parsing is unsuccessful QFepOutputError is raised,
     else all the data is stored in DataContainer object 'data'.
 
-    Usage:
-    cols=["Lambda", "dG"]
-    dG_lambda = _QFepPart1.data.get_rows(columns=cols)
-
-
     Args:
         part1_string (string):  string of Part1 in qfep output
+
+    Usage:
+    >>> cols = ["Lambda", "dG"]
+    >>> dG_lambda = _QFepPart1.data.get_rows(columns=cols)
 
     """
 
@@ -357,13 +360,13 @@ class _QFepPart2(object):
     If parsing is unsuccessful QFepOutputError is raised,
     else all the data is stored in DataContainer object 'data'.
 
-    Usage:
-    cols=["Lambda", "dGg"]
-    dGg_lambda = _QFepPart2.data.get_rows(columns=cols)
-
-
     Args:
         part2_string (string):  string of Part2 in qfep output
+
+    Usage:
+    >>> cols = ["Lambda", "dGg"]
+    >>> dGg_lambda = _QFepPart2.data.get_rows(columns=cols)
+
 
     """
 
@@ -411,13 +414,13 @@ class _QFepPart3(object):
     If parsing is unsuccessful QFepOutputError is raised,
     else all the data is stored in DataContainer object 'data'.
 
-    Usage:
-    cols=["Lambda", "dGg"]
-    dGg_lambda = _QFepPart3.data.get_rows(columns=cols)
-
-
     Args:
         part3_string (string):  string of Part3 in qfep output
+
+    Usage:
+    >>> cols = ["Lambda", "dGg"]
+    >>> dGg_lambda = _QFepPart3.data.get_rows(columns=cols)
+
 
     """
 
@@ -552,13 +555,12 @@ class QFepOutput(object):
 
     All data is stored in DataContainer objects in separate
     _QFepPart0/1/2/3 objects:
-        QFepOutput.part0.data[1].get_rows(columns=["EQtot"])
-        QFepOutput.part2.data.get_rows(columns=["Egap", "dGg"])
+    QFepOutput.part0.data[1].get_rows(columns=["EQtot"])
+    QFepOutput.part2.data.get_rows(columns=["Egap", "dGg"])
 
     Some special data can be obtained directly:
-
-        QFepOutput.dGa  # activation free energy
-        QFepOutput.dG0  # reaction free energy
+    QFepOutput.dGa  # activation free energy
+    QFepOutput.dG0  # reaction free energy
 
     Results of exclusion and QCP calculations are stored in dictionaries
     QFepOutput.exclusions and QanalyseMap.QCP as QFepOutput objects.
@@ -566,6 +568,7 @@ class QFepOutput(object):
     Args:
         qfep_output (string):  qfep output
         _calc_index (int):  used internally for exclusions and QCP
+
     """
 
     _PART0_RE = re.compile(r"(# Part 0.*?)# Part 1", re.DOTALL)
@@ -700,6 +703,7 @@ class QFep(object):
         Args:
             qfep_input_str (string):  qfep input
             workdir (string, optional):  working directory
+
         Returns:
             qfep_output_str  (string):  qfep stdout
 
