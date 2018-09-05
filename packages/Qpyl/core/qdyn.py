@@ -30,7 +30,7 @@ import copy
 import logging
 from collections import OrderedDict as ODict
 
-from Qpyl.common import __version__, raise_or_log, DataContainer, np
+from Qpyl.common import __version__, raise_or_log, DataContainer, np, gzopen
 
 logger = logging.getLogger(__name__)
 
@@ -589,7 +589,7 @@ class QDynOutput(object):
         """
         header_string = ""
         try:
-            with open(self._qdyn_output, 'r') as qdo:
+            with gzopen(self._qdyn_output) as qdo:
                 for line in qdo:
                     header_string += line
                     if "Initialising dynamics" in line:
@@ -623,7 +623,7 @@ class QDynOutput(object):
         time = self.time_begin
         insection = False
         step = 0
-        with open(self._qdyn_output, 'r') as qdyn_output:
+        with gzopen(self._qdyn_output) as qdyn_output:
             qdyn_output.seek(self._header_length)
             for line in qdyn_output:
                 lf = line.split()

@@ -67,8 +67,8 @@ class TestQ:
         assert qprm.angles["C4 C4 Nstar"].fc == 140.0
         assert qprm.angles["C4 C4 Nstar"].theta0 == 121.2
 
-        assert qprm.torsions["Cstar CT CX N3"].fcs == [0.031, 0.234,
-                                                       0.313, 0.079]
+        assert qprm.torsions["Cstar CT CX N3"].fcs == [0.079, 0.313,
+                                                       0.234, 0.031]
 
     def test_types_opls(self):
         qprm = QPrm("oplsaa")
@@ -84,8 +84,8 @@ class TestQ:
         assert qprm.angles["ash.OD1 ash.CG ash.OD2"].theta0 == 121.0
 
         t = qprm.torsions["ash.CA ash.CB ash.CG ash.OD2"]
-        assert t.fcs == [0.225, 0.273, 0.5]
-        assert t.multiplicities == [3.0, 2.0, 1.0]
+        assert t.fcs == [0.5, 0.273, 0.225]
+        assert t.multiplicities == [1.0, 2.0, 3.0]
 
         i = qprm.impropers["ash.CA ash.C ash.O nma.N"]
         assert i.fc == 10.5

@@ -202,9 +202,15 @@ class QPrm(object):
 
                     torsion = _PrmTorsion(atom_types, comment=comment)
 
-                    # torsion parameters belonging to the same torsion
-                    # must be sequential in the parameter file,
-                    # otherwise there is no way of knowing which is correct
+                    # Important note:
+                    # Torsion parameters belonging to the same torsion
+                    # are assumed to be sequential in the parameter file,
+                    # otherwise there is no way of knowing which
+                    # parameters belong together.
+                    # Q treats all parameters independently, thus
+                    # allowing non-sequential parameters. This
+                    # can easily lead to duplicate or mixed parameters
+                    # and no way of determining it.
                     if prms["torsions"] and torsion.prm_id == \
                             prms["torsions"][-1].prm_id:
                         torsion = prms["torsions"][-1]
@@ -337,6 +343,7 @@ class QPrm(object):
                 prms["angles"].append(angle)
 
             # get the torsion (dihedral) types
+            mult_prev = 1
             while True:
                 line = parmf.readline().strip()
                 if not line: break
@@ -353,20 +360,26 @@ class QPrm(object):
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
-                torsion = _PrmTorsion(a_types)
+                prm_id = _PrmTorsion.get_id(a_types)
 
                 # torsion parameters belonging to the same torsion
-                # must be sequential in the parameter file,
-                # otherwise there is no way of knowing which is correct
-                if prms["torsions"] and torsion.prm_id == \
-                        prms["torsions"][-1].prm_id:
+                # should be sequential, with leading negative 
+                # multiplicities/periodicities
+                if prms["torsions"] \
+                        and prms["torsions"][-1].prm_id == prm_id \
+                        and mult_prev < 0:
                     torsion = prms["torsions"][-1]
                 else:
+                    torsion = _PrmTorsion(a_types)
                     prms["torsions"].append(torsion)
+                mult_prev = multiplicity
 
                 try:
+                    # store the absolute value of the multiplicity 
+                    # since Q evaluates the sign in the energy expression
+                    # (while Amber does not)
                     torsion.add_prm(fc,
-                                    multiplicity,
+                                    abs(multiplicity),
                                     phase,
                                     npaths)
                 # in case of two parms sharing same multiplicity
@@ -526,6 +539,7 @@ class QPrm(object):
 
             # get the torsion (dihedral) types
             parmf.readline()    # DIHE
+            mult_prev = 1
             while True:
                 line = parmf.readline().strip()
                 if not line: break
@@ -542,19 +556,26 @@ class QPrm(object):
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
-                torsion = _PrmTorsion(a_types)
+                prm_id = _PrmTorsion.get_id(a_types)
                 # torsion parameters belonging to the same torsion
-                # must be sequential in the parameter file,
-                # otherwise there is no way of knowing which is correct
-                if prms["torsions"] and torsion.prm_id == \
-                        prms["torsions"][-1].prm_id:
+                # should be sequential, with leading negative 
+                # multiplicities/periodicities
+                if prms["torsions"] \
+                        and prms["torsions"][-1].prm_id == prm_id \
+                        and mult_prev < 0:
                     torsion = prms["torsions"][-1]
                 else:
+                    torsion = _PrmTorsion(a_types)
                     prms["torsions"].append(torsion)
 
+                mult_prev = multiplicity
+
                 try:
+                    # store the absolute value of the multiplicity 
+                    # since Q evaluates the sign in the energy expression
+                    # (while Amber does not)
                     torsion.add_prm(fc,
-                                    multiplicity,
+                                    abs(multiplicity),
                                     phase,
                                     npaths)
                 # in case of two parms sharing same multiplicity
@@ -775,16 +796,21 @@ class QPrm(object):
                     raise QPrmError("Could not parse line: '{}'"
                                     .format(line))
 
-
+                # Mult. signs in Q don't actually matter
+                # for reading the torsion parameters.
+                # Let's stick to positive values.
+                # (Q also evaluates the sign in the energies.
+                # Fortunately, prms with phi0=0/180 are not 
+                # affected)
                 multiplicity = (1.0, 2.0, 3.0, 4.0)
                 phi0s = (0.0, 180.0, 0.0, 180.0)
                 paths = (1.0, 1.0, 1.0, 1.0)
 
                 atypes = [lookup_aname[name] for name in anames]
                 torsion = _PrmTorsion(atypes, comment=comment)
-                for fc, nmin, phi0, path in zip(fcs, multiplicity, phi0s, paths):
+                for fc, mult, phi0, path in zip(fcs, multiplicity, phi0s, paths):
                     if abs(fc) > 0.000001:
-                        torsion.add_prm(fc/2.0, nmin, phi0, path)
+                        torsion.add_prm(fc/2.0, mult, phi0, path)
                 if not torsion.get_prms():
                     torsion.add_prm(0.0, 1.0, 0.0, 1.0)
                 prms["torsions"].append(torsion)
@@ -849,9 +875,13 @@ class QPrm(object):
             sa2 = str(prm_dict[prm.prm_id])
             if sa1 != sa2:
                 raise_or_log("Same parameter types with different "
-                             "values:\n{}\n{}".format(sa1, sa2),
+                             "value (could also be due to non-sequential "
+                             "torsion parameters):\n{}\n{}".format(sa1, sa2),
                              QPrmError, logger, self.ignore_errors)
                 old_prm = prm_dict[prm.prm_id]
+            else:
+                logger.warning("Removing duplicate parameter "
+                               ":\n{}".format(sa1))
         prm_dict[prm.prm_id] = prm
         return old_prm
 
@@ -1010,13 +1040,12 @@ class _PrmAtom(object):
                            (geometric rules)   [ (kcal/A^6)^0.5 ]
             lj_R (float):  Rm_i parameter
                            (arithmetic rules)  [ A ]
-            lj_eps (float):  epsilon_i parameter
-                             (arithmetic rules)  [ kcal^0.5 ]
+            lj_eps (float):  epsilon_ii parameter [ kcal ]
             comment (string):  comment
 
         Note: Both A and B or both R and eps have to be given.
-        Note2: All parameters are "single-atom" parameters as defined
-               in Q prm files, ie. A_i = sqrt(A_ii), Rm_i = Rm_ii/2
+        Note2: All parameters except lj_eps are "single-atom" parameters
+               as defined in Q prm files, ie. A_i = sqrt(A_ii), Rm_i = Rm_ii/2
         """
         # atom_type is a string like "CA" or "OW"
         self.atom_type = atom_type
@@ -1120,6 +1149,7 @@ class _PrmTorsion(object):
     def __init__(self, atom_types, comment=None):
         self.is_generic = True if "?" in atom_types else False
         self.multiplicities = []
+        self._abs_mults = []
         self.fcs = []
         self.phases = []
         self.npaths = []
@@ -1162,14 +1192,25 @@ class _PrmTorsion(object):
 
 
     def add_prm(self, fc, multiplicity, phase, npaths):
-        # a torsion is comprised of several functions with different
-        # multiplicities
-        # if multiplicity already exists, raise exception
-        mult = abs(multiplicity)
-        if mult in self.multiplicities:
+        # A torsion is comprised of several functions with different
+        # multiplicities.
+        # If multiplicity already exists, raise exception.
+        # Note that Q does not take the absolute of the multiplicity
+        # thus in principle, equal multiplicies, but opposite in sign
+        # will yield different energies when phi0 != 0 or 180.
+        # Due to the unlikelihood of this being intentional
+        # we here raise an exception.
+
+        amult = abs(multiplicity)
+        if any([abs(amult-abs(mult)) < 1e-7 for mult in self.multiplicities]):
             raise ValueError("Duplicate parameter - multiplicity")
 
-        self.multiplicities.append(mult)
+        # this is to ensure that the useless negative multiplicities
+        # do not conflict when comparing with older parameter sets
+        if abs(phase) < 1e-7 or abs(phase - 180) < 1e-7:
+            multiplicity = amult
+
+        self.multiplicities.append(multiplicity)
         self.fcs.append(fc)
         self.phases.append(phase)
         self.npaths.append(npaths)
@@ -1177,8 +1218,7 @@ class _PrmTorsion(object):
     def get_prms(self):
         """Return a list of the torsion parameters.
 
-        The list is in reverse order of multiplicity,
-        all but last multiplicities are set to negative value.
+        The list is in ascending order of multiplicity.
 
         [ (fc3, -multiplicity3, phase3, npaths3),
           (fc2, -multiplicity2, phase2, npaths2),
@@ -1186,14 +1226,12 @@ class _PrmTorsion(object):
         """
         prms = sorted(zip(self.fcs, self.multiplicities,
                           self.phases, self.npaths),
-                      key=lambda x: x[1], reverse=True)
-        rl = []
-        for i, prm in enumerate(prms):
-            prm = list(prm)
-            if i != len(prms)-1:
-                prm[1] = -prm[1]
-            rl.append(prm)
-        return rl
+                      key=lambda x: x[1])
+        #rl = []
+        #for prm in prms:
+        #    prm = list(prm)
+        #    rl.append(prm)
+        return prms
 
 
 class _PrmImproper(object):
