@@ -1,5 +1,5 @@
-# Generated with q_amber2q.py, version 0.4.0
-# Date: Sat Jan 28 20:54:56 2017
+# Generated with q_amber2q.py, version 0.6.0
+# Date: Wed Sep  5 11:45:05 2018
 #
 [options]
 
@@ -47,12 +47,12 @@ o            p5           os              163.638     115.46
 os           p5           os              167.898     101.84
 
 [torsions]
-c3           c3           os           p5                0.383  -3.0        0.0   1.0
 c3           c3           os           p5                 3.95   1.0      180.0   1.0
-c3           os           p5           o                  0.55  -3.0        0.0   1.0
+c3           c3           os           p5                0.383   3.0        0.0   1.0
 c3           os           p5           o                   0.8   2.0        0.0   1.0
-c3           os           p5           os                  0.0  -3.0        0.0   1.0
+c3           os           p5           o                  0.55   3.0        0.0   1.0
 c3           os           p5           os                 2.61   2.0        0.0   1.0
+c3           os           p5           os                  0.0   3.0        0.0   1.0
 ca           ca           ca           ca                 14.5   2.0      180.0   4.0 # Generic: ? ca ca ?
 ca           ca           ca           ca                 14.5   2.0      180.0   4.0 # Generic: ? ca ca ?
 ca           ca           ca           ca                 14.5   2.0      180.0   4.0 # Generic: ? ca ca ?
@@ -73,8 +73,8 @@ ca           ca           ca           os                 14.5   2.0      180.0 
 ca           ca           ca           os                 14.5   2.0      180.0   4.0 # Generic: ? ca ca ?
 ca           ca           no           o                   0.7   2.0      180.0   1.0
 ca           ca           os           p5                 1.75   2.0      180.0   1.0
-ca           os           p5           o                   0.1  -3.0        0.0   1.0
 ca           os           p5           o                   0.8   2.0      180.0   1.0
+ca           os           p5           o                   0.1   3.0        0.0   1.0
 ca           os           p5           os                  2.4   2.0        0.0   3.0 # Generic: ? os p5 ?
 ca           os           p5           os                  2.4   2.0        0.0   3.0 # Generic: ? os p5 ?
 h1           c3           c3           hc                  1.4   3.0        0.0   9.0 # Generic: ? c3 c3 ?
@@ -96,8 +96,8 @@ ha           ca           ca           no                 14.5   2.0      180.0 
 ha           ca           ca           no                 14.5   2.0      180.0   4.0 # Generic: ? ca ca ?
 ha           ca           ca           os                 14.5   2.0      180.0   4.0 # Generic: ? ca ca ?
 ha           ca           ca           os                 14.5   2.0      180.0   4.0 # Generic: ? ca ca ?
-hc           c3           c3           os                  0.0  -3.0        0.0   1.0
 hc           c3           c3           os                 0.25   1.0        0.0   1.0
+hc           c3           c3           os                  0.0   3.0        0.0   1.0
 
 [impropers]
 ca           ca           ca           ha                  1.1      180.0
