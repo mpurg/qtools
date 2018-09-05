@@ -7,43 +7,36 @@
 
 #### Description
 
-qtools is a Python interface library (Qpyl) and a set of useful
-command line tools for working with the [*Q* molecular dynamics 
-simulation package](http://xray.bmc.uu.se/~aqwww/q/).
-This open-source project was created by Miha Purg
-(currently at Uppsala University) in order to provide Q-users with a set of well tested
-tools for automating repetitive and/or tedious tasks, debugging simulations, and analysing results.
-The author strives to achieve a good balance between the level of
-user-control over *Q* (i.e., relatively low abstraction level) and the ease-of-use provided by qtools.
+qtools is a toolset comprised of a Python library Qpyl and a set of command-line tools, for use with the [molecular dynamics simulation package *Q*](http://xray.bmc.uu.se/~aqwww/q/). This open-source project was created by Miha Purg (currently at Uppsala University) in order to provide Q-users with a set of well-tested tools for automating repetitive and/or tedious tasks, debugging simulations, and analysing results. The author strives to achieve a good balance between the level of user-control over *Q* (i.e., relatively low abstraction level) and the ease-of-use provided by qtools.
 
 *Disclaimer: qtools is not affiliated with *Q* nor should it be considered an official toolset for Q.*
 
 
-#### Available features
+#### Functionality
 
-- Converting parameters to Q format (OPLS, Amber/GAFF).
+- Python API for interfacing with Q executables.
+- EVB mapping and automatic fitting of off-diagonal and gas shift parameters.
+- Support for quantum classical path and group exclusion calculations.
+- Linear response approximation (LRA) calculations (including group contributions)
+- Parameter conversions (OPLS, Amber/GAFF).
 - FEP file generation for EVB simulations.
 - Input generation for MD/FEP simulations and EVB calculations.
-- EVB mapping and automatic fitting of off-diagonal and gas shift parameters.
 - Output parsing and analysis of MD, FEP and EVB.
 - Graphical tool for visualizing results and debugging simulations:
   - Free energy profiles
-  - LRA, REORG, Group contributions
+  - LRA, REORG, group contributions
   - Energy breakdown (VDW, El, Bonds, ...)
 
 
 #### Requirements
 
-The tools pride themselves on not having any dependencies, except *matplotlib*
+The library and tools do not have any dependencies, except *matplotlib*
 which is required only for *q_plot.py*, a non-essential utility used mostly for
-debugging.
+troubleshooting simulations.
 
 The only requirement is *Python, version 2.7*
 
-*Note: The tools will likely fail misserably on Windows,
-since development (and testing) is done exclusively on GNU/Linux.*
-  
-
+*Note: The command-line tools were designed to work in a typical high-perfomance-computer Unix environment, and have not been tested with Microsoft Windows.*
 
 
 #### Installation (Linux)
@@ -59,7 +52,7 @@ Add this line to your `~/.bashrc` or `~/.bash_profile`:
 source $HOME/bin/qtools/qtools_init.sh
 ```
 
-Run the config script:  
+Run the CLI config script:  
 ```
 qscripts_config.py
 ```
@@ -67,13 +60,10 @@ qscripts_config.py
 #### Documentation
 
 The starting point should be the `docs/tutorials` folder.
-For now, it contains one working example of how you can use the command line tools to prepare, simulate and analyse a simple SN2 reaction with EVB.  
+It contains working examples of how you can use the command line tools to prepare, simulate and analyse a simple SN2 reaction with EVB. Additionally, a recently published chapter in the serial Methods in Enzymology provides step-by-step instructions for performing EVB simulations on a real enzymatic system with `qtools`. See [here](https://doi.org/10.1016/bs.mie.2018.06.007).
   
-For python developers, jupyter-notebook examples of interfacing Qpyl can be found in `docs/examples`. Additionally the tests, qscripts_cli and the Sphinx API reference (in `docs/manual`) can be useful to explore the API.
-
-More documentation will be added as soon as possible.
-
-
+For those inclined on using the Python API directly, jupyter-notebook examples calling the Qpyl API can be found in `docs/examples`. The API reference can be found in `docs/api/html`. Additionally, the tests, and the command-line interface (qscripts-cli) can be useful to explore the API.
+  
 #### Testing
 
 Testing is done [here](https://travis-ci.org/mpurg/qtools),
@@ -85,11 +75,6 @@ To run the tests locally, make sure you have `pytest` installed and simply type:
 cd tests
 ./run_tests.sh
 ```
-
-*Note:
-Parts of the code rely on (at the moment still proprietary) Q
-binaries and are thus tested elsewhere.*
-
 
 #### Citations
 
@@ -105,5 +90,5 @@ DOI of the latest release:
 Miha Purg (miha.purg@gmail.com)  
 
 ##### Contributors
-Paul Bauer (paul.bauer@icm.uu.se)  
+Paul Bauer
 

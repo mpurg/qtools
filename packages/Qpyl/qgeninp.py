@@ -24,11 +24,13 @@
 # SOFTWARE.
 #
 #
-#
-#
-# Functions for generating FEP and relaxation inputs for qdyn5
-# Example of procedure files can be found in qtools/template_examples/
-#
+
+"""
+This module contains functions for generating FEP and
+equilibration inputs for Qdyn.
+Example of procedure files can be found in
+qtools/template_examples/
+"""
 
 import sys
 import os
@@ -62,7 +64,7 @@ def genrelax(relax_proc_file, outdir, restraint,
              top_file=None, fep_file=None, runscript_file=None,
              pdb_file=None, cont_file=None, ignore_errors=False):
 
-    """Generates inputs for an MD simulation with Q (qdyn5).
+    """Generates inputs for an MD simulation with Q (Qdyn).
 
     Arguments:
         relax_proc_file (string):  genrelax procedure file pathname
@@ -74,20 +76,19 @@ def genrelax(relax_proc_file, outdir, restraint,
         fep_file (string):  fep file pathname
         runscript_file (string):  slurm/sge run script
         pdb_file (string):  pdb pathname (used to convert placeholders)
-        cont_file (string):  pathname of previous qdyn5 input (continuation)
-        ignore_errors (boolean):  passed to QStruct and QDynInp - write to
-                                  logger instead of raising exceptions on
+        cont_file (string):  pathname of previous Qdyn input (continuation)
+        ignore_errors (boolean):  passed to QStruct and QDynInp - write to\
+                                  logger instead of raising exceptions on\
                                   non-critical things
 
-
     (a) Restraint coordinate can be set to:
-       'top' - topology
-       'cont_inp' - whatever is defined in cont_file
-       'cont_final' - endpoint of previous simulation
-                      (final restart of cont_file)
+    'top' - topology
+    'cont_inp' - whatever is defined in cont_file
+    'cont_final' - endpoint of previous simulation\
+                   (final restart of cont_file)
 
-    (b) top_file and cont_file are mutually exclusive, one of them has to
-        be provided
+    (b) top_file and cont_file are mutually exclusive, one of them has to\
+    be provided
 
     """
 
@@ -513,9 +514,9 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
             pdb_file=None, fep_file=None, runscript_file=None,
             ignore_errors=False):
 
-    """Generates inputs for a FEP/MD simulation with Q (qdyn5).
+    """Generates inputs for a FEP/MD simulation with Q (Qdyn).
 
-    Arguments:
+    Args:
         fep_proc_file (string):  genfeps procedure file pathname
         relax_input_file (string):  pathname of last relaxation step input
         restraint (string):  restraint coordinate (a)
@@ -526,22 +527,21 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
         prefix (string):  prefix for repeat directories
         first_frame_eq (boolean):  use equil instead of first frame (cadee)
 
-    Optional arguments:
+    Optional args:
         pdb_file (string):  pdb pathname (used to convert placeholders)
         fep_file (string):  alternate fep file pathname (ignoring input's fep)
         runscript_file (string):  slurm/sge run script
-        ignore_errors (boolean):  passed to QStruct and QDynInp - write to
-                                  logger instead of raising exceptions on
+        ignore_errors (boolean):  passed to QStruct and QDynInp - write to\
+                                  logger instead of raising exceptions on\
                                   non-critical things
 
     Returns:
         rep_dirs (list):  list of created replica folders
 
-
     (a) Restraint coordinate can be set to:
-       'inp' - whatever is defined in relax_input_file
-       'top' - topology
-       'relax' - endpoint of relaxation
+    'inp' - whatever is defined in relax_input_file
+    'top' - topology
+    'relax' - endpoint of relaxation
 
     """
 

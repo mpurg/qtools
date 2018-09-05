@@ -1,0 +1,1318 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Qpyl.qgeninp &mdash; Qpyl 0.6.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Qpyl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Qpyl.html">Qpyl package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Qpyl</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>Qpyl.qgeninp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Qpyl.qgeninp</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># MIT License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2018  Miha Purg &lt;miha.purg@gmail.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains functions for generating FEP and</span>
+<span class="sd">equilibration inputs for Qdyn.</span>
+<span class="sd">Example of procedure files can be found in</span>
+<span class="sd">qtools/template_examples/</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">locale</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span> <span class="k">as</span> <span class="n">ODict</span>
+
+<span class="kn">from</span> <span class="nn">Qpyl.core.qdyn</span> <span class="k">import</span> <span class="n">QDynInput</span><span class="p">,</span> <span class="n">QDynInputError</span>
+<span class="kn">from</span> <span class="nn">Qpyl.core.qstructure</span> <span class="k">import</span> <span class="n">QStruct</span><span class="p">,</span> <span class="n">QStructError</span><span class="p">,</span> <span class="n">find_placeholders</span>
+<span class="kn">from</span> <span class="nn">Qpyl.common</span> <span class="k">import</span> <span class="n">__version__</span><span class="p">,</span> <span class="n">raise_or_log</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="QGenrelaxError"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qgeninp.QGenrelaxError">[docs]</a><span class="k">class</span> <span class="nc">QGenrelaxError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="QGenfepsError"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qgeninp.QGenfepsError">[docs]</a><span class="k">class</span> <span class="nc">QGenfepsError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># TODO: break these two functions into something digestable</span>
+
+<div class="viewcode-block" id="genrelax"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qgeninp.genrelax">[docs]</a><span class="k">def</span> <span class="nf">genrelax</span><span class="p">(</span><span class="n">relax_proc_file</span><span class="p">,</span> <span class="n">outdir</span><span class="p">,</span> <span class="n">restraint</span><span class="p">,</span>
+             <span class="n">top_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fep_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">runscript_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+             <span class="n">pdb_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cont_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Generates inputs for an MD simulation with Q (Qdyn).</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        relax_proc_file (string):  genrelax procedure file pathname</span>
+<span class="sd">        outdir (string):  output directory</span>
+<span class="sd">        restraint (string):  restraint coordinate (a)</span>
+
+<span class="sd">    Optional arguments (b)</span>
+<span class="sd">        top_file (string):  Q topology pathname</span>
+<span class="sd">        fep_file (string):  fep file pathname</span>
+<span class="sd">        runscript_file (string):  slurm/sge run script</span>
+<span class="sd">        pdb_file (string):  pdb pathname (used to convert placeholders)</span>
+<span class="sd">        cont_file (string):  pathname of previous Qdyn input (continuation)</span>
+<span class="sd">        ignore_errors (boolean):  passed to QStruct and QDynInp - write to\</span>
+<span class="sd">                                  logger instead of raising exceptions on\</span>
+<span class="sd">                                  non-critical things</span>
+
+<span class="sd">    (a) Restraint coordinate can be set to:</span>
+<span class="sd">    &#39;top&#39; - topology</span>
+<span class="sd">    &#39;cont_inp&#39; - whatever is defined in cont_file</span>
+<span class="sd">    &#39;cont_final&#39; - endpoint of previous simulation\</span>
+<span class="sd">                   (final restart of cont_file)</span>
+
+<span class="sd">    (b) top_file and cont_file are mutually exclusive, one of them has to\</span>
+<span class="sd">    be provided</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># check if files exist</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pdb_file&quot;</span><span class="p">,</span> <span class="s2">&quot;cont_file&quot;</span><span class="p">,</span> <span class="s2">&quot;relax_proc_file&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;fep_file&quot;</span><span class="p">,</span> <span class="s2">&quot;top_file&quot;</span><span class="p">,</span> <span class="s2">&quot;runscript_file&quot;</span><span class="p">,</span> <span class="s2">&quot;relax_input&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">lexists</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;File &#39;</span><span class="si">{}</span><span class="s2">&#39; doesn&#39;t exist.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">restraint</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s2">&quot;cont_inp&quot;</span><span class="p">,</span> <span class="s2">&quot;cont_final&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;Argument &#39;restraint&#39; has to be either &quot;</span>
+                             <span class="s2">&quot;&#39;cont_inp&#39;, &#39;top&#39; or &#39;cont_final&#39;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># constants</span>
+    <span class="n">PREFIX</span> <span class="o">=</span> <span class="s2">&quot;relax_&quot;</span>
+    <span class="n">DIR</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">outdir</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">lexists</span><span class="p">(</span><span class="n">DIR</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;Directory &#39;</span><span class="si">{}</span><span class="s2">&#39; exists. Please (re)move it &quot;</span>
+                             <span class="s2">&quot;or set &#39;outdir&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">DIR</span><span class="p">))</span>
+
+    <span class="n">TMPDIR</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+
+    <span class="n">header_comment</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2"># Generated with QTools, version </span><span class="si">{}</span><span class="s2"></span>
+<span class="s2"># Date: </span><span class="si">{}</span><span class="s2"></span>
+<span class="s2"># CWD: </span><span class="si">{}</span><span class="s2"></span>
+<span class="s2"># Cmdline: </span><span class="si">{}</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">))</span>
+
+    <span class="c1"># find and replace placeholders. if not PDB was given to replace them, exit</span>
+    <span class="n">relax_proc_str</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">relax_proc_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">find_placeholders</span><span class="p">(</span><span class="n">relax_proc_str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pdb_file</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;Found placeholders in proc.file, but no PDB &quot;</span>
+                             <span class="s2">&quot;was given: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">)))</span>
+    <span class="k">elif</span> <span class="n">c</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;These placeholders will be replaced with atom indices: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">)))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">qstruct</span> <span class="o">=</span> <span class="n">QStruct</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="s2">&quot;pdb&quot;</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+            <span class="n">relax_proc_str</span> <span class="o">=</span> <span class="n">qstruct</span><span class="o">.</span><span class="n">convert_placeholders</span><span class="p">(</span><span class="n">relax_proc_str</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">QStructError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;Failed to replace placeholders: &quot;</span>
+                                 <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err_msg</span><span class="p">))</span>
+
+    <span class="c1"># get topology and fep and others from previous input if given (--cont)</span>
+    <span class="k">if</span> <span class="n">cont_file</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">top_file</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;&#39;top_file&#39; and &#39;cont_file&#39; don&#39;t like each &quot;</span>
+                                 <span class="s2">&quot;other. Difficult to continue with a &quot;</span>
+                                 <span class="s2">&quot;different topology...&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">QDynInput</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">cont_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
+                          <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">QDynInputError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;There is something wrong with the given &quot;</span>
+                                 <span class="s2">&quot;input file (</span><span class="si">{}</span><span class="s2">): </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cont_file</span><span class="p">,</span>
+                                                              <span class="n">err_msg</span><span class="p">))</span>
+
+        <span class="n">cont_files</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]</span>
+        <span class="n">di</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">cont_file</span><span class="p">)</span>
+        <span class="n">top_fn</span> <span class="o">=</span> <span class="n">cont_files</span><span class="p">[</span><span class="s2">&quot;topology&quot;</span><span class="p">]</span>
+        <span class="n">cont_re_fn</span> <span class="o">=</span> <span class="n">cont_files</span><span class="p">[</span><span class="s2">&quot;final&quot;</span><span class="p">]</span>
+        <span class="n">re_fn</span> <span class="o">=</span> <span class="s2">&quot;cont_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cont_re_fn</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">top_fn</span><span class="p">),</span> <span class="n">TMPDIR</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">cont_re_fn</span><span class="p">),</span>
+                     <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">,</span> <span class="n">re_fn</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">restraint</span> <span class="o">==</span> <span class="s2">&quot;cont_inp&quot;</span> <span class="ow">and</span> <span class="s2">&quot;restraint&quot;</span> <span class="ow">in</span> <span class="n">cont_files</span><span class="p">:</span>
+            <span class="n">cont_rest_fn</span> <span class="o">=</span> <span class="n">cont_files</span><span class="p">[</span><span class="s2">&quot;restraint&quot;</span><span class="p">]</span>
+            <span class="n">rest_fn</span> <span class="o">=</span> <span class="s2">&quot;cont_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cont_rest_fn</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">restraint</span> <span class="o">==</span> <span class="s2">&quot;cont_final&quot;</span><span class="p">:</span>
+            <span class="n">cont_rest_fn</span> <span class="o">=</span> <span class="n">cont_re_fn</span>
+            <span class="n">rest_fn</span> <span class="o">=</span> <span class="s2">&quot;cont_</span><span class="si">{}</span><span class="s2">.rest&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cont_rest_fn</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rest_fn</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">rest_fn</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">cont_rest_fn</span><span class="p">),</span>
+                         <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">,</span> <span class="n">rest_fn</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">fep_file</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Using the fep file &#39;</span><span class="si">{}</span><span class="s2">&#39;, instead of the one &quot;</span>
+                           <span class="s2">&quot;found in the input&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fep_file</span><span class="p">))</span>
+
+            <span class="n">fep_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fep_file</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">fep_file</span><span class="p">,</span> <span class="n">TMPDIR</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">fep_fn</span> <span class="o">=</span> <span class="n">cont_files</span><span class="p">[</span><span class="s2">&quot;fep&quot;</span><span class="p">]</span>
+                <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">fep_fn</span><span class="p">),</span> <span class="n">TMPDIR</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No FEP file found in the input&quot;</span><span class="p">)</span>
+
+    <span class="c1"># or take the arguments</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">top_file</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;Please specify the topology file or &quot;</span>
+                                 <span class="s2">&quot;a previous input for a continuation run.&quot;</span><span class="p">)</span>
+
+        <span class="n">cont_files</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">top_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">top_file</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">top_file</span><span class="p">,</span> <span class="n">TMPDIR</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fep_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fep_file</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">fep_file</span><span class="p">,</span> <span class="n">TMPDIR</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;NOTE: No FEP file!&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">restraint</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;cont_inp&quot;</span><span class="p">,</span> <span class="s2">&quot;cont_final&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t restrain to &#39;</span><span class="si">{}</span><span class="s2">&#39;. Specify &#39;cont_file&#39;.&quot;</span>
+                                 <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">restraint</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rest_fn</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Restraining to: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rest_fn</span> <span class="ow">or</span> <span class="s1">&#39;topology&#39;</span><span class="p">))</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">runscript_file</span><span class="p">,</span> <span class="n">TMPDIR</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No submission script was given.&quot;</span><span class="p">)</span>
+
+
+    <span class="n">general_inp</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">steps_inps</span> <span class="o">=</span> <span class="p">[[],]</span>
+    <span class="n">script_vars</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">section</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">relax_proc_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="c1"># remove comments and strip whitespaces.</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#|\!&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="c1"># empty lines are useless</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="c1"># found a section</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;{&quot;</span><span class="p">:</span>
+            <span class="n">section</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">section</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;Failed to parse &#39;</span><span class="si">{}</span><span class="s2">&#39;... this line - &#39;</span><span class="si">{}</span><span class="s2">&#39; &quot;</span>
+                                 <span class="s2">&quot;is not inside any section:&quot;</span>
+                                 <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">relax_proc_file</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;script_vars&quot;</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">script_vars</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;general&quot;</span><span class="p">:</span>
+            <span class="n">general_inp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;steps&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;__________&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">steps_inps</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">steps_inps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;fep_fn&quot;</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">():</span>
+        <span class="c1"># find and replace atom placeholders in FEP file</span>
+        <span class="c1"># if no PDB was given to replace them, exit</span>
+        <span class="n">fep_tmp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">,</span> <span class="n">fep_fn</span><span class="p">)</span>
+        <span class="n">fep_file_str</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fep_tmp</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">find_placeholders</span><span class="p">(</span><span class="n">fep_file_str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">c</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pdb_file</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Found placeholders in FEP file, but no &quot;</span>
+                                <span class="s2">&quot;PDB was given: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="n">c</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Replacing FEP file placeholders...&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">qstruct</span> <span class="o">=</span> <span class="n">QStruct</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="s2">&quot;pdb&quot;</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+                <span class="n">fep_file_str</span> <span class="o">=</span> <span class="n">qstruct</span><span class="o">.</span><span class="n">convert_placeholders</span><span class="p">(</span><span class="n">fep_file_str</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">QStructError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Failed to replace placeholders: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err_msg</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">open</span><span class="p">(</span><span class="n">fep_tmp</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fep_file_str</span><span class="p">)</span>
+
+
+    <span class="c1"># check for steps with no parameters</span>
+    <span class="c1"># (too many _________ lines)and remove them</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">steps_inps</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">steps_inps</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">steps_inps</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="c1"># join lists of lines to strings and replace the placeholders</span>
+    <span class="n">gen_inp_s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">general_inp</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">placeholder</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">script_vars</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="n">gen_inp_s</span> <span class="o">=</span> <span class="n">gen_inp_s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">placeholder</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="n">step_inps_s</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step_inp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">steps_inps</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">step_inp</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">placeholder</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">script_vars</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">placeholder</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">step_inps_s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+    <span class="c1"># make and save the inputs</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">overridden_prms_all</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">step_n</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">inp_fns</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># to store the filenames and use the return value</span>
+    <span class="k">for</span> <span class="n">step_inp_s</span> <span class="ow">in</span> <span class="n">step_inps_s</span><span class="p">:</span>
+        <span class="c1"># create the files section</span>
+        <span class="n">final</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">.re&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX</span><span class="p">,</span> <span class="n">step_n</span><span class="p">)</span>
+        <span class="n">dcd</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">.dcd&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX</span><span class="p">,</span> <span class="n">step_n</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;final&quot;</span>      <span class="p">:</span> <span class="n">final</span><span class="p">,</span>
+                 <span class="s2">&quot;trajectory&quot;</span> <span class="p">:</span> <span class="n">dcd</span><span class="p">,</span>
+                 <span class="s2">&quot;topology&quot;</span>   <span class="p">:</span> <span class="n">top_fn</span><span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">files</span><span class="p">[</span><span class="s2">&quot;fep&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fep_fn</span>
+        <span class="k">except</span> <span class="ne">NameError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">if</span> <span class="n">step_n</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">prev_step</span> <span class="o">=</span> <span class="n">step_n</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">files</span><span class="p">[</span><span class="s2">&quot;restart&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">.re&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX</span><span class="p">,</span> <span class="n">prev_step</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">cont_files</span><span class="p">:</span>
+            <span class="n">files</span><span class="p">[</span><span class="s2">&quot;restart&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">re_fn</span>
+
+        <span class="k">if</span> <span class="n">rest_fn</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">files</span><span class="p">[</span><span class="s2">&quot;restraint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rest_fn</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># parse the general input</span>
+            <span class="n">inp</span> <span class="o">=</span> <span class="n">QDynInput</span><span class="p">(</span><span class="n">gen_inp_s</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+            <span class="c1"># update the general parameters with step input, printout the</span>
+            <span class="c1"># overriden parms, update the files section</span>
+            <span class="n">overridden_prms</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">step_inp_s</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">overridden_prms</span><span class="p">:</span>
+                <span class="n">overridden_prms_all</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">step_n</span><span class="p">,</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">:</span><span class="si">{}</span><span class="s2">-&gt;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value_old</span><span class="p">,</span> <span class="n">value_new</span><span class="p">)</span> \
+                            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="n">value_old</span><span class="p">,</span> <span class="n">value_new</span><span class="p">)</span> <span class="ow">in</span> \
+                            <span class="n">overridden_prms</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()])))</span>
+
+            <span class="k">if</span> <span class="s2">&quot;energy&quot;</span> <span class="ow">in</span> <span class="n">inp</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;intervals&quot;</span><span class="p">]:</span>
+                <span class="n">files</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">.en&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX</span><span class="p">,</span> <span class="n">step_n</span><span class="p">)</span>
+
+            <span class="n">inp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="n">files</span><span class="p">})</span>
+
+        <span class="k">except</span> <span class="n">QDynInputError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;Problem with step no. </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                 <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">err_msg</span><span class="p">))</span>
+
+        <span class="c1"># set the random seed</span>
+        <span class="n">mdp</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;random_seed&quot;</span> <span class="ow">in</span> <span class="n">mdp</span> <span class="ow">and</span> <span class="nb">int</span><span class="p">(</span><span class="n">mdp</span><span class="p">[</span><span class="s2">&quot;random_seed&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">)</span>
+            <span class="n">inp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;md&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;random_seed&quot;</span><span class="p">:</span> <span class="n">rs</span><span class="p">}})</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generated random seed in step </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                        <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">rs</span><span class="p">))</span>
+
+        <span class="c1"># get the input string</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">inpstr</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">get_string</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">QDynInputError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;Error in step </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                 <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">err_msg</span><span class="p">))</span>
+
+        <span class="n">inpfn</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">.inp&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX</span><span class="p">,</span> <span class="n">step_n</span><span class="p">)</span>
+        <span class="n">inp_fns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DIR</span><span class="p">,</span> <span class="n">inpfn</span><span class="p">))</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">header_comment</span> <span class="o">+</span> <span class="n">inpstr</span>
+        <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">,</span> <span class="n">inpfn</span><span class="p">),</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+        <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+        <span class="n">step_n</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">,</span> <span class="n">DIR</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;Cannot create directory &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">DIR</span><span class="p">))</span>
+
+    <span class="c1"># remove temporary directory</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Created inputs </span><span class="si">{}{:03d}</span><span class="s2">.inp - </span><span class="si">{}{:03d}</span><span class="s2">.inp&quot;</span>
+                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">PREFIX</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">steps</span><span class="p">)))</span>
+
+    <span class="c1"># print some useful information</span>
+    <span class="k">if</span> <span class="n">overridden_prms_all</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Overridden parameters:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">op</span> <span class="ow">in</span> <span class="n">overridden_prms_all</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">op</span><span class="p">))</span>
+
+    <span class="n">summary</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Quick summary</span>
+<span class="si">{0:&lt;10}</span><span class="s2"> </span><span class="si">{1:&gt;5}</span><span class="s2"> </span><span class="si">{2:&gt;10}</span><span class="s2"> </span><span class="si">{3:&gt;10}</span><span class="s2"> </span><span class="si">{4:^10}</span><span class="s2"> </span><span class="si">{5:^10}</span><span class="s2"> </span><span class="si">{6:^10}</span><span class="s2"> </span><span class="si">{7:^30}</span><span class="s2"> </span><span class="si">{8:^10}</span><span class="s2"> </span><span class="si">{9:&gt;10}</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;Step&quot;</span><span class="p">,</span> <span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="s2">&quot;Stepsize&quot;</span><span class="p">,</span> <span class="s2">&quot;Steps&quot;</span><span class="p">,</span> <span class="s2">&quot;Seq.rest&quot;</span><span class="p">,</span> <span class="s2">&quot;Dist.rest&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;Ang.rest&quot;</span><span class="p">,</span> <span class="s2">&quot;Shake&quot;</span><span class="p">,</span> <span class="s2">&quot;Rand.Seed&quot;</span><span class="p">,</span> <span class="s2">&quot;Data (MB)&quot;</span><span class="p">)</span>
+    <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">restraints</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">total_time</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># print out how much data this run will produce</span>
+    <span class="c1"># for this we need the atom count from the topology</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">DIR</span><span class="p">,</span> <span class="n">top_fn</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">(</span><span class="mi">1024</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;no. of atoms, no. of solute atoms&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">num_atoms_all</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">break</span>
+
+    <span class="n">REST_B_PER_ATOM</span> <span class="o">=</span> <span class="mf">48.0</span>
+    <span class="n">TRJ_B_PER_ATOM</span> <span class="o">=</span> <span class="mf">12.0</span>
+    <span class="c1"># very rough estimate, depends on Q version</span>
+    <span class="c1"># it can double if group_contributions are calculated</span>
+    <span class="n">EN_B_PER_STEP</span> <span class="o">=</span> <span class="mf">370.0</span>
+    <span class="n">CONV_MB</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span>
+    <span class="c1"># very rough estimate</span>
+    <span class="n">OUT_B_PER_STEP</span> <span class="o">=</span> <span class="mi">2000</span>
+    <span class="n">TEMP_B_PER_STEP</span> <span class="o">=</span> <span class="mi">160</span>
+    <span class="n">NB_B_PER_STEP</span> <span class="o">=</span> <span class="mi">80</span>
+
+    <span class="c1"># intervals mapping: q_parameter_key, q_default_value, approx_bytes_per_frame</span>
+    <span class="n">qintervals</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;trj&quot;</span>  <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;trajectory&quot;</span><span class="p">,</span>   <span class="mi">100</span><span class="p">,</span> <span class="n">num_atoms_all</span><span class="o">*</span><span class="n">TRJ_B_PER_ATOM</span><span class="p">],</span>
+                  <span class="s2">&quot;log&quot;</span>  <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">,</span>        <span class="mi">10</span><span class="p">,</span> <span class="n">OUT_B_PER_STEP</span><span class="p">],</span>
+                  <span class="s2">&quot;temp&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;temperature&quot;</span><span class="p">,</span>   <span class="mi">10</span><span class="p">,</span> <span class="n">TEMP_B_PER_STEP</span><span class="p">],</span>
+                  <span class="s2">&quot;en&quot;</span>   <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">,</span>        <span class="mi">10</span><span class="p">,</span> <span class="n">EN_B_PER_STEP</span><span class="p">],</span>
+                  <span class="s2">&quot;nb&quot;</span>   <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;non_bond&quot;</span><span class="p">,</span>      <span class="mi">10</span><span class="p">,</span> <span class="n">NB_B_PER_STEP</span><span class="p">]}</span>
+
+    <span class="n">total_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;trj&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;en&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;rest&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">steps</span><span class="p">):</span>
+        <span class="n">nstep</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+        <span class="k">try</span><span class="p">:</span>
+
+            <span class="c1"># get md parameters</span>
+            <span class="n">mdparms</span> <span class="o">=</span> <span class="n">step</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">]</span>
+            <span class="n">total_time</span> <span class="o">+=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mdparms</span><span class="p">[</span><span class="s2">&quot;stepsize&quot;</span><span class="p">])</span><span class="o">*</span><span class="nb">int</span><span class="p">(</span><span class="n">mdparms</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">])</span>
+            <span class="n">random_seed</span> <span class="o">=</span> <span class="n">mdparms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;random_seed&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+            <span class="c1"># get restraints</span>
+            <span class="n">step_rests</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sequence_restraints&quot;</span> <span class="p">:</span> <span class="p">[],</span>
+                          <span class="s2">&quot;distance_restraints&quot;</span> <span class="p">:</span> <span class="p">[],</span>
+                          <span class="s2">&quot;angle_restraints&quot;</span> <span class="p">:</span> <span class="p">[]}</span>
+            <span class="k">for</span> <span class="n">rest_type</span> <span class="ow">in</span> <span class="n">step_rests</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">seqrest</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rest_type</span><span class="p">,</span> <span class="p">[]):</span>
+                    <span class="k">if</span> <span class="n">seqrest</span> <span class="ow">in</span> <span class="n">restraints</span><span class="p">:</span>
+                        <span class="n">rest_num</span> <span class="o">=</span> <span class="n">restraints</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">seqrest</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+                        <span class="n">step_rests</span><span class="p">[</span><span class="n">rest_type</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">rest_num</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">restraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seqrest</span><span class="p">)</span>
+                        <span class="n">step_rests</span><span class="p">[</span><span class="n">rest_type</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">restraints</span><span class="p">)))</span>
+            <span class="n">seq</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">step_rests</span><span class="p">[</span><span class="s2">&quot;sequence_restraints&quot;</span><span class="p">])</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">step_rests</span><span class="p">[</span><span class="s2">&quot;distance_restraints&quot;</span><span class="p">])</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">step_rests</span><span class="p">[</span><span class="s2">&quot;angle_restraints&quot;</span><span class="p">])</span>
+
+            <span class="c1"># get shake parameters</span>
+            <span class="n">shake</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1"># this is a Q default, hopefully it will not change</span>
+            <span class="k">if</span> <span class="n">mdparms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;shake_solvent&quot;</span><span class="p">,</span> <span class="s2">&quot;on&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;on&quot;</span><span class="p">:</span>
+                <span class="n">shake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;solvent&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mdparms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;shake_hydrogens&quot;</span><span class="p">,</span> <span class="s2">&quot;off&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;on&quot;</span><span class="p">:</span>
+                <span class="n">shake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;hydrogens&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mdparms</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;shake_solute&quot;</span><span class="p">,</span> <span class="s2">&quot;off&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;on&quot;</span><span class="p">:</span>
+                <span class="n">shake</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;solute&quot;</span><span class="p">)</span>
+            <span class="n">shake</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">shake</span><span class="p">)</span>
+
+            <span class="c1"># calculate approx amount of data</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">mdsteps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">mdparms</span><span class="p">[</span><span class="s2">&quot;steps&quot;</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">qintervals</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="n">interval_key</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">default_interval</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">bytes_per_step</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">interval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;intervals&quot;</span><span class="p">][</span><span class="n">interval_key</span><span class="p">])</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdsteps</span> <span class="o">/</span> <span class="n">interval</span> <span class="o">*</span> <span class="n">bytes_per_step</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="c1"># default</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdsteps</span> <span class="o">/</span> <span class="n">default_interval</span> <span class="o">*</span> <span class="n">bytes_per_step</span>
+                <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>   <span class="c1"># no printout</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="c1"># if energy or trajectory, check that files for output are</span>
+                    <span class="c1"># defined, otherwise set the printout to 0</span>
+                    <span class="k">if</span> <span class="n">interval_key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;energy&quot;</span><span class="p">,</span> <span class="s2">&quot;trajectory&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> \
+                            <span class="n">interval_key</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+            <span class="n">trj_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;trj&quot;</span><span class="p">]</span>
+            <span class="n">en_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">]</span>
+            <span class="n">log_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;temp&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;nb&quot;</span><span class="p">])</span>
+            <span class="n">rest_data</span> <span class="o">=</span> <span class="n">num_atoms_all</span> <span class="o">*</span> <span class="n">REST_B_PER_ATOM</span>
+            <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;trj&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">trj_data</span>
+            <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">log_data</span>
+            <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">en_data</span>
+            <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;rest&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">rest_data</span>
+
+            <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">trj_data</span> <span class="o">+</span> <span class="n">log_data</span> <span class="o">+</span> <span class="n">rest_data</span> <span class="o">+</span> <span class="n">en_data</span><span class="p">)</span><span class="o">/</span><span class="n">CONV_MB</span>
+
+            <span class="n">summary</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{:&lt;10}</span><span class="s2"> </span><span class="si">{:&gt;5}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:^10}</span><span class="s2"> </span><span class="si">{:^10}</span><span class="s2"> </span><span class="si">{:^10}</span><span class="s2"> &quot;</span>\
+                       <span class="s2">&quot;</span><span class="si">{:^30}</span><span class="s2"> </span><span class="si">{:^10}</span><span class="s2"> </span><span class="si">{:&gt;10.2f}</span><span class="se">\n</span><span class="s2">&quot;</span> \
+                       <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">nstep</span><span class="p">,</span> <span class="n">mdparms</span><span class="p">[</span><span class="s2">&quot;temperature&quot;</span><span class="p">],</span>
+                                 <span class="n">mdparms</span><span class="p">[</span><span class="s2">&quot;stepsize&quot;</span><span class="p">],</span>
+                                 <span class="n">locale</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%d</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">mdsteps</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                                 <span class="n">seq</span><span class="p">,</span> <span class="n">dist</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">shake</span><span class="p">,</span> <span class="n">random_seed</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenrelaxError</span><span class="p">(</span><span class="s2">&quot;You are missing either &#39;steps&#39;, &quot;</span>
+                                 <span class="s2">&quot;&#39;temperature&#39; or &#39;stepsize&#39; in one of your &quot;</span>
+                                 <span class="s2">&quot;relaxation steps. These parameters are &quot;</span>
+                                 <span class="s2">&quot;quite important you know...&quot;</span><span class="p">)</span>
+
+    <span class="n">summary</span> <span class="o">+=</span> <span class="s2">&quot;Restraints:</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">rest</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">restraints</span><span class="p">):</span>
+        <span class="n">summary</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">rest</span><span class="p">)</span>
+
+    <span class="n">summary</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Total time: </span><span class="si">{}</span><span class="s2"> ps</span>
+<span class="s2">Total wasted storage (wild approximation): </span><span class="se">\</span>
+<span class="si">{:.2f}</span><span class="s2"> MB (trj: </span><span class="si">{:.1f}</span><span class="s2">, log: </span><span class="si">{:.1f}</span><span class="s2">, en: </span><span class="si">{:.1f}</span><span class="s2">, rest: </span><span class="si">{:.1f}</span><span class="s2">)</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">total_time</span><span class="o">/</span><span class="mf">1000.0</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">total_data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">/</span><span class="n">CONV_MB</span><span class="p">,</span>
+           <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;trj&quot;</span><span class="p">]</span><span class="o">/</span><span class="n">CONV_MB</span><span class="p">,</span> <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">]</span><span class="o">/</span><span class="n">CONV_MB</span><span class="p">,</span>
+           <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">]</span><span class="o">/</span><span class="n">CONV_MB</span><span class="p">,</span> <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;rest&quot;</span><span class="p">]</span><span class="o">/</span><span class="n">CONV_MB</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">summary</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">inp_fns</span></div>
+
+
+
+<div class="viewcode-block" id="genfeps"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qgeninp.genfeps">[docs]</a><span class="k">def</span> <span class="nf">genfeps</span><span class="p">(</span><span class="n">fep_proc_file</span><span class="p">,</span> <span class="n">relax_input_file</span><span class="p">,</span> <span class="n">restraint</span><span class="p">,</span> <span class="n">energy_list_fn</span><span class="p">,</span>
+            <span class="n">frames</span><span class="p">,</span> <span class="n">repeats</span><span class="p">,</span> <span class="n">fromlambda</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">first_frame_eq</span><span class="p">,</span>
+            <span class="n">pdb_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fep_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">runscript_file</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Generates inputs for a FEP/MD simulation with Q (Qdyn).</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fep_proc_file (string):  genfeps procedure file pathname</span>
+<span class="sd">        relax_input_file (string):  pathname of last relaxation step input</span>
+<span class="sd">        restraint (string):  restraint coordinate (a)</span>
+<span class="sd">        energy_list_fn (string):  name of file that will contain the en.f.list</span>
+<span class="sd">        frames (int):  number of FEP frames</span>
+<span class="sd">        repeats (int):  number of repeats/replicas</span>
+<span class="sd">        fromlambda (float):  starting lambda (0.0 - 1.0)</span>
+<span class="sd">        prefix (string):  prefix for repeat directories</span>
+<span class="sd">        first_frame_eq (boolean):  use equil instead of first frame (cadee)</span>
+
+<span class="sd">    Optional args:</span>
+<span class="sd">        pdb_file (string):  pdb pathname (used to convert placeholders)</span>
+<span class="sd">        fep_file (string):  alternate fep file pathname (ignoring input&#39;s fep)</span>
+<span class="sd">        runscript_file (string):  slurm/sge run script</span>
+<span class="sd">        ignore_errors (boolean):  passed to QStruct and QDynInp - write to\</span>
+<span class="sd">                                  logger instead of raising exceptions on\</span>
+<span class="sd">                                  non-critical things</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        rep_dirs (list):  list of created replica folders</span>
+
+<span class="sd">    (a) Restraint coordinate can be set to:</span>
+<span class="sd">    &#39;inp&#39; - whatever is defined in relax_input_file</span>
+<span class="sd">    &#39;top&#39; - topology</span>
+<span class="sd">    &#39;relax&#39; - endpoint of relaxation</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">frames</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+    <span class="n">repeats</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">repeats</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fromlambda</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fromlambda</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fromlambda</span><span class="p">)</span>
+
+    <span class="c1"># constants</span>
+    <span class="n">PREFIX_EQ</span> <span class="o">=</span> <span class="s2">&quot;equil_&quot;</span>
+    <span class="n">PREFIX_FEP</span> <span class="o">=</span> <span class="s2">&quot;fep_&quot;</span>
+
+
+    <span class="c1"># check if files exist</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">locals</span><span class="p">()</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;pdb_file&quot;</span><span class="p">,</span> <span class="s2">&quot;fep_proc_file&quot;</span><span class="p">,</span> <span class="s2">&quot;fep_file&quot;</span><span class="p">,</span>
+                 <span class="s2">&quot;runscript_file&quot;</span><span class="p">,</span> <span class="s2">&quot;relax_input_file&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">lexists</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;File &#39;</span><span class="si">{}</span><span class="s2">&#39; doesn&#39;t exist.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">restraint</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;top&quot;</span><span class="p">,</span> <span class="s2">&quot;relax&quot;</span><span class="p">,</span> <span class="s2">&quot;inp&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Argument &#39;restraint&#39; has to be either &quot;</span>
+                            <span class="s2">&quot;&#39;inp&#39;, &#39;top&#39; or &#39;relax&#39;&quot;</span><span class="p">)</span>
+
+    <span class="c1"># find and replace atom placeholders.</span>
+    <span class="c1"># if no PDB was given to replace them, exit</span>
+    <span class="n">fep_proc_str</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fep_proc_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">find_placeholders</span><span class="p">(</span><span class="n">fep_proc_str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pdb_file</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Found placeholders in proc. file, but no PDB &quot;</span>
+                            <span class="s2">&quot;was given: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">)))</span>
+    <span class="k">elif</span> <span class="n">c</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;These placeholders will be replaced with atom indices: &quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">qstruct</span> <span class="o">=</span> <span class="n">QStruct</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="s2">&quot;pdb&quot;</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+            <span class="n">fep_proc_str</span> <span class="o">=</span> <span class="n">qstruct</span><span class="o">.</span><span class="n">convert_placeholders</span><span class="p">(</span><span class="n">fep_proc_str</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">QStructError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Failed to replace placeholders: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err_msg</span><span class="p">))</span>
+
+
+    <span class="c1"># make a nice header comment in each input file with the</span>
+    <span class="n">header_comment</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2"># Generated with QTools, version </span><span class="si">{}</span><span class="s2"></span>
+<span class="s2"># Date: </span><span class="si">{}</span><span class="s2"></span>
+<span class="s2"># CWD: </span><span class="si">{}</span><span class="s2"></span>
+<span class="s2"># Cmdline: </span><span class="si">{}</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">__version__</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">(),</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">))</span>
+
+
+    <span class="c1"># get topology and fep and others from the last relaxation input</span>
+    <span class="n">top_file_abs</span><span class="p">,</span> <span class="n">fep_file_abs</span><span class="p">,</span> <span class="n">re_file_abs</span><span class="p">,</span> <span class="n">rest_file</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="n">lambda_initial</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">QDynInput</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">relax_input_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
+                      <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">QDynInputError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;There is something wrong with the given input &quot;</span>
+                            <span class="s2">&quot;file (</span><span class="si">{}</span><span class="s2">): </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">relax_input_file</span><span class="p">,</span> <span class="n">err_msg</span><span class="p">))</span>
+
+
+    <span class="n">di</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">relax_input_file</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]</span>
+        <span class="n">lambda_initial</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;lambdas&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">top_file_abs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">files</span><span class="p">[</span><span class="s2">&quot;topology&quot;</span><span class="p">])</span>
+        <span class="n">re_file_abs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">files</span><span class="p">[</span><span class="s2">&quot;final&quot;</span><span class="p">])</span>
+        <span class="n">fep_file_abs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">files</span><span class="p">[</span><span class="s2">&quot;fep&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">&quot;restraint&quot;</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">rest_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">di</span><span class="p">,</span> <span class="n">files</span><span class="p">[</span><span class="s2">&quot;restraint&quot;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Parsing the relaxation input file failed, &quot;</span>
+                            <span class="s2">&quot;keyword missing... </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err_msg</span><span class="p">))</span>
+
+    <span class="c1"># check if the files actually exist</span>
+    <span class="k">for</span> <span class="n">fn</span><span class="p">,</span> <span class="n">descr</span> <span class="ow">in</span> <span class="p">[(</span><span class="n">top_file_abs</span><span class="p">,</span> <span class="s2">&quot;topology&quot;</span><span class="p">),</span>
+                      <span class="p">(</span><span class="n">fep_file_abs</span><span class="p">,</span> <span class="s2">&quot;fep&quot;</span><span class="p">),</span>
+                      <span class="p">(</span><span class="n">re_file_abs</span><span class="p">,</span> <span class="s2">&quot;final&quot;</span><span class="p">),</span>
+                      <span class="p">(</span><span class="n">rest_file</span><span class="p">,</span> <span class="s2">&quot;restraint&quot;</span><span class="p">)]:</span>
+        <span class="k">if</span> <span class="n">fn</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">lexists</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;When parsing the input, found this filename &quot;</span>
+                                <span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39; next to the &#39;</span><span class="si">{}</span><span class="s2">&#39; command. Unfortunately,&quot;</span>
+                                <span class="s2">&quot; the file doesnt exist...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">descr</span><span class="p">))</span>
+
+    <span class="c1"># change the FEP (when debugging your system, you might want to</span>
+    <span class="c1"># use an old relax and not waste 100M core hours when changing</span>
+    <span class="c1"># a soft core value in the fep)</span>
+    <span class="k">if</span> <span class="n">fep_file</span><span class="p">:</span>
+        <span class="n">fep_file_abs</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">fep_file</span><span class="p">)</span>
+
+
+    <span class="c1"># find and replace atom placeholders in FEP file</span>
+    <span class="c1"># if no PDB was given to replace them, exit</span>
+    <span class="n">fep_file_str</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">fep_file_abs</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">find_placeholders</span><span class="p">(</span><span class="n">fep_file_str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pdb_file</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Found placeholders in FEP file, but no PDB was &quot;</span>
+                            <span class="s2">&quot;given: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">)))</span>
+    <span class="k">elif</span> <span class="n">c</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Replacing FEP file placeholders...&quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">qstruct</span> <span class="o">=</span> <span class="n">QStruct</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="s2">&quot;pdb&quot;</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+            <span class="n">fep_file_str</span> <span class="o">=</span> <span class="n">qstruct</span><span class="o">.</span><span class="n">convert_placeholders</span><span class="p">(</span><span class="n">fep_file_str</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">QStructError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Failed to replace placeholders: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err_msg</span><span class="p">))</span>
+
+
+    <span class="c1"># change the inital lambda (this is not recommended, the system should</span>
+    <span class="c1"># be properly relaxed at a particual lambda before doing FEP)</span>
+    <span class="k">if</span> <span class="n">fromlambda</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lambda_initial</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">fromlambda</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lambda_initial</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">lambda_initial</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Lambda value is bogus, are you on drugs?&quot;</span><span class="p">)</span>
+
+    <span class="c1"># create lambda values, find the closest to the starting one and</span>
+    <span class="c1"># rearrange accordingly: [0.0, 0.02, 0.04, ... 0.98, 1.0]  for frames==51</span>
+    <span class="n">lambdas</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">frames</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">frames</span><span class="p">)]</span>
+
+    <span class="c1"># [2,]   for lambda_initial == 0.04 (or close to 0.04) and frames==51</span>
+    <span class="n">l_i</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">frames</span><span class="p">)</span> <span class="k">if</span> \
+            <span class="nb">abs</span><span class="p">(</span><span class="n">lambdas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">lambda_initial</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">frames</span><span class="p">)]</span>
+    <span class="c1"># there should be only one</span>
+    <span class="n">l_i</span> <span class="o">=</span> <span class="n">l_i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">lambda_initial</span> <span class="o">=</span> <span class="n">lambdas</span><span class="p">[</span><span class="n">l_i</span><span class="p">]</span>
+
+    <span class="c1"># [0.02, 0.0,] for the case of lambda_initial == 0.04 and frames == 51</span>
+    <span class="n">forward_lambdas</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">lambdas</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">l_i</span><span class="p">]))</span>
+    <span class="c1"># [0.06, 0.08, ..., 1.0] for the case of lambda_initial == 0.04, fr. == 51</span>
+    <span class="n">backward_lambdas</span> <span class="o">=</span> <span class="n">lambdas</span><span class="p">[</span><span class="n">l_i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>
+
+    <span class="n">lambdas</span> <span class="o">=</span> <span class="p">[</span><span class="n">lambda_initial</span><span class="p">,]</span> <span class="o">+</span> <span class="n">forward_lambdas</span> <span class="o">+</span> <span class="n">backward_lambdas</span>
+
+    <span class="c1"># print out some useful information</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using restart file: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">re_file_abs</span><span class="p">)))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using topology file: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">top_file_abs</span><span class="p">)))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Using FEP file: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">fep_file_abs</span><span class="p">)))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Starting from lambda value (state 1): </span><span class="si">{}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda_initial</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Number of FEP frames: </span><span class="si">{}</span><span class="s2"> &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frames</span><span class="p">))</span>
+
+
+    <span class="c1"># create a temporary directory to store the files that are identical</span>
+    <span class="c1"># in all replicas - top, fep, runscript, relax restart, restraint file</span>
+    <span class="c1"># (if any) and copy the common files</span>
+    <span class="n">TMPDIR</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+    <span class="n">top_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">top_file_abs</span><span class="p">)</span>
+    <span class="n">fep_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">fep_file_abs</span><span class="p">)</span>
+    <span class="n">relax_re_fn</span> <span class="o">=</span> <span class="s2">&quot;cont_&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">re_file_abs</span><span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">top_file_abs</span><span class="p">,</span> <span class="n">TMPDIR</span><span class="p">)</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">re_file_abs</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">,</span> <span class="n">relax_re_fn</span><span class="p">))</span>
+
+    <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">,</span> <span class="n">fep_fn</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">fep_file_str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">runscript_file</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">runscript_file</span><span class="p">,</span> <span class="n">TMPDIR</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No Q runscript given.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># handle the whole restraint coordinates crap...</span>
+    <span class="c1"># rest_file is the file from the relaxation input (if any)</span>
+    <span class="c1"># rest_fn is the basename of the restraints file (either from input</span>
+    <span class="c1"># or relaxed.re.rest), or None if rest. to topology</span>
+    <span class="k">if</span> <span class="n">restraint</span> <span class="o">==</span> <span class="s2">&quot;relax&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Restraining to: relaxation&quot;</span><span class="p">)</span>
+        <span class="n">rest_fn</span> <span class="o">=</span> <span class="s2">&quot;cont_&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">re_file_abs</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.rest&quot;</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">re_file_abs</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">,</span> <span class="n">rest_fn</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">restraint</span> <span class="o">==</span> <span class="s2">&quot;top&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Restraining to: topology&quot;</span><span class="p">)</span>
+        <span class="n">rest_fn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1"># default, from input</span>
+        <span class="k">if</span> <span class="n">rest_file</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Restraining to: </span><span class="si">{}</span><span class="s2"> (from input)&quot;</span>
+                        <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">rest_file</span><span class="p">)))</span>
+            <span class="n">rest_fn</span> <span class="o">=</span> <span class="s2">&quot;cont_&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">rest_file</span><span class="p">)</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">rest_file</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">,</span> <span class="n">rest_fn</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Restraining to: topology (from input)&quot;</span><span class="p">)</span>
+            <span class="n">rest_fn</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+    <span class="c1"># parse the proc file</span>
+    <span class="n">general_inp</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">eq_steps_inps</span> <span class="o">=</span> <span class="p">[[],]</span>
+    <span class="n">fep_inp</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">script_vars</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">section</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fep_proc_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="c1"># remove comments and strip whitespaces.</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#|\!&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="c1"># empty lines are useless</span>
+        <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="c1"># found a section</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;{&quot;</span><span class="p">:</span>
+            <span class="n">section</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">continue</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">section</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Parsing the procedure file failed... This &quot;</span>
+                                <span class="s2">&quot;line: &#39;</span><span class="si">{}</span><span class="s2">&#39; is not inside any section:&quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;script_vars&quot;</span><span class="p">:</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">var</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">script_vars</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;general&quot;</span><span class="p">:</span>
+            <span class="n">general_inp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;steps_equil&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;__________&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                <span class="n">eq_steps_inps</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">eq_steps_inps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;fep&quot;</span><span class="p">:</span>
+            <span class="n">fep_inp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Parsing the procedure file failed: &quot;</span>
+                                <span class="s2">&quot;Unsupported section: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">section</span><span class="p">))</span>
+
+
+    <span class="c1"># check for steps with no parameters (too many _________ lines)</span>
+    <span class="c1"># and remove them</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eq_steps_inps</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">eq_steps_inps</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+            <span class="n">eq_steps_inps</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+    <span class="c1"># check for missing sections</span>
+    <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="p">((</span><span class="n">general_inp</span><span class="p">,</span> <span class="s2">&quot;GENERAL&quot;</span><span class="p">),</span>
+                 <span class="p">(</span><span class="n">eq_steps_inps</span><span class="p">,</span> <span class="s2">&quot;STEPS_EQUIL&quot;</span><span class="p">),</span>
+                 <span class="p">(</span><span class="n">fep_inp</span><span class="p">,</span> <span class="s2">&quot;FEP&quot;</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">l</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Parsing the procedure file failed: &quot;</span>
+                                <span class="s2">&quot;Section &#39;</span><span class="si">{}</span><span class="s2">&#39; is missing&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+
+
+    <span class="c1"># join lists of lines to strings and replace the placeholders</span>
+    <span class="n">script_variables</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">script_vars</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">gen_inp_s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">general_inp</span><span class="p">)</span>
+    <span class="n">fep_inp_s</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fep_inp</span><span class="p">)</span>
+    <span class="n">eq_steps_inps_s</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">eq_s_inp</span><span class="p">)</span> <span class="k">for</span> <span class="n">eq_s_inp</span> <span class="ow">in</span> <span class="n">eq_steps_inps</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">placeholder</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">script_variables</span><span class="p">:</span>
+        <span class="n">gen_inp_s</span> <span class="o">=</span> <span class="n">gen_inp_s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">placeholder</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="n">fep_inp_s</span> <span class="o">=</span> <span class="n">fep_inp_s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">placeholder</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">step_i</span><span class="p">,</span> <span class="n">eq_step_inp_s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">eq_steps_inps_s</span><span class="p">):</span>
+            <span class="n">eq_steps_inps_s</span><span class="p">[</span><span class="n">step_i</span><span class="p">]</span> <span class="o">=</span> <span class="n">eq_step_inp_s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">placeholder</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+
+    <span class="c1">####################</span>
+    <span class="c1"># make equil. inputs</span>
+    <span class="n">eq_steps</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">eq_step_inp_s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">eq_steps_inps_s</span><span class="p">):</span>
+        <span class="c1"># create the files section</span>
+        <span class="n">final</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">_</span><span class="si">{:4.3f}</span><span class="s2">.re&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX_EQ</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">lambda_initial</span><span class="p">)</span>
+        <span class="n">dcd</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">_</span><span class="si">{:4.3f}</span><span class="s2">.dcd&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX_EQ</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">lambda_initial</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;final&quot;</span>      <span class="p">:</span> <span class="n">final</span><span class="p">,</span>
+                 <span class="s2">&quot;trajectory&quot;</span> <span class="p">:</span> <span class="n">dcd</span><span class="p">,</span>
+                 <span class="s2">&quot;topology&quot;</span>   <span class="p">:</span> <span class="n">top_fn</span><span class="p">,</span>
+                 <span class="s2">&quot;fep&quot;</span>        <span class="p">:</span> <span class="n">fep_fn</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">first_frame_eq</span><span class="p">:</span>
+            <span class="n">files</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">_</span><span class="si">{:4.3f}</span><span class="s2">.en&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX_EQ</span><span class="p">,</span>
+                                                           <span class="n">step_n</span><span class="p">,</span>
+                                                           <span class="n">lambda_initial</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">rest_fn</span><span class="p">:</span>
+            <span class="n">files</span><span class="p">[</span><span class="s2">&quot;restraint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rest_fn</span>
+
+        <span class="k">if</span> <span class="n">step_n</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">files</span><span class="p">[</span><span class="s2">&quot;restart&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">_</span><span class="si">{:4.3f}</span><span class="s2">.re&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX_EQ</span><span class="p">,</span>
+                                                            <span class="n">step_n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+                                                            <span class="n">lambda_initial</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">files</span><span class="p">[</span><span class="s2">&quot;restart&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">relax_re_fn</span>
+
+        <span class="c1"># parse the general input and update with step input and files section</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">inp</span> <span class="o">=</span> <span class="n">QDynInput</span><span class="p">(</span><span class="n">gen_inp_s</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+            <span class="n">inp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">eq_step_inp_s</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;energy&quot;</span> <span class="ow">in</span> <span class="n">inp</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;intervals&quot;</span><span class="p">]:</span>
+                <span class="n">files</span><span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">_</span><span class="si">{:4.3f}</span><span class="s2">.en&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX_EQ</span><span class="p">,</span>
+                                                               <span class="n">step_n</span><span class="p">,</span>
+                                                               <span class="n">lambda_initial</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">first_frame_eq</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Argument &#39;first_frame_eq&#39; requires the &quot;</span>
+                                    <span class="s2">&quot;energy printout defined in the intervals &quot;</span>
+                                    <span class="s2">&quot;section of the equilibration &quot;</span>
+                                    <span class="s2">&quot;(e.g. &#39;energy   10&#39;)&quot;</span><span class="p">)</span>
+
+            <span class="n">inp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="n">files</span><span class="p">})</span>
+            <span class="n">inp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lambdas&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:9.7f}</span><span class="s2"> </span><span class="si">{:9.7f}</span><span class="s2">&quot;</span>
+                                              <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda_initial</span><span class="p">,</span>
+                                                        <span class="mi">1</span><span class="o">-</span><span class="n">lambda_initial</span><span class="p">)})</span>
+        <span class="k">except</span> <span class="n">QDynInputError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Problem with equil. step no. </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">err_msg</span><span class="p">))</span>
+
+        <span class="c1"># test the input string</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="n">inp</span><span class="o">.</span><span class="n">get_string</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">QDynInputError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Error in equil. step </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">err_msg</span><span class="p">))</span>
+
+        <span class="c1"># check if random seed is not defined or is fixed in the first step</span>
+        <span class="k">if</span> <span class="n">step_n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">repeats</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;random_seed&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">inp</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">])</span> <span class="ow">or</span> \
+                        <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">][</span><span class="s2">&quot;random_seed&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Fixed random seed (or restart &quot;</span>
+                                        <span class="s2">&quot;velocities) works only with one &quot;</span>
+                                        <span class="s2">&quot;repeat (others will be identical).</span><span class="se">\n</span><span class="s2">&quot;</span>
+                                        <span class="s2">&quot;Please use &#39;random_seed   -1&#39; in &quot;</span>
+                                        <span class="s2">&quot;your first equilibration step to &quot;</span>
+                                        <span class="s2">&quot;generate random random seeds.&quot;</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="s2">&quot;random_seed&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">inp</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">]:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No random seed in first step of equilibration,&quot;</span>
+                            <span class="s2">&quot;using restart velocities.&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rest_file</span> <span class="ow">and</span> <span class="n">rest_fn</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="n">rest_fn</span> <span class="ow">and</span> <span class="n">rest_file</span><span class="p">)</span> \
+                  <span class="ow">or</span> <span class="p">(</span><span class="n">rest_file</span> <span class="ow">and</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">rest_file</span><span class="p">)</span> <span class="o">!=</span> <span class="n">rest_fn</span><span class="p">)):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;This will not be a true continuation run! &quot;</span>
+                                   <span class="s2">&quot;The relaxation restraint does not match &quot;</span>
+                                   <span class="s2">&quot;yours. Use &#39;inp&#39; instead of &#39;top&#39; or &quot;</span>
+                                   <span class="s2">&quot;&#39;relax&#39; for the restraint.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># append the input</span>
+        <span class="n">eq_steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+
+
+
+    <span class="c1">#################</span>
+    <span class="c1"># make FEP inputs</span>
+    <span class="n">en_filenames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">feps</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">lam</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lambdas</span><span class="p">):</span>
+        <span class="c1"># create the files section</span>
+        <span class="n">final</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">_</span><span class="si">{:4.3f}</span><span class="s2">.re&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX_FEP</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">lam</span><span class="p">)</span>
+        <span class="n">dcd</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">_</span><span class="si">{:4.3f}</span><span class="s2">.dcd&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX_FEP</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">lam</span><span class="p">)</span>
+        <span class="n">en</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">_</span><span class="si">{:4.3f}</span><span class="s2">.en&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX_FEP</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">lam</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;final&quot;</span>      <span class="p">:</span> <span class="n">final</span><span class="p">,</span>
+                 <span class="s2">&quot;trajectory&quot;</span> <span class="p">:</span> <span class="n">dcd</span><span class="p">,</span>
+                 <span class="s2">&quot;topology&quot;</span>   <span class="p">:</span> <span class="n">top_fn</span><span class="p">,</span>
+                 <span class="s2">&quot;energy&quot;</span>     <span class="p">:</span> <span class="n">en</span><span class="p">,</span>
+                 <span class="s2">&quot;fep&quot;</span>        <span class="p">:</span> <span class="n">fep_fn</span><span class="p">}</span>
+
+        <span class="c1"># if this step is in new direction (backwards) then</span>
+        <span class="c1"># set the previous lambda and step to initial</span>
+        <span class="k">if</span> <span class="n">backward_lambdas</span> <span class="ow">and</span> <span class="n">lam</span> <span class="o">==</span> <span class="n">backward_lambdas</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">prev_fep</span> <span class="o">=</span> <span class="n">feps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">step_n</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">prev_fep</span> <span class="o">=</span> <span class="n">eq_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prev_fep</span> <span class="o">=</span> <span class="n">feps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># if this flag is set, all steps that point to the first step</span>
+        <span class="c1"># should point to the last eq step</span>
+        <span class="k">if</span> <span class="n">first_frame_eq</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">step_n</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="p">(</span><span class="n">backward_lambdas</span> <span class="ow">and</span> <span class="n">lam</span> <span class="o">==</span> <span class="n">backward_lambdas</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">prev_fep</span> <span class="o">=</span> <span class="n">eq_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">rest_fn</span><span class="p">:</span>
+            <span class="n">files</span><span class="p">[</span><span class="s2">&quot;restraint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rest_fn</span>
+
+        <span class="n">files</span><span class="p">[</span><span class="s2">&quot;restart&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prev_fep</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="s2">&quot;final&quot;</span><span class="p">]</span>
+
+
+        <span class="c1"># update the parameters and check the input</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">inp</span> <span class="o">=</span> <span class="n">QDynInput</span><span class="p">(</span><span class="n">gen_inp_s</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+            <span class="n">inp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">fep_inp_s</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;energy&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">inp</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;intervals&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;FEP stage requires the energy printout &quot;</span>
+                                    <span class="s2">&quot;defined in the intervals section &quot;</span>
+                                    <span class="s2">&quot;(e.g. &#39;energy   10&#39;)&quot;</span><span class="p">)</span>
+
+            <span class="n">inp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;files&quot;</span><span class="p">:</span> <span class="n">files</span><span class="p">})</span>
+            <span class="n">inp</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;lambdas&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="si">{:9.7f}</span><span class="s2"> </span><span class="si">{:9.7f}</span><span class="s2">&quot;</span>
+                                              <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">lam</span><span class="p">)})</span>
+            <span class="n">inp</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">QDynInputError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Error in FEP step </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">err_msg</span><span class="p">))</span>
+
+        <span class="c1"># append the input</span>
+        <span class="n">feps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inp</span><span class="p">)</span>
+
+        <span class="c1"># add the energy filename to the list</span>
+        <span class="n">en_filenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">inp</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="s2">&quot;energy&quot;</span><span class="p">])</span>
+
+
+    <span class="c1"># if first_frame_eq is set add the energy file and remove the</span>
+    <span class="c1"># first fep frame</span>
+    <span class="k">if</span> <span class="n">first_frame_eq</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Replacing the first FEP frame with the last &quot;</span>
+                    <span class="s2">&quot;equilibration step&quot;</span><span class="p">)</span>
+        <span class="n">en_filenames</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">eq_steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="s2">&quot;energy&quot;</span><span class="p">]</span>
+        <span class="n">feps</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+
+    <span class="c1"># check random seed in fep</span>
+    <span class="k">if</span> <span class="s2">&quot;random_seed&quot;</span> <span class="ow">in</span> <span class="n">feps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+            <span class="nb">int</span><span class="p">(</span><span class="n">feps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">][</span><span class="s2">&quot;random_seed&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Generating random seeds in FEP inputs. &quot;</span>
+                       <span class="s2">&quot;Are you sure this is ok?&quot;</span><span class="p">)</span>
+
+    <span class="c1"># write a file that contains the names of all energy files in proper order</span>
+    <span class="c1"># this file is used later by q_mapper.py</span>
+    <span class="c1"># sort the enfiles according to lambda (1.0 -&gt; 0.0) so that the mapping</span>
+    <span class="c1"># will always go from reactants to products</span>
+    <span class="n">enfiles_lambdas</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">enf</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">enf</span> <span class="ow">in</span> \
+            <span class="nb">enumerate</span><span class="p">(</span><span class="n">en_filenames</span><span class="p">)],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">en_filenames_sorted</span> <span class="o">=</span> <span class="p">[</span><span class="n">en_filenames</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">l</span><span class="p">,</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">enfiles_lambdas</span><span class="p">]</span>
+    <span class="n">enf</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">,</span> <span class="n">energy_list_fn</span><span class="p">)</span>
+    <span class="nb">open</span><span class="p">(</span><span class="n">enf</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">en_filenames_sorted</span><span class="p">))</span>
+
+    <span class="c1"># create directories for repeats/replicas (rep_000,rep_001,rep_002...)</span>
+    <span class="c1"># copy everything from TMPDIR (topology, fep file, relax restart and</span>
+    <span class="c1"># restraint file (if any)); create the eq and fep inputs</span>
+    <span class="c1">#</span>
+    <span class="c1"># first check for existing directories</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">repeats</span><span class="p">):</span>
+        <span class="n">rep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">lexists</span><span class="p">(</span><span class="n">rep</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Directory &#39;</span><span class="si">{}</span><span class="s2">&#39; exists. Please (re)move it or &quot;</span>
+                                <span class="s2">&quot;change the prefix with --prefix.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rep</span><span class="p">))</span>
+
+    <span class="n">lsdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">)</span>
+    <span class="n">rep_dirs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="n">xrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">repeats</span><span class="p">):</span>
+        <span class="n">rep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">num</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">rep</span><span class="p">)</span>
+        <span class="c1"># copy stuff from TMPDIR</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">lsdir</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">,</span> <span class="n">f</span><span class="p">),</span> <span class="n">rep</span><span class="p">)</span>
+
+        <span class="c1"># create eq inputs</span>
+        <span class="k">for</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">eq_step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">eq_steps</span><span class="p">):</span>
+
+    <span class="c1"># check if random seed is a fixed value or not (generate random or fail)</span>
+            <span class="n">eqs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">eq_step</span><span class="p">)</span>  <span class="c1"># a copy</span>
+            <span class="k">if</span> <span class="s2">&quot;random_seed&quot;</span> <span class="ow">in</span> <span class="n">eqs</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                    <span class="nb">int</span><span class="p">(</span><span class="n">eqs</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">][</span><span class="s2">&quot;random_seed&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">rs</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="n">e6</span><span class="p">)</span>
+                <span class="n">eqs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;md&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;random_seed&quot;</span> <span class="p">:</span> <span class="n">rs</span><span class="p">}})</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">eqs</span><span class="o">.</span><span class="n">get_string</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">QDynInputError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Error in step </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">err_msg</span><span class="p">))</span>
+            <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rep</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">_</span><span class="si">{:4.3f}</span><span class="s2">.inp&quot;</span>
+                                   <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX_EQ</span><span class="p">,</span>
+                                             <span class="n">step_n</span><span class="p">,</span>
+                                             <span class="n">lambda_initial</span><span class="p">))</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">header_comment</span> <span class="o">+</span> <span class="n">s</span>
+            <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+
+        <span class="n">last_eq_fn</span> <span class="o">=</span> <span class="n">fn</span>
+        <span class="c1"># create FEP inputs</span>
+        <span class="k">for</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">fep</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">feps</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">first_frame_eq</span><span class="p">:</span>
+                <span class="n">step_n</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">fs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">fep</span><span class="p">)</span>  <span class="c1"># a copy</span>
+            <span class="k">if</span> <span class="s2">&quot;random_seed&quot;</span> <span class="ow">in</span> <span class="n">fs</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">]</span> <span class="ow">and</span> \
+                    <span class="nb">int</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">][</span><span class="s2">&quot;random_seed&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">rs</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="n">e6</span><span class="p">)</span>
+                <span class="n">fs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;md&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;random_seed&quot;</span> <span class="p">:</span> <span class="n">rs</span><span class="p">}})</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="n">fs</span><span class="o">.</span><span class="n">get_string</span><span class="p">()</span>
+            <span class="k">except</span> <span class="n">QDynInputError</span> <span class="k">as</span> <span class="n">err_msg</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QGenfepsError</span><span class="p">(</span><span class="s2">&quot;Error in step </span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">step_n</span><span class="p">,</span> <span class="n">err_msg</span><span class="p">))</span>
+            <span class="n">lam</span> <span class="o">=</span> <span class="n">lambdas</span><span class="p">[</span><span class="n">step_n</span><span class="p">]</span>  <span class="c1"># feps was created in lambdas iteration</span>
+            <span class="n">fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rep</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}{:03d}</span><span class="s2">_</span><span class="si">{:4.3f}</span><span class="s2">.inp&quot;</span>
+                                   <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">PREFIX_FEP</span><span class="p">,</span> <span class="n">step_n</span><span class="p">,</span> <span class="n">lam</span><span class="p">))</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="n">header_comment</span> <span class="o">+</span> <span class="n">s</span>
+            <span class="nb">open</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+      
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Created inputs for repeat/replica &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rep</span><span class="p">))</span>
+        <span class="n">rep_dirs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rep</span><span class="p">)</span>
+
+
+
+    <span class="c1"># get the amount of storage that will be wasted</span>
+    <span class="c1"># for this we need the atom count from the topology</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">,</span><span class="n">top_fn</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">(</span><span class="mi">1024</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s2">&quot;no. of atoms, no. of solute atoms&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">num_atoms_all</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">break</span>
+
+    <span class="n">REST_B_PER_ATOM</span> <span class="o">=</span> <span class="mf">48.0</span>
+    <span class="n">TRJ_B_PER_ATOM</span> <span class="o">=</span> <span class="mf">12.0</span>
+    <span class="c1"># very rough estimate, depends on Q version</span>
+    <span class="c1"># it can double if group_contributions are calculated</span>
+    <span class="n">EN_B_PER_STEP</span> <span class="o">=</span> <span class="mf">370.0</span>
+    <span class="n">CONV_MB</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="mi">20</span>
+    <span class="c1"># very rough estimate</span>
+    <span class="n">OUT_B_PER_STEP</span> <span class="o">=</span> <span class="mi">2000</span>
+    <span class="n">TEMP_B_PER_STEP</span> <span class="o">=</span> <span class="mi">160</span>
+    <span class="n">NB_B_PER_STEP</span> <span class="o">=</span> <span class="mi">80</span>
+
+    <span class="c1"># intervals maps: q_parameter_key, q_default_value, approx_bytes_per_frame</span>
+    <span class="n">qintervals</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;trj&quot;</span>  <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;trajectory&quot;</span><span class="p">,</span>   <span class="mi">100</span><span class="p">,</span> <span class="n">num_atoms_all</span><span class="o">*</span><span class="n">TRJ_B_PER_ATOM</span><span class="p">],</span>
+                  <span class="s2">&quot;log&quot;</span>  <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;output&quot;</span><span class="p">,</span>        <span class="mi">10</span><span class="p">,</span> <span class="n">OUT_B_PER_STEP</span><span class="p">],</span>
+                  <span class="s2">&quot;temp&quot;</span> <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;temperature&quot;</span><span class="p">,</span>   <span class="mi">10</span><span class="p">,</span> <span class="n">TEMP_B_PER_STEP</span><span class="p">],</span>
+                  <span class="s2">&quot;en&quot;</span>   <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;energy&quot;</span><span class="p">,</span>        <span class="mi">10</span><span class="p">,</span> <span class="n">EN_B_PER_STEP</span><span class="p">],</span>
+                  <span class="s2">&quot;nb&quot;</span>   <span class="p">:</span> <span class="p">[</span><span class="s2">&quot;non_bond&quot;</span><span class="p">,</span>      <span class="mi">10</span><span class="p">,</span> <span class="n">NB_B_PER_STEP</span><span class="p">]}</span>
+    <span class="n">total_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;trj&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;en&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;rest&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+            <span class="c1"># calculate approx amount of data</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">eq_steps</span><span class="o">+</span><span class="n">feps</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">mdsteps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;md&quot;</span><span class="p">][</span><span class="s2">&quot;steps&quot;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">qintervals</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">interval_key</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">default_interval</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">bytes_per_step</span> <span class="o">=</span> <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">interval</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">step</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;intervals&quot;</span><span class="p">][</span><span class="n">interval_key</span><span class="p">])</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdsteps</span> <span class="o">/</span> <span class="n">interval</span> <span class="o">*</span> <span class="n">bytes_per_step</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="c1"># default</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">mdsteps</span> <span class="o">/</span> <span class="n">default_interval</span> <span class="o">*</span> <span class="n">bytes_per_step</span>
+            <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>   <span class="c1"># no printout</span>
+            <span class="k">finally</span><span class="p">:</span>
+                <span class="c1"># if energy or trajectory, check that files for output are</span>
+                <span class="c1"># defined, otherwise set the printout to 0</span>
+                <span class="k">if</span> <span class="n">interval_key</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;energy&quot;</span><span class="p">,</span> <span class="s2">&quot;trajectory&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> \
+                   <span class="n">interval_key</span> <span class="ow">in</span> <span class="n">step</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">data</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">trj_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;trj&quot;</span><span class="p">]</span>
+        <span class="n">en_data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">]</span>
+        <span class="n">log_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;temp&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;nb&quot;</span><span class="p">])</span>
+        <span class="n">rest_data</span> <span class="o">=</span> <span class="n">num_atoms_all</span> <span class="o">*</span> <span class="n">REST_B_PER_ATOM</span>
+        <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;trj&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">trj_data</span>
+        <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">log_data</span>
+        <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">en_data</span>
+        <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;rest&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">rest_data</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">trj_data</span> <span class="o">+</span> <span class="n">log_data</span> <span class="o">+</span> <span class="n">rest_data</span> <span class="o">+</span> <span class="n">en_data</span><span class="p">)</span><span class="o">/</span><span class="n">CONV_MB</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Your runs will waste approx. </span><span class="si">{:.2f}</span><span class="s2"> MB of storage. &quot;</span>
+                <span class="s2">&quot;Per replica: </span><span class="si">{:.2f}</span><span class="s2"> MB (trj: </span><span class="si">{:.1f}</span><span class="s2">, log: </span><span class="si">{:.1f}</span><span class="s2">, &quot;</span>
+                <span class="s2">&quot;en: </span><span class="si">{:.1f}</span><span class="s2">, rest: </span><span class="si">{:.1f}</span><span class="s2">)&quot;</span>
+                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">total_data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">/</span><span class="n">CONV_MB</span><span class="o">*</span><span class="n">repeats</span><span class="p">,</span>
+                        <span class="nb">sum</span><span class="p">(</span><span class="n">total_data</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">/</span><span class="n">CONV_MB</span><span class="p">,</span>
+                        <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;trj&quot;</span><span class="p">]</span><span class="o">/</span><span class="n">CONV_MB</span><span class="p">,</span>
+                        <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">]</span><span class="o">/</span><span class="n">CONV_MB</span><span class="p">,</span>
+                        <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;en&quot;</span><span class="p">]</span><span class="o">/</span><span class="n">CONV_MB</span><span class="p">,</span>
+                        <span class="n">total_data</span><span class="p">[</span><span class="s2">&quot;rest&quot;</span><span class="p">]</span><span class="o">/</span><span class="n">CONV_MB</span><span class="p">))</span>
+
+    <span class="c1"># remove temporary directory</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">TMPDIR</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rep_dirs</span></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Miha Purg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.6.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,868 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Qpyl.core.qtopology &mdash; Qpyl 0.6.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Qpyl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Qpyl.html">Qpyl package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Qpyl</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>Qpyl.core.qtopology</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Qpyl.core.qtopology</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># MIT License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2018  Miha Purg &lt;miha.purg@gmail.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module implements an internal topology builder class QTopology.</span>
+<span class="sd">QTopology creates a mapping between the system&#39;s structure (QStruct),</span>
+<span class="sd">bonding patterns/charges (QLib), and the parameters (Qrm), allowing</span>
+<span class="sd">evaluation of individual topological components of the system.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">Qpyl.core</span> <span class="k">import</span> <span class="n">qlibrary</span>
+<span class="kn">from</span> <span class="nn">Qpyl.core</span> <span class="k">import</span> <span class="n">qparameter</span>
+<span class="kn">from</span> <span class="nn">Qpyl.core</span> <span class="k">import</span> <span class="n">qstructure</span>
+<span class="kn">from</span> <span class="nn">Qpyl.core</span> <span class="k">import</span> <span class="n">qpotential</span>
+
+<div class="viewcode-block" id="QTopologyError"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qtopology.QTopologyError">[docs]</a><span class="k">class</span> <span class="nc">QTopologyError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="QTopology"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qtopology.QTopology">[docs]</a><span class="k">class</span> <span class="nc">QTopology</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for storing topology information.</span>
+
+<span class="sd">    (mashup of library, parameter and structure data)</span>
+<span class="sd">    Contains lists of atoms, bonds, angles, torsions</span>
+<span class="sd">    and impropers, along with their parameters.</span>
+
+<span class="sd">    The constructor takes in three arguments:</span>
+<span class="sd">      qlib (qlibrary.QLib object)</span>
+<span class="sd">      qprm (qparameter.QPrm object)</span>
+<span class="sd">      qstruct (qstructure.QStruct object)</span>
+
+<span class="sd">    Typical usage:</span>
+
+<span class="sd">    qlib = qlibrary.QLib(&quot;amber&quot;)</span>
+<span class="sd">    qprm = qparameter.QPrm(&quot;amber&quot;)</span>
+<span class="sd">    qstruct = qstructure.QStruct()</span>
+<span class="sd">    qlib.read_lib(&quot;.../qamber14.lib&quot;)</span>
+<span class="sd">    qprm.read_prm(&quot;.../qamber14.prm&quot;)</span>
+<span class="sd">    qstruct.read_pdb(&quot;.../14u3.pdb&quot;)</span>
+
+<span class="sd">    try:</span>
+<span class="sd">        qtopo = QTopology(qlib, qprm, qstruct)</span>
+<span class="sd">    except QTopologyError as e:</span>
+<span class="sd">        print &quot;Failed to make topology: &quot; + str(e)</span>
+
+<span class="sd">    for bond in qtopo.bonds:</span>
+<span class="sd">        print &quot;%s: fk %.2f, r0 %.2f, r %.2f, E(r) %.2f&quot; %</span>
+<span class="sd">              (bond, bond.prm.fc, bond.prm.r0, bond.r, bond.energy)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qlib</span><span class="p">,</span> <span class="n">qprm</span><span class="p">,</span> <span class="n">qstruct</span><span class="p">):</span>
+        <span class="c1"># do some type checking to prevent bad things from happening</span>
+        <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">_type</span> <span class="ow">in</span> <span class="p">((</span><span class="n">qlib</span><span class="p">,</span> <span class="n">qlibrary</span><span class="o">.</span><span class="n">QLib</span><span class="p">),</span>
+                           <span class="p">(</span><span class="n">qprm</span><span class="p">,</span> <span class="n">qparameter</span><span class="o">.</span><span class="n">QPrm</span><span class="p">),</span>
+                           <span class="p">(</span><span class="n">qstruct</span><span class="p">,</span> <span class="n">qstructure</span><span class="o">.</span><span class="n">QStruct</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">_type</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">QTopologyError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> not of type </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">_type</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">qlib</span><span class="o">.</span><span class="n">ff_type</span> <span class="o">!=</span> <span class="n">qprm</span><span class="o">.</span><span class="n">ff_type</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QTopologyError</span><span class="p">(</span><span class="s2">&quot;QLib FF (</span><span class="si">{}</span><span class="s2">) not &quot;</span>
+                                 <span class="s2">&quot;compatible with QPrm FF (</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qlib</span><span class="o">.</span><span class="n">ff_type</span><span class="p">,</span> <span class="n">qprm</span><span class="o">.</span><span class="n">ff_type</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qlib</span> <span class="o">=</span> <span class="n">qlib</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qprm</span> <span class="o">=</span> <span class="n">qprm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qstruct</span> <span class="o">=</span> <span class="n">qstruct</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qlib</span><span class="o">.</span><span class="n">check_valid</span><span class="p">()</span>  <span class="c1"># check if lib entries are good</span>
+        <span class="k">except</span> <span class="n">qlibrary</span><span class="o">.</span><span class="n">QLibError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QTopologyError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">residues</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">torsions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">impropers</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">residue_struct</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qstruct</span><span class="o">.</span><span class="n">residues</span><span class="p">:</span>
+
+            <span class="c1"># see if it is defined in the library</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">residue_lib</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qlib</span><span class="o">.</span><span class="n">residue_dict</span><span class="p">[</span><span class="n">residue_struct</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QTopologyError</span><span class="p">(</span><span class="s2">&quot;Residue &#39;</span><span class="si">{}</span><span class="s2">&#39; not found in library&quot;</span>
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">residue_struct</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="c1"># create new object for the residue</span>
+            <span class="n">res_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residues</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">residue_top</span> <span class="o">=</span> <span class="n">_TopoResidue</span><span class="p">(</span><span class="n">res_index</span><span class="p">,</span> <span class="n">residue_struct</span><span class="p">,</span> <span class="n">residue_lib</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">residue_top</span><span class="p">)</span>
+
+            <span class="c1"># get atoms and bonds within the residue</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_atoms</span><span class="p">(</span><span class="n">residue_top</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_bonds</span><span class="p">(</span><span class="n">residue_top</span><span class="p">)</span>
+
+	<span class="c1"># get angles, torsions and impropers from the bonds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_angles_torsions</span><span class="p">()</span>
+        <span class="c1"># get impropers (from the lib entries)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_impropers</span><span class="p">()</span>
+
+
+
+
+
+    <span class="k">def</span> <span class="nf">_get_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">residue_top</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates _TopoAtom objects and adds them to</span>
+<span class="sd">        _TopoResidue and QTopology.atoms</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># iterate over the atoms in the library</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">residue_top</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+            <span class="n">aname</span><span class="p">,</span> <span class="n">atype</span><span class="p">,</span> <span class="n">charge</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">atom_type</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">charge</span>
+            <span class="c1"># check if atoms exist in the structure</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">atom_struct</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">residue_top</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">atoms</span>
+                               <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">aname</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QTopologyError</span><span class="p">(</span><span class="s2">&quot;Atom &#39;</span><span class="si">{}</span><span class="s2">&#39; in residue &#39;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                     <span class="s2">&quot; missing in the structure&quot;</span>
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aname</span><span class="p">,</span>
+                                             <span class="n">residue_top</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">index_struct</span><span class="p">,</span>
+                                             <span class="n">residue_top</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+            <span class="c1"># check if atom parameters exist</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">atom_prm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qprm</span><span class="o">.</span><span class="n">atom_types</span><span class="p">[</span><span class="n">atype</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QTopologyError</span><span class="p">(</span><span class="s2">&quot;Atom type &#39;</span><span class="si">{}</span><span class="s2">&#39; not found!&quot;</span>
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atype</span><span class="p">))</span>
+
+            <span class="c1"># add new atom to list (and to the residue_top)</span>
+            <span class="n">atom_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="n">_TopoAtom</span><span class="p">(</span><span class="n">atom_index</span><span class="p">,</span> <span class="n">aname</span><span class="p">,</span> <span class="n">charge</span><span class="p">,</span> <span class="n">atom_prm</span><span class="p">,</span>
+                          <span class="n">atom_struct</span><span class="p">,</span> <span class="n">residue_top</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+            <span class="n">residue_top</span><span class="o">.</span><span class="n">add_atom</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span> <span class="nf">_get_bonds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">residue_top</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates _TopoBond objects and adds them to QTopology.bonds</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># iterate over the bonds in the library</span>
+        <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="n">residue_top</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">bonds</span><span class="p">:</span>
+            <span class="c1"># find the atom objects with those names</span>
+            <span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">residue_top</span><span class="o">.</span><span class="n">atoms</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">bond</span><span class="p">]</span>
+            <span class="c1"># find parameters</span>
+            <span class="n">atom_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">atom_type</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
+            <span class="n">prm_id</span> <span class="o">=</span> <span class="n">qparameter</span><span class="o">.</span><span class="n">_PrmBond</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">atom_types</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">bond_prm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qprm</span><span class="o">.</span><span class="n">bonds</span><span class="p">[</span><span class="n">prm_id</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QTopologyError</span><span class="p">(</span><span class="s2">&quot;Bond type &#39;</span><span class="si">{}</span><span class="s2">&#39; not found!&quot;</span>
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prm_id</span><span class="p">))</span>
+            <span class="c1"># create _TopoBond object</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_TopoBond</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">bond_prm</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># -2 is assuming that the current one was just added (-1)</span>
+            <span class="n">prev_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residues</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="c1"># first residue</span>
+            <span class="k">pass</span>
+            <span class="c1"># don&#39;t check separate chains</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">residue_top</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">molecule</span> <span class="o">==</span> <span class="n">prev_res</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">molecule</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">conn</span> <span class="ow">in</span> <span class="n">residue_top</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">connections</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">conn_prev</span> <span class="ow">in</span> <span class="n">prev_res</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">connections</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s2">&quot;head&quot;</span> <span class="ow">in</span> <span class="n">conn</span> <span class="ow">and</span> <span class="s2">&quot;tail&quot;</span> <span class="ow">in</span> <span class="n">conn_prev</span><span class="p">:</span>
+
+                            <span class="n">ahead</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">residue_top</span><span class="o">.</span><span class="n">atoms</span> <span class="k">if</span>
+                                     <span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">conn</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+
+                            <span class="n">atail</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">prev_res</span><span class="o">.</span><span class="n">atoms</span> <span class="k">if</span>
+                                     <span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">conn_prev</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">0</span><span class="p">]</span>
+
+                            <span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atail</span><span class="p">,</span> <span class="n">ahead</span><span class="p">]</span>
+                            <span class="n">atom_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">atom_type</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
+                            <span class="n">prm_id</span> <span class="o">=</span> <span class="n">qparameter</span><span class="o">.</span><span class="n">_PrmBond</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">atom_types</span><span class="p">)</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">bond_prm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qprm</span><span class="o">.</span><span class="n">bonds</span><span class="p">[</span><span class="n">prm_id</span><span class="p">]</span>
+                            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                                <span class="k">raise</span> <span class="n">QTopologyError</span><span class="p">(</span><span class="s2">&quot;Bond type &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                                     <span class="s2">&quot;not found!&quot;</span>
+                                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prm_id</span><span class="p">))</span>
+                            <span class="c1"># create _TopoBond object</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_TopoBond</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">bond_prm</span><span class="p">))</span>
+
+
+
+
+
+    <span class="k">def</span> <span class="nf">_get_angles_torsions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates _TopoAngle and _TopoTorsion objects and</span>
+<span class="sd">        adds them to QTopology.angles and QTopology.torsions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># to prevent backtracking</span>
+        <span class="n">processed_bonds</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="c1"># iterate over all bonds and find the angles</span>
+        <span class="k">for</span> <span class="n">bond1</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">:</span>
+            <span class="n">processed_angle_bonds</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">bond2</span> <span class="ow">in</span> <span class="n">bond1</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bonds</span> <span class="o">+</span> <span class="n">bond1</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">bonds</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">bond2</span> <span class="o">==</span> <span class="n">bond1</span> <span class="ow">or</span> <span class="n">bond2</span> <span class="ow">in</span> <span class="n">processed_bonds</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">atoms1</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bond1</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+                <span class="n">atoms2</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bond2</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+                <span class="n">common_atom</span> <span class="o">=</span> <span class="n">atoms1</span> <span class="o">&amp;</span> <span class="n">atoms2</span>
+                <span class="n">side_atoms</span> <span class="o">=</span> <span class="n">atoms1</span> <span class="o">^</span> <span class="n">atoms2</span>
+                <span class="n">angle_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">side_atoms</span><span class="o">.</span><span class="n">pop</span><span class="p">(),</span>
+                               <span class="n">common_atom</span><span class="o">.</span><span class="n">pop</span><span class="p">(),</span>
+                               <span class="n">side_atoms</span><span class="o">.</span><span class="n">pop</span><span class="p">()]</span>
+                <span class="c1"># find the angle parameter</span>
+                <span class="n">angle_atypes</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">atom_type</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">angle_atoms</span><span class="p">]</span>
+                <span class="n">prm_id</span> <span class="o">=</span> <span class="n">qparameter</span><span class="o">.</span><span class="n">_PrmAngle</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">angle_atypes</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">angle_prm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qprm</span><span class="o">.</span><span class="n">angles</span><span class="p">[</span><span class="n">prm_id</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">QTopologyError</span><span class="p">(</span><span class="s2">&quot;Angle type &#39;</span><span class="si">{}</span><span class="s2">&#39; not found!&quot;</span>
+                                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prm_id</span><span class="p">))</span>
+                <span class="c1"># create _TopoAngle object</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_TopoAngle</span><span class="p">(</span><span class="n">angle_atoms</span><span class="p">,</span> <span class="n">angle_prm</span><span class="p">))</span>
+
+                <span class="c1"># find the torsions by looking at the bonds</span>
+                <span class="c1"># of the angle&#39;s side atoms</span>
+                <span class="k">for</span> <span class="n">side_atom_index</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+                    <span class="k">for</span> <span class="n">bond3</span> <span class="ow">in</span> <span class="n">angle_atoms</span><span class="p">[</span><span class="n">side_atom_index</span><span class="p">]</span><span class="o">.</span><span class="n">bonds</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">bond3</span> <span class="ow">in</span> <span class="n">processed_bonds</span> <span class="ow">or</span> \
+                           <span class="n">bond3</span> <span class="ow">in</span> <span class="n">processed_angle_bonds</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">atom4</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">bond3</span><span class="o">.</span><span class="n">atoms</span>
+                                     <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">angle_atoms</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                            <span class="c1"># both atoms are part of the angle</span>
+                            <span class="k">continue</span>
+
+                        <span class="k">if</span> <span class="n">side_atom_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">torsion_atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom4</span><span class="p">]</span> <span class="o">+</span> <span class="n">angle_atoms</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">torsion_atoms</span> <span class="o">=</span> <span class="n">angle_atoms</span> <span class="o">+</span> <span class="p">[</span><span class="n">atom4</span><span class="p">]</span>
+
+                        <span class="c1"># TODO: QPrm.find_type() would be better</span>
+                        <span class="c1">#</span>
+                        <span class="c1"># find parameters</span>
+                        <span class="n">atom_types</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">atom_type</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">torsion_atoms</span><span class="p">]</span>
+                        <span class="n">prm_id</span> <span class="o">=</span> <span class="n">qparameter</span><span class="o">.</span><span class="n">_PrmTorsion</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">atom_types</span><span class="p">)</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">torsion_prm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qprm</span><span class="o">.</span><span class="n">torsions</span><span class="p">[</span><span class="n">prm_id</span><span class="p">]</span>
+                        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                            <span class="c1"># see if generic parameters exist</span>
+                            <span class="n">gen_atypes</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;?&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">prm_id</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;?&quot;</span><span class="p">]</span>
+                            <span class="n">prm_id_gen</span> <span class="o">=</span> <span class="n">qparameter</span><span class="o">.</span><span class="n">_PrmTorsion</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">gen_atypes</span><span class="p">)</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">torsion_prm</span> <span class="o">=</span> \
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">qprm</span><span class="o">.</span><span class="n">generic_torsions</span><span class="p">[</span><span class="n">prm_id_gen</span><span class="p">]</span>
+                            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                                <span class="k">raise</span> <span class="n">QTopologyError</span><span class="p">(</span><span class="s2">&quot;Torsions type &#39;</span><span class="si">{}</span><span class="s2">&#39; &quot;</span>
+                                                     <span class="s2">&quot;for torsion &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                                     <span class="s2">&quot;not found!&quot;</span>
+                                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prm_id</span><span class="p">,</span>
+                                                     <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span>
+                                                      <span class="n">torsion_atoms</span><span class="p">])))</span>
+                        <span class="c1"># create _TopoTorsion object</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">torsions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_TopoTorsion</span><span class="p">(</span><span class="n">torsion_atoms</span><span class="p">,</span>
+                                                          <span class="n">torsion_prm</span><span class="p">))</span>
+                <span class="c1"># remove the &#39;angle&#39; bond from the torsion search</span>
+                <span class="c1"># (otherwise you get forward and reverse duplicates)</span>
+                <span class="n">processed_angle_bonds</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bond2</span><span class="p">)</span>
+
+            <span class="c1"># remove the bond from the search (to prevent backtracking)</span>
+            <span class="n">processed_bonds</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">bond1</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span> <span class="nf">_get_impropers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># create impropers -</span>
+        <span class="c1"># only those that are explicitly defined in the library</span>
+        <span class="k">for</span> <span class="n">residue_index</span><span class="p">,</span> <span class="n">residue</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residues</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">improper</span> <span class="ow">in</span> <span class="n">residue</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">impropers</span><span class="p">:</span>
+                <span class="c1"># find _TopoAtom-s involved</span>
+                <span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">aname</span> <span class="ow">in</span> <span class="n">improper</span><span class="p">:</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="n">residue</span>
+                    <span class="c1"># some impropers span to next or</span>
+                    <span class="c1"># previous residues (-C, +N)</span>
+                    <span class="k">if</span> <span class="s2">&quot;+&quot;</span> <span class="ow">in</span> <span class="n">aname</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">residue_index</span><span class="o">+</span><span class="mi">1</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residues</span><span class="p">):</span>
+                            <span class="k">continue</span>
+                        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residues</span><span class="p">[</span><span class="n">residue_index</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="s2">&quot;-&quot;</span> <span class="ow">in</span> <span class="n">aname</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">residue_index</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="k">continue</span>
+                        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residues</span><span class="p">[</span><span class="n">residue_index</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                    <span class="c1"># if separate chains, skip</span>
+                    <span class="k">if</span> <span class="n">residue</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">molecule</span> <span class="o">!=</span> <span class="n">res</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">molecule</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="n">aname</span> <span class="o">=</span> <span class="n">aname</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;+-&quot;</span><span class="p">)</span>
+
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">atoms</span>
+                                      <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">aname</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">connections</span><span class="p">:</span>
+                            <span class="c1"># no connectivity between residues</span>
+                            <span class="c1"># (end of protein - ligands or water)</span>
+                            <span class="k">continue</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">QTopologyError</span><span class="p">(</span><span class="s2">&quot;Bad improper &#39;</span><span class="si">{}</span><span class="s2">&#39; between &quot;</span>
+                                                 <span class="s2">&quot;residues &#39;</span><span class="si">{}</span><span class="s2">&#39; and &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">improper</span><span class="p">),</span>
+                                                         <span class="n">residue</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                                                         <span class="n">res</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># find parameters</span>
+                <span class="n">other_atypes</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">atom_type</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
+                <span class="n">center_atype</span> <span class="o">=</span> <span class="n">other_atypes</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">prm_id</span> <span class="o">=</span> <span class="n">qparameter</span><span class="o">.</span><span class="n">_PrmImproper</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">center_atype</span><span class="p">,</span> <span class="n">other_atypes</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">improper_prm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qprm</span><span class="o">.</span><span class="n">impropers</span><span class="p">[</span><span class="n">prm_id</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="n">improper_prm</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="c1"># see if general parameters exist - a lot of options here, example:</span>
+                <span class="c1"># CA O2 CB CN</span>
+                <span class="c1">#</span>
+                <span class="c1"># Single wildcard:</span>
+                <span class="c1"># ?  O2 CA CN</span>
+                <span class="c1"># ?  O2 CA CB</span>
+                <span class="c1"># ?  O2 CB CN</span>
+                <span class="k">if</span> <span class="n">improper_prm</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                        <span class="n">ots</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_atypes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">other_atypes</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">%</span><span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;?&quot;</span><span class="p">]</span>
+                        <span class="n">prm_id_gen</span> <span class="o">=</span> <span class="n">qparameter</span><span class="o">.</span><span class="n">_PrmImproper</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">center_atype</span><span class="p">,</span> <span class="n">ots</span><span class="p">)</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">improper_prm</span> <span class="o">=</span> \
+                                <span class="bp">self</span><span class="o">.</span><span class="n">qprm</span><span class="o">.</span><span class="n">generic_impropers</span><span class="p">[</span><span class="n">prm_id_gen</span><span class="p">]</span>
+                            <span class="k">break</span>
+                        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                            <span class="n">improper_prm</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="c1"># Two wildcards:</span>
+                <span class="c1"># ?  O2 CB ?</span>
+                <span class="c1"># ?  O2 CA ?</span>
+                <span class="c1"># ?  O2 CN ?</span>
+                <span class="k">if</span> <span class="n">improper_prm</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+                        <span class="n">otypes</span> <span class="o">=</span> <span class="p">[</span><span class="n">other_atypes</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot;?&quot;</span><span class="p">,</span> <span class="s2">&quot;?&quot;</span><span class="p">]</span>
+                        <span class="n">prm_id_gen</span> <span class="o">=</span> <span class="n">qparameter</span><span class="o">.</span><span class="n">_PrmImproper</span><span class="o">.</span><span class="n">get_id</span><span class="p">(</span><span class="n">center_atype</span><span class="p">,</span> <span class="n">otypes</span><span class="p">)</span>
+                        <span class="k">try</span><span class="p">:</span>
+                            <span class="n">improper_prm</span> <span class="o">=</span> \
+                                <span class="bp">self</span><span class="o">.</span><span class="n">qprm</span><span class="o">.</span><span class="n">generic_impropers</span><span class="p">[</span><span class="n">prm_id_gen</span><span class="p">]</span>
+                            <span class="k">break</span>
+                        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                            <span class="n">improper_prm</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="k">if</span> <span class="n">improper_prm</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">QTopologyError</span><span class="p">(</span><span class="s2">&quot;Improper type &#39;</span><span class="si">{}</span><span class="s2">&#39; &quot;</span>
+                                         <span class="s2">&quot;not found!&quot;</span>
+                                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prm_id</span><span class="p">))</span>
+
+                <span class="c1"># create _TopoImproper object (same order as library)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">impropers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_TopoImproper</span><span class="p">(</span><span class="n">atoms</span><span class="p">,</span> <span class="n">improper_prm</span><span class="p">))</span></div>
+
+
+
+
+<span class="k">class</span> <span class="nc">_TopoAtom</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class containing topological information for an atom.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">      index (int):  topology index of atom (1-based)</span>
+<span class="sd">      name (string):  atom name as defined in the library/structure</span>
+<span class="sd">      charge (float):  charge as defined in the QLib library</span>
+<span class="sd">      prm (_PrmAtom):  atom parameter as defined in QPrm</span>
+<span class="sd">      struct (_StructAtom):  atom structure object (stuff from PDB)</span>
+<span class="sd">      residue (_TopoResidue):  reference to its parent residue</span>
+
+<span class="sd">    All these arguments are stored as object properties with the same name.</span>
+<span class="sd">    Additionaly, bonds, angles, torsions and impropers are lists that contain</span>
+<span class="sd">    references to _TopoBond, _TopoAngles etc. objects. These are filled in</span>
+<span class="sd">    automatically when creating aforementioned objects.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">charge</span><span class="p">,</span> <span class="n">prm</span><span class="p">,</span> <span class="n">struct</span><span class="p">,</span> <span class="n">residue</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">charge</span> <span class="o">=</span> <span class="n">charge</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prm</span> <span class="o">=</span> <span class="n">prm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">struct</span> <span class="o">=</span> <span class="n">struct</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">residue</span> <span class="o">=</span> <span class="n">residue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">angles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">torsions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">impropers</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bati_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">_TopoBond</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">,</span>
+                         <span class="n">_TopoAngle</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">angles</span><span class="p">,</span>
+                         <span class="n">_TopoTorsion</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">torsions</span><span class="p">,</span>
+                         <span class="n">_TopoImproper</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">impropers</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;_TopoAtom: </span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+
+
+    <span class="k">def</span> <span class="nf">add_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bond_angle_tor_imp</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add bond, angle, torsion and improper references.</span>
+
+<span class="sd">        See class docstring.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">bond_angle_tor_imp</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bati_map</span><span class="p">[</span><span class="n">_type</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bond_angle_tor_imp</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;bond_agle_tor_imp of unsupported &quot;</span>
+                            <span class="s2">&quot;type: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_type</span><span class="p">))</span>
+
+
+<span class="k">class</span> <span class="nc">_TopoResidue</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class containing topological information for a residue.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">       index (int):  topology index of residue (1-based)</span>
+<span class="sd">       struct (_StructResidue):  object with structure information</span>
+<span class="sd">       lib (_LibResidue):  object with library information</span>
+
+<span class="sd">    Besides the two properties above, it contains a list of its atoms</span>
+<span class="sd">    as _TopoAtom objects in the &#39;atoms&#39; property. This list is filled</span>
+<span class="sd">    automatically as atoms are created with this residue passed in as an</span>
+<span class="sd">    argument.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">struct</span><span class="p">,</span> <span class="n">lib</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">struct</span> <span class="o">=</span> <span class="n">struct</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lib</span> <span class="o">=</span> <span class="n">lib</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">add_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atom</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Append a _TopoAtom object to the &#39;atoms&#39; list&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_TopoBonding</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstract class for topology bonds, angles, torsions and impropers.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        atoms (list):  list of _TopoAtom objects</span>
+<span class="sd">        prm (_PrmBond):  object with bond parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">prm</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prm</span> <span class="o">=</span> <span class="n">prm</span>
+        <span class="n">atom_indexes</span> <span class="o">=</span> <span class="p">[(</span><span class="n">a</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_TopoBond</span><span class="p">):</span>
+            <span class="n">atom_indexes</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_TopoAngle</span><span class="p">):</span>
+            <span class="n">atom_indexes</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">atom_indexes</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">atom_indexes</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_TopoTorsion</span><span class="p">):</span>
+            <span class="n">atom_indexes</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">atom_indexes</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">atom_indexes</span><span class="p">)))</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_TopoImproper</span><span class="p">):</span>
+            <span class="c1"># order is defined in the library</span>
+            <span class="k">pass</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">a</span><span class="p">)</span> <span class="ow">in</span> <span class="n">atom_indexes</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">add_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">atoms_str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">])</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">atoms_str</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_TopoBond</span><span class="p">(</span><span class="n">_TopoBonding</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Contains topological information for a bond.</span>
+
+<span class="sd">    Extends _TopoBonding, implements calc()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate bond distance and energy.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            r (float, optional): define the bond distance instead of</span>
+<span class="sd">                                 calculating it from the structure</span>
+
+<span class="sd">        Returns tuple (E [kcal/mol], r [angstrom])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">r</span><span class="p">:</span>
+            <span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">coordinates</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">qpotential</span><span class="o">.</span><span class="n">bond_distance</span><span class="p">(</span><span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">)</span>
+
+        <span class="n">e</span> <span class="o">=</span> <span class="n">qpotential</span><span class="o">.</span><span class="n">bond_energy</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">fc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">r0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="n">r</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_TopoAngle</span><span class="p">(</span><span class="n">_TopoBonding</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Contains topological information for an angle.</span>
+<span class="sd">    </span>
+<span class="sd">    Extends _TopoBonding, implements calc()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate angle and energy</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            theta (float, optional): define the angle instead of calculating it</span>
+<span class="sd">                                     from the structure</span>
+
+<span class="sd">        Returns tuple (E [kcal/mol], theta [degrees])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">theta</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">,</span> <span class="n">ac3</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">coordinates</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">qpotential</span><span class="o">.</span><span class="n">angle_angle</span><span class="p">(</span><span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">,</span> <span class="n">ac3</span><span class="p">)</span>
+
+        <span class="n">e</span> <span class="o">=</span> <span class="n">qpotential</span><span class="o">.</span><span class="n">angle_energy</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">fc</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">theta0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_TopoTorsion</span><span class="p">(</span><span class="n">_TopoBonding</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Contains topological information for a torsion.</span>
+<span class="sd">    </span>
+<span class="sd">    Extends _TopoBonding, implements calc(), prm_full</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate torsion angle and energy</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            phi (float, optional): define the angle instead of calculating it</span>
+<span class="sd">                                   from the structure</span>
+
+<span class="sd">        Returns tuple (E [kcal/mol], phi [degrees])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">,</span> <span class="n">ac3</span><span class="p">,</span> <span class="n">ac4</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">coordinates</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+            <span class="n">phi</span> <span class="o">=</span> <span class="n">qpotential</span><span class="o">.</span><span class="n">torsion_angle</span><span class="p">(</span><span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">,</span> <span class="n">ac3</span><span class="p">,</span> <span class="n">ac4</span><span class="p">)</span>
+
+        <span class="n">energy</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">fc</span><span class="p">,</span> <span class="n">multiplicity</span><span class="p">,</span> <span class="n">phase</span><span class="p">,</span> <span class="n">npaths</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">get_prms</span><span class="p">():</span>
+            <span class="n">energy</span> <span class="o">+=</span> <span class="n">qpotential</span><span class="o">.</span><span class="n">torsion_energy</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span>
+                                                <span class="n">fc</span><span class="p">,</span> <span class="n">multiplicity</span><span class="p">,</span> 
+                                                <span class="n">npaths</span><span class="p">,</span> <span class="n">phase</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">energy</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">prm_full</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full parameter in case it is generic.</span>
+
+<span class="sd">        Basically, make a copy of the generic parameter,</span>
+<span class="sd">        but use actual atom-types instead of X&#39;s.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">is_generic</span><span class="p">:</span>
+            <span class="n">atypes</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">prm_id</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+            <span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;Generic: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">prm_id</span><span class="p">)</span>
+            <span class="n">full_prm</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="p">)(</span><span class="n">atypes</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">get_prms</span><span class="p">():</span>
+                <span class="n">full_prm</span><span class="o">.</span><span class="n">add_prm</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">full_prm</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prm</span>
+
+
+<span class="k">class</span> <span class="nc">_TopoImproper</span><span class="p">(</span><span class="n">_TopoBonding</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Contains topological information for an improper.</span>
+<span class="sd">    </span>
+<span class="sd">    Extends _TopoBonding, implements calc(), prm_full</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate improper angle and energy</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            phi (float, optional): define the angle instead of calculating it</span>
+<span class="sd">                                   from the structure</span>
+
+<span class="sd">        Returns tuple (E [kcal/mol], phi [degrees])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">phi</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">,</span> <span class="n">ac3</span><span class="p">,</span> <span class="n">ac4</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">struct</span><span class="o">.</span><span class="n">coordinates</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+            <span class="n">phi</span> <span class="o">=</span> <span class="n">qpotential</span><span class="o">.</span><span class="n">improper_angle</span><span class="p">(</span><span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">,</span> <span class="n">ac3</span><span class="p">,</span> <span class="n">ac4</span><span class="p">)</span>
+
+        <span class="n">e</span> <span class="o">=</span>  <span class="n">qpotential</span><span class="o">.</span><span class="n">improper_energy_periodic</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span>
+                                                 <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">fc</span><span class="p">,</span>
+                                                 <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">multiplicity</span><span class="p">,</span>
+                                                 <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">phi0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">prm_full</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return full parameter in case it is generic.</span>
+
+<span class="sd">        Basically, make a copy of the generic parameter,</span>
+<span class="sd">        but use actual atom-types instead of X&#39;s.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">is_generic</span><span class="p">:</span>
+            <span class="n">atypes</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">prm_id</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+            <span class="n">center</span> <span class="o">=</span> <span class="n">atypes</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;Generic: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">prm_id</span><span class="p">)</span>
+            <span class="n">full_prm</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="p">)(</span><span class="n">center</span><span class="p">,</span> <span class="n">atypes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">fc</span><span class="p">,</span>
+                                      <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">phi0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">multiplicity</span><span class="p">,</span>
+                                      <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">full_prm</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">prm</span>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Miha Purg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.6.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

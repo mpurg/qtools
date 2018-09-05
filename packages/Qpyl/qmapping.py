@@ -26,6 +26,11 @@
 #
 #
 
+"""
+This module contains the QMapper class for automating the calculation and
+calibration of EVB reaction free profiles (via Qfep). 
+"""
+
 import sys
 import os
 import time
@@ -106,7 +111,7 @@ class QMapper(object):
         nthreads (int): number of threads
 
     QMapper.parms contains mapping parameters, any direct change will be
-       applied in the mapping.
+    applied in the mapping.
     QMapper.mapped contains the inputs and outputs of succesfully mapped dirs
     # { 'directory_path1': (qfep_input_string, qfep_output_string), ... }
     QMapper.failed contains the error messages of failed dirs
@@ -221,14 +226,14 @@ class QMapper(object):
         Args:
             dga_ref (float): reference activation free energy
             dg0_ref (float): reference reaction free energy
-            step_size (float, optional): step size for calculating the
+            step_size (float, optional): step size for calculating the\
                                          gradient, default=10.0
             threshold (float, optional): convergence threshold, default=0.005
-            max_iterations (int, optional): max number of iterations,
+            max_iterations (int, optional): max number of iterations,\
                                             default=10
 
         Returns:
-            (boolean):  True if succeeded, False if max_iterations was
+            (boolean):  True if succeeded, False if max_iterations was\
                         reached.
 
         Raises QMapperError if all of the directories fail to map.

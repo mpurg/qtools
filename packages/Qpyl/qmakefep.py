@@ -25,7 +25,10 @@
 #
 #
 #
-#
+"""
+This module contains the make_fep() function for generating Q FEP-files,
+and implements a custom exception class QMakeFepError.
+"""
 
 import sys
 import os
@@ -95,7 +98,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
         forcefield (string): forcefield type (see SUPPORTED_FF)
         prms_files (list): Q parameter-file paths
         libs_files (list): Q library-file paths
-        ignore_errors (boolean, optional): don't fail on certain non critical
+        ignore_errors (boolean, optional): don't fail on certain non critical\
                                            errors
 
     Returns:

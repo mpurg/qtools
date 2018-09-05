@@ -23,9 +23,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
-#
-#
-# Some common classes and functions
+
+"""
+This module contains some common classes and functions,
+including simple statistical methods and data structures.
+"""
 
 import math
 import sys
@@ -36,8 +38,7 @@ import gzip
 
 logger = logging.getLogger(__name__)
 
-__version__ = "0.6.0"
-
+from Qpyl import __version__
 
 def get_version_full():
     try:
@@ -71,11 +72,11 @@ def init_logger(name,
 
     Args:
         name (string):  module name, usually root: 'Qpyl'
-        level (int, optional):  logging level (DEBUG, INFO, WARNING...),
+        level (int, optional):  logging level (DEBUG, INFO, WARNING...), \
                                 default is INFO
-        handler: (logging.Handler, optional):  default is
-                                               StreamHandler(sys.stdout)
-        formatter: (logging.Formatter, optional): default is
+        handler: (logging.Handler, optional):  default is \
+                                               StreamHandler(sys.stdout) \
+        formatter: (logging.Formatter, optional): default is \
                                                   SpecialFormatter
 
     Returns:
@@ -179,7 +180,7 @@ class np():
         
         Args:
             vals (list of float):  sample values
-            ddof (int, optional):  delta degrees of freedom (default is 1,
+            ddof (int, optional):  delta degrees of freedom (default is 1, \
                                    producing *sample* standard deviation)
         """
         N = len(vals)
@@ -235,7 +236,7 @@ class DataContainer(object):
     Args:
         coltitles (list): column titles
 
-    Example of usage:
+    Examples:
         >>> dg_de = DataContainer( ['Energy_gap', 'dG'] )
         >>> dg_de.add_row( [-300.0, 10.0 ]
         # reversed rows

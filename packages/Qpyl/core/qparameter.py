@@ -25,6 +25,10 @@
 #
 #
 #
+"""
+This module implements the QPrm class for reading and writing Q (and other)
+parameter files.
+"""
 
 import re
 import math
@@ -60,8 +64,8 @@ class QPrm(object):
 
     Args:
        ff_type (string):  Either 'oplsaa' or 'amber'
-       ignore_errors (boolean):  Optional, default is False.
-                                 If set to True, some non-vital
+       ignore_errors (boolean):  Optional, default is False.\
+                                 If set to True, some non-vital\
                                  exceptions are logged instead.
     """
     def __init__(self, ff_type, ignore_errors=False):
@@ -643,7 +647,7 @@ class QPrm(object):
 
         Args:
             ffld_file (string):  path/name of ffld file
-            qstruct (qstructure.QStruct):  object created with the same
+            qstruct (qstructure.QStruct):  object created with the same\
                                            structure file as the ffld
 
 
@@ -898,10 +902,10 @@ class QPrm(object):
         _PrmAngle, _PrmTorsion and _PrmImproper objects.
         If unset, all parameters will be printed.
 
-        Example:
-        get_string(atom_types=[_PrmAtom, _PrmAtom],
-                   bonds=[_PrmBond, _PrmBond, _PrmBond],
-                   angles=[], torsions=[], impropers=[])
+        Examples:
+            >>> get_string(atom_types=[_PrmAtom, _PrmAtom],\
+                           bonds=[_PrmBond, _PrmBond, _PrmBond],\
+                           angles=[], torsions=[], impropers=[])
         """
         
         prm_l = {"options": [],
@@ -1034,18 +1038,19 @@ class _PrmAtom(object):
         Args:
             atom_type (string):  atom type (CT, CA, Cstar)
             mass (float):  mass of atom
-            lj_A (float):  A_i parameter for 12-6 pot. function
+            lj_A (float):  A_i parameter for 12-6 pot. function\
                            (geometric rules)  [ (kcal/A^12)^0.5 ]
-            lj_B (float):  B_i parameter
+            lj_B (float):  B_i parameter\
                            (geometric rules)   [ (kcal/A^6)^0.5 ]
-            lj_R (float):  Rm_i parameter
+            lj_R (float):  Rm_i parameter\
                            (arithmetic rules)  [ A ]
             lj_eps (float):  epsilon_ii parameter [ kcal ]
             comment (string):  comment
 
         Note: Both A and B or both R and eps have to be given.
         Note2: All parameters except lj_eps are "single-atom" parameters
-               as defined in Q prm files, ie. A_i = sqrt(A_ii), Rm_i = Rm_ii/2
+        as defined in Q prm files, ie. A_i = sqrt(A_ii), Rm_i = Rm_ii/2
+
         """
         # atom_type is a string like "CA" or "OW"
         self.atom_type = atom_type

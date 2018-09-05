@@ -1,0 +1,893 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Qpyl.qgroupcontrib &mdash; Qpyl 0.6.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Qpyl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Qpyl.html">Qpyl package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Qpyl</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>Qpyl.qgroupcontrib</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Qpyl.qgroupcontrib</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># MIT License</span>
+<span class="c1"># </span>
+<span class="c1"># Copyright (c) 2018  Miha Purg &lt;miha.purg@gmail.com&gt;</span>
+<span class="c1"># </span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1"># </span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+<span class="c1"># </span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains the QGroupContrib class for calculating </span>
+<span class="sd">LRA group contributions.</span>
+<span class="sd">It also defines a custom exception class - QGroupContribError.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span> <span class="k">as</span> <span class="n">ODict</span>
+
+<span class="kn">from</span> <span class="nn">Qpyl.core.qcalc</span> <span class="k">import</span> <span class="n">QCalc</span><span class="p">,</span> <span class="n">QCalcError</span><span class="p">,</span> <span class="n">QCalcInput</span><span class="p">,</span> <span class="n">QCalcOutput</span>
+<span class="kn">from</span> <span class="nn">Qpyl.core.qdyn</span> <span class="k">import</span> <span class="n">QDynInput</span><span class="p">,</span> <span class="n">QDynInputError</span>
+<span class="kn">from</span> <span class="nn">Qpyl.core.qstructure</span> <span class="k">import</span> <span class="n">QStruct</span><span class="p">,</span> <span class="n">QStructError</span>
+<span class="kn">from</span> <span class="nn">Qpyl.common</span> <span class="k">import</span> <span class="n">__version__</span><span class="p">,</span> <span class="n">np</span><span class="p">,</span> <span class="n">DataContainer</span>
+<span class="kn">from</span> <span class="nn">Qpyl.plotdata</span> <span class="k">import</span> <span class="n">PlotData</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">_QGroupContribThread</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+    <span class="c1"># threading class used for calling QGroupContrib._calcsingle</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qgcinstance</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">,</span> <span class="n">calcdir</span><span class="p">):</span>
+        <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qgc</span> <span class="o">=</span> <span class="n">qgcinstance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">semaphore</span> <span class="o">=</span> <span class="n">semaphore</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calcdir</span> <span class="o">=</span> <span class="n">calcdir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qcalc</span> <span class="o">=</span> <span class="n">QCalc</span><span class="p">(</span><span class="n">qgcinstance</span><span class="o">.</span><span class="n">_qcalc_exec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qinps</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qouts</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">semaphore</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">qgc</span><span class="o">.</span><span class="n">kill_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+                <span class="k">return</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">qinps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qouts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qgc</span><span class="o">.</span><span class="n">_calcsingle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calcdir</span><span class="p">,</span>
+                                                              <span class="bp">self</span><span class="o">.</span><span class="n">qcalc</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39; done.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calcdir</span><span class="p">))</span>
+            <span class="k">except</span> <span class="n">QGroupContribError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">error_msg</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39; failed.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calcdir</span><span class="p">))</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="n">error_msg</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: Uncaught exception in calc thread: &quot;</span>
+                                <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calcdir</span><span class="p">,</span> <span class="n">error_msg</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="QGroupContribError"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qgroupcontrib.QGroupContribError">[docs]</a><span class="k">class</span> <span class="nc">QGroupContribError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="QGroupContrib"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qgroupcontrib.QGroupContrib">[docs]</a><span class="k">class</span> <span class="nc">QGroupContrib</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for calculating LRA group contributions from EVB trajectories.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        qcalc_exec (string): path of qcalc executable</span>
+<span class="sd">        calcdirs (list of strings): list of directories</span>
+<span class="sd">        pdb_file (string): PDB created with qprep</span>
+<span class="sd">        en_list_fn (string): energy-files-list filename</span>
+<span class="sd">        lambdas_A (tuple of floats): lambdas of state A (1.0, 0.0)</span>
+<span class="sd">        lambdas_B (tuple of floats): lambdas of state B (0.5, 0.5)</span>
+<span class="sd">        resid_first (int): index of first residue used for calcs</span>
+<span class="sd">        resid_last (int): index of last residue used for calcs</span>
+<span class="sd">        scale_ionized (float): scale down ionized residues (ARG, LYS, \</span>
+<span class="sd">                               HIP, GLU, ASP) by this factor \</span>
+<span class="sd">                               (see doi:10.1021/jp962478o)</span>
+<span class="sd">        nthreads (int): number of threads</span>
+<span class="sd">        qmask (list of ints): list of atom indexes to be used as the\</span>
+<span class="sd">                              Q mask for the GC calculations. By default,\</span>
+<span class="sd">                              this is obtained from the FEP file.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qcalc_exec</span><span class="p">,</span> <span class="n">calcdirs</span><span class="p">,</span> <span class="n">pdb_file</span><span class="p">,</span> <span class="n">en_list_fn</span><span class="p">,</span>
+                 <span class="n">lambdas_A</span><span class="p">,</span> <span class="n">lambdas_B</span><span class="p">,</span> <span class="n">resid_first</span><span class="p">,</span> <span class="n">resid_last</span><span class="p">,</span>
+                 <span class="n">scale_ionized</span><span class="p">,</span> <span class="n">nthreads</span><span class="p">,</span> <span class="n">qmask</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_en_list_fn</span> <span class="o">=</span> <span class="n">en_list_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qcalc_exec</span> <span class="o">=</span> <span class="n">qcalc_exec</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pdb_qstruct</span> <span class="o">=</span> <span class="n">QStruct</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="s2">&quot;pdb&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">QStructError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGroupContribError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t parse PDB file &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                     <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="n">error_msg</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calcdirs</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">cd</span><span class="p">)</span> <span class="k">for</span> <span class="n">cd</span> <span class="ow">in</span> <span class="n">calcdirs</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nthreads</span> <span class="o">=</span> <span class="n">nthreads</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas_A</span> <span class="o">=</span> <span class="n">lambdas_A</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas_B</span> <span class="o">=</span> <span class="n">lambdas_B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resid_first</span> <span class="o">=</span> <span class="n">resid_first</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resid_last</span> <span class="o">=</span> <span class="n">resid_last</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span> <span class="o">=</span> <span class="n">scale_ionized</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qmask</span> <span class="o">=</span> <span class="n">qmask</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qcalc_io</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gcs</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failed</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qcalc_version</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kill_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+
+        <span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span> <span class="o">=</span> <span class="n">lambdas_A</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lambdas_B</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">sci</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span>
+        <span class="n">colnames</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Residue id&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;Residue name&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;N&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;&lt;E2-E1&gt;1_VdW(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_mean&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                    <span class="s2">&quot;&lt;E2-E1&gt;1_VdW(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_stdev&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                    <span class="s2">&quot;&lt;E2-E1&gt;1_El(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_mean&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                    <span class="s2">&quot;&lt;E2-E1&gt;1_El(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_stdev&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                    <span class="s2">&quot;&lt;E2-E1&gt;2_VdW(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_mean&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                    <span class="s2">&quot;&lt;E2-E1&gt;2_VdW(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_stdev&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                    <span class="s2">&quot;&lt;E2-E1&gt;2_El(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_mean&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                    <span class="s2">&quot;&lt;E2-E1&gt;2_El(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_stdev&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                    <span class="s2">&quot;LRA_VdW(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_mean&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                    <span class="s2">&quot;LRA_VdW(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_stdev&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                    <span class="s2">&quot;LRA_El(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_(iscale=</span><span class="si">{}</span><span class="s2">)_mean&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">,</span> <span class="n">sci</span><span class="p">),</span>
+                    <span class="s2">&quot;LRA_El(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_(iscale=</span><span class="si">{}</span><span class="s2">)_stdev&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">,</span> <span class="n">sci</span><span class="p">),</span>
+                    <span class="s2">&quot;REORG_VdW(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_mean&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                    <span class="s2">&quot;REORG_VdW(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_stdev&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                    <span class="s2">&quot;REORG_El(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_(iscale=</span><span class="si">{}</span><span class="s2">)_mean&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">,</span> <span class="n">sci</span><span class="p">),</span>
+                    <span class="s2">&quot;REORG_El(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_(iscale=</span><span class="si">{}</span><span class="s2">)_stdev&quot;</span>
+                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">,</span> <span class="n">sci</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gcs_stats</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">colnames</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="QGroupContrib.calcall"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qgroupcontrib.QGroupContrib.calcall">[docs]</a>    <span class="k">def</span> <span class="nf">calcall</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run the GC calcs, update .gcs, .failed and .gcs_stats.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">semaphore</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">BoundedSemaphore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_nthreads</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qcalc_io</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gcs</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gcs_stats</span><span class="o">.</span><span class="n">delete_rows</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failed</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="n">threads</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">calcdir</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calcdirs</span><span class="p">:</span>
+            <span class="n">threads</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_QGroupContribThread</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">semaphore</span><span class="p">,</span> <span class="n">calcdir</span><span class="p">))</span>
+            <span class="n">threads</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">threads</span><span class="p">:</span>
+            <span class="k">while</span> <span class="n">t</span><span class="o">.</span><span class="n">isAlive</span><span class="p">():</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kill_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">():</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">t</span><span class="o">.</span><span class="n">qcalc</span><span class="o">.</span><span class="n">process</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="k">pass</span>
+                    <span class="k">return</span>
+
+            <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">error</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">failed</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">calcdir</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">error</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_qcalc_io</span><span class="p">[</span><span class="n">t</span><span class="o">.</span><span class="n">calcdir</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">qinps</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">qouts</span><span class="p">)</span>
+
+        <span class="c1"># parse the output for results and</span>
+        <span class="c1"># calculate LRAs for each dir</span>
+        <span class="k">for</span> <span class="n">_dir</span><span class="p">,</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">qouts</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qcalc_io</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">gcs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">failed_flag</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">for</span> <span class="n">qout</span> <span class="ow">in</span> <span class="n">qouts</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">qco</span> <span class="o">=</span> <span class="n">QCalcOutput</span><span class="p">(</span><span class="n">qout</span><span class="p">)</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="n">qco</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s2">&quot;gc&quot;</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">qcalc_version</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">qcalc_version</span> <span class="o">=</span> <span class="n">qco</span><span class="o">.</span><span class="n">qcalc_version</span>
+                <span class="k">except</span> <span class="p">(</span><span class="n">QCalcError</span><span class="p">,</span> <span class="ne">KeyError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">failed</span><span class="p">[</span><span class="n">_dir</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_msg</span>
+                    <span class="n">failed_flag</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+                <span class="n">gc</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">get_rows</span><span class="p">():</span>
+                    <span class="n">resid</span><span class="p">,</span> <span class="n">vdw</span><span class="p">,</span> <span class="n">el</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                    <span class="n">gc</span><span class="p">[</span><span class="n">resid</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;vdw&quot;</span><span class="p">:</span> <span class="n">vdw</span><span class="p">,</span> <span class="s2">&quot;el&quot;</span><span class="p">:</span> <span class="n">el</span><span class="p">}</span>
+                <span class="n">gcs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gc</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">failed_flag</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">resids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">gcs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">resnames</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_pdb_qstruct</span><span class="o">.</span><span class="n">residues</span><span class="p">[</span><span class="n">ri</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">ri</span> <span class="ow">in</span> <span class="n">resids</span><span class="p">]</span>
+
+            <span class="c1"># do the LRA thingy</span>
+            <span class="c1"># LRA = 0.5*(&lt;E2-E1&gt;_conf1+&lt;E2-E1&gt;_conf2)</span>
+            <span class="c1"># REORG = &lt;E2-E1&gt;_conf1 - LRA</span>
+            <span class="n">e2e1_st1_vdw</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;vdw&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gcs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;vdw&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">resids</span><span class="p">]</span>
+            <span class="n">e2e1_st1_el</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcs</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;el&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gcs</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;el&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">resids</span><span class="p">]</span>
+            <span class="n">e2e1_st2_vdw</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcs</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;vdw&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gcs</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;vdw&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">resids</span><span class="p">]</span> 
+            <span class="n">e2e1_st2_el</span> <span class="o">=</span> <span class="p">[</span><span class="n">gcs</span><span class="p">[</span><span class="mi">3</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;el&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">gcs</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;el&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">resids</span><span class="p">]</span>
+
+            <span class="c1"># super efficient stuff here</span>
+            <span class="n">vdw_lra</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e2e1_st1_vdw</span><span class="p">,</span> <span class="n">e2e1_st2_vdw</span><span class="p">)]</span>
+            <span class="n">el_lra</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e2e1_st1_el</span><span class="p">,</span> <span class="n">e2e1_st2_el</span><span class="p">)]</span>
+            <span class="n">vdw_reorg</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e2e1_st1_vdw</span><span class="p">,</span> <span class="n">e2e1_st2_vdw</span><span class="p">)]</span>
+            <span class="n">el_reorg</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">e2e1_st1_el</span><span class="p">,</span> <span class="n">e2e1_st2_el</span><span class="p">)]</span>
+
+            <span class="c1"># scale the ionized residues</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">7</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">resname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">resnames</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">resname</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;ARG&quot;</span><span class="p">,</span> <span class="s2">&quot;LYS&quot;</span><span class="p">,</span> <span class="s2">&quot;HIP&quot;</span><span class="p">,</span> <span class="s2">&quot;ASP&quot;</span><span class="p">,</span> <span class="s2">&quot;GLU&quot;</span><span class="p">):</span>
+                        <span class="n">e2e1_st1_el</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">e2e1_st1_el</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span>
+                        <span class="n">e2e1_st2_el</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">e2e1_st2_el</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span>
+                        <span class="n">el_lra</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">el_lra</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span>
+                        <span class="n">el_reorg</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">el_reorg</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span>
+
+            <span class="c1"># write the DataContainer</span>
+            <span class="n">lambda1_st1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas_A</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">lambda2_st1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas_B</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">gc_lra</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">([</span><span class="s2">&quot;Residue_id&quot;</span><span class="p">,</span> <span class="s2">&quot;Residue name&quot;</span><span class="p">,</span>
+                                    <span class="s2">&quot;&lt;E2-E1&gt;1_VdW(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                                    <span class="s2">&quot;&lt;E2-E1&gt;1_El(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_(iscale=</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">,</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span><span class="p">),</span>
+                                    <span class="s2">&quot;&lt;E2-E1&gt;2_VdW(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                                    <span class="s2">&quot;&lt;E2-E1&gt;2_El(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_(iscale=</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">,</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span><span class="p">),</span>
+                                    <span class="s2">&quot;LRA_VdW(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                                    <span class="s2">&quot;LRA_El(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_(iscale=</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">,</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span><span class="p">),</span>
+                                    <span class="s2">&quot;REORG_VdW(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">),</span>
+                                    <span class="s2">&quot;REORG_El(l=</span><span class="si">{:5.4f}</span><span class="s2">-&gt;l=</span><span class="si">{:5.4f}</span><span class="s2">)_(iscale=</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda1_st1</span><span class="p">,</span> <span class="n">lambda2_st1</span><span class="p">,</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span><span class="p">)])</span>
+
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="n">resnames</span><span class="p">,</span>
+                           <span class="n">e2e1_st1_vdw</span><span class="p">,</span> <span class="n">e2e1_st1_el</span><span class="p">,</span>
+                           <span class="n">e2e1_st2_vdw</span><span class="p">,</span> <span class="n">e2e1_st2_el</span><span class="p">,</span>
+                           <span class="n">vdw_lra</span><span class="p">,</span> <span class="n">el_lra</span><span class="p">,</span>
+                           <span class="n">vdw_reorg</span><span class="p">,</span> <span class="n">el_reorg</span><span class="p">):</span>
+                <span class="n">gc_lra</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">gcs</span><span class="p">[</span><span class="n">_dir</span><span class="p">]</span> <span class="o">=</span> <span class="n">gc_lra</span>
+
+        <span class="c1"># get GC stats over all directories</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gcs_stats</span><span class="o">.</span><span class="n">delete_rows</span><span class="p">()</span>
+        <span class="n">gcs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">gc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gcs</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">gc</span><span class="o">.</span><span class="n">get_rows</span><span class="p">():</span>
+                <span class="n">resid</span><span class="p">,</span> <span class="n">resname</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">res_key</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="n">resname</span><span class="p">)</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="p">[[</span><span class="n">val</span><span class="p">,]</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="mi">2</span><span class="p">:]]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">gcs</span><span class="o">.</span><span class="n">has_key</span><span class="p">(</span><span class="n">res_key</span><span class="p">):</span>
+                    <span class="n">gcs</span><span class="p">[</span><span class="n">res_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">values</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">gcs</span><span class="p">[</span><span class="n">res_key</span><span class="p">]):</span>
+                        <span class="n">val</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+
+        <span class="c1"># iterate through each residue and calculate</span>
+        <span class="c1"># means and stdevs</span>
+        <span class="c1"># (sort by residue index)</span>
+        <span class="k">for</span> <span class="n">res_key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">gcs</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])):</span>
+            <span class="n">rc</span> <span class="o">=</span> <span class="n">gcs</span><span class="p">[</span><span class="n">res_key</span><span class="p">]</span>
+            <span class="n">resid</span><span class="p">,</span> <span class="n">resname</span> <span class="o">=</span> <span class="n">res_key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="c1"># get mean and stdev</span>
+            <span class="n">rc_stats</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">resid</span><span class="p">),</span> <span class="n">resname</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="c1"># &lt;E2-E1&gt;1 vdw</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="c1"># &lt;E2-E1&gt;1 el</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="c1"># &lt;E2-E1&gt;2 vdw</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span> <span class="c1"># &lt;E2-E1&gt;2 el</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span> <span class="c1"># LRA vdw</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span> <span class="c1"># LRA el</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">6</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">6</span><span class="p">]),</span> <span class="c1"># REORG vdw</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">7</span><span class="p">]),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">rc</span><span class="p">[</span><span class="mi">7</span><span class="p">])]</span> <span class="c1"># REORG el</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">gcs_stats</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">rc_stats</span><span class="p">)</span></div>
+
+
+
+    <span class="k">def</span> <span class="nf">_calcsingle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">calcdir</span><span class="p">,</span> <span class="n">qcalc</span><span class="p">):</span>
+        <span class="c1"># find input files with given lambdas</span>
+        <span class="c1"># (and correct energy files)</span>
+        <span class="c1"># extract information and run qcalc for each combination</span>
+        <span class="c1">#   fep_000_1.000.dcd, &quot;1.00 0.00&quot;</span>
+        <span class="c1">#   fep_000_1.000.dcd, &quot;0.00 0.00&quot;</span>
+        <span class="c1">#   fep_050_0.000.dcd, &quot;1.00 0.00&quot;</span>
+        <span class="c1">#   fep_050_0.000.dcd, &quot;0.00 0.00&quot;</span>
+        <span class="c1"># return input output strings as a tuple of lists of strings</span>
+        <span class="c1"># ( [inp1, inp2, inp3, inp4], [out1, out2, out3, out4] )</span>
+        <span class="c1"># or raise QGroupContribError on failure</span>
+
+        <span class="c1"># get the list of energy-files</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">en_list_fn</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calcdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_en_list_fn</span><span class="p">)</span>
+            <span class="n">en_list_fn_str</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">en_list_fn</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGroupContribError</span><span class="p">(</span><span class="s2">&quot;No energy-files list &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span>
+                                     <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_en_list_fn</span><span class="p">))</span>
+
+        <span class="n">en_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">enf</span> <span class="k">for</span> <span class="n">enf</span> <span class="ow">in</span> <span class="n">en_list_fn_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span> \
+                                                <span class="k">if</span> <span class="n">enf</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">en_list</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGroupContribError</span><span class="p">(</span><span class="s2">&quot;No energy files in &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span>
+                                     <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_en_list_fn</span><span class="p">))</span>
+
+        <span class="c1"># parse all input files in calcdir for</span>
+        <span class="c1"># a valid energy file and lambda values</span>
+        <span class="n">inp_fns</span> <span class="o">=</span> <span class="p">[</span><span class="n">inp</span> <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">calcdir</span><span class="p">)</span> <span class="k">if</span> <span class="n">inp</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.inp&quot;</span><span class="p">)]</span>
+        <span class="n">lambda_inp_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">inp</span> <span class="ow">in</span> <span class="n">inp_fns</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">inp_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calcdir</span><span class="p">,</span> <span class="n">inp</span><span class="p">)</span>
+                <span class="n">qdi</span> <span class="o">=</span> <span class="n">QDynInput</span><span class="p">(</span><span class="n">input_string</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">inp_file</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">IOError</span><span class="p">,</span> <span class="n">QDynInputError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Error reading Q input &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                             <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">error_msg</span><span class="p">))</span>
+                <span class="k">continue</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">lambda_st1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">qdi</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;lambdas&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">en_file</span> <span class="o">=</span> <span class="n">qdi</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="s2">&quot;energy&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input &#39;</span><span class="si">{}</span><span class="s2">&#39; missing lambda or energy file&quot;</span>
+                             <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">en_file</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">en_list</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">lambda_key</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.6f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lambda_st1</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">inp2</span> <span class="o">=</span> <span class="n">lambda_inp_map</span><span class="p">[</span><span class="n">lambda_key</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">lambda_inp_map</span><span class="p">[</span><span class="n">lambda_key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">qdi</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QGroupContribError</span><span class="p">(</span><span class="s2">&quot;Same lambda values in Qdyn &quot;</span>
+                                         <span class="s2">&quot;inputs: &#39;</span><span class="si">{}</span><span class="s2">&#39;, &#39;</span><span class="si">{}</span><span class="s2">&#39; ??&quot;</span>
+                                         <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inp</span><span class="p">,</span> <span class="n">inp2</span><span class="p">))</span>
+
+        <span class="c1"># get inputs that match specified state1 lambda values</span>
+        <span class="n">lambdas_st1</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lambdas_A</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas_B</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">lamb_st1</span> <span class="ow">in</span> <span class="n">lambdas_st1</span><span class="p">:</span>
+                <span class="n">lamb_key</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:.6f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lamb_st1</span><span class="p">)</span>
+                <span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lambda_inp_map</span><span class="p">[</span><span class="n">lamb_key</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QGroupContribError</span><span class="p">(</span><span class="s2">&quot;QDyn input with lambda==&#39;</span><span class="si">{}</span><span class="s2">&#39; &quot;</span>
+                                     <span class="s2">&quot;(and energy file in &#39;</span><span class="si">{}</span><span class="s2">&#39;) not found.&quot;</span>
+                                     <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lamb_st1</span><span class="p">,</span> <span class="n">en_list_fn</span><span class="p">))</span>
+
+        <span class="c1"># get topology, fep and trajectory filenames from the inputs</span>
+        <span class="n">top_fn</span><span class="p">,</span> <span class="n">fep_fn</span><span class="p">,</span> <span class="n">dcd_fns</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">inp</span><span class="p">,</span> <span class="n">qdi</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">tmp_top_fn</span> <span class="o">=</span> <span class="n">qdi</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="s2">&quot;topology&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QGroupContribError</span><span class="p">(</span><span class="s2">&quot;Topology not found in Qdyn &quot;</span>
+                                         <span class="s2">&quot;input &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">top_fn</span> <span class="ow">and</span> <span class="n">top_fn</span> <span class="o">!=</span> <span class="n">tmp_top_fn</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QGroupContribError</span><span class="p">(</span><span class="s2">&quot;Qdyn inputs with different &quot;</span>
+                                         <span class="s2">&quot;topologies: &#39;</span><span class="si">{}</span><span class="s2">&#39;, &#39;</span><span class="si">{}</span><span class="s2">&#39; ??&quot;</span>
+                                         <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">top_fn</span><span class="p">,</span> <span class="n">tmp_top_fn</span><span class="p">))</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">tmp_fep_fn</span> <span class="o">=</span> <span class="n">qdi</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="s2">&quot;fep&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QGroupContribError</span><span class="p">(</span><span class="s2">&quot;Fep file not found in Qdyn &quot;</span>
+                                         <span class="s2">&quot;input &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">fep_fn</span> <span class="ow">and</span> <span class="n">fep_fn</span> <span class="o">!=</span> <span class="n">tmp_fep_fn</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QGroupContribError</span><span class="p">(</span><span class="s2">&quot;Qdyn inputs with different &quot;</span>
+                                         <span class="s2">&quot;fep files: &#39;</span><span class="si">{}</span><span class="s2">&#39;, &#39;</span><span class="si">{}</span><span class="s2">&#39; ??&quot;</span>
+                                         <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fep_fn</span><span class="p">,</span> <span class="n">tmp_fep_fn</span><span class="p">))</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">tmp_dcd_fn</span> <span class="o">=</span> <span class="n">qdi</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;files&quot;</span><span class="p">][</span><span class="s2">&quot;trajectory&quot;</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QGroupContribError</span><span class="p">(</span><span class="s2">&quot;Trajectory file not found in Qdyn &quot;</span>
+                                         <span class="s2">&quot;input &#39;</span><span class="si">{}</span><span class="s2">&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">inp</span><span class="p">))</span>
+
+            <span class="n">top_fn</span> <span class="o">=</span> <span class="n">tmp_top_fn</span>
+            <span class="n">fep_fn</span> <span class="o">=</span> <span class="n">tmp_fep_fn</span>
+            <span class="n">dcd_fns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp_dcd_fn</span><span class="p">)</span>
+
+        <span class="c1"># check if files are missing</span>
+        <span class="k">for</span> <span class="n">fn</span> <span class="ow">in</span> <span class="p">[</span><span class="n">top_fn</span><span class="p">,</span> <span class="n">fep_fn</span><span class="p">]</span> <span class="o">+</span> <span class="n">dcd_fns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">lexists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calcdir</span><span class="p">,</span> <span class="n">fn</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="n">QGroupContribError</span><span class="p">(</span><span class="s2">&quot;Missing file: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fn</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qmask</span><span class="p">:</span>
+            <span class="c1"># parse fep for q atom numbers</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">calcdir</span><span class="p">,</span> <span class="n">fep_fn</span><span class="p">),</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fep</span><span class="p">:</span>
+                <span class="n">section</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                <span class="n">q_atoms</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">fep</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;!&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="k">elif</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;[&quot;</span><span class="p">:</span>
+                        <span class="n">section</span> <span class="o">=</span> <span class="n">line</span>
+                    <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;[atoms]&quot;</span><span class="p">:</span>
+                        <span class="n">q_atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">q_atoms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qmask</span>
+
+        <span class="n">masks</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ai</span><span class="p">,</span> <span class="n">ai</span><span class="p">)</span> <span class="k">for</span> <span class="n">ai</span> <span class="ow">in</span> <span class="n">q_atoms</span><span class="p">]</span>
+
+        <span class="c1"># make qcalc inputs for every combination of</span>
+        <span class="c1"># configuration (dcd) and potential (lambda),</span>
+        <span class="c1"># run them and return the inputs and outputs</span>
+        <span class="n">combs</span> <span class="o">=</span> <span class="p">((</span><span class="n">dcd_fns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas_A</span><span class="p">),</span>   <span class="c1"># E1_conf1</span>
+                 <span class="p">(</span><span class="n">dcd_fns</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas_B</span><span class="p">),</span>   <span class="c1"># E2_conf1</span>
+                 <span class="p">(</span><span class="n">dcd_fns</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas_A</span><span class="p">),</span>   <span class="c1"># E1_conf2</span>
+                 <span class="p">(</span><span class="n">dcd_fns</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas_B</span><span class="p">))</span>  <span class="c1"># E2_conf2</span>
+        <span class="c1"># example with lambdas &quot;1.00 0.00&quot; and &quot;0.50 0.50&quot;:</span>
+        <span class="c1">#</span>
+        <span class="c1"># fep_000_1.000.dcd, (1.00, 0.00)</span>
+        <span class="c1"># fep_000_1.000.dcd, (0.50, 0.50)</span>
+        <span class="c1"># fep_025_0.500.dcd, (1.00, 0.00)</span>
+        <span class="c1"># fep_025_0.500.dcd, (0.50, 0.50)</span>
+
+        <span class="n">input_strings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">output_strings</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">dcdfile</span><span class="p">,</span> <span class="n">lambdas</span> <span class="ow">in</span> <span class="n">combs</span><span class="p">:</span>
+            <span class="n">qci</span> <span class="o">=</span> <span class="n">QCalcInput</span><span class="p">(</span><span class="n">top_fn</span><span class="p">,</span> <span class="p">[</span><span class="n">dcdfile</span><span class="p">,],</span> <span class="n">fep_fn</span><span class="p">,</span> <span class="n">lambdas</span><span class="p">)</span>
+
+            <span class="n">qci</span><span class="o">.</span><span class="n">add_residue_nb_mon</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_resid_first</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">_resid_last</span><span class="p">,</span>
+                                   <span class="n">masks</span><span class="p">)</span>
+
+            <span class="n">qcalc_inp_str</span> <span class="o">=</span> <span class="n">qci</span><span class="o">.</span><span class="n">get_string</span><span class="p">()</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">qcalc_out_str</span> <span class="o">=</span> <span class="n">qcalc</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">qcalc_inp_str</span><span class="p">,</span> <span class="n">workdir</span><span class="o">=</span><span class="n">calcdir</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">QCalcError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QGroupContribError</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+
+            <span class="n">input_strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qcalc_inp_str</span><span class="p">)</span>
+            <span class="n">output_strings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qcalc_out_str</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">input_strings</span><span class="p">,</span> <span class="n">output_strings</span><span class="p">)</span>
+
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">fails</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cd</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span> \
+                           <span class="k">for</span> <span class="n">cd</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">failed</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()])</span>
+
+        <span class="n">calcdirs</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_calcdirs</span><span class="p">)</span>
+        <span class="n">outstr</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">---------------------------------- GC details ---------------------------------</span>
+<span class="s2"># Calculated with: Qtools (</span><span class="si">{version}</span><span class="s2">), Qcalc (</span><span class="si">{qcalc_version}</span><span class="s2">)</span>
+<span class="s2"># Qcalc path: </span><span class="si">{qcalc_exec}</span><span class="s2"></span>
+<span class="s2"># Work dir: </span><span class="si">{cwd}</span><span class="s2"></span>
+<span class="s2"># Date: </span><span class="si">{date}</span><span class="s2"></span>
+<span class="s2"># CMDline: </span><span class="si">{cmdline}</span><span class="s2"></span>
+
+<span class="s2">Directories:</span>
+<span class="si">{dirs}</span><span class="s2"></span>
+
+<span class="s2">Fails:</span>
+<span class="si">{fails}</span><span class="s2"></span>
+<span class="s2">-------------------------------------------------------------------------------</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">__version__</span><span class="p">,</span> <span class="n">cwd</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">date</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">(),</span>
+           <span class="n">cmdline</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">),</span> <span class="n">qcalc_version</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">qcalc_version</span><span class="p">,</span>
+           <span class="n">fails</span><span class="o">=</span><span class="n">fails</span> <span class="ow">or</span> <span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="n">dirs</span><span class="o">=</span><span class="n">calcdirs</span><span class="p">,</span>
+           <span class="n">qcalc_exec</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qcalc_exec</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">outstr</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">plotdata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return GC data as a dictionary of PlotData objects.</span>
+
+<span class="sd">        Example keys in returned dictionary:</span>
+<span class="sd">            &#39;gc_lra_el&#39;: PlotData of electrostatic LRA group contributions,</span>
+<span class="sd">                         one subplot - means vs residue index</span>
+
+<span class="sd">            &#39;gc_lra_el_top&#39;: PlotData of top 20 electrostatic LRA GCs</span>
+<span class="sd">                             one subplot - means vs &quot;resid.resname&quot;</span>
+
+<span class="sd">            &#39;gc_lra_vdw&#39;: PlotData of vdw LRA GCs,</span>
+<span class="sd">                          one subplot - means vs residue indexes</span>
+
+<span class="sd">            &#39;gc_reorg_el&#39;: PlotData of el. &#39;REORG&#39; group contributions,</span>
+<span class="sd">                           one subplot - means vs residue index</span>
+
+<span class="sd">            &#39;gc_de1_el&#39;: PlotData of electrostatic &lt;E1 - E2&gt;_1,</span>
+<span class="sd">                         one subplot - means vs residue index</span>
+
+<span class="sd">            &#39;gc_de2_el&#39;: PlotData of electrostatic &lt;E1 - E2&gt;_2,</span>
+<span class="sd">                         one subplot - means vs residue index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">plots</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+
+        <span class="c1"># all failed</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">gcs</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">plots</span>
+
+        <span class="n">lamb1</span><span class="p">,</span> <span class="n">lamb2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas_A</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lambdas_B</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># make PlotData objects</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_lra_el_top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Top LRA GC (El, </span><span class="si">{}</span><span class="s2">-&gt;</span><span class="si">{}</span><span class="s2">, iscale=</span><span class="si">{}</span><span class="s2">),&quot;</span>
+                                          <span class="s2">&quot; top 20&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lamb1</span><span class="p">,</span> <span class="n">lamb2</span><span class="p">,</span>
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span><span class="p">),</span>
+                                          <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Residue&quot;</span><span class="p">,</span>
+                                          <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Free energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                          <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_reorg_el_top&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Top REORG GC (El, </span><span class="si">{}</span><span class="s2">-&gt;</span><span class="si">{}</span><span class="s2">, iscale=</span><span class="si">{}</span><span class="s2">),&quot;</span>
+                                            <span class="s2">&quot; top 20&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lamb1</span><span class="p">,</span> <span class="n">lamb2</span><span class="p">,</span>
+                                                      <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span><span class="p">),</span>
+                                            <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Residue&quot;</span><span class="p">,</span>
+                                            <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Free energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                            <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_lra_el&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;LRA GC (El, </span><span class="si">{}</span><span class="s2">-&gt;</span><span class="si">{}</span><span class="s2">, iscale=</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                      <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lamb1</span><span class="p">,</span> <span class="n">lamb2</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span><span class="p">),</span>
+                                      <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Residue index&quot;</span><span class="p">,</span>
+                                      <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                      <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_lra_vdw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;LRA GC (VdW, </span><span class="si">{}</span><span class="s2">-&gt;</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                       <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lamb1</span><span class="p">,</span> <span class="n">lamb2</span><span class="p">),</span>
+                                       <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Residue index&quot;</span><span class="p">,</span>
+                                       <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                       <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_reorg_el&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;REORG GC (El, </span><span class="si">{}</span><span class="s2">-&gt;</span><span class="si">{}</span><span class="s2">, iscale=</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                        <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lamb1</span><span class="p">,</span> <span class="n">lamb2</span><span class="p">,</span>
+                                                  <span class="bp">self</span><span class="o">.</span><span class="n">_scale_ionized</span><span class="p">),</span>
+                                        <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Residue index&quot;</span><span class="p">,</span>
+                                        <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                        <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_reorg_vdw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;REORG GC (VdW, </span><span class="si">{}</span><span class="s2">-&gt;</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                         <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lamb1</span><span class="p">,</span> <span class="n">lamb2</span><span class="p">),</span>
+                                         <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Residue index&quot;</span><span class="p">,</span>
+                                         <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                         <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_de1_el&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;&lt;E1-E2&gt;_1 (El, </span><span class="si">{}</span><span class="s2">-&gt;</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                      <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lamb1</span><span class="p">,</span> <span class="n">lamb2</span><span class="p">),</span>
+                                      <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Residue index&quot;</span><span class="p">,</span>
+                                      <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                      <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_de1_vdw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;&lt;E1-E2&gt;_1 (VdW, </span><span class="si">{}</span><span class="s2">-&gt;</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                       <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lamb1</span><span class="p">,</span> <span class="n">lamb2</span><span class="p">),</span>
+                                       <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Residue index&quot;</span><span class="p">,</span>
+                                       <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                       <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_de2_el&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;&lt;E1-E2&gt;_2 (El, </span><span class="si">{}</span><span class="s2">-&gt;</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                      <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lamb1</span><span class="p">,</span> <span class="n">lamb2</span><span class="p">),</span>
+                                      <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Residue index&quot;</span><span class="p">,</span>
+                                      <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                      <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_de2_vdw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;&lt;E1-E2&gt;_2 (VdW, </span><span class="si">{}</span><span class="s2">-&gt;</span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                       <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lamb1</span><span class="p">,</span> <span class="n">lamb2</span><span class="p">),</span>
+                                       <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Residue index&quot;</span><span class="p">,</span>
+                                       <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                       <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gcs_stats</span><span class="o">.</span><span class="n">get_columns</span><span class="p">()</span>
+        <span class="n">resids</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;mean_N=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gcs</span><span class="p">))</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_de1_vdw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">cols</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">yerror</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_de1_el&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">cols</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">yerror</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_de2_vdw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">cols</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">yerror</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_de2_el&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">cols</span><span class="p">[</span><span class="mi">9</span><span class="p">],</span> <span class="n">yerror</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">10</span><span class="p">])</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_lra_vdw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">cols</span><span class="p">[</span><span class="mi">11</span><span class="p">],</span> <span class="n">yerror</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">12</span><span class="p">])</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_lra_el&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">cols</span><span class="p">[</span><span class="mi">13</span><span class="p">],</span> <span class="n">yerror</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">14</span><span class="p">])</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_reorg_vdw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">cols</span><span class="p">[</span><span class="mi">15</span><span class="p">],</span> <span class="n">yerror</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">16</span><span class="p">])</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_reorg_el&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">resids</span><span class="p">,</span> <span class="n">cols</span><span class="p">[</span><span class="mi">17</span><span class="p">],</span> <span class="n">yerror</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="mi">18</span><span class="p">])</span>
+
+
+        <span class="c1"># top 20 LRA el</span>
+        <span class="n">sorted_rows</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gcs_stats</span><span class="o">.</span><span class="n">get_rows</span><span class="p">(),</span>
+                             <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">5</span><span class="p">]))[:</span><span class="mi">20</span><span class="p">]</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">sorted_rows</span><span class="p">)</span>
+        <span class="n">resids</span><span class="p">,</span> <span class="n">resnames</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rn</span><span class="o">.</span><span class="n">capitalize</span><span class="p">(),</span> <span class="n">ri</span><span class="p">)</span> \
+                                <span class="k">for</span> <span class="n">ri</span><span class="p">,</span> <span class="n">rn</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="n">resnames</span><span class="p">)]</span>
+        <span class="n">els</span><span class="p">,</span> <span class="n">elstd</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="mi">13</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="mi">14</span><span class="p">]</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_lra_el_top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">els</span><span class="p">,</span> <span class="n">yerror</span><span class="o">=</span><span class="n">elstd</span><span class="p">)</span>
+
+        <span class="c1"># top 20 reorg el</span>
+        <span class="n">sorted_rows</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gcs_stats</span><span class="o">.</span><span class="n">get_rows</span><span class="p">(),</span>
+                             <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">9</span><span class="p">]))[:</span><span class="mi">20</span><span class="p">]</span>
+        <span class="n">cols</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">sorted_rows</span><span class="p">)</span>
+        <span class="n">resids</span><span class="p">,</span> <span class="n">resnames</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">rn</span><span class="o">.</span><span class="n">capitalize</span><span class="p">(),</span> <span class="n">ri</span><span class="p">)</span> \
+                                <span class="k">for</span> <span class="n">ri</span><span class="p">,</span> <span class="n">rn</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">resids</span><span class="p">,</span> <span class="n">resnames</span><span class="p">)]</span>
+        <span class="n">els</span><span class="p">,</span> <span class="n">elstd</span> <span class="o">=</span> <span class="n">cols</span><span class="p">[</span><span class="mi">17</span><span class="p">],</span> <span class="n">cols</span><span class="p">[</span><span class="mi">18</span><span class="p">]</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;gc_reorg_el_top&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">els</span><span class="p">,</span> <span class="n">yerror</span><span class="o">=</span><span class="n">elstd</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">plots</span>
+
+
+
+
+<div class="viewcode-block" id="QGroupContrib.get_pdbgc"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qgroupcontrib.QGroupContrib.get_pdbgc">[docs]</a>    <span class="k">def</span> <span class="nf">get_pdbgc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the structure in PDB format (string) with added GC values.</span>
+
+<span class="sd">        Fill the Occupancy fields with LRA contributions and</span>
+<span class="sd">        Temperature factor fields with REORG contributions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">resids</span><span class="p">,</span> <span class="n">lras</span><span class="p">,</span> <span class="n">reorgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gcs_stats</span><span class="o">.</span><span class="n">get_columns</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">17</span><span class="p">])</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="n">resids</span><span class="p">,</span> <span class="n">lras</span><span class="p">,</span> <span class="n">reorgs</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="n">pdb</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">mol</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pdb_qstruct</span><span class="o">.</span><span class="n">molecules</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">mol</span><span class="o">.</span><span class="n">residues</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">i</span> <span class="o">=</span> <span class="n">resids</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+                    <span class="n">lra_gc</span><span class="p">,</span> <span class="n">reorg_gc</span> <span class="o">=</span> <span class="n">lras</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">reorgs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="n">lra_gc</span><span class="p">,</span> <span class="n">reorg_gc</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span>
+
+                <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">res</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+                    <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">coordinates</span>
+                    <span class="n">pdb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;ATOM  </span><span class="si">{:&gt;5d}</span><span class="s2"> </span><span class="si">{:&lt;4s}</span><span class="s2"> </span><span class="si">{:3s}</span><span class="s2">  </span><span class="si">{:&gt;4d}</span><span class="s2">    &quot;</span>\
+                                <span class="s2">&quot;</span><span class="si">{:&gt;8.3f}{:&gt;8.3f}{:&gt;8.3f}{:&gt;6.2f}{:&gt;6.2f}</span><span class="s2">&quot;</span>\
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                          <span class="n">atom</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                          <span class="n">atom</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                                          <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">lra_gc</span><span class="p">,</span> <span class="n">reorg_gc</span><span class="p">))</span>
+            <span class="n">pdb</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;GAP&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pdb</span><span class="p">)</span></div></div>
+
+
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Miha Purg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.6.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -25,6 +25,11 @@
 #
 #
 #
+"""
+This module implements several force-field potential energy functions,
+and functions for calculating distances, angles and dihedral angles, as
+implemented in Q.
+"""
 
 import math
 

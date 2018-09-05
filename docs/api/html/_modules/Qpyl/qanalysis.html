@@ -1,0 +1,899 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Qpyl.qanalysis &mdash; Qpyl 0.6.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Qpyl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Qpyl.html">Qpyl package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Qpyl</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>Qpyl.qanalysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Qpyl.qanalysis</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># MIT License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2018  Miha Purg &lt;miha.purg@gmail.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for analysing Qfep and Qdyn output (logfiles).</span>
+<span class="sd">Two main classes are QAnalyseFeps and QAnalyseDyns.</span>
+<span class="sd">See q_analysefeps.py and q_analysedyns.py for usage.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span> <span class="k">as</span> <span class="n">ODict</span>
+
+<span class="kn">from</span> <span class="nn">Qpyl.core.qfep</span> <span class="k">import</span> <span class="n">QFepOutput</span><span class="p">,</span> <span class="n">QFepOutputError</span>
+<span class="kn">from</span> <span class="nn">Qpyl.core.qdyn</span> <span class="k">import</span> <span class="n">QDynOutput</span><span class="p">,</span> <span class="n">QDynOutputError</span>
+<span class="kn">from</span> <span class="nn">Qpyl.common</span> <span class="k">import</span> <span class="n">DataContainer</span><span class="p">,</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="nn">Qpyl.plotdata</span> <span class="k">import</span> <span class="n">PlotData</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="QAnalyseFeps"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qanalysis.QAnalyseFeps">[docs]</a><span class="k">class</span> <span class="nc">QAnalyseFeps</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper class for QFepOutput for analysing multiple outputs.</span>
+
+<span class="sd">    Calculates statistics (mean, stdev,...), makes pretty summaries,</span>
+<span class="sd">    extracts all data to PlotData objects via neat functions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        qfep_outputs (list of strings or list of tuples(string, string)): \</span>
+<span class="sd">                    pathnames of qfep outputs or (name, output_string) tuples</span>
+
+<span class="sd">        lra_lambdas (list of floats, optional):  lambdas at which LRA energies\</span>
+<span class="sd">                                                 should be calculated at.\</span>
+<span class="sd">                                                 Usual case is (1.0, 0.0).\</span>
+<span class="sd">                                                 Default = None (no LRA calcs)</span>
+<span class="sd">        _parent (QAnalyseFeps): used internally for QCP and exclusions</span>
+<span class="sd">        _subcalcs (string): used internally for QCP and exclusions </span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; qos = [os.path.join(md, &quot;qfep.log&quot;) for md in sorted(mapdirs)]</span>
+<span class="sd">        &gt;&gt;&gt; qaf = QAnalyseFeps(qos, lra_lambdas=(1.0, 0.0))</span>
+<span class="sd">        &gt;&gt;&gt; print qaf.stats_str</span>
+<span class="sd">        # prints statistics</span>
+<span class="sd">        &gt;&gt;&gt; for sub_calc_key, sub_calc in sorted(qaf.sub_calcs.iteritems()):</span>
+<span class="sd">        &gt;&gt;&gt;     print sub_calc.stats_str</span>
+<span class="sd">        # prints subcalculation (QCP, GE) statistics</span>
+<span class="sd">        &gt;&gt;&gt; for failed_path, failed_msg in sorted(qaf.failed.iteritems()):</span>
+<span class="sd">        &gt;&gt;&gt;     relp = os.path.relpath(failed_path)</span>
+<span class="sd">        &gt;&gt;&gt;     print &quot;-&gt; {}: {}&quot;.format(relp, failed_msg)</span>
+<span class="sd">        # prints failed</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qfep_outputs</span><span class="p">,</span> <span class="n">lra_lambdas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">_parent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">_subcalc_key</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qfep_outputs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">qfep_outputs</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lra_lambdas</span> <span class="o">=</span> <span class="n">lra_lambdas</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">_parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_subcalc_key</span> <span class="o">=</span> <span class="n">_subcalc_key</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">qfos</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dgas</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dg0s</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dgs_fep</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lras</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failed</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failed_dg</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub_calcs</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+
+        <span class="c1"># main calculation (not subcalc)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># check if the files exist and if they parse</span>
+            <span class="k">for</span> <span class="n">qfep_output</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qfep_outputs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">qfep_output</span><span class="p">,</span> <span class="n">basestring</span><span class="p">):</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">qfep_out_string</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">qfep_output</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">IOError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">failed</span><span class="p">[</span><span class="n">qfep_output</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_msg</span>
+                        <span class="k">continue</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">qfep_out_name</span> <span class="o">=</span> <span class="n">qfep_output</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">qfep_out_name</span><span class="p">,</span> <span class="n">qfep_out_string</span> <span class="o">=</span> <span class="n">qfep_output</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">qfo</span> <span class="o">=</span> <span class="n">QFepOutput</span><span class="p">(</span><span class="n">qfep_out_string</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">QFepOutputError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">failed</span><span class="p">[</span><span class="n">qfep_out_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_msg</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">failed</span><span class="p">[</span><span class="n">qfep_out_name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;UNCAUGHT EXCEPTION: </span><span class="si">{}</span><span class="s2">&quot;</span>\
+                                                 <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">qfos</span><span class="p">[</span><span class="n">qfep_out_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">qfo</span>
+        <span class="c1"># exctract data (exclusion or QCP) from parent&#39;s sub_calcs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">qfos_failed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">failed</span>
+            <span class="k">for</span> <span class="n">p_qfo_key</span><span class="p">,</span> <span class="n">p_qfo</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">qfos</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subcalc_key</span> <span class="ow">in</span> <span class="n">p_qfo</span><span class="o">.</span><span class="n">sub_calcs</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">qfos</span><span class="p">[</span><span class="n">p_qfo_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_qfo</span><span class="o">.</span><span class="n">sub_calcs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_subcalc_key</span><span class="p">]</span>
+
+        <span class="c1"># get dG_FEP, dGa, dG0, LRAs</span>
+        <span class="k">for</span> <span class="n">qfep_output</span><span class="p">,</span> <span class="n">qfo</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qfos</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dgs_fep</span><span class="p">[</span><span class="n">qfep_output</span><span class="p">]</span> <span class="o">=</span> <span class="n">qfo</span><span class="o">.</span><span class="n">part1</span><span class="o">.</span><span class="n">dg</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dga</span> <span class="o">=</span> <span class="n">qfo</span><span class="o">.</span><span class="n">part3</span><span class="o">.</span><span class="n">dga</span>
+                <span class="n">dg0</span> <span class="o">=</span> <span class="n">qfo</span><span class="o">.</span><span class="n">part3</span><span class="o">.</span><span class="n">dg0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dgas</span><span class="p">[</span><span class="n">qfep_output</span><span class="p">]</span> <span class="o">=</span> <span class="n">dga</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dg0s</span><span class="p">[</span><span class="n">qfep_output</span><span class="p">]</span> <span class="o">=</span> <span class="n">dg0</span>
+                <span class="k">if</span> <span class="n">qfo</span><span class="o">.</span><span class="n">part3</span><span class="o">.</span><span class="n">warning</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qfep_output</span><span class="p">,</span>
+                                                   <span class="n">qfo</span><span class="o">.</span><span class="n">part3</span><span class="o">.</span><span class="n">warning</span><span class="p">))</span>
+            <span class="k">except</span> <span class="n">QFepOutputError</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">failed_dg</span><span class="p">[</span><span class="n">qfep_output</span><span class="p">]</span> <span class="o">=</span> <span class="n">error_msg</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">error_msg</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">failed_dg</span><span class="p">[</span><span class="n">qfep_output</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;UNCAUGHT EXCEPTION: </span><span class="si">{}</span><span class="s2">&quot;</span>\
+                                              <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+            <span class="c1"># get LRA energies or log if fails (3 states, weird data)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lra_lambdas</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">lra</span> <span class="o">=</span> <span class="n">qfo</span><span class="o">.</span><span class="n">part0</span><span class="o">.</span><span class="n">calc_lra</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lra_lambdas</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                             <span class="bp">self</span><span class="o">.</span><span class="n">_lra_lambdas</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;LRA failed on &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                   <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qfep_output</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">lras</span><span class="p">[</span><span class="n">qfep_output</span><span class="p">]</span> <span class="o">=</span> <span class="n">lra</span>
+
+            <span class="c1"># add sub_calcs to self.sub_calcs, if they exist</span>
+            <span class="k">for</span> <span class="n">subcalc_key</span> <span class="ow">in</span> <span class="n">qfo</span><span class="o">.</span><span class="n">sub_calcs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">subcalc_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_calcs</span><span class="p">:</span>
+                    <span class="n">subqaf</span> <span class="o">=</span> <span class="n">QAnalyseFeps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qfep_outputs</span><span class="p">,</span>
+                                          <span class="bp">self</span><span class="o">.</span><span class="n">_lra_lambdas</span><span class="p">,</span>
+                                          <span class="n">_parent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                                          <span class="n">_subcalc_key</span><span class="o">=</span><span class="n">subcalc_key</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">sub_calcs</span><span class="p">[</span><span class="n">subcalc_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">subqaf</span>
+
+        <span class="c1"># TODO: check that parameters match in different outputs,</span>
+        <span class="c1"># otherwise, log a warning</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dg_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;DataContainer with all main and subcalc free energies.&quot;&quot;&quot;</span>
+        <span class="n">subcalcs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sub_calcs</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">coltitles</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Qfep_output&quot;</span><span class="p">,</span> <span class="s2">&quot;dG*&quot;</span><span class="p">,</span> <span class="s2">&quot;dG0&quot;</span><span class="p">,</span> <span class="s2">&quot;dG_lambda&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">sc</span> <span class="ow">in</span> <span class="n">subcalcs</span><span class="p">:</span>
+            <span class="n">coltitles</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_dG*&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sc</span><span class="p">),</span>
+                              <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_dG0&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sc</span><span class="p">),</span>
+                              <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_dG_lambda&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sc</span><span class="p">)])</span>
+
+        <span class="n">dc</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">coltitles</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">qfep_output</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qfos</span><span class="p">):</span>
+            <span class="n">relp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">qfep_output</span><span class="p">)</span>
+            <span class="n">dga</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">qfep_output</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">dg0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dg0s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">qfep_output</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">dg_fep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgs_fep</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">qfep_output</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="n">relp</span><span class="p">,</span> <span class="n">dga</span><span class="p">,</span> <span class="n">dg0</span><span class="p">,</span> <span class="n">dg_fep</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">subcalc</span> <span class="ow">in</span> <span class="n">subcalcs</span><span class="p">:</span>
+                <span class="n">dga</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_calcs</span><span class="p">[</span><span class="n">subcalc</span><span class="p">]</span><span class="o">.</span><span class="n">dgas</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">qfep_output</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">dg0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_calcs</span><span class="p">[</span><span class="n">subcalc</span><span class="p">]</span><span class="o">.</span><span class="n">dg0s</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">qfep_output</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">dg_fep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_calcs</span><span class="p">[</span><span class="n">subcalc</span><span class="p">]</span><span class="o">.</span><span class="n">dgs_fep</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">qfep_output</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">dga</span><span class="p">,</span> <span class="n">dg0</span><span class="p">,</span> <span class="n">dg_fep</span><span class="p">])</span>
+
+            <span class="n">dc</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dc</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stats_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Free energy stats in string format.&quot;&quot;&quot;</span>
+        <span class="n">dgas</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgas</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">dg0s</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dg0s</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="n">dgs_fep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgs_fep</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+        <span class="n">allres</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">allres</span><span class="p">[</span><span class="s2">&quot;calc_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_subcalc_key</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">allres</span><span class="p">[</span><span class="s2">&quot;dg_n&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dgas</span><span class="p">)</span>
+        <span class="n">allres</span><span class="p">[</span><span class="s2">&quot;dga&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dgas</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dgas</span><span class="p">),</span>
+                         <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">dgas</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std_error</span><span class="p">(</span><span class="n">dgas</span><span class="p">))</span>
+
+        <span class="n">allres</span><span class="p">[</span><span class="s2">&quot;dg0&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dg0s</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dg0s</span><span class="p">),</span>
+                         <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">dg0s</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std_error</span><span class="p">(</span><span class="n">dg0s</span><span class="p">))</span>
+
+        <span class="n">allres</span><span class="p">[</span><span class="s2">&quot;dg_fep_n&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dgs_fep</span><span class="p">)</span>
+        <span class="n">allres</span><span class="p">[</span><span class="s2">&quot;dg_fep&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dgs_fep</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">dgs_fep</span><span class="p">),</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">dgs_fep</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std_error</span><span class="p">(</span><span class="n">dgs_fep</span><span class="p">))</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2"># </span><span class="si">{calc_type:&lt;15}</span><span class="s2"> Mean      Std.dev    Median    Std.error       N</span>
+<span class="s2">dG*         </span><span class="si">{dga[0]:10.2f}</span><span class="s2"> </span><span class="si">{dga[1]:10.2f}</span><span class="s2"> </span><span class="si">{dga[2]:10.2f}</span><span class="s2"> </span><span class="si">{dga[3]:10.2f}</span><span class="s2"> </span><span class="si">{dg_n:10}</span><span class="s2"></span>
+<span class="s2">dG0         </span><span class="si">{dg0[0]:10.2f}</span><span class="s2"> </span><span class="si">{dg0[1]:10.2f}</span><span class="s2"> </span><span class="si">{dg0[2]:10.2f}</span><span class="s2"> </span><span class="si">{dg0[3]:10.2f}</span><span class="s2"> </span><span class="si">{dg_n:10}</span><span class="s2"></span>
+<span class="s2">dG_lambda   </span><span class="si">{dg_fep[0]:10.2f}</span><span class="s2"> </span><span class="si">{dg_fep[1]:10.2f}</span><span class="s2"> </span><span class="si">{dg_fep[2]:10.2f}</span><span class="s2"> </span><span class="se">\</span>
+<span class="si">{dg_fep[3]:10.2f}</span><span class="s2"> </span><span class="si">{dg_fep_n:10}</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="n">allres</span><span class="p">)</span>
+
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">plotdata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return &#39;useful data&#39; as a dictionary of PlotData objects.</span>
+
+<span class="sd">        Each qfep_output will be a subplot in one PlotData, except in the case</span>
+<span class="sd">        of LRA where there is only one subplot: the average and stdev over all</span>
+<span class="sd">        outputs.</span>
+
+<span class="sd">        Useful data:</span>
+<span class="sd">        - All energies from part 0</span>
+<span class="sd">        - FEP back, forward and average dG profiles vs lambda</span>
+<span class="sd">        - FEP delta (forward - reverse) vs lambda</span>
+<span class="sd">        - Binning overlap/histograms</span>
+<span class="sd">        - Full dGg profile (not bin-averaged) for first output</span>
+<span class="sd">        - LRA contributions (statistics)</span>
+<span class="sd">        - Free energy profiles vs Egap (bin-averaged)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">plots</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+
+        <span class="c1"># no QFepOutput objects (all failed to parse)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">qfos</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">plots</span>
+
+        <span class="c1"># make PlotData objects</span>
+
+        <span class="c1"># Part 3 (bin-averaged profile)</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgde&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Free-energy profile (bin-averaged, norm.)&quot;</span><span class="p">,</span>
+                                 <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;E1-E2  [kcal/mol]&quot;</span><span class="p">,</span>
+                                 <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Free energy  [kcal/mol]&quot;</span><span class="p">)</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgde_unnorm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Free-energy profile (bin-averaged)&quot;</span><span class="p">,</span>
+                                        <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;E1-E2  [kcal/mol]&quot;</span><span class="p">,</span>
+                                        <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Free energy  [kcal/mol]&quot;</span><span class="p">)</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;rxy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Off-diagonal distance&quot;</span><span class="p">,</span>
+                                <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;E1-E2  [kcal/mol]&quot;</span><span class="p">,</span>
+                                <span class="n">ylabel</span><span class="o">=</span><span class="s2">u&quot;Rxy  [Å]&quot;</span><span class="p">)</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;pts_egap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Binning (total counts)&quot;</span><span class="p">,</span>
+                                     <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;E1-E2 [kcal/mol]&quot;</span><span class="p">,</span>
+                                     <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Number of points&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Part 2 (dGg/binning)</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;egap_lambda&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Binning (overlap)&quot;</span><span class="p">,</span>
+                                        <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Lambda (state 1)&quot;</span><span class="p">,</span>
+                                        <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;E1-E2 [kcal/mol]&quot;</span><span class="p">)</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;pts_egap_hists&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Binning (histograms, &quot;</span>
+                                           <span class="s2">&quot;1st output only)&quot;</span><span class="p">,</span>
+                                           <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;E1-E2&quot;</span><span class="p">,</span>
+                                           <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Number of points,&quot;</span><span class="p">)</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;pts_egap_l&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Binning3D (1st output only)&quot;</span><span class="p">,</span>
+                                       <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;E1-E2&quot;</span><span class="p">,</span>
+                                       <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Lambda (state 1)&quot;</span><span class="p">,</span>
+                                       <span class="n">zlabel</span><span class="o">=</span><span class="s2">&quot;Number of points&quot;</span><span class="p">,</span>
+                                       <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;wireframe&quot;</span><span class="p">)</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgg_egap&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Full dGg profile (1st output only)&quot;</span><span class="p">,</span>
+                                     <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;E1-E2 [kcal/mol]&quot;</span><span class="p">,</span>
+                                     <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Lambda (state 1)&quot;</span><span class="p">,</span>
+                                     <span class="n">zlabel</span><span class="o">=</span><span class="s2">&quot;Free energy [kcal/mol]&quot;</span><span class="p">,</span>
+                                     <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;wireframe&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Part 1 (FEP)</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;FEP (dG_sum)&quot;</span><span class="p">,</span>
+                                <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Lambda (state 1)&quot;</span><span class="p">,</span>
+                                <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Free energy  [kcal/mol]&quot;</span><span class="p">)</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgl_delta&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;FEP (dGf-dGr)&quot;</span><span class="p">,</span>
+                                      <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Lambda (state 1)&quot;</span><span class="p">,</span>
+                                      <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Free energy  [kcal/mol]&quot;</span><span class="p">)</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgl_forw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;FEP (dG_forward)&quot;</span><span class="p">,</span>
+                                     <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Lambda (state 1)&quot;</span><span class="p">,</span>
+                                     <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Free energy  [kcal/mol]&quot;</span><span class="p">)</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgl_rev&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;FEP (dG_reverse)&quot;</span><span class="p">,</span>
+                                    <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Lambda (state 1)&quot;</span><span class="p">,</span>
+                                    <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Free energy  [kcal/mol]&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Part 0 (Avg. energies / LRAs)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lra_lambdas</span><span class="p">:</span>
+            <span class="n">l1</span><span class="p">,</span> <span class="n">l2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lra_lambdas</span> 
+            <span class="n">lra_de_st1</span> <span class="o">=</span> <span class="s2">&quot;lra_de_st1_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l1</span><span class="p">)</span>
+            <span class="n">lra_de_st2</span> <span class="o">=</span> <span class="s2">&quot;lra_de_st2_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l2</span><span class="p">)</span>
+            <span class="n">lra_lra</span> <span class="o">=</span> <span class="s2">&quot;lra_lra_</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+            <span class="n">lra_reo</span> <span class="o">=</span> <span class="s2">&quot;lra_reo_</span><span class="si">{}{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+            <span class="n">plots</span><span class="p">[</span><span class="n">lra_de_st1</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;E2-E1 (lambda=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l1</span><span class="p">),</span>
+                                         <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy type&quot;</span><span class="p">,</span>
+                                         <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Free energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                         <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+            <span class="n">plots</span><span class="p">[</span><span class="n">lra_de_st2</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;E2-E1 (lambda=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l2</span><span class="p">),</span>
+                                         <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy type&quot;</span><span class="p">,</span>
+                                         <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Free energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                         <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+            <span class="n">plots</span><span class="p">[</span><span class="n">lra_lra</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;LRA (l=</span><span class="si">{}</span><span class="s2"> -&gt; l=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">),</span>
+                                      <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy type&quot;</span><span class="p">,</span>
+                                      <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Free energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                      <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+            <span class="n">plots</span><span class="p">[</span><span class="n">lra_reo</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Reorganization energy (l=</span><span class="si">{}</span><span class="s2"> -&gt; &quot;</span>
+                                      <span class="s2">&quot;l=</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">),</span>
+                                      <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Energy type&quot;</span><span class="p">,</span>
+                                      <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Free energy  [kcal/mol]&quot;</span><span class="p">,</span>
+                                      <span class="n">plot_type</span><span class="o">=</span><span class="s2">&quot;bar&quot;</span><span class="p">)</span>
+
+        <span class="c1"># get the column names from the first output (0th is lambda)</span>
+        <span class="n">qfo0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qfos</span><span class="o">.</span><span class="n">values</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">evb_states</span> <span class="o">=</span> <span class="n">qfo0</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">nstates</span>
+        <span class="n">part0_coltitles</span> <span class="o">=</span> <span class="n">qfo0</span><span class="o">.</span><span class="n">part0</span><span class="o">.</span><span class="n">data_state</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">column_titles</span>
+
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">part0_coltitles</span><span class="p">[</span><span class="mi">4</span><span class="p">:]:</span>
+            <span class="k">for</span> <span class="n">evb_state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">evb_states</span><span class="p">):</span>
+                <span class="n">est</span> <span class="o">=</span> <span class="n">evb_state</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;e</span><span class="si">{}</span><span class="s2">l_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+                <span class="n">plots</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;E</span><span class="si">{}</span><span class="s2"> vs Lambda (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est</span><span class="p">,</span> <span class="n">col</span><span class="p">),</span>
+                                      <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Lambda (state </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est</span><span class="p">),</span>
+                                      <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;E</span><span class="si">{}</span><span class="s2"> (</span><span class="si">{}</span><span class="s2">)  [kcal/mol]&quot;</span>
+                                             <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est</span><span class="p">,</span> <span class="n">col</span><span class="p">))</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;e</span><span class="si">{}</span><span class="s2">l_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+                <span class="n">plots</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;E</span><span class="si">{}</span><span class="s2"> vs Lambda (</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est</span><span class="p">,</span> <span class="n">col</span><span class="p">),</span>
+                                      <span class="n">xlabel</span><span class="o">=</span><span class="s2">&quot;Lambda (state </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est</span><span class="p">),</span>
+                                      <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;E</span><span class="si">{}</span><span class="s2"> (</span><span class="si">{}</span><span class="s2">)  [kcal/mol]&quot;</span>
+                                             <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est</span><span class="p">,</span> <span class="n">col</span><span class="p">))</span>
+
+        <span class="c1"># populate PlotData subplots (each output is a subplot)</span>
+        <span class="k">for</span> <span class="n">qfo_path</span><span class="p">,</span> <span class="n">qfo</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qfos</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+
+            <span class="n">relp</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">relpath</span><span class="p">(</span><span class="n">qfo_path</span><span class="p">)</span>
+
+            <span class="c1"># Part 0 energies</span>
+            <span class="k">for</span> <span class="n">evb_state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">evb_states</span><span class="p">):</span>
+                <span class="n">est</span> <span class="o">=</span> <span class="n">evb_state</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">qfo</span><span class="o">.</span><span class="n">part0</span><span class="o">.</span><span class="n">data_state</span><span class="p">[</span><span class="n">evb_state</span><span class="p">]</span><span class="o">.</span><span class="n">get_columns</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">colname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">part0_coltitles</span><span class="p">[</span><span class="mi">4</span><span class="p">:]):</span>
+                    <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;e</span><span class="si">{}</span><span class="s2">l_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">est</span><span class="p">,</span> <span class="n">colname</span><span class="p">)</span>
+                    <span class="c1"># 3rd column is lambda, 4,5,6,7.. are energies</span>
+                    <span class="n">plots</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">4</span><span class="p">])</span>
+
+
+            <span class="c1"># Part 1 FEP</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">qfo</span><span class="o">.</span><span class="n">part1</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_columns</span><span class="p">([</span><span class="s2">&quot;Lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;dGf&quot;</span><span class="p">,</span>
+                                               <span class="s2">&quot;dGr&quot;</span><span class="p">,</span> <span class="s2">&quot;dG&quot;</span><span class="p">])</span>
+
+            <span class="n">delta</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,]</span>
+            <span class="k">for</span> <span class="n">dgf</span><span class="p">,</span> <span class="n">dgb</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">:],</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">dg</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dgf</span><span class="p">)</span><span class="o">-</span><span class="nb">abs</span><span class="p">(</span><span class="n">dgb</span><span class="p">)</span>
+                <span class="n">delta</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dg</span><span class="p">)</span>
+
+            <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgl_delta&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">delta</span><span class="p">)</span>
+            <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgl_forw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgl_rev&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgl&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+
+            <span class="c1"># Part 2 (sampling/binning)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">qfo</span><span class="o">.</span><span class="n">part2</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_columns</span><span class="p">([</span><span class="s2">&quot;Lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;Egap&quot;</span><span class="p">,</span>
+                                               <span class="s2">&quot;dGg&quot;</span><span class="p">,</span> <span class="s2">&quot;points&quot;</span><span class="p">])</span>
+            <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;egap_lambda&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="c1">## use only the first one, too much data otherwise</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;pts_egap_hists&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">subplots</span><span class="p">:</span>
+                <span class="n">rows</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">data</span><span class="p">)</span> <span class="c1">#transpose columns to rows</span>
+                <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                    <span class="n">rows_f</span> <span class="o">=</span> <span class="p">[(</span><span class="n">eg</span><span class="p">,</span> <span class="n">pts</span><span class="p">)</span> <span class="k">for</span> <span class="n">lam</span><span class="p">,</span> <span class="n">eg</span><span class="p">,</span> <span class="n">dgg</span><span class="p">,</span> <span class="n">pts</span> <span class="ow">in</span> <span class="n">rows</span> <span class="k">if</span> <span class="n">lam</span> <span class="o">==</span> <span class="n">l</span><span class="p">]</span>
+                    <span class="n">eg</span><span class="p">,</span> <span class="n">pts</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">rows_f</span><span class="p">)</span> <span class="c1">#transpose rows to columns</span>
+
+                    <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;pts_egap_hists&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">l</span><span class="p">),</span>
+                                                        <span class="n">eg</span><span class="p">,</span> <span class="n">pts</span><span class="p">)</span>
+
+                <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgg_egap&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;pts_egap_l&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+
+
+            <span class="c1"># Part 3</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">qfo</span><span class="o">.</span><span class="n">part3</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">get_columns</span><span class="p">([</span><span class="s2">&quot;Egap&quot;</span><span class="p">,</span> <span class="s2">&quot;dGg&quot;</span><span class="p">,</span> <span class="s2">&quot;dGg_norm&quot;</span><span class="p">,</span>
+                                               <span class="s2">&quot;r_xy&quot;</span><span class="p">,</span> <span class="s2">&quot;points&quot;</span><span class="p">])</span>
+            <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgde&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;dgde_unnorm&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;rxy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;pts_egap&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">relp</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lras</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lra_stats</span><span class="o">.</span><span class="n">get_columns</span><span class="p">()</span>
+            <span class="n">plots</span><span class="p">[</span><span class="n">lra_de_st1</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="s2">&quot;average&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                          <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">yerror</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">plots</span><span class="p">[</span><span class="n">lra_de_st2</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="s2">&quot;average&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                          <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">yerror</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+            <span class="n">plots</span><span class="p">[</span><span class="n">lra_lra</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="s2">&quot;average&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                       <span class="n">data</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">yerror</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+            <span class="n">plots</span><span class="p">[</span><span class="n">lra_reo</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="s2">&quot;average&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                       <span class="n">data</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">yerror</span><span class="o">=</span><span class="n">data</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">plots</span>
+
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lra_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Calculate average and st.dev of LRA and reorg energies.&quot;&quot;&quot;</span>
+
+        <span class="n">average_lras</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">([</span><span class="s2">&quot;E_type&quot;</span><span class="p">,</span> <span class="s2">&quot;(E2-E1)_10_mean&quot;</span><span class="p">,</span>
+                                      <span class="s2">&quot;(E2-E1)_10_std&quot;</span><span class="p">,</span> <span class="s2">&quot;(E2-E1)_01_mean&quot;</span><span class="p">,</span>
+                                      <span class="s2">&quot;(E2-E1)_01_std&quot;</span><span class="p">,</span> <span class="s2">&quot;LRA_mean&quot;</span><span class="p">,</span> <span class="s2">&quot;LRA_std&quot;</span><span class="p">,</span>
+                                      <span class="s2">&quot;REORG_mean&quot;</span><span class="p">,</span> <span class="s2">&quot;REORG_std&quot;</span><span class="p">])</span>
+
+        <span class="n">allvals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">lra</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lras</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">lra</span><span class="o">.</span><span class="n">get_rows</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">irow</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">allvals</span><span class="p">[</span><span class="n">irow</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="n">allvals</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">row</span><span class="p">,])</span>
+
+    <span class="c1"># allvals now looks like this:</span>
+    <span class="c1"># [</span>
+    <span class="c1">#   [</span>
+    <span class="c1">#     [&quot;EQtot&quot;, EQtot_de_st1_1, EQtot_de_st2_1, EQtot_lra_1, EQtot_reorg_1],</span>
+    <span class="c1">#     [&quot;EQtot&quot;, EQtot_de_st1_2, EQtot_de_st2_2, ...], ...</span>
+    <span class="c1">#   ],</span>
+    <span class="c1">#   [</span>
+    <span class="c1">#     [&quot;EQbond&quot;, EQbond_de_st1_1, EQbond_de_st2_1, EQbond_lra_1, EQbond_reorg_1],</span>
+    <span class="c1">#     [&quot;EQbond&quot;, EQbond_de_st1_2, EQbond_de_st2_2, ...], ...</span>
+    <span class="c1">#   ]</span>
+    <span class="c1"># ]</span>
+    <span class="c1">#</span>
+        <span class="k">for</span> <span class="n">values</span> <span class="ow">in</span> <span class="n">allvals</span><span class="p">:</span>
+            <span class="c1"># transpose to get [ [&quot;EQtot&quot;,&quot;EQtot&quot;...],</span>
+            <span class="c1">#                    [ EQtot_de_st1_1, EQtot_de_st1_2,...],</span>
+            <span class="c1">#                    [ EQtot_de_st2_1, EQtot_de_st2_2,...], ...]</span>
+
+            <span class="n">values</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">values</span><span class="p">)</span>  
+            <span class="c1"># now they can be easily averaged and std-ed</span>
+            <span class="n">e_type</span> <span class="o">=</span> <span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">de_st1_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">de_st2_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">lra_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">reo_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+            <span class="n">de_st1_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">de_st2_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+            <span class="n">lra_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+            <span class="n">reo_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">values</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
+
+            <span class="n">average_lras</span><span class="o">.</span><span class="n">add_row</span><span class="p">([</span><span class="n">e_type</span><span class="p">,</span> <span class="n">de_st1_mean</span><span class="p">,</span> <span class="n">de_st1_std</span><span class="p">,</span>
+                                  <span class="n">de_st2_mean</span><span class="p">,</span> <span class="n">de_st2_std</span><span class="p">,</span> <span class="n">lra_mean</span><span class="p">,</span>
+                                  <span class="n">lra_std</span><span class="p">,</span> <span class="n">reo_mean</span><span class="p">,</span> <span class="n">reo_std</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">average_lras</span></div>
+
+
+
+<div class="viewcode-block" id="QAnalyseDynsError"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qanalysis.QAnalyseDynsError">[docs]</a><span class="k">class</span> <span class="nc">QAnalyseDynsError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="QAnalyseDyns"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qanalysis.QAnalyseDyns">[docs]</a><span class="k">class</span> <span class="nc">QAnalyseDyns</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Wrapper class for QanalyseDyn for parsing a sequence of Qdyn outputs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        qdyn_outputs (list): Qdyn output pathnames</span>
+<span class="sd">        time_unit (string): fs,ps,ns (optional, default is ps)</span>
+<span class="sd">        step_size (float): use in case the output reads 0.000</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; qads = QAnalyseDyns([&quot;fep_000.log&quot;, &quot;fep_001.log&quot;], timeunit=&quot;ps&quot;)</span>
+<span class="sd">        # get average temperatures by combining all outputs</span>
+<span class="sd">        &gt;&gt;&gt; print qads.get_temp_stats()</span>
+
+<span class="sd">    Raises QAnalyseDynsError  (if it fails to parse an output)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span> 
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qdyn_outputs</span><span class="p">,</span> <span class="n">time_unit</span><span class="o">=</span><span class="s2">&quot;ps&quot;</span><span class="p">,</span> <span class="n">step_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_unit</span> <span class="o">=</span> <span class="n">time_unit</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">output</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qdyn_outputs</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">qdo</span> <span class="o">=</span> <span class="n">QDynOutput</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">time_unit</span><span class="p">,</span>
+                                 <span class="n">step_size</span><span class="o">=</span><span class="n">step_size</span><span class="p">,</span>
+                                 <span class="n">start_time</span><span class="o">=</span><span class="n">start_time</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">qdo</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">QDynOutputError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QAnalyseDynsError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2">: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+            <span class="n">start_time</span> <span class="o">=</span> <span class="n">qdo</span><span class="o">.</span><span class="n">time_end</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_evb_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">nstates</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">en_section_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">map_en_section</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qen_section_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">map_qen_section</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="QAnalyseDyns.get_temps"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qanalysis.QAnalyseDyns.get_temps">[docs]</a>    <span class="k">def</span> <span class="nf">get_temps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get temperatures from all logfiles combined.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stride (int, optional):  use only every Nth point, default=1</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            temperatures (DataContainer)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># &quot;Time&quot;, &quot;T_tot&quot;, &quot;T_free&quot;, &quot;T_free_solute&quot;, &quot;T_free_solvent&quot;</span>
+        <span class="n">cts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data_temp</span><span class="o">.</span><span class="n">column_titles</span>
+        <span class="n">temps</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">cts</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">qdo</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span><span class="p">:</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">qdo</span><span class="o">.</span><span class="n">data_temp</span><span class="o">.</span><span class="n">get_rows</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[::</span><span class="n">stride</span><span class="p">]:</span>
+                <span class="n">temps</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">temps</span></div>
+
+
+
+<div class="viewcode-block" id="QAnalyseDyns.get_temp_stats"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qanalysis.QAnalyseDyns.get_temp_stats">[docs]</a>    <span class="k">def</span> <span class="nf">get_temp_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns temperature stats in string format (used for cmdline printout)</span>
+<span class="sd">        for all logfiles combined</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">temps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_temps</span><span class="p">(</span><span class="n">stride</span><span class="o">=</span><span class="n">stride</span><span class="p">)</span>
+        <span class="n">tt</span><span class="p">,</span> <span class="n">tf</span><span class="p">,</span> <span class="n">tf_solu</span><span class="p">,</span> <span class="n">tf_solv</span> <span class="o">=</span> <span class="n">temps</span><span class="o">.</span><span class="n">get_columns</span><span class="p">((</span><span class="s2">&quot;T_tot&quot;</span><span class="p">,</span> <span class="s2">&quot;T_free&quot;</span><span class="p">,</span>
+                                                      <span class="s2">&quot;T_free_solute&quot;</span><span class="p">,</span>
+                                                      <span class="s2">&quot;T_free_solvent&quot;</span><span class="p">))</span>
+        <span class="n">tt_mean</span><span class="p">,</span> <span class="n">tt_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tt</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">tt</span><span class="p">)</span>
+        <span class="n">tf_mean</span><span class="p">,</span> <span class="n">tf_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tf</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">tf</span><span class="p">)</span>
+        <span class="n">tf_solu_mean</span><span class="p">,</span> <span class="n">tf_solu_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tf_solu</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">tf_solu</span><span class="p">)</span>
+        <span class="n">tf_solv_mean</span><span class="p">,</span> <span class="n">tf_solv_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">tf_solv</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">tf_solv</span><span class="p">)</span>
+        <span class="n">tt_max_dev</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">tt_mean</span><span class="p">),</span> <span class="n">tt</span><span class="p">))</span>
+        <span class="n">tf_max_dev</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">tf_mean</span><span class="p">),</span> <span class="n">tf</span><span class="p">))</span>
+        <span class="n">tf_solu_max_dev</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">tf_solu_mean</span><span class="p">),</span> <span class="n">tf_solu</span><span class="p">))</span>
+        <span class="n">tf_solv_max_dev</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">tf_solv_mean</span><span class="p">),</span> <span class="n">tf_solv</span><span class="p">))</span>
+
+        <span class="n">outstr</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">Temperature stats:</span>
+<span class="si">{0:20s}{1:&gt;15s}{2:&gt;15s}{3:&gt;15s}</span><span class="s2"></span>
+<span class="si">{4:20s}{5:&gt;15.2f}{6:&gt;15.2f}{7:&gt;15.2f}</span><span class="s2"></span>
+<span class="si">{8:20s}{9:&gt;15.2f}{10:&gt;15.2f}{11:&gt;15.2f}</span><span class="s2"></span>
+<span class="si">{12:20s}{13:&gt;15.2f}{14:&gt;15.2f}{15:&gt;15.2f}</span><span class="s2"></span>
+<span class="si">{16:20s}{17:&gt;15.2f}{18:&gt;15.2f}{19:&gt;15.2f}</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="s2">&quot;Mean&quot;</span><span class="p">,</span> <span class="s2">&quot;Stdev&quot;</span><span class="p">,</span> <span class="s2">&quot;Max.Abs.Dev.&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;T_total&quot;</span><span class="p">,</span> <span class="n">tt_mean</span><span class="p">,</span> <span class="n">tt_std</span><span class="p">,</span> <span class="n">tt_max_dev</span><span class="p">,</span>
+           <span class="s2">&quot;T_free&quot;</span><span class="p">,</span> <span class="n">tf_mean</span><span class="p">,</span> <span class="n">tf_std</span><span class="p">,</span> <span class="n">tf_max_dev</span><span class="p">,</span>
+           <span class="s2">&quot;T_free_solute&quot;</span><span class="p">,</span> <span class="n">tf_solu_mean</span><span class="p">,</span> <span class="n">tf_solu_std</span><span class="p">,</span> <span class="n">tf_solu_max_dev</span><span class="p">,</span>
+           <span class="s2">&quot;T_free_solvent&quot;</span><span class="p">,</span> <span class="n">tf_solv_mean</span><span class="p">,</span> <span class="n">tf_solv_std</span><span class="p">,</span> <span class="n">tf_solv_max_dev</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">outstr</span></div>
+
+
+
+<div class="viewcode-block" id="QAnalyseDyns.get_offdiags"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qanalysis.QAnalyseDyns.get_offdiags">[docs]</a>    <span class="k">def</span> <span class="nf">get_offdiags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get distances from all logfiles combined.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           stride (int, optional):  use only every Nth point, default=1</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">           distances (dict):  e.g: { &quot;13_31&quot;: DataContainer,</span>
+<span class="sd">                                     &quot;13_18&quot;: DataContainer }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">coltitles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data_offdiags</span><span class="o">.</span><span class="n">column_titles</span>
+        <span class="n">dists</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">coltitles</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">qdo</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span><span class="p">:</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">qdo</span><span class="o">.</span><span class="n">data_offdiags</span><span class="o">.</span><span class="n">get_rows</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[::</span><span class="n">stride</span><span class="p">]:</span>
+                <span class="n">dists</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dists</span></div>
+
+
+<div class="viewcode-block" id="QAnalyseDyns.get_energies"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qanalysis.QAnalyseDyns.get_energies">[docs]</a>    <span class="k">def</span> <span class="nf">get_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e_type</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get energies from all logfiles combined.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           e_type (string):  keys in QDynOutput.map_en_section dictionary</span>
+<span class="sd">           stride (int, optional):  use only every Nth point, default=1</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">           energies (DataContainer)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">map_en_section</span><span class="p">[</span><span class="n">e_type</span><span class="p">]</span><span class="o">.</span><span class="n">column_titles</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">cts</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">qdo</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span><span class="p">:</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">qdo</span><span class="o">.</span><span class="n">map_en_section</span><span class="p">[</span><span class="n">e_type</span><span class="p">]</span><span class="o">.</span><span class="n">get_rows</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[::</span><span class="n">stride</span><span class="p">]:</span>
+                <span class="n">energies</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">energies</span></div>
+
+
+<div class="viewcode-block" id="QAnalyseDyns.get_q_energies"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qanalysis.QAnalyseDyns.get_q_energies">[docs]</a>    <span class="k">def</span> <span class="nf">get_q_energies</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qe_type</span><span class="p">,</span> <span class="n">evb_state</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get Q energies from all logfiles combined.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           qe_type (string):  keys in QDynOutput.map_qen_section dictionary</span>
+<span class="sd">           evb_state (int):  1 or 2 or 3...</span>
+<span class="sd">           stride (int, optional):  use only every Nth point, default=1</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">           energies (DataContainer)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">map_qen_section</span><span class="p">[</span><span class="n">qe_type</span><span class="p">][</span><span class="n">evb_state</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>\
+                                                        <span class="o">.</span><span class="n">column_titles</span>
+        <span class="n">energies</span> <span class="o">=</span> <span class="n">DataContainer</span><span class="p">(</span><span class="n">cts</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">qdo</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysed</span><span class="p">:</span>
+            <span class="n">rows</span> <span class="o">=</span> <span class="n">qdo</span><span class="o">.</span><span class="n">map_qen_section</span><span class="p">[</span><span class="n">qe_type</span><span class="p">][</span><span class="n">evb_state</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_rows</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">[::</span><span class="n">stride</span><span class="p">]:</span>
+                <span class="n">energies</span><span class="o">.</span><span class="n">add_row</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">energies</span></div>
+
+
+<div class="viewcode-block" id="QAnalyseDyns.get_plotdata"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qanalysis.QAnalyseDyns.get_plotdata">[docs]</a>    <span class="k">def</span> <span class="nf">get_plotdata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return &#39;useful data&#39; as a dictionary of PlotData objects.</span>
+
+<span class="sd">        Useful data:</span>
+<span class="sd">        - Temperatures</span>
+<span class="sd">        - Offdiagonal distances</span>
+<span class="sd">        - Energies (Q and non-Q)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">           stride (int, optional):  use only every Nth point, default=1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">plots</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+
+        <span class="c1"># make PlotData objects</span>
+
+        <span class="n">time_label</span> <span class="o">=</span> <span class="s2">&quot;Time [</span><span class="si">{}</span><span class="s2">]&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_unit</span><span class="p">)</span>
+        <span class="n">plots</span> <span class="o">=</span> <span class="n">ODict</span><span class="p">()</span>
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;temp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Temperature&quot;</span><span class="p">,</span>
+                                 <span class="n">xlabel</span><span class="o">=</span><span class="n">time_label</span><span class="p">,</span>
+                                 <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;T [K]&quot;</span><span class="p">)</span>
+
+        <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;offdiags&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Offdiagonal distances&quot;</span><span class="p">,</span>
+                                     <span class="n">xlabel</span><span class="o">=</span><span class="n">time_label</span><span class="p">,</span>
+                                     <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Distance [A]&quot;</span><span class="p">)</span>
+
+        <span class="n">t_dc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_temps</span><span class="p">(</span><span class="n">stride</span><span class="o">=</span><span class="n">stride</span><span class="p">)</span>
+        <span class="n">t_cs</span><span class="p">,</span> <span class="n">t_cts</span> <span class="o">=</span> <span class="n">t_dc</span><span class="o">.</span><span class="n">get_columns</span><span class="p">(),</span> <span class="n">t_dc</span><span class="o">.</span><span class="n">column_titles</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t_ct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">t_cts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;temp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">t_ct</span><span class="p">,</span> <span class="n">t_cs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">t_cs</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># 0==Time</span>
+
+
+        <span class="n">d_dc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_offdiags</span><span class="p">(</span><span class="n">stride</span><span class="o">=</span><span class="n">stride</span><span class="p">)</span>
+        <span class="n">d_cs</span><span class="p">,</span> <span class="n">d_cts</span> <span class="o">=</span> <span class="n">d_dc</span><span class="o">.</span><span class="n">get_columns</span><span class="p">(),</span> <span class="n">d_dc</span><span class="o">.</span><span class="n">column_titles</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">d_ct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">d_cts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="n">plots</span><span class="p">[</span><span class="s2">&quot;offdiags&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">d_ct</span><span class="p">,</span> <span class="n">d_cs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">d_cs</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># 0==Time</span>
+
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">en_section_keys</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;E_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">plots</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Energy: &quot;</span> <span class="o">+</span> <span class="n">k</span><span class="p">,</span>
+                                  <span class="n">xlabel</span><span class="o">=</span><span class="n">time_label</span><span class="p">,</span>
+                                  <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Energy [kcal/mol]&quot;</span><span class="p">)</span>
+            <span class="n">e_dc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_energies</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="n">stride</span><span class="p">)</span>
+            <span class="n">e_cs</span><span class="p">,</span> <span class="n">e_cts</span> <span class="o">=</span> <span class="n">e_dc</span><span class="o">.</span><span class="n">get_columns</span><span class="p">(),</span> <span class="n">e_dc</span><span class="o">.</span><span class="n">column_titles</span>
+            <span class="k">if</span> <span class="n">e_cs</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e_ct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">e_cts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                    <span class="n">plots</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">e_ct</span><span class="p">,</span> <span class="n">e_cs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">e_cs</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="c1"># 0==Time</span>
+
+
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">qen_section_keys</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">evb_state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_evb_states</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;EQ</span><span class="si">{}</span><span class="s2">_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">evb_state</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+                <span class="n">plots</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">PlotData</span><span class="p">(</span><span class="s2">&quot;Q Energy: </span><span class="si">{}</span><span class="s2"> (state </span><span class="si">{}</span><span class="s2">)&quot;</span>
+                                      <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">evb_state</span><span class="p">),</span>
+                                      <span class="n">xlabel</span><span class="o">=</span><span class="n">time_label</span><span class="p">,</span>
+                                      <span class="n">ylabel</span><span class="o">=</span><span class="s2">&quot;Energy [kcal/mol]&quot;</span><span class="p">)</span>
+                <span class="n">qe_dc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_q_energies</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">evb_state</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="n">stride</span><span class="p">)</span>
+                <span class="n">qe_cs</span><span class="p">,</span> <span class="n">qe_cts</span> <span class="o">=</span> <span class="n">qe_dc</span><span class="o">.</span><span class="n">get_columns</span><span class="p">(),</span> <span class="n">qe_dc</span><span class="o">.</span><span class="n">column_titles</span>
+                <span class="k">if</span> <span class="n">qe_cs</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">qe_ct</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qe_cts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                        <span class="n">plots</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">qe_ct</span><span class="p">,</span> <span class="n">qe_cs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">qe_cs</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">plots</span></div></div>
+
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Miha Purg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.6.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

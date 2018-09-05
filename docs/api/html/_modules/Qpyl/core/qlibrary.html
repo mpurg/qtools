@@ -1,0 +1,1147 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Qpyl.core.qlibrary &mdash; Qpyl 0.6.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Qpyl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../Qpyl.html">Qpyl package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Qpyl</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>Qpyl.core.qlibrary</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Qpyl.core.qlibrary</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># MIT License</span>
+<span class="c1">#</span>
+<span class="c1"># Copyright (c) 2018  Miha Purg &lt;miha.purg@gmail.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1">#</span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+<span class="c1">#</span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module implements the QLib class for reading and writing Q (and other)</span>
+<span class="sd">library files.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">from</span> <span class="nn">Qpyl.common</span> <span class="k">import</span> <span class="n">__version__</span><span class="p">,</span> <span class="n">raise_or_log</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="QLibError"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qlibrary.QLibError">[docs]</a><span class="k">class</span> <span class="nc">QLibError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="QLib"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qlibrary.QLib">[docs]</a><span class="k">class</span> <span class="nc">QLib</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for reading and writing Q library files.</span>
+
+<span class="sd">    Also supports parsing oplsaa_ffld and amber_lib.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">       ff_type (string):  Either &#39;oplsaa&#39; or &#39;amber&#39;</span>
+<span class="sd">       ignore_errors (boolean):  Optional, default is False.\</span>
+<span class="sd">                                 If set to True, some non-vital\</span>
+<span class="sd">                                 exceptions are logged instead.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ff_type</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span> <span class="o">=</span> <span class="n">ignore_errors</span>
+        <span class="n">supported_ff</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;oplsaa&#39;</span><span class="p">,</span> <span class="s1">&#39;amber&#39;</span><span class="p">]</span>
+        <span class="n">ff_type</span> <span class="o">=</span> <span class="n">ff_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">ff_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported_ff</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Force field type &#39;</span><span class="si">{}</span><span class="s2">&#39; not supported. Use </span><span class="si">{}</span><span class="s2">&quot;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ff_type</span><span class="p">,</span> <span class="s2">&quot; or &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">supported_ff</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ff_type</span> <span class="o">=</span> <span class="n">ff_type</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">residue_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">_add_residue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">residue</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Internal method for adding residues&quot;&quot;&quot;</span>
+        <span class="c1"># check for duplicates</span>
+        <span class="k">if</span> <span class="n">residue</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">residue_dict</span><span class="p">:</span>
+            <span class="c1"># check if they are the same...</span>
+            <span class="n">orig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">residue_dict</span><span class="p">[</span><span class="n">residue</span><span class="o">.</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">get_str</span><span class="p">()</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">residue</span><span class="o">.</span><span class="n">get_str</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">orig</span> <span class="o">!=</span> <span class="n">new</span><span class="p">:</span>
+                <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;Duplicate library entries for residue &#39;</span><span class="si">{}</span><span class="s2">&#39; &quot;</span>
+                             <span class="s2">&quot;with different parameters&quot;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">residue</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+                             <span class="n">QLibError</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Duplicate library entry for residue &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">residue</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">residue_dict</span><span class="p">[</span><span class="n">residue</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">residue</span>
+
+
+<div class="viewcode-block" id="QLib.check_valid"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qlibrary.QLib.check_valid">[docs]</a>    <span class="k">def</span> <span class="nf">check_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call &#39;check_valid&#39; on each _LibResidue object.</span>
+
+<span class="sd">        Raises QLibError if something is not cool with the residues.</span>
+<span class="sd">        (see _LibResidue for more info)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">residue</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">residue_dict</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">residue</span><span class="o">.</span><span class="n">check_valid</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="QLib.read_lib"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qlibrary.QLib.read_lib">[docs]</a>    <span class="k">def</span> <span class="nf">read_lib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read and parse a Q library (.lib) file</span>
+
+<span class="sd">        Add new residues to QLib.residue_dict as _LibResidue objects</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            libfile (string):  name/path of Q lib file</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">residues</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">libfile</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span>  <span class="k">as</span> <span class="n">lib</span><span class="p">:</span>
+            <span class="n">section</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">lnumber</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lib</span><span class="o">.</span><span class="n">readlines</span><span class="p">()):</span>
+                <span class="n">lnumber</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="c1"># remove comments</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#|\*|\!&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">):</span>
+                    <span class="c1"># get the 3 letter code and make a new object</span>
+                    <span class="n">resname</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                    <span class="n">residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_LibResidue</span><span class="p">(</span><span class="n">resname</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;[&quot;</span><span class="p">):</span>
+                    <span class="n">section</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;]&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;[] &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">residues</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">section</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Line #</span><span class="si">{}</span><span class="s2"> in LIB file &#39;</span><span class="si">{}</span><span class="s2">&#39; is not a &quot;</span>
+                                    <span class="s2">&quot;comment and is not inside a {{XXX}} &quot;</span>
+                                    <span class="s2">&quot;section and [XXX...X] subsection:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span>
+                                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lnumber</span><span class="p">,</span> <span class="n">libfile</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">residues</span><span class="p">:</span>
+                    <span class="n">residue</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;atoms&quot;</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">atom_name</span><span class="p">,</span> <span class="n">atom_type</span><span class="p">,</span> <span class="n">atom_charge</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+                        <span class="n">residue</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_LibAtom</span><span class="p">(</span><span class="n">atom_name</span><span class="p">,</span>
+                                                      <span class="n">atom_type</span><span class="p">,</span>
+                                                      <span class="nb">float</span><span class="p">(</span><span class="n">atom_charge</span><span class="p">),</span>
+                                                      <span class="n">residue</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Line #</span><span class="si">{}</span><span class="s2"> in LIB file &#39;</span><span class="si">{}</span><span class="s2">&#39; couldn&#39;t&quot;</span>
+                                        <span class="s2">&quot;be parsed (should look like this &quot;</span>
+                                        <span class="s2">&quot;&#39;aindex aname atype charge ...&#39;):</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span>
+                                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lnumber</span><span class="p">,</span> <span class="n">libfile</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+
+                <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;bonds&quot;</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Line #</span><span class="si">{}</span><span class="s2"> in LIB file &#39;</span><span class="si">{}</span><span class="s2">&#39; couldn&#39;t &quot;</span>
+                                        <span class="s2">&quot;be parsed (should look like this &quot;</span>
+                                        <span class="s2">&quot;&#39;atom1 atom2&#39;):</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span>
+                                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lnumber</span><span class="p">,</span> <span class="n">libfile</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">residue</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">))</span>
+
+
+                <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;impropers&quot;</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">a3</span><span class="p">,</span> <span class="n">a4</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Line #</span><span class="si">{}</span><span class="s2"> in LIB file &#39;</span><span class="si">{}</span><span class="s2">&#39; couldn&#39;t be&quot;</span>
+                                        <span class="s2">&quot;parsed (should look like this &quot;</span>
+                                        <span class="s2">&quot;&#39;atom1 atom2 atom3 atom4&#39;):</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span>
+                                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lnumber</span><span class="p">,</span> <span class="n">libfile</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">residue</span><span class="o">.</span><span class="n">_add_improper</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="p">[</span><span class="n">a1</span><span class="p">,</span> <span class="n">a3</span><span class="p">,</span> <span class="n">a4</span><span class="p">])</span>
+
+
+                <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;charge_groups&quot;</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ff_type</span> <span class="o">==</span> <span class="s2">&quot;amber&quot;</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;&#39;Charge_groups&#39; section is not &quot;</span>
+                                        <span class="s2">&quot;compatible with &#39;amber&#39; forcefield&quot;</span><span class="p">)</span>
+                    <span class="n">cgrp</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="n">residue</span><span class="o">.</span><span class="n">charge_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cgrp</span><span class="p">)</span>
+
+
+                <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;info&quot;</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Line #</span><span class="si">{}</span><span class="s2"> in LIB file &#39;</span><span class="si">{}</span><span class="s2">&#39; couldn&#39;t be&quot;</span>
+                                        <span class="s2">&quot;parsed (should look like this &quot;</span>
+                                        <span class="s2">&quot;&#39;keyword value&#39;):</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span>
+                                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lnumber</span><span class="p">,</span> <span class="n">libfile</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">residue</span><span class="o">.</span><span class="n">info</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+                <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;connections&quot;</span><span class="p">:</span>
+                    <span class="n">residue</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+
+                <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;build_rules&quot;</span><span class="p">:</span>
+                    <span class="n">residue</span><span class="o">.</span><span class="n">build_rules</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Unsupported section in &#39;</span><span class="si">{}</span><span class="s2">&#39;: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                   <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">libfile</span><span class="p">,</span> <span class="n">section</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">residue</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_residue</span><span class="p">(</span><span class="n">residue</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">residues</span><span class="p">:</span>
+            <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;No residues found&quot;</span><span class="p">,</span> <span class="n">QLibError</span><span class="p">,</span>
+                         <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="QLib.read_amber_lib"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qlibrary.QLib.read_amber_lib">[docs]</a>    <span class="k">def</span> <span class="nf">read_amber_lib</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">libfile</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read and parse an Amber library (.lib) file</span>
+
+<span class="sd">        Add new residues to QLib.residue_dict as _LibResidue objects</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            libfile (string):  name/path of Amber lib file</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ff_type</span> <span class="o">!=</span> <span class="s2">&quot;amber&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Function not supported with force field&quot;</span>
+                            <span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ff_type</span><span class="p">))</span>
+
+        <span class="n">residues</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">libfile</span><span class="p">)</span> <span class="k">as</span> <span class="n">lib</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">lnumber</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lib</span><span class="o">.</span><span class="n">readlines</span><span class="p">()):</span>
+                <span class="n">lnumber</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;!!&quot;</span><span class="p">):</span>
+                    <span class="k">continue</span> <span class="c1"># ignore comment</span>
+
+                <span class="k">if</span> <span class="n">residues</span><span class="p">:</span>
+                    <span class="n">residue</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;!&quot;</span><span class="p">:</span>
+                    <span class="n">lf</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lf</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                        <span class="n">rname</span> <span class="o">=</span> <span class="n">lf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">residues</span> <span class="ow">or</span> <span class="n">residue</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="n">rname</span><span class="p">:</span>
+                            <span class="n">residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_LibResidue</span><span class="p">(</span><span class="n">rname</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+
+                        <span class="n">section</span> <span class="o">=</span> <span class="n">lf</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span> <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Line #</span><span class="si">{}</span><span class="s2"> in LIB file &#39;</span><span class="si">{}</span><span class="s2">&#39; &quot;</span>
+                                          <span class="s2">&quot;couldn&#39;t be parsed:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span>
+                                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lnumber</span><span class="p">,</span> <span class="n">libfile</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">section</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">residues</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;atoms&quot;</span><span class="p">:</span>
+                    <span class="n">lf</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">name</span><span class="p">,</span> <span class="n">atype</span> <span class="o">=</span> <span class="n">lf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">),</span> <span class="n">lf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+                        <span class="n">charge</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lf</span><span class="p">[</span><span class="mi">7</span><span class="p">])</span>
+                        <span class="n">atype</span> <span class="o">=</span> <span class="n">atype</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;star&quot;</span><span class="p">)</span>
+                        <span class="n">residue</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_LibAtom</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">atype</span><span class="p">,</span>
+                                                      <span class="n">charge</span><span class="p">,</span>
+                                                      <span class="n">residue</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Line #</span><span class="si">{}</span><span class="s2"> in LIB file &#39;</span><span class="si">{}</span><span class="s2">&#39; &quot;</span>
+                                        <span class="s2">&quot;couldn&#39;t be parsed:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span>
+                                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lnumber</span><span class="p">,</span> <span class="n">libfile</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+
+                <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;connectivity&quot;</span><span class="p">:</span>
+                    <span class="n">atomnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">residue</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">ai1</span><span class="p">,</span> <span class="n">ai2</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="n">a1</span> <span class="o">=</span> <span class="n">atomnames</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">ai1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">a2</span> <span class="o">=</span> <span class="n">atomnames</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">ai2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">a1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atomnames</span> <span class="ow">or</span> <span class="n">a2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atomnames</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Undefined atom(s) </span><span class="si">{}</span><span class="s2"> and/or </span><span class="si">{}</span><span class="s2"> &quot;</span>
+                                            <span class="s2">&quot;mentioned in the connectivity &quot;</span>
+                                            <span class="s2">&quot;section of &#39;</span><span class="si">{}</span><span class="s2">&#39;, ln.</span><span class="si">{}</span><span class="s2">.&quot;</span>
+                                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">libfile</span><span class="p">,</span> <span class="n">lnumber</span><span class="p">))</span>
+                        <span class="n">residue</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Line #</span><span class="si">{}</span><span class="s2"> in LIB file &#39;</span><span class="si">{}</span><span class="s2">&#39; &quot;</span>
+                                        <span class="s2">&quot;couldn&#39;t be parsed:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span>
+                                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lnumber</span><span class="p">,</span> <span class="n">libfile</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+
+                <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;residueconnect&quot;</span><span class="p">:</span>
+                    <span class="n">atomnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">residue</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">ai1</span><span class="p">,</span> <span class="n">ai2</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()[:</span><span class="mi">2</span><span class="p">]</span>
+                        <span class="n">a1</span> <span class="o">=</span> <span class="n">atomnames</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">ai1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">a2</span> <span class="o">=</span> <span class="n">atomnames</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">ai2</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">a1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atomnames</span> <span class="ow">or</span> <span class="n">a2</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atomnames</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Undefined atom(s) </span><span class="si">{}</span><span class="s2"> and/or </span><span class="si">{}</span><span class="s2"> &quot;</span>
+                                            <span class="s2">&quot;mentioned in the residueconnect&quot;</span>
+                                            <span class="s2">&quot; section of &#39;</span><span class="si">{}</span><span class="s2">&#39;, ln.</span><span class="si">{}</span><span class="s2">.&quot;</span>
+                                            <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">libfile</span><span class="p">,</span> <span class="n">lnumber</span><span class="p">))</span>
+                        <span class="n">residue</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;head &quot;</span> <span class="o">+</span> <span class="n">a1</span><span class="p">)</span>
+                        <span class="n">residue</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;tail &quot;</span> <span class="o">+</span> <span class="n">a2</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Line #</span><span class="si">{}</span><span class="s2"> in LIB file &#39;</span><span class="si">{}</span><span class="s2">&#39; &quot;</span>
+                                        <span class="s2">&quot;couldn&#39;t be parsed:</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span>
+                                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lnumber</span><span class="p">,</span> <span class="n">libfile</span><span class="p">,</span> <span class="n">line</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">residue</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_residue</span><span class="p">(</span><span class="n">residue</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">residues</span><span class="p">:</span>
+            <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;No residues found&quot;</span><span class="p">,</span> <span class="n">QLibError</span><span class="p">,</span>
+                         <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span></div>
+
+
+
+
+<div class="viewcode-block" id="QLib.read_mol2"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qlibrary.QLib.read_mol2">[docs]</a>    <span class="k">def</span> <span class="nf">read_mol2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mol2_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read and parse a mol2 file.</span>
+
+<span class="sd">        Add the residues to QLib.residue_dict as _LibResidue objects</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mol2_file (string):  name/path of mol2 file</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ff_type</span> <span class="o">!=</span> <span class="s2">&quot;amber&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Function not supported with &quot;</span>
+                            <span class="s2">&quot;force field &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ff_type</span><span class="p">))</span>
+
+        <span class="n">aindex</span><span class="p">,</span> <span class="n">old_aindex</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="n">rindex</span><span class="p">,</span> <span class="n">old_rindex</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="n">residues</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">mol2_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;@&lt;TRIPOS&gt;&quot;</span><span class="p">):</span>
+                <span class="n">section</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;@&lt;TRIPOS&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;MOLECULE&quot;</span><span class="p">:</span>
+                    <span class="c1"># lookup for bonds section</span>
+                    <span class="n">lookup_aindex</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;ATOM&quot;</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">aindex</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">old_aindex</span> <span class="o">=</span> <span class="n">aindex</span>
+                <span class="k">if</span> <span class="n">rindex</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">old_rindex</span> <span class="o">=</span> <span class="n">rindex</span>
+
+                <span class="n">lf</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+                <span class="n">aindex</span><span class="p">,</span> <span class="n">aname</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lf</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">lf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">atype</span> <span class="o">=</span> <span class="n">lf</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+                <span class="n">rindex</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">lf</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+                <span class="n">rname</span> <span class="o">=</span> <span class="n">lf</span><span class="p">[</span><span class="mi">7</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                <span class="n">charge</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">lf</span><span class="p">[</span><span class="mi">8</span><span class="p">])</span>
+
+
+                <span class="k">if</span> <span class="n">old_aindex</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">aindex</span> <span class="o">-</span> <span class="n">old_aindex</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Bad Mol2 format - atom &quot;</span>
+                                   <span class="s2">&quot;index </span><span class="si">{}</span><span class="s2"> followed by </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                   <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">old_aindex</span><span class="p">,</span> <span class="n">aindex</span><span class="p">))</span>
+
+                <span class="k">if</span> <span class="n">old_rindex</span> <span class="o">==</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">old_rindex</span> <span class="o">!=</span> <span class="n">rindex</span><span class="p">:</span>
+                    <span class="n">residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_LibResidue</span><span class="p">(</span><span class="n">rname</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+
+                    <span class="k">if</span> <span class="n">old_rindex</span> <span class="ow">and</span> <span class="n">rindex</span> <span class="o">-</span> <span class="n">old_rindex</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Bad Mol2 format - residue &quot;</span>
+                                       <span class="s2">&quot;index </span><span class="si">{}</span><span class="s2"> followed by </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                       <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">old_rindex</span><span class="p">,</span> <span class="n">rindex</span><span class="p">))</span>
+
+
+                <span class="n">lib_residue</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">lib_residue</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_LibAtom</span><span class="p">(</span><span class="n">aname</span><span class="p">,</span> <span class="n">atype</span><span class="p">,</span>
+                                                  <span class="n">charge</span><span class="p">,</span> <span class="n">lib_residue</span><span class="p">))</span>
+                <span class="n">lookup_aindex</span><span class="p">[</span><span class="n">lf</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="n">aname</span><span class="p">,</span> <span class="n">rindex</span><span class="p">,</span> <span class="n">lib_residue</span><span class="p">)</span>
+
+
+            <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;BOND&quot;</span><span class="p">:</span>
+
+                <span class="n">lf</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">aname1</span><span class="p">,</span> <span class="n">rindex1</span><span class="p">,</span> <span class="n">residue1</span> <span class="o">=</span> <span class="n">lookup_aindex</span><span class="p">[</span><span class="n">lf</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+                <span class="n">aname2</span><span class="p">,</span> <span class="n">rindex2</span><span class="p">,</span> <span class="n">residue2</span> <span class="o">=</span> <span class="n">lookup_aindex</span><span class="p">[</span><span class="n">lf</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+
+                <span class="k">if</span> <span class="n">rindex1</span> <span class="o">&lt;</span> <span class="n">rindex2</span><span class="p">:</span>
+                    <span class="n">residue1</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;tail &quot;</span> <span class="o">+</span> <span class="n">aname1</span><span class="p">)</span>
+                    <span class="n">residue2</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;head &quot;</span> <span class="o">+</span> <span class="n">aname2</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">rindex1</span> <span class="o">&gt;</span> <span class="n">rindex2</span><span class="p">:</span>
+                    <span class="n">residue1</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;head &quot;</span> <span class="o">+</span> <span class="n">aname1</span><span class="p">)</span>
+                    <span class="n">residue2</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;tail &quot;</span> <span class="o">+</span> <span class="n">aname2</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">residue1</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">aname1</span><span class="p">,</span> <span class="n">aname2</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">residue</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_residue</span><span class="p">(</span><span class="n">residue</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">residues</span><span class="p">:</span>
+            <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;No residues found&quot;</span><span class="p">,</span> <span class="n">QLibError</span><span class="p">,</span>
+                         <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="QLib.read_prepin_impropers"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qlibrary.QLib.read_prepin_impropers">[docs]</a>    <span class="k">def</span> <span class="nf">read_prepin_impropers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prepin_file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read and parse an Amber prepin (.prepi) file</span>
+
+<span class="sd">        NOTE: Extracts only improper definitions for residues already</span>
+<span class="sd">              defined in QLib.residue_dict</span>
+<span class="sd">              (usually obtained with read_amber_lib or read_mol2)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            prepin_file (string): Amber prepin file pathname</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ff_type</span> <span class="o">!=</span> <span class="s2">&quot;amber&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Function not supported with &quot;</span>
+                            <span class="s2">&quot;force field &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ff_type</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residue_dict</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;Cannot add impropers to empty library&quot;</span><span class="p">,</span>
+                         <span class="n">QLibError</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span>
+
+        <span class="c1"># get all the impropers from the file</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">residue</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">impropers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">prepin_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">prepi</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">prepi</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+                <span class="n">lf</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">lf</span><span class="p">:</span>
+                    <span class="n">section</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lf</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">lf</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;INT&quot;</span><span class="p">:</span>
+                    <span class="n">residue</span> <span class="o">=</span> <span class="n">lf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">residue</span> <span class="ow">in</span> <span class="n">impropers</span><span class="p">:</span>
+                        <span class="n">impropers</span><span class="p">[</span><span class="n">residue</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">residue</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="s2">&quot;DONE&quot;</span> <span class="ow">in</span> <span class="n">lf</span><span class="p">:</span>
+                    <span class="n">residue</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">lf</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;IMPROPER&quot;</span><span class="p">:</span>
+                    <span class="n">section</span> <span class="o">=</span> <span class="s2">&quot;improper&quot;</span>
+                    <span class="k">continue</span>
+
+                <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;improper&quot;</span><span class="p">:</span>
+                    <span class="c1"># example line (center atom is N)</span>
+                    <span class="c1"># -M CA N H</span>
+                    <span class="n">imp</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+                    <span class="n">impropers</span><span class="p">[</span><span class="n">residue</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imp</span><span class="p">)</span>
+
+
+        <span class="n">res_not_in_lib</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="c1"># add them to the residues in the library</span>
+        <span class="k">for</span> <span class="n">resname</span><span class="p">,</span> <span class="n">imps</span> <span class="ow">in</span> <span class="n">impropers</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">imp</span> <span class="ow">in</span> <span class="n">imps</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c1"># different naming convention for head and tail</span>
+                    <span class="n">imp</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-M&quot;</span><span class="p">,</span> <span class="s2">&quot;-C&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;+M&quot;</span><span class="p">,</span> <span class="s2">&quot;+N&quot;</span><span class="p">)</span>
+                    <span class="n">other_atoms</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="c1"># third one is center</span>
+                    <span class="n">center_atom</span> <span class="o">=</span> <span class="n">other_atoms</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">residue_dict</span><span class="p">[</span><span class="n">resname</span><span class="p">]</span><span class="o">.</span><span class="n">_add_improper</span><span class="p">(</span><span class="n">center_atom</span><span class="p">,</span>
+                                                             <span class="n">other_atoms</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="n">res_not_in_lib</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">resname</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">resname</span> <span class="ow">in</span> <span class="n">res_not_in_lib</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Prepi: Residue &#39;</span><span class="si">{}</span><span class="s2">&#39; NOT found in library. &quot;</span>
+                           <span class="s2">&quot;Impropers will be ignored. Check that residues &quot;</span>
+                           <span class="s2">&quot;have the same names as in the library &quot;</span>
+                           <span class="s2">&quot;(.lib, .mol2).&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">resname</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="QLib.read_ffld"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qlibrary.QLib.read_ffld">[docs]</a>    <span class="k">def</span> <span class="nf">read_ffld</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ffld_file</span><span class="p">,</span> <span class="n">qstruct</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read and parse a Macromodel FFLD file for oplsaa parameters.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            ffld_file (string):  path/name of ffld file</span>
+<span class="sd">            qstruct (qstructure.QStruct):  object created with the same\</span>
+<span class="sd">                                           structure file as the ffld</span>
+
+<span class="sd">        The second argument is a QStruct object created with</span>
+<span class="sd">        the pdb or mol2 file that was used to create the ffld file.</span>
+<span class="sd">        It&#39;s needed to map atoms and residue to their names in the structure.</span>
+
+<span class="sd">        Atom-types have the following format: resisduename.ATOMNAME</span>
+<span class="sd">        Eg. asp.CA</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ff_type</span> <span class="o">!=</span> <span class="s2">&quot;oplsaa&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Function not supported with &quot;</span>
+                            <span class="s2">&quot;force field &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ff_type</span><span class="p">))</span>
+
+        <span class="c1"># keys are ffld atom names, values are tuples:</span>
+        <span class="c1"># (StructAtom, LibResidue)</span>
+        <span class="n">lookup_aname</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="n">residues</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">section</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">ffld_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;------&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">):</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;atom   type  vdw  symbol&quot;</span><span class="p">):</span>
+                <span class="n">section</span> <span class="o">=</span> <span class="s2">&quot;ATOMS&quot;</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Stretch            k&quot;</span><span class="p">):</span>
+                <span class="n">section</span> <span class="o">=</span> <span class="s2">&quot;BONDS&quot;</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Bending                      k&quot;</span><span class="p">):</span>
+                <span class="n">section</span> <span class="o">=</span> <span class="s2">&quot;ANGLES&quot;</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;proper Torsion&quot;</span><span class="p">):</span>
+                <span class="n">section</span> <span class="o">=</span> <span class="s2">&quot;TORSIONS&quot;</span>
+                <span class="k">continue</span>
+            <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;improper Torsion&quot;</span><span class="p">):</span>
+                <span class="n">section</span> <span class="o">=</span> <span class="s2">&quot;IMPROPERS&quot;</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;ATOMS&quot;</span><span class="p">:</span>
+<span class="c1">#</span>
+<span class="c1">#  C1      135  C1   CT      -0.0175   3.5000   0.0660 high   C: alkanes</span>
+<span class="c1">#</span>
+                <span class="n">lf</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">type_</span><span class="p">,</span> <span class="n">vdw</span><span class="p">,</span> <span class="n">symbol</span> <span class="o">=</span> <span class="n">lf</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+                <span class="n">charge</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">epsilon</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="n">lf</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span>
+                <span class="n">quality</span><span class="p">,</span> <span class="n">comment</span> <span class="o">=</span> <span class="n">lf</span><span class="p">[</span><span class="mi">7</span><span class="p">],</span> <span class="n">lf</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
+
+
+                <span class="n">aindex_struct</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lookup_aname</span><span class="p">)</span>
+                <span class="n">atom_struct</span> <span class="o">=</span> <span class="n">qstruct</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">aindex_struct</span><span class="p">]</span>
+                <span class="n">residue_struct</span> <span class="o">=</span> <span class="n">atom_struct</span><span class="o">.</span><span class="n">residue</span>
+
+                <span class="c1"># check if element from ffld matches the one in the structure</span>
+                <span class="c1"># (just the first letters)</span>
+                <span class="k">if</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">atom_struct</span><span class="o">.</span><span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+                    <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;Atom element mismatch, possible wrong &quot;</span>
+                                 <span class="s2">&quot;order of atoms: &#39;</span><span class="si">{}</span><span class="s2">&#39; (struct) &#39;</span><span class="si">{}</span><span class="s2">&#39; (ffld)&quot;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom_struct</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">name</span><span class="p">),</span>
+                                 <span class="n">QLibError</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span>
+
+                <span class="c1"># crate new library entry if first atom or different residue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">residues</span> <span class="ow">or</span> \
+                      <span class="n">residue_struct</span> <span class="o">!=</span> <span class="n">qstruct</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="n">aindex_struct</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">residue</span><span class="p">:</span>
+                    <span class="n">residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_LibResidue</span><span class="p">(</span><span class="n">residue_struct</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+
+                <span class="n">residue</span> <span class="o">=</span> <span class="n">residues</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="c1"># append the atom to the residue</span>
+                <span class="n">atom_name</span> <span class="o">=</span> <span class="n">atom_struct</span><span class="o">.</span><span class="n">name</span>
+                <span class="n">residue_name</span> <span class="o">=</span> <span class="n">residue_struct</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                <span class="n">atom_type</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">residue_name</span><span class="p">,</span> <span class="n">atom_name</span><span class="p">)</span>
+                <span class="n">residue</span><span class="o">.</span><span class="n">atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_LibAtom</span><span class="p">(</span><span class="n">atom_name</span><span class="p">,</span> <span class="n">atom_type</span><span class="p">,</span> <span class="n">charge</span><span class="p">,</span>
+                                              <span class="n">residue</span><span class="p">))</span>
+
+                <span class="n">lookup_aname</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom_struct</span><span class="p">,</span> <span class="n">residue</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;BONDS&quot;</span><span class="p">:</span>
+<span class="c1">#</span>
+<span class="c1">#  C1      H2      340.00000    1.09000   high      140  0   CT  -HC    ==&gt; CT  -HC</span>
+<span class="c1">#</span>
+                <span class="n">lf</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">atom1_struct</span><span class="p">,</span> <span class="n">residue1</span> <span class="o">=</span> <span class="n">lookup_aname</span><span class="p">[</span><span class="n">lf</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+                <span class="n">atom2_struct</span><span class="p">,</span> <span class="n">residue2</span> <span class="o">=</span> <span class="n">lookup_aname</span><span class="p">[</span><span class="n">lf</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+                <span class="n">atom_name1</span> <span class="o">=</span> <span class="n">atom1_struct</span><span class="o">.</span><span class="n">name</span>
+                <span class="n">atom_name2</span> <span class="o">=</span> <span class="n">atom2_struct</span><span class="o">.</span><span class="n">name</span>
+                <span class="n">rindex1</span> <span class="o">=</span> <span class="n">atom1_struct</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">index</span>
+                <span class="n">rindex2</span> <span class="o">=</span> <span class="n">atom2_struct</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">index</span>
+
+                <span class="k">if</span> <span class="n">rindex1</span> <span class="o">&lt;</span> <span class="n">rindex2</span><span class="p">:</span>
+                    <span class="n">residue1</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;tail &quot;</span> <span class="o">+</span> <span class="n">atom_name1</span><span class="p">)</span>
+                    <span class="n">residue2</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;head &quot;</span> <span class="o">+</span> <span class="n">atom_name2</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">rindex1</span> <span class="o">&gt;</span> <span class="n">rindex2</span><span class="p">:</span>
+                    <span class="n">residue1</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;head &quot;</span> <span class="o">+</span> <span class="n">atom_name1</span><span class="p">)</span>
+                    <span class="n">residue2</span><span class="o">.</span><span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;tail &quot;</span> <span class="o">+</span> <span class="n">atom_name2</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">residue1</span><span class="o">.</span><span class="n">bonds</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">atom_name1</span><span class="p">,</span> <span class="n">atom_name2</span><span class="p">))</span>
+
+            <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s2">&quot;IMPROPERS&quot;</span><span class="p">:</span>
+<span class="c1">#</span>
+<span class="c1">#  C21     C22     C20     O19       2.200   high   aromatic atom</span>
+<span class="c1">#</span>
+                <span class="n">lf</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="n">atoms</span> <span class="o">=</span> <span class="p">[</span><span class="n">lookup_aname</span><span class="p">[</span><span class="n">aname</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">aname</span> <span class="ow">in</span> <span class="n">lf</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]]</span>
+                <span class="n">center_atom</span> <span class="o">=</span> <span class="n">atoms</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># third pos</span>
+                <span class="n">rindex</span> <span class="o">=</span> <span class="n">center_atom</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">index</span>
+
+                <span class="n">atom_names</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
+                    <span class="n">name</span> <span class="o">=</span> <span class="n">atom</span><span class="o">.</span><span class="n">name</span>
+                    <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;</span> <span class="n">rindex</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;+&quot;</span> <span class="o">+</span> <span class="n">name</span>
+                    <span class="k">elif</span> <span class="n">atom</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">rindex</span><span class="p">:</span>
+                        <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">name</span>
+                    <span class="n">atom_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+                <span class="n">atom_names</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+                <span class="n">residue</span> <span class="o">=</span> <span class="n">lookup_aname</span><span class="p">[</span><span class="n">lf</span><span class="p">[</span><span class="mi">2</span><span class="p">]][</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">residue</span><span class="o">.</span><span class="n">_add_improper</span><span class="p">(</span><span class="n">center_atom</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">atom_names</span><span class="p">)</span>
+
+
+
+        <span class="k">for</span> <span class="n">residue</span> <span class="ow">in</span> <span class="n">residues</span><span class="p">:</span>
+            <span class="c1"># add default charge group (all atoms)</span>
+            <span class="n">atom_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">residue</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+            <span class="n">residue</span><span class="o">.</span><span class="n">charge_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom_names</span><span class="p">)</span>
+            <span class="c1"># add residue to library</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_residue</span><span class="p">(</span><span class="n">residue</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">residues</span><span class="p">:</span>
+            <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;No residues found&quot;</span><span class="p">,</span> <span class="n">QLibError</span><span class="p">,</span>
+                         <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">residues</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Possible connections and improper &quot;</span>
+                           <span class="s2">&quot;definitions of first and last residue &quot;</span>
+                           <span class="s2">&quot;can be missing in the output!&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="QLib.get_string"><a class="viewcode-back" href="../../../Qpyl.core.html#Qpyl.core.qlibrary.QLib.get_string">[docs]</a>    <span class="k">def</span> <span class="nf">get_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the whole Q library in string format.</span>
+
+<span class="sd">        To print specific residues, use</span>
+<span class="sd">        self.residue_dict[name].get_str()</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">residue</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">residue_dict</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                              <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">):</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="n">residue</span><span class="o">.</span><span class="n">get_str</span><span class="p">()</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot;*&quot;</span> <span class="o">+</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">80</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">out</span></div></div>
+
+<span class="k">class</span> <span class="nc">_LibAtom</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class containing library atom information.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        name (string):   atom name (same as in structure)</span>
+<span class="sd">        atype (string):  atom type (same as in parameter file)</span>
+<span class="sd">        charge (float):  partial charge</span>
+<span class="sd">        residue (_LibResidue):  parent residue object</span>
+<span class="sd">        comment (string):  optional, comment</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">atype</span><span class="p">,</span> <span class="n">charge</span><span class="p">,</span> <span class="n">residue</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atom_type</span> <span class="o">=</span> <span class="n">atype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">charge</span> <span class="o">=</span> <span class="n">charge</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">residue</span> <span class="o">=</span> <span class="n">residue</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_comment</span> <span class="o">=</span> <span class="n">comment</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">comment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comment</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot; # </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_comment</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="nd">@comment</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">comment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comment</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_comment</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> # </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comment</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_comment</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;_LibAtom(name=</span><span class="si">{}</span><span class="s2">, atype=</span><span class="si">{}</span><span class="s2">, charge=</span><span class="si">{}</span><span class="s2">, residue=</span><span class="si">{}</span><span class="s2">)&quot;</span>\
+               <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">atom_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">charge</span><span class="p">,</span>
+                         <span class="bp">self</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_LibResidue</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class containing library residue entries.</span>
+
+<span class="sd">    Provides direct access to properties of specific</span>
+<span class="sd">    residues (atoms, charges, bonds, impropers...) and</span>
+<span class="sd">    several useful functions for checking the</span>
+<span class="sd">    integrity of the entry, rescaling charges and for</span>
+<span class="sd">    printing it out.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        resname (string):   three letter residue identifier (GLY, ARG...)</span>
+<span class="sd">        library (QLib):   parent object</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">INFO_KEYS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;solvent&quot;</span><span class="p">,</span> <span class="s2">&quot;SYBYLtype&quot;</span><span class="p">,</span> <span class="s2">&quot;density&quot;</span><span class="p">,</span> <span class="s2">&quot;dielectric&quot;</span><span class="p">)</span>
+    <span class="n">BUILD_RULES</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;torsion&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resname</span><span class="p">,</span> <span class="n">library</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">resname</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="o">=</span> <span class="p">[]</span>   <span class="c1"># [ _LibAtom, _LibAtom... ]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span> <span class="o">=</span> <span class="p">[]</span>   <span class="c1"># [ (&quot;CA&quot;,&quot;CB&quot;), (&quot;CA&quot;, &quot;HA1&quot;), ... ]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">impropers</span> <span class="o">=</span> <span class="p">[]</span>   <span class="c1"># [ (&quot;C1&quot;,&quot;C2&quot;,&quot;C3&quot;,&quot;C4&quot;), ... ]  # C2 is center</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>   <span class="c1"># [ &quot;head N&quot;, &quot;tail C&quot; ]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">charge_groups</span> <span class="o">=</span> <span class="p">[]</span>   <span class="c1"># [ [&quot;O1&quot;, &quot;H1&quot;], [&quot;C1&quot;,&quot;H2&quot;,&quot;H3&quot;], ... ]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_rules</span> <span class="o">=</span> <span class="p">[]</span>   <span class="c1"># [ &quot;torsion HE1 OE1 CD OE2 0&quot;, ... ]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>   <span class="c1"># { &quot;SYBYLtype&quot;: &quot;RESIDUE&quot;, &quot;solvent&quot;: 1, ... }</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">library</span> <span class="o">=</span> <span class="n">library</span>
+
+    <span class="k">def</span> <span class="nf">_add_improper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">center_atom</span><span class="p">,</span> <span class="n">other_atoms</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add an explicit improper to the library entry. (private)</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            center_atom (string)</span>
+<span class="sd">            other_atoms (list of strings)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#</span>
+        <span class="c1"># Sort non-center atoms based on atom names (NOT atom types).</span>
+        <span class="c1"># There is some ambiguity in improper definitions in Amber</span>
+        <span class="c1"># due to sorting by atom types... Let&#39;s not propagate bad practice...</span>
+        <span class="c1"># Also, sort head and tail atoms without + and - signs</span>
+        <span class="c1">#</span>
+        <span class="n">imp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">other_atoms</span><span class="p">)</span>
+        <span class="n">imp</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;+-&quot;</span><span class="p">))</span>
+        <span class="n">imp</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">center_atom</span><span class="p">)</span>  <span class="c1"># center atom is in position 2 in Q</span>
+
+        <span class="k">if</span> <span class="n">imp</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">impropers</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">impropers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">imp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Overwriting existing improper &quot;</span>
+                           <span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39; in residue &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">imp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+
+    <span class="k">def</span> <span class="nf">check_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Checks for duplicates, missing atoms, integer charges, ...</span>
+
+<span class="sd">        Raises QLibError (or logs if QLib.ignore_errors is True).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+        <span class="n">types</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">atom_type</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+        <span class="n">charges</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">charge</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+        <span class="c1"># check for duplicates</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Duplicate atom name &#39;</span><span class="si">{}</span><span class="s2">&#39; in residue &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>\
+                                <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+        <span class="c1"># check charge groups for integer charges (and bad atom names)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">charge_groups</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">cg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">charge_groups</span><span class="p">:</span>
+
+                <span class="n">net_charge</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">aname</span> <span class="ow">in</span> <span class="n">cg</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">aname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Undefined atom </span><span class="si">{}</span><span class="s2"> in charge group&quot;</span>
+                                        <span class="s2">&quot; &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aname</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cg</span><span class="p">)))</span>
+                    <span class="n">net_charge</span> <span class="o">+=</span> <span class="n">charges</span><span class="p">[</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">aname</span><span class="p">)]</span>
+
+                <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">net_charge</span> <span class="o">-</span> <span class="nb">round</span><span class="p">(</span><span class="n">net_charge</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">7</span><span class="p">:</span>
+                    <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;Net charge of charge group &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                 <span class="s2">&quot; in residue &#39;</span><span class="si">{}</span><span class="s2">&#39; not integer: </span><span class="si">{}</span><span class="s2">&quot;</span>\
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cg</span><span class="p">),</span>
+                                         <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                         <span class="n">net_charge</span><span class="p">),</span>
+                                 <span class="n">QLibError</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span>
+        <span class="c1"># check the whole residue for integer charge</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">net_charge</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">charges</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">net_charge</span> <span class="o">-</span> <span class="nb">round</span><span class="p">(</span><span class="n">net_charge</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">7</span><span class="p">:</span>
+                <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;Net charge of residue &#39;</span><span class="si">{}</span><span class="s2">&#39; not integer: &quot;</span>
+                             <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">net_charge</span><span class="p">),</span>
+                             <span class="n">QLibError</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span>
+
+        <span class="c1"># check bonds for bad atom names</span>
+        <span class="k">for</span> <span class="n">bond_atoms</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">aname</span> <span class="ow">in</span> <span class="n">bond_atoms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">aname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Undefined atom </span><span class="si">{}</span><span class="s2"> in bond &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>\
+                                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aname</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bond_atoms</span><span class="p">)))</span>
+
+        <span class="c1"># check impropers for bad atom names</span>
+        <span class="k">for</span> <span class="n">imp_atoms</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">impropers</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">aname</span> <span class="ow">in</span> <span class="n">imp_atoms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">aname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names</span> <span class="ow">and</span> <span class="n">aname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;-C&quot;</span><span class="p">,</span> <span class="s2">&quot;+N&quot;</span><span class="p">]:</span>
+                    <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Undefined atom &#39;</span><span class="si">{}</span><span class="s2">&#39; in improper &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>\
+                                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aname</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">imp_atoms</span><span class="p">)))</span>
+
+        <span class="c1"># check keywords in info section</span>
+        <span class="n">low_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">INFO_KEYS</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">keyword</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">low_keys</span><span class="p">:</span>
+                <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;Keyword &#39;</span><span class="si">{}</span><span class="s2">&#39; in [info] section not &quot;</span>
+                             <span class="s2">&quot;not supported (residue &#39;</span><span class="si">{}</span><span class="s2">&#39;).&quot;</span>
+                             <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
+                             <span class="n">QLibError</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">library</span><span class="o">.</span><span class="n">ignore_errors</span><span class="p">)</span>
+
+        <span class="c1"># check build rules</span>
+        <span class="k">for</span> <span class="n">build_rule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_rules</span><span class="p">:</span>
+            <span class="n">br</span> <span class="o">=</span> <span class="n">build_rule</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">typ</span><span class="p">,</span> <span class="n">anames</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">br</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">br</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">],</span> <span class="n">br</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Invalid build rule &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">build_rule</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">typ</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">BUILD_RULES</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Build_rule &#39;</span><span class="si">{}</span><span class="s2">&#39; not supported&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">typ</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">aname</span> <span class="ow">in</span> <span class="n">anames</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">aname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Undefined atom &#39;</span><span class="si">{}</span><span class="s2">&#39; in build_rule &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">aname</span><span class="p">,</span> <span class="n">build_rule</span><span class="p">))</span>
+
+
+
+
+    <span class="k">def</span> <span class="nf">rescale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">,</span> <span class="n">threshold</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Rescale the charges of a group of atoms to nearest integer value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            atoms (list):  List of atom names</span>
+<span class="sd">            threshold:  Maximum difference between sum and nearest integer.\</span>
+<span class="sd">                        If the difference is greater than this value,\</span>
+<span class="sd">                        QLibError, is raised.</span>
+
+<span class="sd">        Used primarily in oplsaa for charge groups, or to fix rounding errors.</span>
+
+<span class="sd">        According to this formula:</span>
+<span class="sd">        (credits go to M.Repic)</span>
+<span class="sd">        q_i = q_i_initial - weight(q_i) * diff</span>
+
+<span class="sd">        where:</span>
+<span class="sd">        weight(q_i) = abs(q_i) / sum([abs(q) for q in all_q])</span>
+<span class="sd">        diff = sum(all_q) - round(sum(all_q))</span>
+
+<span class="sd">        After rescaling, if the sum is not integer (rounding error), find</span>
+<span class="sd">        the largest charge and adjust it to remove the excess charge.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+
+        <span class="c1"># for some reason I feel obliged to check for stupidity</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">atoms</span><span class="p">))</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Duplicate atom names in group &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                            <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">atoms</span><span class="p">)))</span>
+
+        <span class="c1"># create atom_name: charge mapping for given atoms</span>
+        <span class="n">atom_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">charge</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">}</span>
+
+        <span class="c1"># check if the given atoms actually exist</span>
+        <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atom_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">atom_dict</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Atom name &#39;</span><span class="si">{}</span><span class="s2">&#39; not found in residue &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="c1"># calculate absolute charges and sums</span>
+        <span class="n">sum_all_q</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">atom_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="n">sum_abs_all_q</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">q</span><span class="p">)</span> <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="n">atom_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()])</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">sum_all_q</span><span class="p">)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">sum_all_q</span> <span class="o">-</span> <span class="n">target</span>
+        <span class="k">if</span> <span class="n">diff</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QLibError</span><span class="p">(</span><span class="s2">&quot;Difference between sum of charges and nearest &quot;</span>
+                            <span class="s2">&quot;integer (</span><span class="si">{}</span><span class="s2">) is greater than threshold&quot;</span>
+                            <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">diff</span><span class="p">))</span>
+
+        <span class="c1"># rescale the charges</span>
+        <span class="k">for</span> <span class="n">atom_name</span> <span class="ow">in</span> <span class="n">atoms</span><span class="p">:</span>
+            <span class="n">charge_init</span> <span class="o">=</span> <span class="n">atom_dict</span><span class="p">[</span><span class="n">atom_name</span><span class="p">]</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">charge_init</span><span class="p">)</span> <span class="o">/</span> <span class="n">sum_abs_all_q</span>
+            <span class="n">charge</span> <span class="o">=</span> <span class="n">charge_init</span> <span class="o">-</span> <span class="n">weight</span> <span class="o">*</span> <span class="n">diff</span>
+            <span class="n">atom_dict</span><span class="p">[</span><span class="n">atom_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">charge</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+
+        <span class="n">sum_all_q_new</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">atom_dict</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="c1"># if the net charge is not integer (rounding errors)</span>
+        <span class="c1"># find the atom with the largest absolute charge</span>
+        <span class="c1"># that is not chemically equivalent to some other atom</span>
+        <span class="c1"># and remove the excess charge</span>
+
+        <span class="n">excess</span> <span class="o">=</span> <span class="n">sum_all_q_new</span> <span class="o">-</span> <span class="n">target</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">excess</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">7</span><span class="p">:</span>
+            <span class="c1"># only unique atoms, with abs charges</span>
+            <span class="n">atom_dict2</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">charge</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">charge</span> <span class="ow">in</span>
+                          <span class="n">atom_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> \
+                          <span class="n">atom_dict</span><span class="o">.</span><span class="n">values</span><span class="p">()</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="n">charge</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">}</span>
+            <span class="c1"># maximum charge atom</span>
+            <span class="n">max_ch_atom</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">atom_dict2</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">atom_dict2</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+
+            <span class="n">atom_dict</span><span class="p">[</span><span class="n">max_ch_atom</span><span class="p">]</span> <span class="o">-=</span> <span class="n">excess</span>
+
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Excess charge (</span><span class="si">{}</span><span class="s2">) in group &#39;</span><span class="si">{}</span><span class="s2">&#39; was &quot;</span>
+                           <span class="s2">&quot;removed from atom </span><span class="si">{}</span><span class="s2">.&quot;</span>
+                           <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">excess</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">atoms</span><span class="p">),</span> <span class="n">max_ch_atom</span><span class="p">))</span>
+
+
+        <span class="c1"># change the charge in the actual atom definition</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">atom_dict</span><span class="p">:</span>
+                <span class="n">ac_diff</span> <span class="o">=</span> <span class="n">atom_dict</span><span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">-</span> <span class="n">atom</span><span class="o">.</span><span class="n">charge</span>
+                <span class="n">atom</span><span class="o">.</span><span class="n">comment</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:10.6f}</span><span class="s2"> (dq=</span><span class="si">{:+.6f}</span><span class="s2">) </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">charge</span><span class="p">,</span>
+                                                                 <span class="n">ac_diff</span><span class="p">,</span>
+                                                                 <span class="n">atom</span><span class="o">.</span><span class="n">comment</span><span class="p">)</span>
+                <span class="n">atom</span><span class="o">.</span><span class="n">charge</span> <span class="o">=</span> <span class="n">atom_dict</span><span class="p">[</span><span class="n">atom</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+
+
+
+
+    <span class="k">def</span> <span class="nf">get_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the Q-lib formatted string for the residue.&quot;&quot;&quot;</span>
+
+        <span class="n">infol</span><span class="p">,</span> <span class="n">al</span><span class="p">,</span> <span class="n">bl</span><span class="p">,</span> <span class="n">il</span><span class="p">,</span> <span class="n">cl</span><span class="p">,</span> <span class="n">brl</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+
+        <span class="n">indent</span> <span class="o">=</span> <span class="s2">&quot;        &quot;</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">infol</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">{:30}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms</span><span class="p">):</span>
+            <span class="n">al</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;    </span><span class="si">{:&gt;5d}</span><span class="s2">  </span><span class="si">{a.name:&lt;5s}</span><span class="s2">  </span><span class="si">{a.atom_type:&lt;12s}</span><span class="s2"> &quot;</span>
+                      <span class="s2">&quot;</span><span class="si">{a.charge:&gt;10.6f}{a.comment}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">atom</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">bond</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonds</span><span class="p">:</span>
+            <span class="n">bl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">{b[0]:&lt;5s}</span><span class="s2"> </span><span class="si">{b[1]:s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="n">bond</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">imp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">impropers</span><span class="p">:</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;5s}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">imp</span><span class="p">)</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+            <span class="n">il</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="n">tmp</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">chgr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">charge_groups</span><span class="p">:</span>
+            <span class="n">cl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chgr</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">br</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_rules</span><span class="p">:</span>
+            <span class="n">brl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="n">br</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">conn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">connections</span><span class="p">:</span>
+            <span class="n">col</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="n">conn</span><span class="p">)</span>
+
+        <span class="n">outl</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(((</span><span class="s2">&quot;info&quot;</span><span class="p">,</span> <span class="n">infol</span><span class="p">),</span>
+                            <span class="p">(</span><span class="s2">&quot;atoms&quot;</span><span class="p">,</span> <span class="n">al</span><span class="p">),</span>
+                            <span class="p">(</span><span class="s2">&quot;bonds&quot;</span><span class="p">,</span> <span class="n">bl</span><span class="p">),</span>
+                            <span class="p">(</span><span class="s2">&quot;impropers&quot;</span><span class="p">,</span> <span class="n">il</span><span class="p">),</span>
+                            <span class="p">(</span><span class="s2">&quot;build_rules&quot;</span><span class="p">,</span> <span class="n">brl</span><span class="p">),</span>
+                            <span class="p">(</span><span class="s2">&quot;connections&quot;</span><span class="p">,</span> <span class="n">col</span><span class="p">),</span>
+                            <span class="p">(</span><span class="s2">&quot;charge_groups&quot;</span><span class="p">,</span> <span class="n">cl</span><span class="p">)))</span>
+
+        <span class="n">outstr</span> <span class="o">=</span> <span class="s2">&quot;{{</span><span class="si">{}</span><span class="s2">}}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">section</span><span class="p">,</span> <span class="n">lines</span> <span class="ow">in</span> <span class="n">outl</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">lines</span><span class="p">:</span>
+                <span class="n">outstr</span> <span class="o">+=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2">    [</span><span class="si">{}</span><span class="s2">]</span>
+<span class="si">{}</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">outstr</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;_LibResidue(</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Miha Purg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.6.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

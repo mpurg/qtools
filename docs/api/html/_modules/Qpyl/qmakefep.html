@@ -1,0 +1,1091 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Qpyl.qmakefep &mdash; Qpyl 0.6.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Qpyl
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.6.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Qpyl.html">Qpyl package</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Qpyl</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>Qpyl.qmakefep</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for Qpyl.qmakefep</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python2</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="c1">#</span>
+<span class="c1"># MIT License</span>
+<span class="c1"># </span>
+<span class="c1"># Copyright (c) 2018  Miha Purg &lt;miha.purg@gmail.com&gt;</span>
+<span class="c1"># </span>
+<span class="c1"># Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="c1"># of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="c1"># in the Software without restriction, including without limitation the rights</span>
+<span class="c1"># to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="c1"># copies of the Software, and to permit persons to whom the Software is</span>
+<span class="c1"># furnished to do so, subject to the following conditions:</span>
+<span class="c1"># </span>
+<span class="c1"># The above copyright notice and this permission notice shall be included in all</span>
+<span class="c1"># copies or substantial portions of the Software.</span>
+<span class="c1"># </span>
+<span class="c1"># THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="c1"># IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="c1"># FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="c1"># AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="c1"># LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="c1"># OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="c1"># SOFTWARE.</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="c1">#</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains the make_fep() function for generating Q FEP-files,</span>
+<span class="sd">and implements a custom exception class QMakeFepError.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span> <span class="k">as</span> <span class="n">ODict</span>
+
+<span class="kn">from</span> <span class="nn">Qpyl.core.qlibrary</span> <span class="k">import</span> <span class="n">QLib</span><span class="p">,</span> <span class="n">QLibError</span>
+<span class="kn">from</span> <span class="nn">Qpyl.core.qparameter</span> <span class="k">import</span> <span class="n">QPrm</span><span class="p">,</span> <span class="n">QPrmError</span>
+<span class="kn">from</span> <span class="nn">Qpyl.core.qstructure</span> <span class="k">import</span> <span class="n">QStruct</span><span class="p">,</span> <span class="n">QStructError</span>
+<span class="kn">from</span> <span class="nn">Qpyl.core.qtopology</span> <span class="k">import</span> <span class="n">QTopology</span><span class="p">,</span> <span class="n">QTopologyError</span>
+<span class="kn">from</span> <span class="nn">Qpyl.common</span> <span class="k">import</span> <span class="n">raise_or_log</span><span class="p">,</span> <span class="n">__version__</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="n">SUPPORTED_FF</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;amber&quot;</span><span class="p">,</span> <span class="s2">&quot;oplsaa&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="QMakeFepError"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qmakefep.QMakeFepError">[docs]</a><span class="k">class</span> <span class="nc">QMakeFepError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<span class="k">class</span> <span class="nc">_FepPrmMorse</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for Morse parameters.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">harmonic_prm</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">harmonic_prm</span> <span class="o">=</span> <span class="n">harmonic_prm</span>
+
+<div class="viewcode-block" id="make_fep"><a class="viewcode-back" href="../../Qpyl.html#Qpyl.qmakefep.make_fep">[docs]</a><span class="k">def</span> <span class="nf">make_fep</span><span class="p">(</span><span class="n">qmap_file</span><span class="p">,</span> <span class="n">pdb_file</span><span class="p">,</span> <span class="n">forcefield</span><span class="p">,</span>
+             <span class="n">parm_files</span><span class="p">,</span> <span class="n">lib_files</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generate a template FEP file for EVB simulations in Q.</span>
+
+<span class="sd">    Parses a QMAP file (see below), state 1 structure file (PDB) and</span>
+<span class="sd">    all states libraries and parameters, and determines the changes</span>
+<span class="sd">    in connectivity/charges/parameters that occur between the states.</span>
+
+<span class="sd">    QMAP is a text file that defines mappings of library ids (for each state)</span>
+<span class="sd">    to state 1 structure/topology ids, best explained on an example:</span>
+
+<span class="sd">    q   315.O     OHH.O     OHH.O</span>
+<span class="sd">    q   315.H1    OHH.H1    HIP.HE2</span>
+<span class="sd">    q   315.H2    OHH.H2    OHH.H2</span>
+<span class="sd">    q   155.NE2   HID.NE2   HIP.NE2</span>
+<span class="sd">    ...</span>
+<span class="sd">    n   155.CA    HID.CA    HIP.CA</span>
+
+<span class="sd">    The first column defines the atom as being a &#39;Q&#39; atom or a &#39;neighbouring&#39;</span>
+<span class="sd">    atom. The latter will not be included in the &#39;Q-region&#39; but will be</span>
+<span class="sd">    included in the &#39;change_bonds/change_angles...&#39; sections in case there is a</span>
+<span class="sd">    change in bonding/parameters outside the Q region. Additionally, you can</span>
+<span class="sd">    define a &#39;q&#39; atom with &#39;q_qcp&#39;, which will create an additional section for</span>
+<span class="sd">    isotopically clean masses used in QCP calculations.</span>
+<span class="sd">    The second column is the PDB ID, comprised of residue index and atom name,</span>
+<span class="sd">    separated by a dot.</span>
+<span class="sd">    The third column is the library ID of this atom in state 1, comprised of</span>
+<span class="sd">    residue name and atom name (should be the same as in the structure).</span>
+<span class="sd">    The fourth column is the library ID of this atom in state 2.</span>
+<span class="sd">    Additional columns can be added for other states.</span>
+
+<span class="sd">    The returned template string contains several missing parts, denoted with</span>
+<span class="sd">    &lt;FIX&gt;, which have to be manually replaced with appropriate values. These</span>
+<span class="sd">    include the softpair C parameters, Morse parameters, Hij parameters.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        qmap_file (string): QMAP file path</span>
+<span class="sd">        pdb_file (string): state 1 PDB file path (the one built with qprep)</span>
+<span class="sd">        forcefield (string): forcefield type (see SUPPORTED_FF)</span>
+<span class="sd">        prms_files (list): Q parameter-file paths</span>
+<span class="sd">        libs_files (list): Q library-file paths</span>
+<span class="sd">        ignore_errors (boolean, optional): don&#39;t fail on certain non critical\</span>
+<span class="sd">                                           errors</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        fepstr (string):  fepfile template</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        QMakeFepError</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">if</span> <span class="n">forcefield</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SUPPORTED_FF</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Force field &#39;</span><span class="si">{}</span><span class="s2">&#39; not supported. Use </span><span class="si">{}</span><span class="s2">&quot;</span>
+                            <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">forcefield</span><span class="p">,</span> <span class="s2">&quot; or &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SUPPORTED_FF</span><span class="p">)))</span>
+
+
+    <span class="n">fep_types</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;atoms&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;bonds&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                 <span class="s2">&quot;torsions&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;impropers&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">fep_changes</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;atoms&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;charges&quot;</span><span class="p">:</span> <span class="p">[],</span>
+                   <span class="s2">&quot;bonds&quot;</span><span class="p">:</span> <span class="n">ODict</span><span class="p">(),</span> <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="n">ODict</span><span class="p">(),</span>
+                   <span class="s2">&quot;torsions&quot;</span><span class="p">:</span> <span class="n">ODict</span><span class="p">(),</span> <span class="s2">&quot;impropers&quot;</span><span class="p">:</span> <span class="n">ODict</span><span class="p">()}</span>
+    <span class="n">fep_qcp_atoms</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">fep_morse_prms</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">fep_reacting_atoms</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">num_evb_states</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># parse the MAP file</span>
+    <span class="c1"># pdb_ids_map = [ (&#39;q&#39;, [pdbid1_state1,]),</span>
+    <span class="c1">#                 (&#39;q&#39;, [pdbid2_state1,]),</span>
+    <span class="c1">#                 ...</span>
+    <span class="c1">#                 (&#39;n&#39;, [pdbid11_state1,]),</span>
+    <span class="c1">#                 ...</span>
+    <span class="c1">#               ]</span>
+    <span class="c1"># lib_ids_map = [ [lib_id1_state1, lib_id2_state1...],</span>
+    <span class="c1">#                 [lib_id1_state2, lib_id2_state2...],</span>
+    <span class="c1">#                 ...</span>
+    <span class="c1">#               ]</span>
+    <span class="c1">#</span>
+    <span class="n">lib_ids_map</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">pdb_ids_map</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">qmap_file</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">qatom_map</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">qatom_map</span><span class="o">.</span><span class="n">readlines</span><span class="p">()):</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;#|\*|\!&quot;</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>   <span class="c1"># remove comments</span>
+            <span class="k">if</span> <span class="n">line</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">atom_type</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="n">pdb_id</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">lib_ids</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
+
+            <span class="k">if</span> <span class="n">atom_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;n&quot;</span><span class="p">,</span> <span class="s2">&quot;q_qcp&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Lines in the QMAP file should begin &quot;</span>
+                                    <span class="s2">&quot;with either &#39;q&#39; (qatom) or &#39;n&#39; &quot;</span>
+                                    <span class="s2">&quot;(neighboring atom) or &#39;q_qcp&#39; &quot;</span>
+                                    <span class="s2">&quot;(QPI q atom)&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">resid</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">pdb_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">int</span><span class="p">(</span><span class="n">resid</span><span class="p">):</span> <span class="k">raise</span> <span class="ne">ValueError</span>
+
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Invalid PDB ID &#39;</span><span class="si">{}</span><span class="s2">&#39;. Should be &quot;</span>
+                                    <span class="s2">&quot;RESID.ATOMNAME&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdb_id</span><span class="p">))</span>
+
+            <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">atom_type</span><span class="p">,</span> <span class="p">[</span><span class="n">pdb_id</span><span class="p">,])</span>
+            <span class="k">if</span> <span class="n">tmp</span> <span class="ow">in</span> <span class="n">pdb_ids_map</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Duplicate PDB ID: &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdb_id</span><span class="p">))</span>
+            <span class="n">pdb_ids_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">num_evb_states</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">num_evb_states</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lib_ids</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">lib_ids</span><span class="p">)</span> <span class="o">!=</span> <span class="n">num_evb_states</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Number of states in line &#39;</span><span class="si">{}</span><span class="s2">&#39; not equal &quot;</span>
+                                    <span class="s2">&quot;to number of PDB files&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+
+            <span class="k">for</span> <span class="n">state</span><span class="p">,</span> <span class="n">lib_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lib_ids</span><span class="p">):</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">resname</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">lib_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">resname</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span> <span class="k">raise</span> <span class="ne">ValueError</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Invalid library ID &#39;</span><span class="si">{}</span><span class="s2">&#39;. Should be &quot;</span>
+                                        <span class="s2">&quot;RESNAME.ATOMNAME&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lib_id</span><span class="p">))</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">lib_id</span> <span class="ow">in</span> <span class="n">lib_ids_map</span><span class="p">[</span><span class="n">state</span><span class="p">]:</span>
+                        <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;The library IDs in one EVB state &quot;</span>
+                                            <span class="s2">&quot;should be unique (double &#39;</span><span class="si">{}</span><span class="s2">&#39;), &quot;</span>
+                                            <span class="s2">&quot;otherwise proper bonding can&#39;t &quot;</span>
+                                            <span class="s2">&quot;be determined.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lib_id</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                    <span class="n">lib_ids_map</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+
+                <span class="n">lib_ids_map</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lib_id</span><span class="p">)</span>
+
+
+    <span class="c1"># load libraries</span>
+    <span class="n">qlib</span> <span class="o">=</span> <span class="n">QLib</span><span class="p">(</span><span class="n">forcefield</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">lib</span> <span class="ow">in</span> <span class="n">lib_files</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">qlib</span><span class="o">.</span><span class="n">read_lib</span><span class="p">(</span><span class="n">lib</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">QLibError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Problem parsing lib (</span><span class="si">{}</span><span class="s2">): </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lib</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+
+    <span class="c1"># make dummy structures for other states</span>
+    <span class="n">structures</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)]</span>
+    <span class="n">structures</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdb_file</span>
+    <span class="n">libid_pdbid_map</span> <span class="o">=</span> <span class="p">[{}</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)]</span>
+
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_evb_states</span><span class="p">):</span>
+        <span class="n">state_structure</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">atom_index</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">processed_residues</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">q_or_n</span><span class="p">,</span> <span class="n">pdb_ids_all_states</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pdb_ids_map</span><span class="p">):</span>
+
+            <span class="n">lib_id</span> <span class="o">=</span> <span class="n">lib_ids_map</span><span class="p">[</span><span class="n">state</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">resname</span><span class="p">,</span> <span class="n">aname</span> <span class="o">=</span> <span class="n">lib_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># add all atoms of current residue to the dummy structure</span>
+            <span class="c1"># at the same time, storing the mapping lib_id:pdb_id</span>
+            <span class="c1"># in libid_pdbid_map for later</span>
+            <span class="k">if</span> <span class="n">resname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">processed_residues</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">residue_lib</span> <span class="o">=</span> <span class="n">qlib</span><span class="o">.</span><span class="n">residue_dict</span><span class="p">[</span><span class="n">resname</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Residue &#39;</span><span class="si">{}</span><span class="s2">&#39; not found in library.&quot;</span>
+                                        <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">resname</span><span class="p">))</span>
+                <span class="n">processed_residues</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">resname</span><span class="p">)</span>
+                <span class="n">res_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">processed_residues</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">residue_lib</span><span class="o">.</span><span class="n">atoms</span><span class="p">:</span>
+                    <span class="n">lib_id2</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">resname</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">pdb_id2</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">res_index</span><span class="p">,</span> <span class="n">atom</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                    <span class="n">state_structure</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:&lt;6}{:5}</span><span class="s2"> </span><span class="si">{:4}</span><span class="s2"> </span><span class="si">{:3}</span><span class="s2"> </span><span class="si">{:5}</span><span class="s2">    &quot;</span>
+                                           <span class="s2">&quot;</span><span class="si">{:8.3f}{:8.3f}{:8.3f}</span><span class="s2">&quot;</span>
+                                           <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;ATOM&quot;</span><span class="p">,</span> <span class="n">atom_index</span><span class="p">,</span>
+                                                     <span class="n">atom</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">resname</span><span class="p">,</span>
+                                                     <span class="n">res_index</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                    <span class="n">atom_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    <span class="c1"># map the newly created dummy atom&#39;s pdb_id to lib_id</span>
+                    <span class="n">libid_pdbid_map</span><span class="p">[</span><span class="n">state</span><span class="p">][</span><span class="n">lib_id2</span><span class="p">]</span> <span class="o">=</span> <span class="n">pdb_id2</span>
+
+            <span class="c1"># add pdb_id of current atom in current (dummy structure)</span>
+            <span class="c1"># state to pdb_ids_map (using its lib_id)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">pdb_id_this_state</span> <span class="o">=</span> <span class="n">libid_pdbid_map</span><span class="p">[</span><span class="n">state</span><span class="p">][</span><span class="n">lib_id</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Library ID &#39;</span><span class="si">{}</span><span class="s2">&#39; not valid.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lib_id</span><span class="p">))</span>
+            <span class="n">pdb_ids_all_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pdb_id_this_state</span><span class="p">)</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">structures</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkstemp</span><span class="p">()</span>
+        <span class="nb">open</span><span class="p">(</span><span class="n">structures</span><span class="p">[</span><span class="n">state</span><span class="p">],</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">state_structure</span><span class="p">))</span>
+        <span class="c1"># DEBUG</span>
+        <span class="c1"># print &quot;Dummy PDB for st.{}: {}&quot;.format(state + 1, structures[state])</span>
+
+
+
+    <span class="c1"># load parameters</span>
+    <span class="n">qprm</span> <span class="o">=</span> <span class="n">QPrm</span><span class="p">(</span><span class="n">forcefield</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">parm</span> <span class="ow">in</span> <span class="n">parm_files</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">qprm</span><span class="o">.</span><span class="n">read_prm</span><span class="p">(</span><span class="n">parm</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">QPrmError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Problem with parm (</span><span class="si">{}</span><span class="s2">): </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parm</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
+
+    <span class="c1"># load structures and make topologies</span>
+    <span class="n">topologies</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">qstruct</span> <span class="o">=</span> <span class="n">QStruct</span><span class="p">(</span><span class="n">structures</span><span class="p">[</span><span class="n">state</span><span class="p">],</span> <span class="s2">&quot;pdb&quot;</span><span class="p">,</span>
+                              <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">QStructError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Problem parsing PDB file (</span><span class="si">{}</span><span class="s2">): </span><span class="si">{}</span><span class="s2"> &quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">structures</span><span class="p">[</span><span class="n">state</span><span class="p">],</span> <span class="n">e</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">topologies</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">QTopology</span><span class="p">(</span><span class="n">qlib</span><span class="p">,</span> <span class="n">qprm</span><span class="p">,</span> <span class="n">qstruct</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">QTopologyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Problem building the topology: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+
+
+    <span class="c1"># Make _TopoAtom (atoms in QTopology) maps out of qmap&#39;s lists</span>
+    <span class="c1"># and extract types, type changes and charge changes</span>
+    <span class="c1">#</span>
+    <span class="c1"># atom_map = [ [_TopoAtom1_state1, _TopoAtom1_state2, ... ],</span>
+    <span class="c1">#              [_TopoAtom2_state1, _TopoAtom2_state2, ... ], </span>
+    <span class="c1">#              [_TopoAtom3_state1, _TopoAtom3_state2, ... ], </span>
+    <span class="c1">#            ...</span>
+    <span class="c1">#            ]</span>
+    <span class="n">atom_map</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">q_or_n</span><span class="p">,</span> <span class="n">pdb_id_all_states</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pdb_ids_map</span><span class="p">):</span>
+        <span class="n">atom_all_states</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">state</span><span class="p">,</span> <span class="n">pdb_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pdb_id_all_states</span><span class="p">):</span>
+            <span class="n">residue</span><span class="p">,</span> <span class="n">aname</span> <span class="o">=</span> <span class="n">pdb_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">residue</span> <span class="o">=</span> <span class="n">topologies</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">residues</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">residue</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">atom</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">residue</span><span class="o">.</span><span class="n">atoms</span> <span class="k">if</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">aname</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Atom &#39;</span><span class="si">{}</span><span class="s2">&#39; doesn&#39;t exist in PDB &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                    <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pdb_id</span><span class="p">,</span> <span class="n">structures</span><span class="p">[</span><span class="n">state</span><span class="p">]))</span>
+            <span class="n">atom_all_states</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="p">)</span>
+        <span class="n">atom_map</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom_all_states</span><span class="p">)</span>
+
+        <span class="c1"># check for stupidity - lib_id in QMAP state 1 </span>
+        <span class="c1"># not matching the structure/topology</span>
+        <span class="n">lib_id_qmap</span> <span class="o">=</span> <span class="n">lib_ids_map</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">lib_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom_all_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                                <span class="n">atom_all_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lib_id</span> <span class="o">!=</span> <span class="n">lib_id_qmap</span><span class="p">:</span>
+            <span class="n">pdb_id</span> <span class="o">=</span> <span class="n">pdb_ids_map</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;QMAP state 1 library ID (</span><span class="si">{}</span><span class="s2">) of atom &#39;</span><span class="si">{}</span><span class="s2">&#39; &quot;</span>
+                                <span class="s2">&quot;doesn&#39;t match topology library ID (</span><span class="si">{}</span><span class="s2">).&quot;</span>
+                                <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">lib_id_qmap</span><span class="p">,</span> <span class="n">pdb_id</span><span class="p">,</span> <span class="n">lib_id</span><span class="p">))</span>
+
+
+        <span class="c1"># For Q atoms (and not the neighbor atoms):</span>
+        <span class="c1"># get FEP atom types, type changes and charge changes</span>
+        <span class="k">if</span> <span class="n">q_or_n</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">,</span> <span class="s2">&quot;q_qcp&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atom_all_states</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">atom</span><span class="o">.</span><span class="n">prm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fep_types</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]:</span>
+                    <span class="n">fep_types</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">prm</span><span class="p">)</span>
+
+            <span class="n">fep_changes</span><span class="p">[</span><span class="s2">&quot;charges&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">a</span><span class="o">.</span><span class="n">charge</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atom_all_states</span><span class="p">])</span>
+            <span class="n">fep_changes</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom_all_states</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">q_or_n</span> <span class="o">==</span> <span class="s2">&quot;q_qcp&quot;</span><span class="p">:</span>
+                <span class="n">fep_qcp_atoms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atom_all_states</span><span class="p">)</span>
+
+    <span class="n">charge_sums</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">):</span>
+        <span class="n">charge_sum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">c</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">fep_changes</span><span class="p">[</span><span class="s2">&quot;charges&quot;</span><span class="p">]])</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">charge_sum</span><span class="p">)</span> <span class="o">-</span> <span class="n">charge_sum</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">:</span>
+            <span class="n">raise_or_log</span><span class="p">(</span><span class="s2">&quot;Net charge in state </span><span class="si">{}</span><span class="s2"> not integer: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                         <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">state</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">charge_sum</span><span class="p">),</span>
+                         <span class="n">QMakeFepError</span><span class="p">,</span> <span class="n">logger</span><span class="p">,</span> <span class="n">ignore_errors</span><span class="o">=</span><span class="n">ignore_errors</span><span class="p">)</span>
+        <span class="n">charge_sums</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">charge_sum</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">any</span><span class="p">([</span><span class="nb">abs</span><span class="p">(</span><span class="n">c</span><span class="o">-</span><span class="n">charge_sums</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">charge_sums</span><span class="p">]):</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Net charge changes between states: </span><span class="si">{}</span><span class="s2">&quot;</span>
+                       <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot; -&gt; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">charge_sums</span><span class="p">])))</span>
+
+
+
+    <span class="c1"># get all Bonds, Angles, Torsions and Impropers which include</span>
+    <span class="c1"># at least one atom defined in qmap</span>
+    <span class="n">batis</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;bonds&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;torsions&quot;</span><span class="p">:</span> <span class="p">[],</span> <span class="s2">&quot;impropers&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+    <span class="n">batis</span><span class="p">[</span><span class="s2">&quot;bonds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)]</span>
+    <span class="n">batis</span><span class="p">[</span><span class="s2">&quot;angles&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)]</span>
+    <span class="n">batis</span><span class="p">[</span><span class="s2">&quot;torsions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)]</span>
+    <span class="n">batis</span><span class="p">[</span><span class="s2">&quot;impropers&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="nb">set</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)]</span>
+    <span class="k">for</span> <span class="n">atom_all_states</span> <span class="ow">in</span> <span class="n">atom_map</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">state</span><span class="p">,</span> <span class="n">atom</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">atom_all_states</span><span class="p">):</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">batis</span><span class="p">[</span><span class="s2">&quot;bonds&quot;</span><span class="p">][</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">atom</span><span class="o">.</span><span class="n">bonds</span><span class="p">]</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">batis</span><span class="p">[</span><span class="s2">&quot;angles&quot;</span><span class="p">][</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atom</span><span class="o">.</span><span class="n">angles</span><span class="p">]</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">batis</span><span class="p">[</span><span class="s2">&quot;torsions&quot;</span><span class="p">][</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">atom</span><span class="o">.</span><span class="n">torsions</span><span class="p">]</span>
+            <span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">batis</span><span class="p">[</span><span class="s2">&quot;impropers&quot;</span><span class="p">][</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">atom</span><span class="o">.</span><span class="n">impropers</span><span class="p">]</span>
+
+
+    <span class="c1"># map the bonds,angles,torsions,impropers (bati) in different states</span>
+    <span class="c1"># to same key (ordered list of state1 PDB_IDs)</span>
+    <span class="c1">#</span>
+    <span class="c1"># bati_map =</span>
+    <span class="c1"># { &quot;bonds&quot;: {state1_bond1_key: [bond1_state1, bond1_state2,...],</span>
+    <span class="c1">#             state1_bond2_key: [bond2_state1, bond2_state2,...], ...},</span>
+    <span class="c1">#   &quot;angles&quot;: {state1_angle1_key: [angle1_state1, angle1_state2,...],...}</span>
+    <span class="c1">#  ... }</span>
+    <span class="c1">#</span>
+    <span class="c1"># also, include only batis which have all atoms defined in qmap</span>
+    <span class="c1"># also, detect inter-residue batis and raies QMakeFepError</span>
+
+    <span class="n">bati_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;bonds&quot;</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">&quot;angles&quot;</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">&quot;torsions&quot;</span><span class="p">:</span> <span class="p">{},</span> <span class="s2">&quot;impropers&quot;</span><span class="p">:</span> <span class="p">{}}</span>
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">):</span>
+        <span class="n">atoms_in_state</span> <span class="o">=</span> <span class="p">[</span><span class="n">a_all_st</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="k">for</span> <span class="n">a_all_st</span> <span class="ow">in</span> <span class="n">atom_map</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">bati_type</span> <span class="ow">in</span> <span class="n">bati_map</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">bati</span> <span class="ow">in</span> <span class="n">batis</span><span class="p">[</span><span class="n">bati_type</span><span class="p">][</span><span class="n">state</span><span class="p">]:</span>
+
+                <span class="c1"># find the corresponding atoms in state1</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">atoms_st1</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom_map</span><span class="p">[</span><span class="n">atoms_in_state</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">a</span><span class="p">)][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span>
+                                 <span class="n">bati</span><span class="o">.</span><span class="n">atoms</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="c1"># one of the Atoms is not defined in QMAP</span>
+                    <span class="k">continue</span>
+
+                <span class="n">pdbid_index</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atoms_st1</span><span class="p">:</span>
+                    <span class="n">pdbid_index</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">atom</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                                        <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+                                                       <span class="n">atom</span><span class="o">.</span><span class="n">name</span><span class="p">)))</span>
+                <span class="c1"># order the pdbids to prevent double entries</span>
+                <span class="k">if</span> <span class="n">bati_type</span> <span class="o">==</span> <span class="s2">&quot;bonds&quot;</span><span class="p">:</span>
+                    <span class="n">pids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">pdbid_index</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bati_type</span> <span class="o">==</span> <span class="s2">&quot;angles&quot;</span><span class="p">:</span>
+                    <span class="n">pids</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">pdbid_index</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">pdbid_index</span><span class="p">)))</span>
+                <span class="k">elif</span> <span class="n">bati_type</span> <span class="o">==</span> <span class="s2">&quot;torsions&quot;</span><span class="p">:</span>
+                    <span class="n">pids</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">pdbid_index</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">pdbid_index</span><span class="p">)))</span>
+                <span class="k">elif</span> <span class="n">bati_type</span> <span class="o">==</span> <span class="s2">&quot;impropers&quot;</span><span class="p">:</span>
+                    <span class="c1"># topology order == library order == correct order</span>
+                    <span class="n">pids</span> <span class="o">=</span> <span class="n">pdbid_index</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">pids</span><span class="p">])</span>
+
+                <span class="c1"># check for bonds/angles/torsions/impropers that are</span>
+                <span class="c1"># shared between residues</span>
+                <span class="n">residue_ids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">atom</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">index</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">bati</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">residue_ids</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">QMakeFepError</span><span class="p">(</span><span class="s2">&quot;Inter-residue bond/angle/torsion &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span>
+                                        <span class="s2">&quot; not supported. Combine the residues &quot;</span>
+                                        <span class="s2">&quot;into a single library entry if you &quot;</span>
+                                        <span class="s2">&quot;want to make changes over the &quot;</span>
+                                        <span class="s2">&quot;&#39;head-tail&#39; bond.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+
+                <span class="c1"># add bati to bati_map</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">bati_map</span><span class="p">[</span><span class="n">bati_type</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">bati</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="n">bati_map</span><span class="p">[</span><span class="n">bati_type</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span>
+                                                <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)]</span>
+                    <span class="n">bati_map</span><span class="p">[</span><span class="n">bati_type</span><span class="p">][</span><span class="n">key</span><span class="p">][</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">bati</span>
+
+
+    <span class="c1"># DEBUG</span>
+    <span class="c1"># for k,v in bati_map.iteritems():</span>
+        <span class="c1"># print k</span>
+        <span class="c1"># for k2, v2 in v.iteritems():</span>
+            <span class="c1"># print k2, v2[0], v2[1]</span>
+
+    <span class="k">def</span> <span class="nf">_bati_sort</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">bati_all_states</span><span class="p">):</span>
+        <span class="c1"># to sort bonds/angles.. based on the key</span>
+        <span class="c1"># also, breaking and forming bonds have priority</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">bati_all_states</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+    <span class="c1"># find changes between states (add to fep_changes dict)</span>
+    <span class="k">for</span> <span class="n">bati_type</span><span class="p">,</span> <span class="n">batis</span> <span class="ow">in</span> <span class="n">bati_map</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">bati_key</span><span class="p">,</span> <span class="n">bati_all_states</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">batis</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span>
+                                                <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span> \
+                                                        <span class="n">_bati_sort</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)):</span>
+
+            <span class="c1"># bond/angle/.. breaking or forming</span>
+            <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">bati_all_states</span><span class="p">:</span>
+                <span class="n">fep_changes</span><span class="p">[</span><span class="n">bati_type</span><span class="p">][</span><span class="n">bati_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">bati_all_states</span>
+
+                <span class="c1"># add bond atoms to &quot;reactive atoms&quot; set</span>
+                <span class="c1"># and replace the bond parameter with a Morse type</span>
+                <span class="k">if</span> <span class="n">bati_type</span> <span class="o">==</span> <span class="s2">&quot;bonds&quot;</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">bati</span> <span class="ow">in</span> <span class="n">bati_all_states</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">bati</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">fep_reacting_atoms</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">bati</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>
+                            <span class="c1"># the bond parameter is replaced with a Morse</span>
+                            <span class="c1"># parameter (_FepPrmMorse)</span>
+                            <span class="n">prm_id</span> <span class="o">=</span> <span class="n">bati</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">prm_id</span>
+                            <span class="k">try</span><span class="p">:</span>
+                                <span class="n">bati</span><span class="o">.</span><span class="n">prm</span> <span class="o">=</span> <span class="n">fep_morse_prms</span><span class="p">[</span><span class="n">prm_id</span><span class="p">]</span>
+                            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                                <span class="n">bati</span><span class="o">.</span><span class="n">prm</span> <span class="o">=</span> <span class="n">_FepPrmMorse</span><span class="p">(</span><span class="n">bati</span><span class="o">.</span><span class="n">prm</span><span class="p">)</span>
+                                <span class="n">fep_morse_prms</span><span class="p">[</span><span class="n">prm_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">bati</span><span class="o">.</span><span class="n">prm</span>
+
+            <span class="c1"># the actual values of the parameters are not exactly the same</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">bati_all_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">strval</span> <span class="o">==</span> <span class="n">bati</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">strval</span>
+                                                <span class="k">for</span> <span class="n">bati</span> <span class="ow">in</span> <span class="n">bati_all_states</span><span class="p">]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">tmp</span><span class="p">):</span>
+                    <span class="n">fep_changes</span><span class="p">[</span><span class="n">bati_type</span><span class="p">][</span><span class="n">bati_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">bati_all_states</span>
+
+    <span class="c1"># DEBUG</span>
+    <span class="c1"># for k,v in fep_changes.iteritems():</span>
+        <span class="c1"># print k</span>
+        <span class="c1"># try:</span>
+            <span class="c1"># for k2,(v1,v2) in v.iteritems():</span>
+                <span class="c1"># print k2,v1,v2</span>
+        <span class="c1"># except:</span>
+            <span class="c1"># for (v1,v2) in v:</span>
+                <span class="c1"># print v1,v2</span>
+
+
+    <span class="c1"># add parameters of changing batis to fep_types</span>
+    <span class="k">for</span> <span class="n">bati_type</span> <span class="ow">in</span> <span class="n">bati_map</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">bati_all_states</span> <span class="ow">in</span> <span class="n">fep_changes</span><span class="p">[</span><span class="n">bati_type</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">prms</span> <span class="o">=</span> <span class="p">[</span><span class="n">bati</span><span class="o">.</span><span class="n">prm</span> <span class="k">for</span> <span class="n">bati</span> <span class="ow">in</span> <span class="n">bati_all_states</span> <span class="k">if</span> <span class="n">bati</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">prm</span> <span class="ow">in</span> <span class="n">prms</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">prm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">fep_types</span><span class="p">[</span><span class="n">bati_type</span><span class="p">]:</span>
+                    <span class="n">fep_types</span><span class="p">[</span><span class="n">bati_type</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prm</span><span class="p">)</span>
+
+    <span class="c1"># DEBUG</span>
+    <span class="c1"># for k,v in fep_types.iteritems():</span>
+        <span class="c1"># print k</span>
+        <span class="c1"># for v2 in v:</span>
+            <span class="c1"># print v2</span>
+
+    <span class="c1"># add reactive atoms from states that have bond==None to fep_reacting_atoms</span>
+    <span class="k">for</span> <span class="n">atom_all_states</span> <span class="ow">in</span> <span class="n">fep_changes</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atom_all_states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">fep_reacting_atoms</span><span class="p">:</span>
+                <span class="n">fep_reacting_atoms</span> <span class="o">|=</span> <span class="nb">set</span><span class="p">(</span><span class="n">atom_all_states</span><span class="p">)</span>
+
+
+
+
+    <span class="c1">########################</span>
+    <span class="c1"># Prepare the output</span>
+    <span class="c1">########################</span>
+
+
+    <span class="n">fep_l</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;atoms&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;atom_types&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;qcp_mass&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;change_atoms&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;change_charges&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;soft_pairs&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;off_diagonals&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;bond_types&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;change_bonds&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;angle_types&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;change_angles&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;torsion_types&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;change_torsions&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;improper_types&quot;</span><span class="p">:</span> <span class="p">[],</span>
+             <span class="s2">&quot;change_impropers&quot;</span><span class="p">:</span> <span class="p">[]}</span>
+
+    <span class="c1">####################</span>
+    <span class="c1"># ATOMS</span>
+    <span class="c1"># CHANGE_ATOMS</span>
+    <span class="c1"># CHANGE_CHARGES</span>
+    <span class="c1">####################</span>
+    <span class="n">format_atoms</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;15}</span><span class="s2"> </span><span class="si">{:&lt;10}</span><span class="s2">     #  </span><span class="si">{:&lt;15}</span><span class="s2"> </span><span class="si">{:&lt;15}</span><span class="s2"> </span><span class="si">{:&gt;3}</span><span class="s2">&quot;</span>
+    <span class="n">format_ch_atoms</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;10}</span><span class="s2"> &quot;</span> <span class="o">+</span> <span class="s2">&quot; </span><span class="si">{:&lt;12}</span><span class="s2">&quot;</span><span class="o">*</span><span class="n">num_evb_states</span> <span class="o">+</span> <span class="s2">&quot;    #  </span><span class="si">{:&lt;}</span><span class="s2">&quot;</span>
+    <span class="n">format_ch_crgs</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;10}</span><span class="s2"> &quot;</span> <span class="o">+</span> <span class="s2">&quot; </span><span class="si">{:12}</span><span class="s2">&quot;</span><span class="o">*</span><span class="n">num_evb_states</span> <span class="o">+</span> <span class="s2">&quot;    #  </span><span class="si">{:&lt;10}</span><span class="s2">&quot;</span>\
+                   <span class="o">+</span> <span class="s2">&quot; </span><span class="si">{:&gt;12}</span><span class="s2">&quot;</span><span class="o">*</span><span class="p">(</span><span class="n">num_evb_states</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">format_qcp</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;15}</span><span class="s2"> </span><span class="si">{:&lt;10}</span><span class="s2">     #  </span><span class="si">{:&lt;10}</span><span class="s2">&quot;</span>
+
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_atoms</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;#Q index&quot;</span><span class="p">,</span> <span class="s2">&quot;PDB index&quot;</span><span class="p">,</span>
+                                              <span class="s2">&quot;St.1 PDB_ID&quot;</span><span class="p">,</span> <span class="s2">&quot;St.1 LIB_ID&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">))</span>
+
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#Q index&quot;</span><span class="p">]</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;Type st.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)])</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;St.1 PDB_ID&quot;</span><span class="p">)</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;change_atoms&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_ch_atoms</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">tmp</span><span class="p">))</span>
+
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#Q index&quot;</span><span class="p">]</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;Charge st.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)])</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;St.1 PDB_ID&quot;</span><span class="p">)</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;dq(</span><span class="si">{}</span><span class="s2">-&gt;</span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="o">-</span><span class="mi">1</span><span class="p">)])</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;change_charges&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_ch_crgs</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">tmp</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">fep_qcp_atoms</span><span class="p">:</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;qcp_mass&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;[qcp_mass]&quot;</span><span class="p">)</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;qcp_mass&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_qcp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;#Q index&quot;</span><span class="p">,</span> <span class="s2">&quot;Mass&quot;</span><span class="p">,</span>
+                                                   <span class="s2">&quot;St.1 PDB_ID&quot;</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">atom_all_states</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fep_changes</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]):</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">atom_all_states</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">pdb_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">lib_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">residue</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c1"># atoms</span>
+        <span class="n">reacting_flag</span> <span class="o">=</span> <span class="s2">&quot; !&quot;</span> <span class="o">*</span> <span class="nb">bool</span><span class="p">([</span><span class="n">atom</span> <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">atom_all_states</span>
+                                     <span class="k">if</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">fep_reacting_atoms</span><span class="p">])</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_atoms</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="s2">&quot;$&quot;</span><span class="o">+</span><span class="n">pdb_id</span><span class="o">+</span><span class="s2">&quot;$&quot;</span><span class="p">,</span>
+                                                  <span class="n">pdb_id</span><span class="p">,</span> <span class="n">lib_id</span><span class="p">,</span>
+                                                  <span class="n">reacting_flag</span><span class="p">))</span>
+
+        <span class="c1"># change_atoms</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">q_index</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">prm_id</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atom_all_states</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">pdb_id</span><span class="p">]</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;change_atoms&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_ch_atoms</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">tmp</span><span class="p">))</span>
+
+        <span class="c1"># charges</span>
+        <span class="n">crgs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">charge</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">atom_all_states</span><span class="p">]</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">q_index</span><span class="p">]</span> <span class="o">+</span> <span class="n">crgs</span> <span class="o">+</span> <span class="p">[</span><span class="n">pdb_id</span><span class="p">]</span> \
+            <span class="o">+</span> <span class="p">[</span><span class="n">crgs</span><span class="p">[</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">crgs</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;change_charges&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_ch_crgs</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">tmp</span><span class="p">))</span>
+
+        <span class="c1"># qcp_atoms</span>
+        <span class="k">if</span> <span class="n">atom_all_states</span> <span class="ow">in</span> <span class="n">fep_qcp_atoms</span><span class="p">:</span>
+            <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;qcp_mass&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_qcp</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span>
+                                                       <span class="s2">&quot;&lt;FIX&gt;&quot;</span><span class="p">,</span> <span class="n">pdb_id</span><span class="p">))</span>
+
+
+    <span class="c1">###############</span>
+    <span class="c1"># ATOM_TYPES</span>
+    <span class="c1">###############</span>
+    <span class="n">format_atypes</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;12}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">forcefield</span> <span class="o">==</span> <span class="s2">&quot;amber&quot;</span><span class="p">:</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;atom_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_atypes</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;#Atom_type&quot;</span><span class="p">,</span> <span class="s2">&quot;LJ_Rm&quot;</span><span class="p">,</span>
+                                                        <span class="s2">&quot;LJ_eps&quot;</span><span class="p">,</span> <span class="s2">&quot;SP_Ci&quot;</span><span class="p">,</span>
+                                                        <span class="s2">&quot;SP_ai&quot;</span><span class="p">,</span> <span class="s2">&quot;LJ_Rm&quot;</span><span class="p">,</span>
+                                                        <span class="s2">&quot;LJ_eps_14&quot;</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;atom_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_atypes</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;#Atom_type&quot;</span><span class="p">,</span> <span class="s2">&quot;LJ_A&quot;</span><span class="p">,</span>
+                                                        <span class="s2">&quot;LJ_B&quot;</span><span class="p">,</span> <span class="s2">&quot;SP_Ci&quot;</span><span class="p">,</span>
+                                                        <span class="s2">&quot;SP_ai&quot;</span><span class="p">,</span> <span class="s2">&quot;LJ_A_14&quot;</span><span class="p">,</span>
+                                                        <span class="s2">&quot;LJ_B_14&quot;</span><span class="p">,</span> <span class="s2">&quot;mass&quot;</span><span class="p">))</span>
+
+    <span class="n">fep_reacting_atoms_prms</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">prm</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">fep_reacting_atoms</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">prm</span> <span class="ow">in</span> <span class="n">fep_types</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]:</span>
+        <span class="n">sp_c</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">sp_a</span> <span class="o">=</span> <span class="mf">2.5</span>
+        <span class="k">if</span> <span class="n">prm</span> <span class="ow">in</span> <span class="n">fep_reacting_atoms_prms</span><span class="p">:</span>
+            <span class="n">sp_c</span> <span class="o">=</span> <span class="s2">&quot;&lt;FIX&gt;&quot;</span>
+        <span class="k">if</span> <span class="n">forcefield</span> <span class="o">==</span> <span class="s2">&quot;amber&quot;</span><span class="p">:</span>
+            <span class="n">lj1</span><span class="p">,</span> <span class="n">lj2</span> <span class="o">=</span> <span class="n">prm</span><span class="o">.</span><span class="n">lj_R</span><span class="p">,</span> <span class="n">prm</span><span class="o">.</span><span class="n">lj_eps</span>
+            <span class="n">lj3</span><span class="p">,</span> <span class="n">lj4</span> <span class="o">=</span> <span class="n">lj1</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">lj2</span><span class="o">/</span><span class="mf">1.2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lj1</span><span class="p">,</span> <span class="n">lj2</span> <span class="o">=</span> <span class="n">prm</span><span class="o">.</span><span class="n">lj_A</span><span class="p">,</span> <span class="n">prm</span><span class="o">.</span><span class="n">lj_B</span>
+            <span class="n">lj3</span><span class="p">,</span> <span class="n">lj4</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">lj1</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span> <span class="mi">4</span><span class="p">),</span> <span class="nb">round</span><span class="p">(</span><span class="n">lj2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;atom_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_atypes</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">prm</span><span class="o">.</span><span class="n">prm_id</span><span class="p">,</span> <span class="n">lj1</span><span class="p">,</span> <span class="n">lj2</span><span class="p">,</span>
+                                                        <span class="n">sp_c</span><span class="p">,</span> <span class="n">sp_a</span><span class="p">,</span> <span class="n">lj3</span><span class="p">,</span> <span class="n">lj4</span><span class="p">,</span>
+                                                        <span class="n">prm</span><span class="o">.</span><span class="n">mass</span><span class="p">))</span>
+
+    <span class="c1">###############</span>
+    <span class="c1"># BOND_TYPES</span>
+    <span class="c1">###############</span>
+    <span class="n">format_hbonds</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;8}</span><span class="s2">      </span><span class="si">{:&gt;10}</span><span class="s2">       </span><span class="si">{:&gt;10}</span><span class="s2">   # </span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="n">format_mbonds</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;8}</span><span class="s2"> </span><span class="si">{:^10}</span><span class="s2"> </span><span class="si">{:^10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2">   # </span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;bond_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Harmonic format&quot;</span><span class="p">)</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;bond_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_hbonds</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;#Index&quot;</span><span class="p">,</span> <span class="s2">&quot;Fc&quot;</span><span class="p">,</span>
+                                                    <span class="s2">&quot;r0&quot;</span><span class="p">,</span> <span class="s2">&quot;PRM_ID&quot;</span><span class="p">))</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;bond_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;## Morse format&quot;</span><span class="p">)</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;bond_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_mbonds</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;#Index&quot;</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha&quot;</span><span class="p">,</span>
+                                                    <span class="s2">&quot;r0&quot;</span><span class="p">,</span> <span class="s2">&quot;PRM_ID&quot;</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">bond_type</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fep_types</span><span class="p">[</span><span class="s2">&quot;bonds&quot;</span><span class="p">]):</span>
+        <span class="n">b_index</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bond_type</span><span class="p">,</span> <span class="n">_FepPrmMorse</span><span class="p">):</span>
+            <span class="n">prm_id</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bond_type</span><span class="o">.</span><span class="n">harmonic_prm</span><span class="o">.</span><span class="n">prm_id</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">format_mbonds</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b_index</span><span class="p">,</span> <span class="s2">&quot;&lt;FIX_D&gt;&quot;</span><span class="p">,</span> <span class="s2">&quot;&lt;FIX_a&gt;&quot;</span><span class="p">,</span>
+                                       <span class="s2">&quot;&lt;FIX_r0&gt;&quot;</span><span class="p">,</span> <span class="n">prm_id</span><span class="p">)</span>
+            <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;bond_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prm_id</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bond_type</span><span class="o">.</span><span class="n">prm_id</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">format_hbonds</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">b_index</span><span class="p">,</span> <span class="n">bond_type</span><span class="o">.</span><span class="n">fc</span><span class="p">,</span> <span class="n">bond_type</span><span class="o">.</span><span class="n">r0</span><span class="p">,</span>
+                                       <span class="n">prm_id</span><span class="p">)</span>
+            <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;bond_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+
+
+    <span class="c1">###############</span>
+    <span class="c1"># CHANGE_BONDS</span>
+    <span class="c1">###############</span>
+    <span class="n">format_bondch</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;10}</span><span class="s2"> </span><span class="si">{:&lt;10}</span><span class="s2"> &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">{:^5}</span><span class="s2"> &quot;</span><span class="o">*</span><span class="n">num_evb_states</span> <span class="o">+</span> <span class="s2">&quot;  # </span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#Atom1&quot;</span><span class="p">,</span> <span class="s2">&quot;Atom2&quot;</span><span class="p">]</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;St.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)])</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;St.1 PDB_IDs&quot;</span><span class="p">)</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;change_bonds&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_bondch</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">tmp</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">bond_key</span><span class="p">,</span> <span class="n">bond_all_states</span> <span class="ow">in</span> <span class="n">fep_changes</span><span class="p">[</span><span class="s2">&quot;bonds&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="c1"># bond_key == &quot;PDB_ID1 PDB_ID2&quot;</span>
+        <span class="n">prm_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bond_all_states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">b</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">prm_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">btype_index</span> <span class="o">=</span> <span class="n">fep_types</span><span class="p">[</span><span class="s2">&quot;bonds&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">prm</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">prm_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">btype_index</span><span class="p">)</span>
+
+        <span class="n">placeholders</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">bond_key</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+        <span class="n">pdb_id</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">bond_key</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">placeholders</span> <span class="o">+</span> <span class="n">prm_indexes</span> <span class="o">+</span> <span class="p">[</span><span class="n">pdb_id</span><span class="p">]</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;change_bonds&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_bondch</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">tmp</span><span class="p">))</span>
+
+
+    <span class="c1">###############</span>
+    <span class="c1"># ANGLE_TYPES</span>
+    <span class="c1">###############</span>
+    <span class="n">format_angles</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;8}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2">   # </span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;angle_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_angles</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;#Index&quot;</span><span class="p">,</span> <span class="s2">&quot;Fc&quot;</span><span class="p">,</span>
+                                                     <span class="s2">&quot;theta0&quot;</span><span class="p">,</span> <span class="s2">&quot;PRM_ID&quot;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">angle_type</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fep_types</span><span class="p">[</span><span class="s2">&quot;angles&quot;</span><span class="p">]):</span>
+        <span class="n">an_index</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">prm_id</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">angle_type</span><span class="o">.</span><span class="n">prm_id</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">format_angles</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">an_index</span><span class="p">,</span> <span class="n">angle_type</span><span class="o">.</span><span class="n">fc</span><span class="p">,</span>
+                                   <span class="n">angle_type</span><span class="o">.</span><span class="n">theta0</span><span class="p">,</span> <span class="n">prm_id</span><span class="p">)</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;angle_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+
+
+    <span class="c1">#################</span>
+    <span class="c1"># CHANGE_ANGLES</span>
+    <span class="c1">#################</span>
+    <span class="n">format_angch</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;10}</span><span class="s2"> </span><span class="si">{:&lt;10}</span><span class="s2"> </span><span class="si">{:&lt;10}</span><span class="s2"> &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="si">{:^5}</span><span class="s2"> &quot;</span><span class="o">*</span><span class="n">num_evb_states</span> <span class="o">+</span> <span class="s2">&quot;  # </span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#Atom1&quot;</span><span class="p">,</span> <span class="s2">&quot;Atom2&quot;</span><span class="p">,</span> <span class="s2">&quot;Atom3&quot;</span><span class="p">]</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;St.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)])</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;St.1 PDB_IDs&quot;</span><span class="p">)</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;change_angles&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_angch</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">tmp</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">angle_key</span><span class="p">,</span> <span class="n">angle_all_states</span> <span class="ow">in</span> <span class="n">fep_changes</span><span class="p">[</span><span class="s2">&quot;angles&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="c1"># angle_key == &quot;PDB_ID1 PDB_ID2 PDB_ID3&quot;</span>
+        <span class="n">prm_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ang</span> <span class="ow">in</span> <span class="n">angle_all_states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ang</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">prm_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">atype_index</span> <span class="o">=</span> <span class="n">fep_types</span><span class="p">[</span><span class="s2">&quot;angles&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">ang</span><span class="o">.</span><span class="n">prm</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">prm_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">atype_index</span><span class="p">)</span>
+
+        <span class="n">placeholders</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">angle_key</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+        <span class="n">pdb_id</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">angle_key</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">placeholders</span> <span class="o">+</span> <span class="n">prm_indexes</span> <span class="o">+</span> <span class="p">[</span><span class="n">pdb_id</span><span class="p">]</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;change_angles&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_angch</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">tmp</span><span class="p">))</span>
+
+
+
+
+    <span class="c1">#################</span>
+    <span class="c1"># TORSION_TYPES</span>
+    <span class="c1">#################</span>
+    <span class="n">format_torsions</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;8}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2">   # </span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;torsion_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_torsions</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;#Index&quot;</span><span class="p">,</span> <span class="s2">&quot;Fc&quot;</span><span class="p">,</span>
+                                                         <span class="s2">&quot;mult&quot;</span><span class="p">,</span> <span class="s2">&quot;psi0&quot;</span><span class="p">,</span>
+                                                         <span class="s2">&quot;PRM_ID&quot;</span><span class="p">))</span>
+    <span class="n">tor_index</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">tor_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">torsion_type</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fep_types</span><span class="p">[</span><span class="s2">&quot;torsions&quot;</span><span class="p">]):</span>
+        <span class="n">prm_id</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">torsion_type</span><span class="o">.</span><span class="n">prm_id</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="n">prm_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">fc</span><span class="p">,</span> <span class="n">per</span><span class="p">,</span> <span class="n">psi0</span><span class="p">,</span> <span class="n">npath</span> <span class="ow">in</span> <span class="n">torsion_type</span><span class="o">.</span><span class="n">get_prms</span><span class="p">():</span>
+            <span class="n">fc</span> <span class="o">=</span> <span class="n">fc</span><span class="o">/</span><span class="n">npath</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">format_torsions</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">tor_index</span><span class="p">,</span> <span class="n">fc</span><span class="p">,</span> <span class="n">per</span><span class="p">,</span> <span class="n">psi0</span><span class="p">,</span> <span class="n">prm_id</span><span class="p">)</span>
+            <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;torsion_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+            <span class="n">prm_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tor_index</span><span class="p">)</span>
+            <span class="n">tor_index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">tor_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prm_indexes</span><span class="p">)</span>
+
+    <span class="c1">###################</span>
+    <span class="c1"># CHANGE_TORSIONS</span>
+    <span class="c1">###################</span>
+    <span class="n">format_torch</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;10}</span><span class="s2"> </span><span class="si">{:&lt;10}</span><span class="s2"> </span><span class="si">{:&lt;10}</span><span class="s2"> </span><span class="si">{:&lt;10}</span><span class="s2"> &quot;</span> \
+                 <span class="o">+</span> <span class="s2">&quot;</span><span class="si">{:^5}</span><span class="s2"> &quot;</span><span class="o">*</span><span class="n">num_evb_states</span> <span class="o">+</span> <span class="s2">&quot;  # </span><span class="si">{}</span><span class="s2">&quot;</span>
+
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#Atom1&quot;</span><span class="p">,</span> <span class="s2">&quot;Atom2&quot;</span><span class="p">,</span> <span class="s2">&quot;Atom3&quot;</span><span class="p">,</span> <span class="s2">&quot;Atom4&quot;</span><span class="p">]</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;St.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)])</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;St.1 PDB_IDs&quot;</span><span class="p">)</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;change_torsions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_torch</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">tmp</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">torsion_key</span><span class="p">,</span> <span class="n">torsion_all_states</span> <span class="ow">in</span> <span class="n">fep_changes</span><span class="p">[</span><span class="s2">&quot;torsions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="c1"># torsion_key == &quot;PDB_ID1 PDB_ID2 PDB_ID3 PDB_ID4&quot;</span>
+        <span class="k">for</span> <span class="n">state</span><span class="p">,</span> <span class="n">tor</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">torsion_all_states</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">tor</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tor</span><span class="o">.</span><span class="n">prm</span><span class="o">.</span><span class="n">fcs</span><span class="p">)):</span>
+                <span class="n">tprm_index</span> <span class="o">=</span> <span class="n">fep_types</span><span class="p">[</span><span class="s2">&quot;torsions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">tor</span><span class="o">.</span><span class="n">prm</span><span class="p">)</span>
+                <span class="n">ttype_index</span> <span class="o">=</span> <span class="n">tor_indexes</span><span class="p">[</span><span class="n">tprm_index</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="n">prm_indexes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">torsion_all_states</span><span class="p">))]</span>
+                <span class="n">prm_indexes</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">ttype_index</span>
+
+                <span class="n">placeholders</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">torsion_key</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+                <span class="n">pdb_id</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">torsion_key</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">placeholders</span> <span class="o">+</span> <span class="n">prm_indexes</span> <span class="o">+</span> <span class="p">[</span><span class="n">pdb_id</span><span class="p">]</span>
+                <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;change_torsions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_torch</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">tmp</span><span class="p">))</span>
+
+
+
+    <span class="c1">#################</span>
+    <span class="c1"># IMPROPER_TYPES</span>
+    <span class="c1">#################</span>
+    <span class="n">format_impropers</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;8}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2"> </span><span class="si">{:&gt;10}</span><span class="s2">   # </span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;improper_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_impropers</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;#Index&quot;</span><span class="p">,</span>
+                                                           <span class="s2">&quot;Fc&quot;</span><span class="p">,</span> <span class="s2">&quot;phi0&quot;</span><span class="p">,</span>
+                                                           <span class="s2">&quot;PRM_ID&quot;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">improper_type</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fep_types</span><span class="p">[</span><span class="s2">&quot;impropers&quot;</span><span class="p">]):</span>
+        <span class="n">imp_index</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">prm_id</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">improper_type</span><span class="o">.</span><span class="n">prm_id</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">format_impropers</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">imp_index</span><span class="p">,</span> <span class="n">improper_type</span><span class="o">.</span><span class="n">fc</span><span class="p">,</span>
+                                      <span class="n">improper_type</span><span class="o">.</span><span class="n">phi0</span><span class="p">,</span> <span class="n">prm_id</span><span class="p">)</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;improper_types&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+
+
+    <span class="c1">###################</span>
+    <span class="c1"># CHANGE_IMPROPERS</span>
+    <span class="c1">###################</span>
+    <span class="n">format_impch</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{:&lt;10}</span><span class="s2"> </span><span class="si">{:&lt;10}</span><span class="s2"> </span><span class="si">{:&lt;10}</span><span class="s2"> </span><span class="si">{:&lt;10}</span><span class="s2"> &quot;</span> \
+                 <span class="o">+</span> <span class="s2">&quot;</span><span class="si">{:^5}</span><span class="s2"> &quot;</span><span class="o">*</span><span class="n">num_evb_states</span> <span class="o">+</span> <span class="s2">&quot;  # </span><span class="si">{}</span><span class="s2">&quot;</span>
+
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#Atom1&quot;</span><span class="p">,</span> <span class="s2">&quot;Atom2&quot;</span><span class="p">,</span> <span class="s2">&quot;Atom3&quot;</span><span class="p">,</span> <span class="s2">&quot;Atom4&quot;</span><span class="p">]</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s2">&quot;St.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_evb_states</span><span class="p">)])</span>
+    <span class="n">tmp</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;St.1 PDB_IDs&quot;</span><span class="p">)</span>
+    <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;change_impropers&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_impch</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">tmp</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">improper_key</span><span class="p">,</span> <span class="n">improper_all_states</span> <span class="ow">in</span> <span class="n">fep_changes</span><span class="p">[</span><span class="s2">&quot;impropers&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="c1"># improper_key == &quot;PDB_ID1 PDB_ID2 PDB_ID3 PDB_ID4&quot;</span>
+        <span class="n">prm_indexes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">imp</span> <span class="ow">in</span> <span class="n">improper_all_states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">imp</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">prm_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">itype_index</span> <span class="o">=</span> <span class="n">fep_types</span><span class="p">[</span><span class="s2">&quot;impropers&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">imp</span><span class="o">.</span><span class="n">prm</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">prm_indexes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">itype_index</span><span class="p">)</span>
+
+        <span class="n">placeholders</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;$</span><span class="si">{}</span><span class="s2">$&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">improper_key</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+        <span class="n">pdb_id</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">improper_key</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
+
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">placeholders</span> <span class="o">+</span> <span class="n">prm_indexes</span> <span class="o">+</span> <span class="p">[</span><span class="n">pdb_id</span><span class="p">]</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;change_impropers&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">format_impch</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">tmp</span><span class="p">))</span>
+
+    <span class="c1">##############</span>
+    <span class="c1"># SOFT_PAIRS</span>
+    <span class="c1">##############</span>
+    <span class="k">for</span> <span class="n">bond_key</span><span class="p">,</span> <span class="n">bond_all_states</span> <span class="ow">in</span> <span class="n">fep_changes</span><span class="p">[</span><span class="s2">&quot;bonds&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+        <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="n">bond_all_states</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">state</span><span class="p">,</span> <span class="n">bond</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bond_all_states</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">bond</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">atoms_in_state</span> <span class="o">=</span> <span class="p">[</span><span class="n">atom_all_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="k">for</span> <span class="n">atom_all_states</span> \
+                                                        <span class="ow">in</span> <span class="n">fep_changes</span><span class="p">[</span><span class="s2">&quot;atoms&quot;</span><span class="p">]]</span>
+                <span class="n">a1_qindex</span> <span class="o">=</span> <span class="n">atoms_in_state</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">a2_qindex</span> <span class="o">=</span> <span class="n">atoms_in_state</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">bond</span><span class="o">.</span><span class="n">atoms</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">fep_l</span><span class="p">[</span><span class="s2">&quot;soft_pairs&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{:10}</span><span class="s2"> </span><span class="si">{:10}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a1_qindex</span><span class="p">,</span>
+                                                                <span class="n">a2_qindex</span><span class="p">))</span>
+
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">fep_l</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">fep_l</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">fep_l</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+
+    <span class="n">fepstr</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s2"># Generated with Qtools, version </span><span class="si">{version}</span><span class="s2"></span>
+<span class="s2"># Date: </span><span class="si">{date}</span><span class="s2"></span>
+<span class="s2"># CWD: </span><span class="si">{cwd}</span><span class="s2"></span>
+<span class="s2"># CMDline: </span><span class="si">{cmd}</span><span class="s2"></span>
+<span class="s2">#</span>
+
+<span class="s2">[FEP]</span>
+<span class="s2">states </span><span class="si">{states}</span><span class="s2"></span>
+
+<span class="s2">[atoms]</span>
+<span class="si">{atoms}</span><span class="s2"></span>
+
+<span class="s2">[atom_types]</span>
+<span class="si">{atom_types}</span><span class="s2"></span>
+
+<span class="s2">[change_atoms]</span>
+<span class="si">{change_atoms}</span><span class="s2"></span>
+
+<span class="s2">[change_charges]</span>
+<span class="si">{change_charges}</span><span class="s2"></span>
+
+<span class="s2">[soft_pairs]</span>
+<span class="si">{soft_pairs}</span><span class="s2"></span>
+
+<span class="s2">[off_diagonals]</span>
+<span class="s2"># State_i State_j  Atom1  Atom2  A_ij  mu_ij</span>
+<span class="s2">#</span>
+<span class="s2">## Example1, Hij=H12=0 (not known in advance)</span>
+<span class="s2">## 1 2  13 14  0  0</span>
+<span class="s2">## Example2, Hij=H12=C*exp(-mu * r_13_14)  (C=20.0, mu=0.45)</span>
+<span class="s2">## 1 2  13 14  20.0  0.45</span>
+<span class="s2">#</span>
+<span class="s2">&lt;FIX&gt;</span>
+
+<span class="s2">[bond_types]</span>
+<span class="si">{bond_types}</span><span class="s2"></span>
+
+<span class="s2">[change_bonds]</span>
+<span class="si">{change_bonds}</span><span class="s2"></span>
+
+<span class="s2">[angle_types]</span>
+<span class="si">{angle_types}</span><span class="s2"></span>
+
+<span class="s2">[change_angles]</span>
+<span class="si">{change_angles}</span><span class="s2"></span>
+
+<span class="s2">[torsion_types]</span>
+<span class="si">{torsion_types}</span><span class="s2"></span>
+
+<span class="s2">[change_torsions]</span>
+<span class="si">{change_torsions}</span><span class="s2"></span>
+
+<span class="s2">[improper_types]</span>
+<span class="si">{improper_types}</span><span class="s2"></span>
+
+<span class="s2">[change_impropers]</span>
+<span class="si">{change_impropers}</span><span class="s2"></span>
+
+<span class="si">{qcp_mass}</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">states</span><span class="o">=</span><span class="n">num_evb_states</span><span class="p">,</span> <span class="n">date</span><span class="o">=</span><span class="n">time</span><span class="o">.</span><span class="n">ctime</span><span class="p">(),</span> <span class="n">cmd</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">),</span>
+           <span class="n">cwd</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">version</span><span class="o">=</span><span class="n">__version__</span><span class="p">,</span> <span class="o">**</span><span class="n">fep_l</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fepstr</span></div>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Miha Purg.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.6.1',
+            LANGUAGE:'en',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

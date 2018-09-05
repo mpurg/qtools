@@ -25,6 +25,11 @@
 #
 #
 #
+"""
+This module contains the QGroupContrib class for calculating 
+LRA group contributions.
+It also defines a custom exception class - QGroupContribError.
+"""
 
 import sys
 import os
@@ -86,12 +91,12 @@ class QGroupContrib(object):
         lambdas_B (tuple of floats): lambdas of state B (0.5, 0.5)
         resid_first (int): index of first residue used for calcs
         resid_last (int): index of last residue used for calcs
-        scale_ionized (float): scale down ionized residues (ARG, LYS,
-                               HIP, GLU, ASP) by this factor
+        scale_ionized (float): scale down ionized residues (ARG, LYS, \
+                               HIP, GLU, ASP) by this factor \
                                (see doi:10.1021/jp962478o)
         nthreads (int): number of threads
-        qmask (list of ints): list of atom indexes to be used as the
-                              Q mask for the GC calculations. By default,
+        qmask (list of ints): list of atom indexes to be used as the\
+                              Q mask for the GC calculations. By default,\
                               this is obtained from the FEP file.
 
     """

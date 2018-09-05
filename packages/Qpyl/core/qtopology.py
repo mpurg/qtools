@@ -25,6 +25,12 @@
 #
 #
 #
+"""
+This module implements an internal topology builder class QTopology.
+QTopology creates a mapping between the system's structure (QStruct),
+bonding patterns/charges (QLib), and the parameters (Qrm), allowing
+evaluation of individual topological components of the system.
+"""
 
 from Qpyl.core import qlibrary
 from Qpyl.core import qparameter

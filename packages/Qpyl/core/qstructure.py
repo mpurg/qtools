@@ -25,6 +25,11 @@
 #
 #
 #
+"""
+This module contains the QStruct class for handling Q structure files (PDB, mol2).
+Additionally, it implements methods for finding and replacing atom
+placeholders (e.g. $1.N$)
+"""
 
 import re
 import logging
@@ -61,8 +66,8 @@ class QStruct(object):
     Args:
       filename (path to the structure file)
       filetype (type of structure file:  'pdb' or 'mol2')
-      ignore_errors (boolean):  Optional, default is False.
-                                If set to True, some non-vital
+      ignore_errors (boolean):  Optional, default is False.\
+                                If set to True, some non-vital\
                                 exceptions are logged instead.
 
     In contrast to QLib and QPrm, the 'read' methods in this
@@ -70,7 +75,7 @@ class QStruct(object):
     contain data from only one structure file.
 
     The structure data is stored in three lists:
-      atoms, residues, molecules
+    atoms, residues, molecules
     which contain _StructAtom, _StructResidue and _StructMolecule
     objects.
 
