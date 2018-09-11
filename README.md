@@ -1,9 +1,6 @@
+### qtools 
+
 [![Travis](https://api.travis-ci.org/mpurg/qtools.svg?branch=master)](https://travis-ci.org/mpurg/qtools)  [![Coverage Status](https://coveralls.io/repos/github/mpurg/qtools/badge.svg?branch=master)](https://coveralls.io/github/mpurg/qtools?branch=master)
-
-  
-  
-
-### README 
 
 #### Description
 
