@@ -66,7 +66,7 @@ For those inclined on using the Python API directly, jupyter-notebook examples c
   
 #### Testing
 
-Testing is done [here](https://travis-ci.org/mpurg/qtools),
+Automated Testing is performed on [Travis-CI](https://travis-ci.org/mpurg/qtools),
 with [pytest](https://docs.pytest.org/en/latest/) for Qpyl
 ([code coverage](https://coveralls.io/github/mpurg/qtools?branch=master)).
 and simple regression tests for CLI tools.
