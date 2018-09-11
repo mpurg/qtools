@@ -60,7 +60,7 @@ qscripts_config.py
 #### Documentation
 
 The starting point should be the `docs/tutorials` folder.
-It contains working examples of how you can use the command line tools to prepare, simulate and analyse a simple SN2 reaction with EVB. Additionally, a recently published chapter in the serial Methods in Enzymology provides step-by-step instructions for performing EVB simulations on a real enzymatic system with `qtools`. See [here](https://doi.org/10.1016/bs.mie.2018.06.007).
+It contains working examples of how you can use the command line tools to prepare, simulate and analyse a simple SN2 reaction with EVB. Additionally, a recently published chapter in the serial Methods in Enzymology provides step-by-step instructions for performing EVB simulations on a real enzymatic system with `qtools`. Manuscript available [here](https://doi.org/10.1016/bs.mie.2018.06.007) (paywalled).
   
 For those inclined on using the Python API directly, jupyter-notebook examples calling the Qpyl API can be found in `docs/examples`. The API reference can be found in `docs/api/html`. Additionally, the tests, and the command-line interface (qscripts-cli) can be useful to explore the API.
   
