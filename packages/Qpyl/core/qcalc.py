@@ -31,12 +31,15 @@ Contains classes for running Qcalc (QCalc), generating inputs (QCalcInput),
 parsing output (QCalcOutput).
 """
 
+from __future__ import absolute_import
 import subprocess
 import logging
 import re
 from collections import OrderedDict
 
 from Qpyl.common import __version__, raise_or_log, DataContainer
+import six
+from six.moves import zip
 
 logger = logging.getLogger(__name__)
 
@@ -154,7 +157,7 @@ class QCalcInput(object):
             masks (list of strings): masks used for the calculation
                                      (eg. ["res 314", "1245", "1246", ...])
         """
-        if isinstance(masks, basestring):
+        if isinstance(masks, six.string_types):
             masks = [masks,]
         # rmsd.out is due to the unfortunate feature added in Q c79ef672400
         self.actions.append((self.CALC_RMSD, masks + [".",] + ["rmsd.out",]))
@@ -171,7 +174,7 @@ class QCalcInput(object):
                                       (eg. ["res 314", "1245", "1246", ...])
 
         """
-        if isinstance(masks, basestring):
+        if isinstance(masks, six.string_types):
             masks = [masks,]
         lines = [resid_first, resid_last] + masks + ["."]
         self.actions.append((self.CALC_RES_NB, lines))

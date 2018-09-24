@@ -30,11 +30,14 @@ This module implements the QLib class for reading and writing Q (and other)
 library files.
 """
 
+from __future__ import absolute_import
 import re
 import logging
 from collections import OrderedDict
 
 from Qpyl.common import __version__, raise_or_log
+import six
+from six.moves import map
 
 logger = logging.getLogger(__name__)
 
@@ -449,7 +452,7 @@ class QLib(object):
 
         res_not_in_lib = set()
         # add them to the residues in the library
-        for resname, imps in impropers.iteritems():
+        for resname, imps in six.iteritems(impropers):
             for imp in imps:
                 try:
                     # different naming convention for head and tail
@@ -521,7 +524,7 @@ class QLib(object):
 #
                 lf = line.split()
                 name, type_, vdw, symbol = lf[0:4]
-                charge, sigma, epsilon = map(float, lf[4:7])
+                charge, sigma, epsilon = list(map(float, lf[4:7]))
                 quality, comment = lf[7], lf[8:]
 
 
@@ -624,7 +627,7 @@ class QLib(object):
         self.residue_dict[name].get_str()
         """
         out = ""
-        for residue in sorted(self.residue_dict.values(),
+        for residue in sorted(list(self.residue_dict.values()),
                               key=lambda x: x.name):
             out += residue.get_str()
             out += "*" + "-"*80 + "\n"
@@ -871,8 +874,8 @@ class _LibResidue(object):
         if abs(excess) > 1e-7:
             # only unique atoms, with abs charges
             atom_dict2 = {name: abs(charge) for name, charge in
-                          atom_dict.iteritems() if \
-                          atom_dict.values().count(charge) == 1}
+                          six.iteritems(atom_dict) if \
+                          list(atom_dict.values()).count(charge) == 1}
             # maximum charge atom
             max_ch_atom = max(atom_dict2, key=lambda x: atom_dict2[x])
 
@@ -901,7 +904,7 @@ class _LibResidue(object):
         infol, al, bl, il, cl, brl, col = [], [], [], [], [], [], []
 
         indent = "        "
-        for k, v in self.info.iteritems():
+        for k, v in six.iteritems(self.info):
             infol.append(indent + "{:30} {}".format(k, v))
         for i, atom in enumerate(self.atoms):
             al.append("    {:>5d}  {a.name:<5s}  {a.atom_type:<12s} "
@@ -927,7 +930,7 @@ class _LibResidue(object):
                             ("charge_groups", cl)))
 
         outstr = "{{{}}}\n".format(self.name)
-        for section, lines in outl.iteritems():
+        for section, lines in six.iteritems(outl):
             if lines:
                 outstr += """\
     [{}]

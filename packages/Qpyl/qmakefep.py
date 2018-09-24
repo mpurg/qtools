@@ -30,6 +30,7 @@ This module contains the make_fep() function for generating Q FEP-files,
 and implements a custom exception class QMakeFepError.
 """
 
+from __future__ import absolute_import
 import sys
 import os
 import re
@@ -43,6 +44,8 @@ from Qpyl.core.qparameter import QPrm, QPrmError
 from Qpyl.core.qstructure import QStruct, QStructError
 from Qpyl.core.qtopology import QTopology, QTopologyError
 from Qpyl.common import raise_or_log, __version__
+import six
+from six.moves import range
 
 logger = logging.getLogger(__name__)
 
@@ -435,10 +438,10 @@ def make_fep(qmap_file, pdb_file, forcefield,
             return (1, key)
 
     # find changes between states (add to fep_changes dict)
-    for bati_type, batis in bati_map.iteritems():
-        for bati_key, bati_all_states in sorted(batis.items(),
-                                                key=lambda (key, val): \
-                                                        _bati_sort(key, val)):
+    for bati_type, batis in six.iteritems(bati_map):
+        for bati_key, bati_all_states in sorted(list(batis.items()),
+                                                key=lambda key_val: \
+                                                        _bati_sort(key_val[0], key_val[1])):
 
             # bond/angle/.. breaking or forming
             if None in bati_all_states:
@@ -646,7 +649,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
     tmp.append("St.1 PDB_IDs")
     fep_l["change_bonds"].append(format_bondch.format(*tmp))
 
-    for bond_key, bond_all_states in fep_changes["bonds"].iteritems():
+    for bond_key, bond_all_states in six.iteritems(fep_changes["bonds"]):
         # bond_key == "PDB_ID1 PDB_ID2"
         prm_indexes = []
         for b in bond_all_states:
@@ -686,7 +689,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
     tmp.append("St.1 PDB_IDs")
     fep_l["change_angles"].append(format_angch.format(*tmp))
 
-    for angle_key, angle_all_states in fep_changes["angles"].iteritems():
+    for angle_key, angle_all_states in six.iteritems(fep_changes["angles"]):
         # angle_key == "PDB_ID1 PDB_ID2 PDB_ID3"
         prm_indexes = []
         for ang in angle_all_states:
@@ -736,7 +739,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
     tmp.append("St.1 PDB_IDs")
     fep_l["change_torsions"].append(format_torch.format(*tmp))
 
-    for torsion_key, torsion_all_states in fep_changes["torsions"].iteritems():
+    for torsion_key, torsion_all_states in six.iteritems(fep_changes["torsions"]):
         # torsion_key == "PDB_ID1 PDB_ID2 PDB_ID3 PDB_ID4"
         for state, tor in enumerate(torsion_all_states):
             if tor == None:
@@ -783,7 +786,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
     tmp.append("St.1 PDB_IDs")
     fep_l["change_impropers"].append(format_impch.format(*tmp))
 
-    for improper_key, improper_all_states in fep_changes["impropers"].iteritems():
+    for improper_key, improper_all_states in six.iteritems(fep_changes["impropers"]):
         # improper_key == "PDB_ID1 PDB_ID2 PDB_ID3 PDB_ID4"
         prm_indexes = []
         for imp in improper_all_states:
@@ -802,7 +805,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
     ##############
     # SOFT_PAIRS
     ##############
-    for bond_key, bond_all_states in fep_changes["bonds"].iteritems():
+    for bond_key, bond_all_states in six.iteritems(fep_changes["bonds"]):
         if None in bond_all_states:
             for state, bond in enumerate(bond_all_states):
                 if bond == None:

@@ -2,11 +2,13 @@
 # py.test test functions
 #########################
 
+from __future__ import absolute_import
 import pytest
 import os
 import re
 
 from Qpyl.qmapping import QMapper, QMapperError
+import six
 
 def is_close(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
@@ -45,7 +47,7 @@ class TestQMapper:
         assert qmapper.input_parms_str == \
             "q_mapper.py 100.0 10.0 --bins 20 --skip 1 --min 1 --temp 298.0 "
 
-        for md, (qfep_inp, qfep_out) in qmapper.mapped.iteritems():
+        for md, (qfep_inp, qfep_out) in six.iteritems(qmapper.mapped):
             fn = "data/qmapping/qfep_" + os.path.basename(md) + ".inp"
             #open(fn, "w").write(qfep_inp)
             assert open(fn, "r").read() == qfep_inp

@@ -31,10 +31,12 @@ and functions for calculating distances, angles and dihedral angles, as
 implemented in Q.
 """
 
+from __future__ import absolute_import
 import math
 
 from Qpyl.core import qstructure
 from Qpyl.common import __version__, raise_or_log
+from six.moves import zip
 
 
 def bond_distance(ac1, ac2):

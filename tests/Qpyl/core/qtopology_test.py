@@ -1,3 +1,4 @@
+from __future__ import absolute_import
 from Qpyl.core.qparameter import QPrm
 from Qpyl.core.qlibrary import QLib
 from Qpyl.core.qstructure import QStruct

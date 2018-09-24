@@ -3,9 +3,14 @@
 #########################
 
 
+from __future__ import absolute_import
+from __future__ import print_function
 import pytest
 from Qpyl.core.qdyn import QDynInput, QDynInputError
 from Qpyl.core.qdyn import QDynOutput, QDynOutput
+import six
+from six.moves import range
+from six.moves import zip
 
 def is_close(a, b, rel_tol=1e-09, abs_tol=0.0):
     return abs(a-b) <= max(rel_tol * max(abs(a), abs(b)), abs_tol)
@@ -97,8 +102,8 @@ class TestQDynOutput:
         "SUM": [0.016, -3319.31, -3369.97, 50.66]
         }
 
-        for k, ref in refs.iteritems():
-            print "Testing ", k
+        for k, ref in six.iteritems(refs):
+            print("Testing ", k)
             val = getattr(qdo1, "data_E_"+k).get_rows()[15]
             val2 = getattr(qdo1, "data_E_"+k).get_rows()[15]
             val3 = getattr(qdo1, "data_E_"+k).get_rows()[16]
@@ -118,9 +123,9 @@ class TestQDynOutput:
                 [0.016, 0.5, -230.72, 102.56, -300.61, 46.45, 2.02, 0.0]]
         }
 
-        for k, ref in refs.iteritems():
+        for k, ref in six.iteritems(refs):
             for i in range(2): # two states
-                print "Testing ", k, ", state ", i
+                print("Testing ", k, ", state ", i)
                 val = getattr(qdo1, "data_EQ_"+k)[i].get_rows()[15]
                 val2 = getattr(qdo1, "data_EQ_"+k)[i].get_rows()[15]
                 val3 = getattr(qdo1, "data_EQ_"+k)[i].get_rows()[21]

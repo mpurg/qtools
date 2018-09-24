@@ -3,6 +3,7 @@
 #########################
 
 
+from __future__ import absolute_import
 import pytest
 
 from Qpyl.core.qlibrary import QLib, QLibError

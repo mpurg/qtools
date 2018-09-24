@@ -31,6 +31,7 @@ This module contains the QMapper class for automating the calculation and
 calibration of EVB reaction free profiles (via Qfep). 
 """
 
+from __future__ import absolute_import
 import sys
 import os
 import time
@@ -41,6 +42,7 @@ from collections import OrderedDict as ODict
 from Qpyl.core.qfep import QFep, QFepError, QFepInput
 from Qpyl.core.qfep import QFepOutput, QFepOutputError
 from Qpyl.common import __version__, np
+import six
 
 logger = logging.getLogger(__name__)
 
@@ -273,7 +275,7 @@ class QMapper(object):
         # raises QMapperError on total failure
 
         self.mapall(_supress_info=True)
-        for (qfo, err) in self.failed.iteritems():
+        for (qfo, err) in six.iteritems(self.failed):
             logger.info("Failed to map '{}': {}".format(qfo, err))
 
         if not self.mapped:
@@ -283,7 +285,7 @@ class QMapper(object):
                                "parameters (skip, bins, ...).")
 
         dga, dg0 = [], []
-        for mapdir, (_, qfo_str) in self.mapped.iteritems():
+        for mapdir, (_, qfo_str) in six.iteritems(self.mapped):
             try:
                 qfo = QFepOutput(qfo_str)
                 dga.append(qfo.part3.dga)
@@ -370,7 +372,7 @@ class QMapper(object):
     def details(self):
 
         fails = "\n".join(["{}: {}".format(md, e) for md, e in \
-                                                 self.failed.iteritems()])
+                                                 six.iteritems(self.failed)])
 
         qfep_version = "Unknown, likely ancient"
         for _, qfep_out in self.mapped.values():

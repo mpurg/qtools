@@ -2,6 +2,8 @@
 # py.test test functions
 #########################
 
+from __future__ import absolute_import
+from __future__ import print_function
 import pytest
 
 from Qpyl.core.qfep import QFepOutput, QFepOutputError
@@ -65,13 +67,13 @@ class TestQFepOutput:
         # E = 0.5*( (-8.21 --65.90) + (-77.97 --6.81) )
         # E = -6.7350
         lras = qfo1.part0.calc_lra(1.0, 0.0)
-        print lras
+        print(lras)
         lra_eqbond = lras.get_columns(["LRA"])[0][1]
         assert is_close(lra_eqbond, -6.7350)
 
     def test_lra2(self, qfo2):
         lras = qfo2.part0.calc_lra(1.0, 0.0)
-        print lras
+        print(lras)
         lras = " ".join(["{:.2f}".format(x) for x in lras.get_columns()[3]])
         expected = "206.07 139.64 -2.59 -6.68 -0.01 69.30 6.41 "\
                    "43.62 6.75 30.10 -0.61 -4.43 0.29 0.00"
@@ -88,13 +90,13 @@ class TestQFepOutput:
         # E = 0.5*( (-43.784 --60.086) + (-45.172 --53.488) )
         # E = 12.309
         lras = qfo1.part0.calc_lra(0.9, 0.6)
-        print lras
+        print(lras)
         lra_eqbond = lras.get_columns(["LRA"])[0][1]
         assert is_close(lra_eqbond, 12.309)
 
     def test_lra4(self, qfo2):
         lras = qfo2.part0.calc_lra(0.9, 0.6)
-        print lras
+        print(lras)
         lras = " ".join(["{:.2f}".format(x) for x in lras.get_columns()[3]])
         expected = "187.28 89.52 51.98 0.27 -0.00 30.78 14.74 19.51 14.87 "\
                    "10.84 -0.20 0.42 0.07 0.00"

@@ -31,6 +31,7 @@ LRA group contributions.
 It also defines a custom exception class - QGroupContribError.
 """
 
+from __future__ import absolute_import
 import sys
 import os
 import time
@@ -43,6 +44,8 @@ from Qpyl.core.qdyn import QDynInput, QDynInputError
 from Qpyl.core.qstructure import QStruct, QStructError
 from Qpyl.common import __version__, np, DataContainer
 from Qpyl.plotdata import PlotData
+import six
+from six.moves import zip
 
 logger = logging.getLogger(__name__)
 
@@ -200,7 +203,7 @@ class QGroupContrib(object):
 
         # parse the output for results and
         # calculate LRAs for each dir
-        for _dir, (_, qouts) in self._qcalc_io.iteritems():
+        for _dir, (_, qouts) in six.iteritems(self._qcalc_io):
             gcs = []
             failed_flag = False
             for qout in qouts:
@@ -285,12 +288,12 @@ class QGroupContrib(object):
         # get GC stats over all directories
         self.gcs_stats.delete_rows()
         gcs = {}
-        for _, gc in self.gcs.iteritems():
+        for _, gc in six.iteritems(self.gcs):
             for row in gc.get_rows():
                 resid, resname = row[0:2]
                 res_key = "{}.{}".format(resid, resname)
                 values = [[val,] for val in row[2:]]
-                if not gcs.has_key(res_key):
+                if res_key not in gcs:
                     gcs[res_key] = values
                 else:
                     for i, val in enumerate(gcs[res_key]):
@@ -299,7 +302,7 @@ class QGroupContrib(object):
         # iterate through each residue and calculate
         # means and stdevs
         # (sort by residue index)
-        for res_key in sorted(gcs.keys(), key=lambda x: int(x.split(".")[0])):
+        for res_key in sorted(list(gcs.keys()), key=lambda x: int(x.split(".")[0])):
             rc = gcs[res_key]
             resid, resname = res_key.split(".")
             # get mean and stdev
@@ -487,7 +490,7 @@ class QGroupContrib(object):
     def details(self):
 
         fails = "\n".join(["{}: {}".format(cd, e) \
-                           for cd, e in self.failed.iteritems()])
+                           for cd, e in six.iteritems(self.failed)])
 
         calcdirs = ", ".join(self._calcdirs)
         outstr = """
@@ -629,7 +632,7 @@ Fails:
         # top 20 LRA el
         sorted_rows = sorted(self.gcs_stats.get_rows(),
                              key=lambda x: -abs(x[5]))[:20]
-        cols = zip(*sorted_rows)
+        cols = list(zip(*sorted_rows))
         resids, resnames = cols[0], cols[1]
         keys = ["{}_{}".format(rn.capitalize(), ri) \
                                 for ri, rn in zip(resids, resnames)]
@@ -639,7 +642,7 @@ Fails:
         # top 20 reorg el
         sorted_rows = sorted(self.gcs_stats.get_rows(),
                              key=lambda x: -abs(x[9]))[:20]
-        cols = zip(*sorted_rows)
+        cols = list(zip(*sorted_rows))
         resids, resnames = cols[0], cols[1]
         keys = ["{}_{}".format(rn.capitalize(), ri) \
                                 for ri, rn in zip(resids, resnames)]

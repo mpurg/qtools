@@ -30,12 +30,16 @@ This module implements the QPrm class for reading and writing Q (and other)
 parameter files.
 """
 
+from __future__ import absolute_import
 import re
 import math
 import logging
 from collections import OrderedDict
 
 from Qpyl.common import __version__, raise_or_log
+import six
+from six.moves import map
+from six.moves import zip
 
 logger = logging.getLogger(__name__)
 
@@ -116,7 +120,7 @@ class QPrm(object):
             for lnumber, line in enumerate(prmfile.readlines()):
                 lnumber += 1
 
-                line, comment = map(str.strip, re.split("#|\*|\!", line+"!", 1))
+                line, comment = list(map(str.strip, re.split("#|\*|\!", line+"!", 1)))
                 comment = " ".join(comment.strip("!").split())
 
                 if line == "":
@@ -198,7 +202,7 @@ class QPrm(object):
                     parms = line.split()
                     try:
                         atom_types = parms[0:4]
-                        fc, multiplicity, phase, npaths = map(float, parms[4:8])
+                        fc, multiplicity, phase, npaths = list(map(float, parms[4:8]))
                     except Exception as e:
                         raise QPrmError("Could not parse line {} in [torsions]"
                                         " section of parm file '{}':\n{}"
@@ -238,7 +242,7 @@ class QPrm(object):
                     try:
                         atom_types = parms[0:4]
                         center_atom = atom_types.pop(1)
-                        fc, phi0 = map(float, parms[4:6])
+                        fc, phi0 = list(map(float, parms[4:6]))
                     except Exception as e:
                         raise QPrmError("Could not parse line {} in "
                                         "[impropers] section of parm file '{}'"
@@ -254,7 +258,7 @@ class QPrm(object):
                                     "{}: {}".format(parm_fn, section))
 
         dups = []
-        for type_, params in prms.iteritems():
+        for type_, params in six.iteritems(prms):
             for prm in params:
                 dup = self._add_prm(prm)
                 if dup != None:
@@ -354,7 +358,7 @@ class QPrm(object):
                 try:
                     a_types = line[0:2], line[3:5], line[6:8], line[9:11]
                     a_types = [x.strip().replace("*", "star") for x in a_types]
-                    a_types = map(lambda x: "?" if x == "X" else x, a_types)
+                    a_types = ["?" if x == "X" else x for x in a_types]
                     npaths = float(line[11:15])
                     fc, phase = float(line[15:30]), float(line[30:45])
                     try:
@@ -399,7 +403,7 @@ class QPrm(object):
                 try:
                     a_types = line[0:2], line[3:5], line[6:8], line[9:11]
                     a_types = [x.strip().replace("*", "star") for x in a_types]
-                    a_types = map(lambda x: "?" if x == "X" else x, a_types)
+                    a_types = ["?" if x == "X" else x for x in a_types]
                     center_atom = a_types.pop(2)
 
                     fc, phi0 = float(line[15:30]), float(line[30:45])
@@ -436,7 +440,7 @@ class QPrm(object):
                 try:
                     a_type = line[0].replace("*", "star")
                     same_a_types = same_types.get(a_type, [a_type,])
-                    lj_R, lj_eps = map(float, line[1:3])
+                    lj_R, lj_eps = list(map(float, line[1:3]))
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
@@ -451,7 +455,7 @@ class QPrm(object):
 
 
         dups = []
-        for type_, params in prms.iteritems():
+        for type_, params in six.iteritems(prms):
             for prm in params:
                 dup = self._add_prm(prm)
                 if dup != None:
@@ -550,7 +554,7 @@ class QPrm(object):
                 try:
                     a_types = line[0:2], line[3:5], line[6:8], line[9:11]
                     a_types = [x.strip().replace("*", "star") for x in a_types]
-                    a_types = map(lambda x: "?" if x == "X" else x, a_types)
+                    a_types = ["?" if x == "X" else x for x in a_types]
                     npaths = float(line[11:15])
                     fc, phase = float(line[15:30]), float(line[30:45])
                     try:
@@ -596,7 +600,7 @@ class QPrm(object):
                 try:
                     a_types = line[0:2], line[3:5], line[6:8], line[9:11]
                     a_types = [x.strip().replace("*", "star") for x in a_types]
-                    a_types = map(lambda x: "?" if x == "X" else x, a_types)
+                    a_types = ["?" if x == "X" else x for x in a_types]
                     center_atom = a_types.pop(2)
 
                     fc, phi0 = float(line[15:30]), float(line[30:45])
@@ -620,7 +624,7 @@ class QPrm(object):
                 if not line: break
                 try:
                     a_type = line[0].replace("*", "star")
-                    lj_R, lj_eps = map(float, line[1:3])
+                    lj_R, lj_eps = list(map(float, line[1:3]))
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
@@ -633,7 +637,7 @@ class QPrm(object):
                 prms["atoms"].append(atom_type)
 
         dups = []
-        for type_, params in prms.iteritems():
+        for type_, params in six.iteritems(prms):
             for prm in params:
                 dup = self._add_prm(prm)
                 if dup != None:
@@ -708,7 +712,7 @@ class QPrm(object):
                 lf = line.split()
                 try:
                     name, type_, vdw, symbol = lf[0:4]
-                    charge, sigma, epsilon = map(float, lf[4:7])
+                    charge, sigma, epsilon = list(map(float, lf[4:7]))
                     comment = "FFLD: {}_{}_{} {}".format(symbol, vdw, type_,
                                                          " ".join(lf[8:]))
                 except Exception:
@@ -760,7 +764,7 @@ class QPrm(object):
                 lf = line.split()
                 try:
                     anames = lf[0:2]
-                    fc, r0 = map(float, lf[2:4])
+                    fc, r0 = list(map(float, lf[2:4]))
                     comment = "FFLD: " + " ".join(lf[4:])
                 except Exception as e:
                     raise QPrmError("Could not parse line: '{}'"
@@ -777,7 +781,7 @@ class QPrm(object):
                 lf = line.split()
                 try:
                     anames = lf[0:3]
-                    fc, theta0 = map(float, lf[3:5])
+                    fc, theta0 = list(map(float, lf[3:5]))
                     comment = "FFLD: " + " ".join(lf[5:])
                 except Exception as e:
                     raise QPrmError("Could not parse line: '{}'"
@@ -794,7 +798,7 @@ class QPrm(object):
                 lf = line.split()
                 try:
                     anames = lf[0:4]
-                    fcs = map(float, lf[4:8])
+                    fcs = list(map(float, lf[4:8]))
                     comment = "FFLD: " + " ".join(lf[8:])
                 except Exception as e:
                     raise QPrmError("Could not parse line: '{}'"
@@ -839,7 +843,7 @@ class QPrm(object):
                 prms["impropers"].append(improper)
 
         dups = []
-        for type_, params in prms.iteritems():
+        for type_, params in six.iteritems(prms):
             for prm in params:
                 dup = self._add_prm(prm)
                 if dup != None:
@@ -919,19 +923,19 @@ class QPrm(object):
         genimpropers = []
 
         if atom_types == None:
-            atom_types = self.atom_types.values()
+            atom_types = list(self.atom_types.values())
         if bonds == None:
-            bonds = self.bonds.values()
+            bonds = list(self.bonds.values())
         if angles == None:
-            angles = self.angles.values()
+            angles = list(self.angles.values())
         if torsions == None:
-            gentorsions = self.generic_torsions.values()
-            torsions = self.torsions.values()
+            gentorsions = list(self.generic_torsions.values())
+            torsions = list(self.torsions.values())
         if impropers == None:
-            genimpropers = self.generic_impropers.values()
-            impropers = self.impropers.values()
+            genimpropers = list(self.generic_impropers.values())
+            impropers = list(self.impropers.values())
 
-        for k, v in self.options.iteritems():
+        for k, v in six.iteritems(self.options):
             prm_l["options"].append("{:<30s} {:<s}".format(k, v))
 
         for v in sorted(set(atom_types), key=lambda x: x.prm_id):

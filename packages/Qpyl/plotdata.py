@@ -33,9 +33,13 @@ It also contains custom JSON encoder and decoder classes
 which allow saving the objects in JSON format.
 """
 
+from __future__ import absolute_import
+from __future__ import print_function
 import json
 import sys
 from collections import OrderedDict as ODict
+import six
+from six.moves import zip
 
 
 class PlotDataJSONEncoder(json.JSONEncoder):
@@ -55,7 +59,7 @@ class PlotDataJSONDecoder(json.JSONDecoder):
     def __init__(self):
         if sys.version_info < (2,7):
             # object_pairs_hook is supported only in version 2.7
-            print "You need python 2.7 or later to run this script, sorry (it's json's fault)!"
+            print("You need python 2.7 or later to run this script, sorry (it's json's fault)!")
             sys.exit(1)
         super(PlotDataJSONDecoder, self).__init__(object_pairs_hook=self.decode_plotdata)
 
@@ -105,7 +109,7 @@ class PlotData(object):
         elif self.plot_type == "wireframe":
             raise PlotDataError("Cannot export wireframe data to grace...")
 
-        legends = self.subplots.keys()
+        legends = list(self.subplots.keys())
 # creates this:
 # @s0 legend "rep_000"
 # @s1 legend "rep_001" ...
@@ -117,7 +121,7 @@ class PlotData(object):
                 set_config += "@s%d line type 0 \n" % (i,)
 
         sets = ""
-        for label, sp in self.subplots.iteritems():
+        for label, sp in six.iteritems(self.subplots):
             if not sp["yerror"] or len(sp["yerror"]) != len(sp["xdata"]):
                 yerror=["" for x in sp["xdata"]]
             else:

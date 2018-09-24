@@ -29,12 +29,14 @@ This module contains some common classes and functions,
 including simple statistical methods and data structures.
 """
 
+from __future__ import absolute_import
 import math
 import sys
 import os
 import shutil
 import logging
 import gzip
+from six.moves import zip
 
 logger = logging.getLogger(__name__)
 
@@ -149,7 +151,7 @@ class np():
             list_a (list):  list of ints/floats
             list_b (list):  list of ints/floats
         """
-        lists = zip(list_a, list_b)
+        lists = list(zip(list_a, list_b))
         N, conc, disc = len(lists), 0.0, 0.0
         for i, (x, y) in enumerate(lists[:-1]):
             for (x2, y2) in lists[i+1:]:
@@ -187,7 +189,7 @@ class np():
         if N == 0 or N-ddof == 0: 
             return float('nan')
         mean = np.mean(vals)
-        variance = map(lambda x: (x - mean)**2, vals)
+        variance = [(x - mean)**2 for x in vals]
         return math.sqrt(sum(variance)/(N - ddof))
 
     @staticmethod
@@ -274,7 +276,7 @@ class DataContainer(object):
                 col_inds.append(col)
             else:
                 col_inds.append(self.column_titles.index(str(col)))
-        cols = zip(*self._rows)   # transpose
+        cols = list(zip(*self._rows))   # transpose
         if col_inds:
             return [cols[i] for i in col_inds]
         else:
@@ -293,7 +295,7 @@ class DataContainer(object):
         """
         if columns:
             cols = self.get_columns(columns)
-            return zip(*cols)
+            return list(zip(*cols))
         else:
             return self._rows
 

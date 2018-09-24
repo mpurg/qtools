@@ -32,11 +32,14 @@ performing system calls to Qfep (QFep), and parsing Qfep output (QFepOutput).
 """
 
 
+from __future__ import absolute_import
 import subprocess
 import re
 import logging
 
 from Qpyl.common import __version__, DataContainer
+from six.moves import range
+from six.moves import zip
 
 logger = logging.getLogger(__name__)
 
@@ -229,7 +232,7 @@ class _QFepPart0(object):
 
         # LRA=0.5*(<E2-E1>_10+<E2-E1>_01)
         # REO=0.5*(<E2-E1>_10-<E2-E1>_01)
-        des_st1_st2 = zip(des_st1, des_st2)
+        des_st1_st2 = list(zip(des_st1, des_st2))
         es_lra = [0.5 * (de_st1 + de_st2) for de_st1, de_st2 in des_st1_st2]
         es_reo = [0.5 * (de_st1 - de_st2) for de_st1, de_st2 in des_st1_st2]
 
@@ -251,8 +254,8 @@ class _QFepPart0(object):
             raise QFepOutputError("Part0 has a wrong header, did the qfep "
                                   "binary change?")
         n_lines_parsed = 0
-        lines_to_read = range(calc_index*self._num_evb_states,
-                              (calc_index+1)*self._num_evb_states)
+        lines_to_read = list(range(calc_index*self._num_evb_states,
+                              (calc_index+1)*self._num_evb_states))
         for line in lines:
             # fix for Q version df165865
             if "Could not read file header!" in line:

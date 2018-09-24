@@ -30,6 +30,7 @@ See q_analysefeps.py and q_analysedyns.py for usage.
 """
 
 
+from __future__ import absolute_import
 import os
 import re
 import logging
@@ -39,6 +40,9 @@ from Qpyl.core.qfep import QFepOutput, QFepOutputError
 from Qpyl.core.qdyn import QDynOutput, QDynOutputError
 from Qpyl.common import DataContainer, np
 from Qpyl.plotdata import PlotData
+import six
+from six.moves import range
+from six.moves import zip
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +99,7 @@ class QAnalyseFeps(object):
         if self._parent == None:
             # check if the files exist and if they parse
             for qfep_output in self._qfep_outputs:
-                if isinstance(qfep_output, basestring):
+                if isinstance(qfep_output, six.string_types):
                     try:
                         qfep_out_string = open(qfep_output, "r").read()
                     except IOError as error_msg:
@@ -118,12 +122,12 @@ class QAnalyseFeps(object):
         # exctract data (exclusion or QCP) from parent's sub_calcs
         else:
             self.qfos_failed = self._parent.failed
-            for p_qfo_key, p_qfo in self._parent.qfos.iteritems():
+            for p_qfo_key, p_qfo in six.iteritems(self._parent.qfos):
                 if self._subcalc_key in p_qfo.sub_calcs:
                     self.qfos[p_qfo_key] = p_qfo.sub_calcs[self._subcalc_key]
 
         # get dG_FEP, dGa, dG0, LRAs
-        for qfep_output, qfo in self.qfos.iteritems():
+        for qfep_output, qfo in six.iteritems(self.qfos):
             self.dgs_fep[qfep_output] = qfo.part1.dg
             try:
                 dga = qfo.part3.dga
@@ -193,9 +197,9 @@ class QAnalyseFeps(object):
     @property
     def stats_str(self):
         """Free energy stats in string format."""
-        dgas = self.dgas.values()
-        dg0s = self.dg0s.values()
-        dgs_fep = self.dgs_fep.values()
+        dgas = list(self.dgas.values())
+        dg0s = list(self.dg0s.values())
+        dgs_fep = list(self.dgs_fep.values())
 
         allres = {}
         allres["calc_type"] = self._subcalc_key or ""
@@ -318,7 +322,7 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
                                       plot_type="bar")
 
         # get the column names from the first output (0th is lambda)
-        qfo0 = self.qfos.values()[0]
+        qfo0 = list(self.qfos.values())[0]
         evb_states = qfo0.header.nstates
         part0_coltitles = qfo0.part0.data_state[0].column_titles
 
@@ -337,7 +341,7 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
                                              "".format(est, col))
 
         # populate PlotData subplots (each output is a subplot)
-        for qfo_path, qfo in self.qfos.iteritems():
+        for qfo_path, qfo in six.iteritems(self.qfos):
 
             relp = os.path.relpath(qfo_path)
 
@@ -373,10 +377,10 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
 
             ## use only the first one, too much data otherwise
             if not plots["pts_egap_hists"].subplots:
-                rows = zip(*data) #transpose columns to rows
+                rows = list(zip(*data)) #transpose columns to rows
                 for l in sorted(set(data[0])):
                     rows_f = [(eg, pts) for lam, eg, dgg, pts in rows if lam == l]
-                    eg, pts = zip(*rows_f) #transpose rows to columns
+                    eg, pts = list(zip(*rows_f)) #transpose rows to columns
 
                     plots["pts_egap_hists"].add_subplot("{}_{}".format(relp, l),
                                                         eg, pts)
@@ -443,7 +447,7 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
             #                    [ EQtot_de_st1_1, EQtot_de_st1_2,...],
             #                    [ EQtot_de_st2_1, EQtot_de_st2_2,...], ...]
 
-            values = zip(*values)  
+            values = list(zip(*values))  
             # now they can be easily averaged and std-ed
             e_type = values[0][0]
             de_st1_mean = np.mean(values[1])
@@ -499,8 +503,8 @@ class QAnalyseDyns(object):
             start_time = qdo.time_end
 
         self.n_evb_states = self.analysed[0].header.nstates
-        self.en_section_keys = self.analysed[0].map_en_section.keys()
-        self.qen_section_keys = self.analysed[0].map_qen_section.keys()
+        self.en_section_keys = list(self.analysed[0].map_en_section.keys())
+        self.qen_section_keys = list(self.analysed[0].map_qen_section.keys())
 
 
     def get_temps(self, stride=1):
@@ -537,10 +541,10 @@ class QAnalyseDyns(object):
         tf_mean, tf_std = np.mean(tf), np.std(tf)
         tf_solu_mean, tf_solu_std = np.mean(tf_solu), np.std(tf_solu)
         tf_solv_mean, tf_solv_std = np.mean(tf_solv), np.std(tf_solv)
-        tt_max_dev = max(map(lambda x: abs(x - tt_mean), tt))
-        tf_max_dev = max(map(lambda x: abs(x - tf_mean), tf))
-        tf_solu_max_dev = max(map(lambda x: abs(x - tf_solu_mean), tf_solu))
-        tf_solv_max_dev = max(map(lambda x: abs(x - tf_solv_mean), tf_solv))
+        tt_max_dev = max([abs(x - tt_mean) for x in tt])
+        tf_max_dev = max([abs(x - tf_mean) for x in tf])
+        tf_solu_max_dev = max([abs(x - tf_solu_mean) for x in tf_solu])
+        tf_solv_max_dev = max([abs(x - tf_solv_mean) for x in tf_solv])
 
         outstr = """\
 Temperature stats:

@@ -6,3 +6,4 @@ qscripts.cfg
 .cache
 _build
 .coverage
+*bak

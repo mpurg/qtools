@@ -32,12 +32,15 @@ and parsing Qdyn output (QDynOutput).
 """
 
 
+from __future__ import absolute_import
 import re
 import copy
 import logging
 from collections import OrderedDict as ODict
 
 from Qpyl.common import __version__, raise_or_log, DataContainer, np, gzopen
+import six
+from six.moves import range
 
 logger = logging.getLogger(__name__)
 
@@ -231,7 +234,7 @@ class QDynInput(object):
                     value = " ".join(c[1:])
                 except IndexError:
                     value = None   # checking is done later in _check_parms
-                if qsection not in parms.keys():
+                if qsection not in list(parms.keys()):
                     parms[qsection] = {}
                 parms[qsection][key] = value
 
@@ -242,13 +245,13 @@ class QDynInput(object):
         # Checks if parameters are supported (typos and such)
         # and if they are of correct type.
 
-        for qsection, qsec_parms in parms.iteritems():
+        for qsection, qsec_parms in six.iteritems(parms):
             if qsection not in Q_PARAMETERS:
                 raise_or_log("Unsupported section: '{}'".format(qsection),
                              QDynInputError, logger, self._ignore_errors)
             try:
                 if isinstance(qsec_parms, dict):
-                    for key, value in qsec_parms.iteritems():
+                    for key, value in six.iteritems(qsec_parms):
                         exp_type = Q_PARAMETERS[qsection][key]
                         exp_type(value)
             except KeyError:
@@ -267,7 +270,7 @@ class QDynInput(object):
         # contains parameters that were overwritten as tuples (old,new)
         overridden = {}
 
-        for section, prms in d2.iteritems():
+        for section, prms in six.iteritems(d2):
             if "group_contribution" in section \
                     or "restraints" in section \
                     or "lambdas" in section:
@@ -277,7 +280,7 @@ class QDynInput(object):
             else:
                 if section not in d1:
                     d1[section] = {}
-                for keyword, prm in prms.iteritems():
+                for keyword, prm in six.iteritems(prms):
                     if keyword in d1[section]:
                         if d1[section][keyword] != prm:
                             tmpk = section + "/" + keyword
@@ -368,10 +371,10 @@ class QDynInput(object):
         if check:
             self.check()
 
-        qsections = self.parameters.keys()
+        qsections = list(self.parameters.keys())
         if sort:
             qsections = sorted(qsections,
-                        key=lambda x: (Q_PARAMETERS.keys() + [x]).index(x))
+                        key=lambda x: (list(Q_PARAMETERS.keys()) + [x]).index(x))
 
         # generate the string such that all the sections and keywords
         s = []
@@ -382,10 +385,10 @@ class QDynInput(object):
             elif "lambda" in qsection:
                 s.append(self.parameters[qsection])
             else:
-                keywords = self.parameters[qsection].keys()
+                keywords = list(self.parameters[qsection].keys())
 
                 if sort:
-                    qkeys = Q_PARAMETERS[qsection].keys() 
+                    qkeys = list(Q_PARAMETERS[qsection].keys()) 
                     keywords = sorted(keywords,
                                       key=lambda x: (qkeys + [x]).index(x))
 
@@ -716,10 +719,10 @@ class QDynOutput(object):
                                     t_solv))
 
         # join Offdiagonal distances to single DataContainer
-        offd_keys = tmp_offdiags.keys()
+        offd_keys = list(tmp_offdiags.keys())
         cts = ["Time",] + offd_keys
         self.data_offdiags = DataContainer(cts)
-        for i, (time, _) in enumerate(tmp_offdiags.values()[0]):
+        for i, (time, _) in enumerate(list(tmp_offdiags.values())[0]):
             row = [time,] + [tmp_offdiags[k][i][1] for k in offd_keys]
             self.data_offdiags.add_row(row)
 

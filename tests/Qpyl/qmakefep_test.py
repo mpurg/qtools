@@ -3,6 +3,7 @@
 #########################
 
 
+from __future__ import absolute_import
 import re
 import pytest
 
@@ -18,6 +19,6 @@ class TestMakeFep:
                                 libs)
         fep_file_str = re.sub("(\*|\!|#).*", "", fep_file_str)
         ref_fep = open("data/qmakefep/3hp.fep.tmplt.gen").read()
-        open("asd", "w").write(fep_file_str)
+        #open("asd", "w").write(fep_file_str)
         assert fep_file_str == ref_fep
 

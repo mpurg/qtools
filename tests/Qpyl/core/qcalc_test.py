@@ -2,6 +2,7 @@
 # py.test test functions
 #########################
 
+from __future__ import absolute_import
 import pytest
 
 from Qpyl.core.qcalc import QCalcOutput
