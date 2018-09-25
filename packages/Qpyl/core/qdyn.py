@@ -561,20 +561,21 @@ class QDynOutput(object):
             self.data_EQ_SUM.append(DataContainer(q_columns3))
 
         # mapping of energy types (label in the output) with containers
-        self.map_en_section = {"solute": self.data_E_solute,
-                               "solvent": self.data_E_solvent,
-                               "solute-solvent": self.data_E_solute_solvent,
-                               "LRF": self.data_E_LRF,
-                               "Q-atom": self.data_E_Q_atom,
-                               "restraints": self.data_E_restraints,
-                               "SUM": self.data_E_SUM}
+        self.map_en_section = ODict([("solute", self.data_E_solute),
+                                     ("solvent", self.data_E_solvent),
+                                     ("solute-solvent",
+                                         self.data_E_solute_solvent),
+                                     ("LRF", self.data_E_LRF),
+                                     ("Q-atom", self.data_E_Q_atom),
+                                     ("restraints", self.data_E_restraints),
+                                     ("SUM", self.data_E_SUM)])
 
-        self.map_qen_section = {"Q-Q": self.data_EQ_Q,
-                                "Q-prot": self.data_EQ_prot,
-                                "Q-wat": self.data_EQ_wat,
-                                "Q-surr.": self.data_EQ_surr,
-                                "Q-any": self.data_EQ_any,
-                                "Q-SUM": self.data_EQ_SUM}
+        self.map_qen_section = ODict([("Q-Q", self.data_EQ_Q),
+                                      ("Q-prot", self.data_EQ_prot),
+                                      ("Q-wat", self.data_EQ_wat),
+                                      ("Q-surr.", self.data_EQ_surr),
+                                      ("Q-any", self.data_EQ_any),
+                                      ("Q-SUM", self.data_EQ_SUM)])
 
 
         # parse the rest
@@ -617,7 +618,7 @@ class QDynOutput(object):
         temps_q6 = {"Total": [], "Free": [], "Solute": [],
                     "Solvent": [], "time": []}
         # tmp offdiagonal vars
-        tmp_offdiags = {}
+        tmp_offdiags = ODict()
         for atom1, atom2 in self.header.offdiagonals:
             k = "{}_{}".format(atom1, atom2)
             tmp_offdiags[k] = []

@@ -30,7 +30,9 @@ See q_analysefeps.py and q_analysedyns.py for usage.
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
+from io import open
+
 import os
 import re
 import logging
@@ -115,6 +117,7 @@ class QAnalyseFeps(object):
                 except QFepOutputError as error_msg:
                     self.failed[qfep_out_name] = error_msg
                 except Exception as error_msg:
+                    raise
                     self.failed[qfep_out_name] = "UNCAUGHT EXCEPTION: {}"\
                                                  "".format(error_msg)
                 else:

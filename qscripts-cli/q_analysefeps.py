@@ -192,7 +192,7 @@ every mapping.
     # convert plots to json and write them out
     fn_out = args.plots_out
     plots = qaf.plotdata
-    jsonenc = plotdata.PlotDataJSONEncoder(indent=2)
+    jsonenc = plotdata.PlotDataJSONEncoder(indent=2, separators=(",", ": "))
     backup = backup_file(fn_out)
     open(fn_out, 'w').write(jsonenc.encode(plots))
     if backup:

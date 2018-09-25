@@ -31,7 +31,8 @@ LRA group contributions.
 It also defines a custom exception class - QGroupContribError.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
+from io import open
 import sys
 import os
 import time
@@ -499,7 +500,6 @@ class QGroupContrib(object):
 # Qcalc path: {qcalc_exec}
 # Work dir: {cwd}
 # Date: {date}
-# CMDline: {cmdline}
 
 Directories:
 {dirs}

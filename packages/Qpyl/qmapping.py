@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -31,7 +31,11 @@ This module contains the QMapper class for automating the calculation and
 calibration of EVB reaction free profiles (via Qfep). 
 """
 
-from __future__ import absolute_import
+
+from __future__ import absolute_import, unicode_literals
+from __future__ import print_function, division
+from io import open
+
 import sys
 import os
 import time
@@ -219,6 +223,7 @@ class QMapper(object):
         return (qfep_inp_str, qfep_out_str)
 
 
+
     def fit_to_reference(self, dga_ref, dg0_ref, step_size=10.0,
                          threshold=0.005, max_iterations=10):
         """Fit Hij and alpha to obtain desired dG* and dG0 values.
@@ -347,8 +352,8 @@ class QMapper(object):
             dhij = +1
 
         # Step 3, get results
-        self.parms["hij"] = hij_init + dhij
-        self.parms["alpha"] = alpha_init + dalpha
+        self.parms["hij"] = round(hij_init + dhij, 6)
+        self.parms["alpha"] = round(alpha_init + dalpha, 6)
         means3 = self._getmeans()
         logger.info("{:10.2f} {:10.2f} {:10.2f} {:10.2f}"
                     "".format(self.parms["hij"], self.parms["alpha"],
@@ -356,16 +361,6 @@ class QMapper(object):
         return means3
 
 
-
-
-    @property
-    def input_parms_str(self):
-        # TODO: CLI script doesn't belong in here
-        inp_parms = "q_mapper.py {hij} {alpha} "\
-                    "--bins {gap_bins} --skip {points_skip} "\
-                    "--min {minpts_bin} --temp {temperature} "\
-                    "".format(**self.parms)
-        return inp_parms
 
 
     @property
@@ -384,6 +379,8 @@ class QMapper(object):
                 qfep_version = qfo.header.qfep_version
                 break
 
+        parms_str = "\n".join(["{:<15} {:>15}".format(prm, self.parms[prm]) \
+                for prm in sorted(self.parms)])
         mapdirs = ", ".join(self._mapdirs)
         outstr = """
 ------------------------------- Mapping details -------------------------------
@@ -391,20 +388,19 @@ class QMapper(object):
 # Qfep path: {qfep_exec}
 # Work dir: {cwd}
 # Date: {date}
-# CMDline: {cmdline}
 
-Directories:
+# Parms:
+{parms}
+
+# Directories:
 {dirs}
 
-Input:
-{inp_parms}
-
-Fails:
+# Fails:
 {fails}
 -------------------------------------------------------------------------------
 """.format(version=__version__, cwd=os.getcwd(), date=time.ctime(),
-           inp_parms=self.input_parms_str, cmdline=" ".join(sys.argv),
-           fails=fails or "None", dirs=mapdirs, qfep_version=qfep_version,
+           parms=parms_str, fails=fails or "None",
+           dirs=mapdirs, qfep_version=qfep_version,
            qfep_exec=os.path.abspath(self._qfep.qfep_exec))
 
         return outstr

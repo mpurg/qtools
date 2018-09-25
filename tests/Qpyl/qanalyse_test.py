@@ -17,7 +17,8 @@ class TestAnalyseFeps:
         qfep_outs = ["data/qfep.out.1",
                      "data/qfep.out.2"]
         qafs = QAnalyseFeps(qfep_outs, lra_lambdas=(1.0, 0.0))
-        jsonenc = plotdata.PlotDataJSONEncoder(indent=2)
+        jsonenc = plotdata.PlotDataJSONEncoder(indent=2,
+                                               separators=(',', ': '))
         #open("data/qaf.tmp.json", "w").write(jsonenc.encode(qafs.plotdata))
         assert jsonenc.encode(qafs.plotdata) == ref_values
 
@@ -61,8 +62,9 @@ class TestAnalyseDyns:
         qdyn_outs = ["data/qdyn5.log",
                      "data/qdyn6.log"]
         qads = QAnalyseDyns(qdyn_outs)
-        jsonenc = plotdata.PlotDataJSONEncoder(indent=2)
+        jsonenc = plotdata.PlotDataJSONEncoder(indent=2,
+                                               separators=(',', ': '))
         pd = jsonenc.encode(qads.get_plotdata(stride=10))
-#        open("data/qad.tmp.json", "w").write(pd)
+        #open("data/qad.tmp.json", "w").write(pd)
         assert pd == ref_values
 

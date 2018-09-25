@@ -26,6 +26,9 @@
 #
 #
 
+from __future__ import unicode_literals
+from io import open
+
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -224,11 +227,10 @@ Attempting to fit to dG# = {} and dG0 = {}
 
     else:
         print """
-
 Well done! Use this on your non-reference simulations:
-{}
-
-""".format(qmapper.input_parms_str)
+q_mapper.py {hij} {alpha} --bins {gap_bins} --skip {points_skip} \
+--min {minpts_bin} --temp {temperature} 
+""".format(**qmapper.parms)
 
         # write out the inputs and outputs from the last step
         qfep_inp_fn = QScfg.get("files", "qfep_inp")
@@ -246,13 +248,17 @@ Well done! Use this on your non-reference simulations:
                                             qafs.failed.iteritems()])
 
         outstr = """
+------------------------------- q_automapper.py -------------------------------
+# Path: {q_automapper}
+# CMDline: q_automapper.py {cmdline}
 {mapper_details}
 Analysis Stats:
 {analysis_stats}
 Analysis Fails:
 {analysis_fails}
 """.format(mapper_details=qmapper.details, analysis_stats=qafs.stats_str,
-           analysis_fails=fails or "None")
+           analysis_fails=fails or "None", cmdline=" ".join(sys.argv[1:]),
+           q_automapper=sys.argv[0])
 
         if fails or qmapper.failed:
             print """

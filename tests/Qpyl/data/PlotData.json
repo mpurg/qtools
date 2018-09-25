@@ -1,0 +1,61 @@
+{
+  "__type__": "PlotData",
+  "title": "random_title",
+  "plot_type": "bar",
+  "xlabel": "xlab",
+  "ylabel": "ylab",
+  "subplots": {
+    "1.subplot": {
+      "xdata": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "ydata": [
+        2,
+        4,
+        8,
+        16
+      ],
+      "zdata": [
+        2,
+        4,
+        8,
+        16
+      ],
+      "yerror": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "2.subplot": {
+      "xdata": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "ydata": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "zdata": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "yerror": [
+        1,
+        1,
+        1,
+        1
+      ]
+    }
+  }
+}

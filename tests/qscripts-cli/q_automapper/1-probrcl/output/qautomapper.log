@@ -1,19 +1,27 @@
 
+------------------------------- q_automapper.py -------------------------------
+# 
+# CMDline: q_automapper.py 12 -5 0 0 --dirs testrep1 testrep2 --skip 1 --min 1 --bins 50 --temp 298 --step 10 --threshold 0.001 --iter 10 --nosingle --qfep_exec /home/mpurg/bin/converting_qtools_p3/qtools-modernize/tests/qbin//Qfep6 --out qautomapper.log
 
 ------------------------------- Mapping details -------------------------------
-# Mapped with: Qtools (0.5.12), Qfep (6.0.8)
-# Qfep path: /home/mpurg/bin/Q6/bin/Qfep6
-# Work dir: /tmp/1-probrcl_mE2
-# Date: Mon Apr 23 10:40:46 2018
-# CMDline: /home/mpurg/bin/qtools/qscripts-cli/q_automapper.py 12 -5 0 0 --dirs testrep1 testrep2 --skip 1 --min 1 --bins 50 --temp 298 --step 10 --threshold 0.001 --iter 10 --nosingle --out qautomapper.log
+# Mapped with: Qtools (0.6.1), Qfep (6.0.8)
+# 
+# Work dir: /tmp/1-probrcl_3Ic
+# Date: Tue Sep 25 21:24:17 2018
 
-Directories:
+# Parms:
+alpha                  4.567082
+gap_bins                     50
+gas_const          0.0019872041
+hij                   82.120105
+minpts_bin                    1
+points_skip                   1
+temperature               298.0
+
+# Directories:
 testrep1, testrep2
 
-Input:
-q_mapper.py 82.1201056503 4.56708284345 --bins 50 --skip 1 --min 1 --temp 298.0 
-
-Fails:
+# Fails:
 None
 -------------------------------------------------------------------------------
 

@@ -31,7 +31,7 @@ Contains classes for running Qcalc (QCalc), generating inputs (QCalcInput),
 parsing output (QCalcOutput).
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 import subprocess
 import logging
 import re
@@ -80,11 +80,14 @@ class QCalc(object):
             raise QCalcError("Problem when running qcalc: {}"
                              "".format(error_msg))
 
-        # "\n" is added to fix the blocking qcalc issue 
-        stdout, stderr = self.process.communicate(qcalc_input_str + "\n")
+        # "\n" is added to fix the blocking qcalc issue
+        qcalc_input_str += "\n"
+        # convert to bytes (Py3+)
+        stdin = qcalc_input_str.encode("utf-8")
+        stdout, stderr = self.process.communicate(stdin)
 
         # stderr is useless in qcalc
-        return stdout
+        return stdout.decode("utf-8")
 
 
 class QCalcInput(object):

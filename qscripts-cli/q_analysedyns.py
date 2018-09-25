@@ -93,7 +93,7 @@ print qads.get_temp_stats()
 
 plots = qads.get_plotdata(stride=args.stride)
 
-jsonenc = plotdata.PlotDataJSONEncoder(indent=2)
+jsonenc = plotdata.PlotDataJSONEncoder(indent=2, separators=(",", ": "))
 backup = backup_file(args.plots_out)
 if backup:
     print "Backed up '{}' to '{}'".format(args.plots_out, backup)

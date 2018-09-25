@@ -32,7 +32,7 @@ performing system calls to Qfep (QFep), and parsing Qfep output (QFepOutput).
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 import subprocess
 import re
 import logging
@@ -722,13 +722,16 @@ class QFep(object):
             raise QFepError("Problem when running qfep: {}"
                             "".format(error_msg))
 
-        stdout, stderr = self.process.communicate(qfep_input_str)
+        # convert to bytes (Py3+)
+        stdin = qfep_input_str.encode("utf-8")
+        stdout, stderr = self.process.communicate(stdin)
 
         # not sure if this ever happens, but will keep it anyway
         if stderr:
-            raise QFepError("QFep wrote to STDERR: {}".format(stderr))
+            raise QFepError("QFep wrote to STDERR: {}"
+                            "".format(stderr.decode("utf-8")))
 
-        return stdout
+        return stdout.decode("utf-8")
 
 ###############################################################################
 
@@ -780,7 +783,7 @@ class QFepInput(object):
 1 -1                 # linear combination of states ( E = e1 - e2 )
 {en_files}
 stop""".format(frames=len(self.energy_files),
-               RT=self.temperature*self.gas_const,
+               RT=round(self.temperature*self.gas_const, 10),
                points_skip=self.points_skip,
                gap_bins=self.gap_bins,
                minpts_bin=self.minpts_bin,

@@ -1,11 +1,13 @@
 
+---------------------------------- q_calc.py ----------------------------------
+# Path: 
+# CMDline: q_calc.py gc dfpase_dfp_start.pdb 15 20 --iscale 1 --dirs testrep1 testrep2 testrep3 --lra_l 0.86 0.46 --qmask qmask.list --plots_out qgc3.pd.json --out qc3.log --pdbgc gc3.pdb --qcalc_exec /home/mpurg/bin/converting_qtools_p3/qtools-modernize/tests/qbin//Qcalc6 --writeout
 
 ---------------------------------- GC details ---------------------------------
-# Calculated with: Qtools (0.5.12), Qcalc (6.0.8)
-# Qcalc path: /home/mpurg/bin/Q6/bin/Qcalc6
-# Work dir: /tmp/1-gc_probrcl_zs5
-# Date: Mon Apr 23 18:18:12 2018
-# CMDline: /home/mpurg/bin/qtools/qscripts-cli/q_calc.py gc dfpase_dfp_start.pdb 15 20 --iscale 1 --dirs testrep1 testrep2 testrep3 --lra_l 0.86 0.46 --qmask qmask.list --plots_out qgc3.pd.json --out qc3.log --pdbgc gc3.pdb --writeout
+# Calculated with: Qtools (0.6.1), Qcalc (6.0.8)
+# Qcalc path:
+# Work dir: /tmp/1-gc_probrcl_lcV
+# Date: Tue Sep 25 21:56:16 2018
 
 Directories:
 testrep1, testrep2, testrep3

@@ -33,6 +33,7 @@ It also contains custom JSON encoder and decoder classes
 which allow saving the objects in JSON format.
 """
 
+from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import print_function
 import json
@@ -45,23 +46,24 @@ from six.moves import zip
 class PlotDataJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, PlotData):
-            return { "__type__":  "PlotData",
-                     "title":     obj.title,
-                     "plot_type": obj.plot_type,
-                     "xlabel":    obj.xlabel,
-                     "ylabel":    obj.ylabel,
-                     "subplots":  obj.subplots }
+            return ODict([("__type__",  "PlotData"),
+                          ("title",     obj.title),
+                          ("plot_type", obj.plot_type),
+                          ("xlabel",    obj.xlabel),
+                          ("ylabel",    obj.ylabel),
+                          ("subplots",  obj.subplots)])
         else:
             return json.JSONEncoder.default(self, obj)
 
 
 class PlotDataJSONDecoder(json.JSONDecoder):
     def __init__(self):
-        if sys.version_info < (2,7):
+        if sys.version_info < (2, 7):
             # object_pairs_hook is supported only in version 2.7
-            print("You need python 2.7 or later to run this script, sorry (it's json's fault)!")
-            sys.exit(1)
-        super(PlotDataJSONDecoder, self).__init__(object_pairs_hook=self.decode_plotdata)
+            raise PlotDataError("You need python 2.7 or later to run this"
+                                "script, sorry (it's json's fault)!")
+        super(PlotDataJSONDecoder,
+                self).__init__(object_pairs_hook=self.decode_plotdata)
 
     def decode_plotdata(self, d):
         d = ODict(d)
@@ -94,8 +96,10 @@ class PlotData(object):
         self.subplots = ODict()
 
     def add_subplot(self, label, xdata, ydata, zdata=None, yerror=None):
-        self.subplots[label] = {"xdata": xdata, "ydata": ydata,
-                                "zdata": zdata, "yerror": yerror}
+        self.subplots[label] = ODict([("xdata", xdata),
+                                      ("ydata", ydata),
+                                      ("zdata", zdata),
+                                      ("yerror", yerror)])
 
 
     # TODO: clean this code, looks almost as bad as Javascript
@@ -131,6 +135,7 @@ class PlotData(object):
                 sets += "%s %s %s\n" % (x, y, dy)
             sets += "&\n"
         
+
         return """#
 @type {typ}
 @title "{title}"
@@ -139,6 +144,6 @@ class PlotData(object):
 {set_config}
 {sets}
 
-""".format(typ=typ, title=self.title, xlabel=self.xlabel.encode("utf-8"), ylabel=self.ylabel.encode("utf-8"), set_config=set_config, sets=sets)
+""".format(typ=typ, title=self.title, xlabel=self.xlabel, ylabel=self.ylabel, set_config=set_config, sets=sets)
 
 

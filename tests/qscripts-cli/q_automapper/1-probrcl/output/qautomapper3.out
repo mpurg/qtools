@@ -39,10 +39,8 @@ Will use these directories for mapping (use --dirs to change this): testrep1, te
 #      83.11       4.57      11.75      -4.94
 #      82.12       4.57      12.00      -5.00
 
-
 Well done! Use this on your non-reference simulations:
-q_mapper.py 82.1215253387 4.56566374318 --bins 50 --skip 1 --min 1 --temp 298.0 
-
+q_mapper.py 82.121525 4.565664 --bins 50 --skip 1 --min 1 --temp 298.0 
 
 Writting out the logfile...
 # Backed up 'asd' to '#asd.1#'

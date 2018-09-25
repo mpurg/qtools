@@ -32,6 +32,7 @@ library files.
 
 from __future__ import absolute_import
 import re
+import math
 import logging
 from collections import OrderedDict
 
@@ -806,14 +807,15 @@ class _LibResidue(object):
 
 
 
-    def rescale(self, atoms, threshold):
+    def rescale(self, atoms, threshold=0.4):
         """Rescale the charges of a group of atoms to nearest integer value.
 
         Args:
             atoms (list):  List of atom names
-            threshold:  Maximum difference between sum and nearest integer.\
-                        If the difference is greater than this value,\
-                        QLibError, is raised.
+            threshold (float, optional):  Maximum difference between sum of \
+                                          charges and the nearest integer. \
+                                          If the difference is greater than \
+                                          this value, QLibError, is raised.
 
         Used primarily in oplsaa for charge groups, or to fix rounding errors.
 
@@ -849,12 +851,21 @@ class _LibResidue(object):
         # calculate absolute charges and sums
         sum_all_q = sum(atom_dict.values())
         sum_abs_all_q = sum([abs(q) for q in atom_dict.values()])
+
         target = round(sum_all_q)
+
         diff = sum_all_q - target
-        if diff > threshold:
+        if abs(diff) > threshold:
             raise QLibError("Difference between sum of charges and nearest "
                             "integer ({}) is greater than threshold"
                             "".format(diff))
+
+        if abs(abs(sum_all_q - target) - 0.5) < 1e-9:
+            logger.warning("The sum of charges is exactly halfway between "
+                           "the integers ({}). Since Py2 and Py3 handle the "
+                           "rounding of 0.5 differently, the rescaling "
+                           "will be dependent on your python version."
+                           "".format(sum_all_q))
 
         # rescale the charges
         for atom_name in atoms:

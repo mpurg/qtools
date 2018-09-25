@@ -24,6 +24,8 @@
 # SOFTWARE.
 #
 
+from __future__ import unicode_literals
+from io import open
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -158,6 +160,9 @@ def main():
     qafs = QAnalyseFeps(output_files)
 
     outstr = """
+--------------------------------- q_mapper.py ---------------------------------
+# Path: {q_mapper}
+# CMDline: q_mapper.py {cmdline}
 {mapper_details}
 Analysis Stats:
 {analysis_stats}
@@ -166,8 +171,8 @@ FEP: {fails}, EVB: {fails_dg}
 
 Run q_analysefeps.py for more info...
 """.format(mapper_details=qmapper.details, analysis_stats=qafs.stats_str,
-           fails=len(qafs.failed) or "None",
-           fails_dg=len(qafs.failed_dg) or "None")
+           fails=len(qafs.failed) or "None", cmdline=" ".join(sys.argv[1:]),
+           q_mapper=sys.argv[0], fails_dg=len(qafs.failed_dg) or "None")
 
     print outstr
     backup = backup_file(args.outfile)

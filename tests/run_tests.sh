@@ -9,7 +9,8 @@ mkdir -p qbin && cd qbin
 export QBIN_DIR=$(pwd)
 echo $QBIN_DIR
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
-    wget -q -O- https://github.com/qusers/Q6/releases/download/v6.0/Q6Linux.tar.gz | tar xv
+#    wget -q -O- https://github.com/qusers/Q6/releases/download/v6.0/Q6Linux.tar.gz | tar xv
+    pass
 elif [[ "$OSTYPE" == "darwin"* ]]; then
     wget -q -O- https://github.com/qusers/Q6/releases/download/v6.0/Q6Mac.tar.gz | tar xv
 else

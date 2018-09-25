@@ -24,6 +24,9 @@
 # SOFTWARE.
 #
 
+from __future__ import unicode_literals
+from io import open
+
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -147,13 +150,17 @@ def gc(args):
         top_gcs_reorg = "\n".join(out_l)
 
     outstr = """
+---------------------------------- q_calc.py ----------------------------------
+# Path: {q_calc}
+# CMDline: q_calc.py {cmdline}
 {gc_details}
 Top LRA (el) contributions:
 {top_gcs}
 
 Top REORG (el) contributions:
 {top_gcs_reorg}
-""".format(gc_details=qgc.details, top_gcs=top_gcs, top_gcs_reorg=top_gcs_reorg)
+""".format(gc_details=qgc.details, top_gcs=top_gcs, q_calc=sys.argv[0],
+           top_gcs_reorg=top_gcs_reorg, cmdline=" ".join(sys.argv[1:]))
 
     print outstr
     fn_out = args.output_fn
@@ -166,7 +173,7 @@ Top REORG (el) contributions:
     # convert plots to json and write them out
     fn_out = args.plots_out
     plots = qgc.plotdata
-    jsonenc = plotdata.PlotDataJSONEncoder(indent=2)
+    jsonenc = plotdata.PlotDataJSONEncoder(indent=2, separators=(",", ": "))
     backup = backup_file(fn_out)
     if backup:
         print "# Backed up '{}' to '{}'".format(fn_out, backup)

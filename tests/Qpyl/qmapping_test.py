@@ -2,7 +2,10 @@
 # py.test test functions
 #########################
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
+from __future__ import print_function, division
+from io import open
+
 import pytest
 import os
 import re
@@ -44,12 +47,9 @@ class TestQMapper:
             qmapper.kill_event.set()
             raise
 
-        assert qmapper.input_parms_str == \
-            "q_mapper.py 100.0 10.0 --bins 20 --skip 1 --min 1 --temp 298.0 "
-
         for md, (qfep_inp, qfep_out) in six.iteritems(qmapper.mapped):
             fn = "data/qmapping/qfep_" + os.path.basename(md) + ".inp"
-            #open(fn, "w").write(qfep_inp)
+            #open("asd", "w").write(qfep_inp)
             assert open(fn, "r").read() == qfep_inp
 
             fn = "data/qmapping/qfep_" + os.path.basename(md) + ".out"
@@ -87,9 +87,11 @@ class TestQMapper:
             qmapper.kill_event.set()
             raise
 
-        assert qmapper.input_parms_str == "q_mapper.py 82.1201056503 " \
-                "4.56708284345 --bins 50 --skip 1 --min 1 --temp 298.0 "
-
-        assert is_close(qmapper.parms["hij"], 82.1201056503)
-        assert is_close(qmapper.parms["alpha"], 4.56708284345)
+        assert is_close(qmapper.parms["hij"], 82.120105)
+        assert is_close(qmapper.parms["alpha"], 4.567082)
+        assert is_close(qmapper.parms["gas_const"], 0.0019872041)
+        assert is_close(qmapper.parms["temperature"], 298.0)
+        assert qmapper.parms["gap_bins"] == 50
+        assert qmapper.parms["points_skip"] == 1
+        assert qmapper.parms["minpts_bin"] == 1
 

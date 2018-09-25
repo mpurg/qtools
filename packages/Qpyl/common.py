@@ -29,7 +29,7 @@ This module contains some common classes and functions,
 including simple statistical methods and data structures.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division, unicode_literals
 import math
 import sys
 import os
@@ -217,9 +217,9 @@ class np():
             return float('nan')
         vals = sorted(vals)
         if N % 2 == 0: #even
-            return np.mean((vals[N/2-1], vals[N/2]))
+            return np.mean((vals[N//2-1], vals[N//2]))
         else: #odd
-            return vals[N/2]
+            return vals[N//2]
 
 
 
