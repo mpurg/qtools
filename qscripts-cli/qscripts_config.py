@@ -30,7 +30,7 @@ from __future__ import absolute_import, print_function
 from __future__ import division, unicode_literals
 import six.moves.configparser
 from six.moves import input
-from io import open
+#from io import open
 
 import sys
 import os
@@ -76,7 +76,12 @@ class _QScriptsConfig(object):
                   "'qscripts_config.py'.".format(self.cfgfile))
             sys.exit(1)
 
-        self.config = six.moves.configparser.SafeConfigParser()
+        args = {"inline_comment_prefixes": (';',)}
+        try:
+            self.config = six.moves.configparser.ConfigParser(**args)
+        except TypeError: # py27
+            self.config = six.moves.configparser.ConfigParser()
+
 
         try:
             self.config.read(self.cfgfile)
