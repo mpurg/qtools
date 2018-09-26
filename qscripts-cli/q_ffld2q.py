@@ -183,7 +183,7 @@ all_prms.sort(key=lambda x: x[1]) # sort by energy
 pchk = []
 for p, de, v, v0 in all_prms:
     prmtype = "-".join(p.prm.prm_id.split())
-    pchk.append("{:<40}  value:{:>8.2f}   eq.value:{:>8.2f}    "
+    pchk.append("{!r:<40}  value:{:>8.2f}   eq.value:{:>8.2f}    "
                 "dE:{:>6.2f}    # Prm: {}".format(p, v, v0, de, prmtype))
 
 

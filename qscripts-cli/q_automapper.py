@@ -37,7 +37,11 @@ import sys
 import os
 import argparse
 import logging
-import inspect
+try:
+    from inspect import getfullargspec
+except ImportError: # py27
+    from inspect import getargspec as getfullargspec
+
 
 from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl.qmapping import QMapper, QMapperError
@@ -111,7 +115,8 @@ def main():
                         help="Logfile name (default={})."
                              "".format(QScfg.get("files", "automapper_log")))
 
-    _args, _, _, _defaults = inspect.getargspec(QMapper.fit_to_reference)
+    _argspec = getfullargspec(QMapper.fit_to_reference)
+    _args, _defaults = _argspec[0], _argspec[3]
     defs = dict(list(zip(_args[-len(_defaults):], _defaults)))
 
     optarg.add_argument("--step", dest="step_size", type=float,

@@ -62,8 +62,19 @@ class SpecialFormatter(logging.Formatter):
                logging.INFO : "# %(message)s",
                'DEFAULT' : "%(message)s"}
 
+    def __init__(self, *args, **kwargs):
+        super(SpecialFormatter, self).__init__(*args, **kwargs)
+
     def format(self, record):
-        self._fmt = self.FORMATS.get(record.levelno, self.FORMATS['DEFAULT'])
+# a bit diff in py2 vs py3
+# https://stackoverflow.com/questions/14844970/modifying-logging-message-format-based-on-message-logging-level-in-python3
+        try:
+            self._style
+            self._style._fmt = self.FORMATS.get(record.levelno,
+                                                self.FORMATS['DEFAULT'])
+        except AttributeError:
+            self._fmt = self.FORMATS.get(record.levelno,
+                                         self.FORMATS['DEFAULT'])
         return logging.Formatter.format(self, record)
 
 
