@@ -30,7 +30,10 @@ This module contains the make_fep() function for generating Q FEP-files,
 and implements a custom exception class QMakeFepError.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division, unicode_literals
+import six
+from six.moves import range
+from io import open
 import sys
 import os
 import re
@@ -44,8 +47,6 @@ from Qpyl.core.qparameter import QPrm, QPrmError
 from Qpyl.core.qstructure import QStruct, QStructError
 from Qpyl.core.qtopology import QTopology, QTopologyError
 from Qpyl.common import raise_or_log, __version__
-import six
-from six.moves import range
 
 logger = logging.getLogger(__name__)
 
@@ -439,9 +440,9 @@ def make_fep(qmap_file, pdb_file, forcefield,
 
     # find changes between states (add to fep_changes dict)
     for bati_type, batis in six.iteritems(bati_map):
-        for bati_key, bati_all_states in sorted(list(batis.items()),
+        for bati_key, bati_all_states in sorted(batis.items(),
                                                 key=lambda key_val: \
-                                                        _bati_sort(key_val[0], key_val[1])):
+                                      _bati_sort(key_val[0], key_val[1])):
 
             # bond/angle/.. breaking or forming
             if None in bati_all_states:

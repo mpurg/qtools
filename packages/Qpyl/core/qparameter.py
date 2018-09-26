@@ -30,16 +30,18 @@ This module implements the QPrm class for reading and writing Q (and other)
 parameter files.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals, division
+import six
+from six.moves import map
+from six.moves import zip
+from io import open
+
 import re
 import math
 import logging
 from collections import OrderedDict
 
 from Qpyl.common import __version__, raise_or_log
-import six
-from six.moves import map
-from six.moves import zip
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +122,8 @@ class QPrm(object):
             for lnumber, line in enumerate(prmfile.readlines()):
                 lnumber += 1
 
-                line, comment = list(map(str.strip, re.split("#|\*|\!", line+"!", 1)))
+                line, comment = [x.strip() for x in \
+                        re.split("#|\*|\!", line+"!", 1)]
                 comment = " ".join(comment.strip("!").split())
 
                 if line == "":
@@ -202,7 +205,7 @@ class QPrm(object):
                     parms = line.split()
                     try:
                         atom_types = parms[0:4]
-                        fc, multiplicity, phase, npaths = list(map(float, parms[4:8]))
+                        fc, multiplicity, phase, npaths = map(float, parms[4:8])
                     except Exception as e:
                         raise QPrmError("Could not parse line {} in [torsions]"
                                         " section of parm file '{}':\n{}"
@@ -242,7 +245,7 @@ class QPrm(object):
                     try:
                         atom_types = parms[0:4]
                         center_atom = atom_types.pop(1)
-                        fc, phi0 = list(map(float, parms[4:6]))
+                        fc, phi0 = map(float, parms[4:6])
                     except Exception as e:
                         raise QPrmError("Could not parse line {} in "
                                         "[impropers] section of parm file '{}'"
@@ -440,7 +443,7 @@ class QPrm(object):
                 try:
                     a_type = line[0].replace("*", "star")
                     same_a_types = same_types.get(a_type, [a_type,])
-                    lj_R, lj_eps = list(map(float, line[1:3]))
+                    lj_R, lj_eps = map(float, line[1:3])
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
@@ -624,7 +627,7 @@ class QPrm(object):
                 if not line: break
                 try:
                     a_type = line[0].replace("*", "star")
-                    lj_R, lj_eps = list(map(float, line[1:3]))
+                    lj_R, lj_eps = map(float, line[1:3])
                 except Exception as e:
                     raise QPrmError("Could not parse line '{}'".format(line))
 
@@ -712,7 +715,7 @@ class QPrm(object):
                 lf = line.split()
                 try:
                     name, type_, vdw, symbol = lf[0:4]
-                    charge, sigma, epsilon = list(map(float, lf[4:7]))
+                    charge, sigma, epsilon = map(float, lf[4:7])
                     comment = "FFLD: {}_{}_{} {}".format(symbol, vdw, type_,
                                                          " ".join(lf[8:]))
                 except Exception:
@@ -764,7 +767,7 @@ class QPrm(object):
                 lf = line.split()
                 try:
                     anames = lf[0:2]
-                    fc, r0 = list(map(float, lf[2:4]))
+                    fc, r0 = map(float, lf[2:4])
                     comment = "FFLD: " + " ".join(lf[4:])
                 except Exception as e:
                     raise QPrmError("Could not parse line: '{}'"
@@ -781,7 +784,7 @@ class QPrm(object):
                 lf = line.split()
                 try:
                     anames = lf[0:3]
-                    fc, theta0 = list(map(float, lf[3:5]))
+                    fc, theta0 = map(float, lf[3:5])
                     comment = "FFLD: " + " ".join(lf[5:])
                 except Exception as e:
                     raise QPrmError("Could not parse line: '{}'"

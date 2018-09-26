@@ -30,15 +30,16 @@ This module implements the QLib class for reading and writing Q (and other)
 library files.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals, division
+import six
+from six.moves import map
+from io import open
+
 import re
-import math
 import logging
 from collections import OrderedDict
 
 from Qpyl.common import __version__, raise_or_log
-import six
-from six.moves import map
 
 logger = logging.getLogger(__name__)
 
@@ -525,7 +526,7 @@ class QLib(object):
 #
                 lf = line.split()
                 name, type_, vdw, symbol = lf[0:4]
-                charge, sigma, epsilon = list(map(float, lf[4:7]))
+                charge, sigma, epsilon = map(float, lf[4:7])
                 quality, comment = lf[7], lf[8:]
 
 
@@ -815,7 +816,8 @@ class _LibResidue(object):
             threshold (float, optional):  Maximum difference between sum of \
                                           charges and the nearest integer. \
                                           If the difference is greater than \
-                                          this value, QLibError, is raised.
+                                          this value, QLibError, is raised. \
+                                          Default is 0.4.
 
         Used primarily in oplsaa for charge groups, or to fix rounding errors.
 

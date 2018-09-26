@@ -31,8 +31,11 @@ LRA group contributions.
 It also defines a custom exception class - QGroupContribError.
 """
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import, division, unicode_literals
 from io import open
+import six
+from six.moves import zip
+
 import sys
 import os
 import time
@@ -45,8 +48,6 @@ from Qpyl.core.qdyn import QDynInput, QDynInputError
 from Qpyl.core.qstructure import QStruct, QStructError
 from Qpyl.common import __version__, np, DataContainer
 from Qpyl.plotdata import PlotData
-import six
-from six.moves import zip
 
 logger = logging.getLogger(__name__)
 
@@ -303,7 +304,7 @@ class QGroupContrib(object):
         # iterate through each residue and calculate
         # means and stdevs
         # (sort by residue index)
-        for res_key in sorted(list(gcs.keys()), key=lambda x: int(x.split(".")[0])):
+        for res_key in sorted(gcs, key=lambda x: int(x.split(".")[0])):
             rc = gcs[res_key]
             resid, resname = res_key.split(".")
             # get mean and stdev

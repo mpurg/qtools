@@ -32,7 +32,10 @@ Example of procedure files can be found in
 qtools/template_examples/
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, division, unicode_literals
+import six
+from six.moves import range
+
 import sys
 import os
 import copy
@@ -48,8 +51,6 @@ from collections import OrderedDict as ODict
 from Qpyl.core.qdyn import QDynInput, QDynInputError
 from Qpyl.core.qstructure import QStruct, QStructError, find_placeholders
 from Qpyl.common import __version__, raise_or_log
-import six
-from six.moves import range
 
 logger = logging.getLogger(__name__)
 
@@ -465,7 +466,7 @@ Quick summary
                     # if energy or trajectory, check that files for output are
                     # defined, otherwise set the printout to 0
                     if interval_key in ("energy", "trajectory") and not \
-                            interval_key in list(step.parameters["files"].keys()):
+                            interval_key in step.parameters["files"]:
                         data[k] = 0
 
 
@@ -1083,7 +1084,7 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
                 # if energy or trajectory, check that files for output are
                 # defined, otherwise set the printout to 0
                 if interval_key in ("energy", "trajectory") and not \
-                   interval_key in list(step.parameters["files"].keys()):
+                   interval_key in step.parameters["files"]:
                     data[k] = 0
 
         trj_data = data["trj"]

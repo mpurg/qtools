@@ -30,13 +30,14 @@ including simple statistical methods and data structures.
 """
 
 from __future__ import absolute_import, division, unicode_literals
+from six.moves import zip
+from io import open
 import math
 import sys
 import os
 import shutil
 import logging
 import gzip
-from six.moves import zip
 
 logger = logging.getLogger(__name__)
 
@@ -143,26 +144,6 @@ def backup_file(filename):
 
 # no need for numpy to do these basic stats
 class np():
-    @staticmethod
-    def kendall_tau(list_a, list_b):
-        """Calculate Kendall's tau-a correlation coefficient.
-
-        Args:
-            list_a (list):  list of ints/floats
-            list_b (list):  list of ints/floats
-        """
-        lists = list(zip(list_a, list_b))
-        N, conc, disc = len(lists), 0.0, 0.0
-        for i, (x, y) in enumerate(lists[:-1]):
-            for (x2, y2) in lists[i+1:]:
-                dx, dy = (x - x2), (y - y2)
-                if dx * dy < 0:
-                    disc += 1
-                elif dx * dy > 0:
-                    conc += 1
-                else:
-                    pass # ignore ties
-        return (conc - disc)/(N * (N - 1)/2.0)
 
     @staticmethod
     def mean(vals):

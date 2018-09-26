@@ -32,15 +32,15 @@ and parsing Qdyn output (QDynOutput).
 """
 
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals, division
+import six
+from six.moves import range
 import re
 import copy
 import logging
 from collections import OrderedDict as ODict
 
 from Qpyl.common import __version__, raise_or_log, DataContainer, np, gzopen
-import six
-from six.moves import range
 
 logger = logging.getLogger(__name__)
 
@@ -178,7 +178,7 @@ class QDynInput(object):
         >>>     # get the input string
         >>>     new_inp_str = inp.get_string()
         >>> except QDynInputError as e:
-        >>>     print "Problem with input file:", str(e)
+        >>>     print("Problem with input file:", str(e))
 
     """
 
@@ -234,7 +234,7 @@ class QDynInput(object):
                     value = " ".join(c[1:])
                 except IndexError:
                     value = None   # checking is done later in _check_parms
-                if qsection not in list(parms.keys()):
+                if qsection not in parms:
                     parms[qsection] = {}
                 parms[qsection][key] = value
 

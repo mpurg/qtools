@@ -33,14 +33,13 @@ It also contains custom JSON encoder and decoder classes
 which allow saving the objects in JSON format.
 """
 
-from __future__ import unicode_literals
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, division, unicode_literals
+import six
+from six.moves import zip
+
 import json
 import sys
 from collections import OrderedDict as ODict
-import six
-from six.moves import zip
 
 
 class PlotDataJSONEncoder(json.JSONEncoder):
@@ -113,29 +112,27 @@ class PlotData(object):
         elif self.plot_type == "wireframe":
             raise PlotDataError("Cannot export wireframe data to grace...")
 
-        legends = list(self.subplots.keys())
-# creates this:
-# @s0 legend "rep_000"
-# @s1 legend "rep_001" ...
         set_config = ""
-        for i, sp in enumerate(self.subplots.keys()):
-            set_config += "@s%d legend \"%s\" \n" % (i, sp)   # add legends
+        sets = ""
+        for i, (label, sp) in enumerate(six.iteritems(self.subplots)):
+            # create this:
+            # @s0 legend "rep_000"
+            # @s1 legend "rep_001" ...
+            set_config += "@s{} legend \"{}\" \n".format(i, label) 
             if typ == "bar":
                 # don't show the line in bar plots
-                set_config += "@s%d line type 0 \n" % (i,)
+                set_config += "@s{} line type 0 \n".format(i)
 
-        sets = ""
-        for label, sp in six.iteritems(self.subplots):
+            # add the data
             if not sp["yerror"] or len(sp["yerror"]) != len(sp["xdata"]):
                 yerror=["" for x in sp["xdata"]]
             else:
                 yerror = sp["yerror"]
                 typ = typ + "dy"
             for x, y, dy in zip(sp["xdata"], sp["ydata"], yerror):
-                sets += "%s %s %s\n" % (x, y, dy)
+                sets += "{} {} {}\n".format(x, y, dy)
             sets += "&\n"
         
-
         return """#
 @type {typ}
 @title "{title}"

@@ -32,9 +32,9 @@ calibration of EVB reaction free profiles (via Qfep).
 """
 
 
-from __future__ import absolute_import, unicode_literals
-from __future__ import print_function, division
+from __future__ import absolute_import, division, unicode_literals
 from io import open
+import six
 
 import sys
 import os
@@ -46,7 +46,6 @@ from collections import OrderedDict as ODict
 from Qpyl.core.qfep import QFep, QFepError, QFepInput
 from Qpyl.core.qfep import QFepOutput, QFepOutputError
 from Qpyl.common import __version__, np
-import six
 
 logger = logging.getLogger(__name__)
 

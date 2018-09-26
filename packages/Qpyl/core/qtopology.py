@@ -32,12 +32,12 @@ bonding patterns/charges (QLib), and the parameters (Qrm), allowing
 evaluation of individual topological components of the system.
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals, division
+from six.moves import range
 from Qpyl.core import qlibrary
 from Qpyl.core import qparameter
 from Qpyl.core import qstructure
 from Qpyl.core import qpotential
-from six.moves import range
 
 class QTopologyError(Exception):
     pass

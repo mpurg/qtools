@@ -30,8 +30,11 @@ See q_analysefeps.py and q_analysedyns.py for usage.
 """
 
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import, division, unicode_literals
 from io import open
+import six
+from six.moves import range
+from six.moves import zip
 
 import os
 import re
@@ -42,9 +45,6 @@ from Qpyl.core.qfep import QFepOutput, QFepOutputError
 from Qpyl.core.qdyn import QDynOutput, QDynOutputError
 from Qpyl.common import DataContainer, np
 from Qpyl.plotdata import PlotData
-import six
-from six.moves import range
-from six.moves import zip
 
 logger = logging.getLogger(__name__)
 
@@ -68,14 +68,14 @@ class QAnalyseFeps(object):
     Examples:
         >>> qos = [os.path.join(md, "qfep.log") for md in sorted(mapdirs)]
         >>> qaf = QAnalyseFeps(qos, lra_lambdas=(1.0, 0.0))
-        >>> print qaf.stats_str
+        >>> print(qaf.stats_str)
         # prints statistics
-        >>> for sub_calc_key, sub_calc in sorted(qaf.sub_calcs.iteritems()):
-        >>>     print sub_calc.stats_str
+        >>> for sub_calc_key, sub_calc in sorted(qaf.sub_calcs.items()):
+        >>>     print(sub_calc.stats_str)
         # prints subcalculation (QCP, GE) statistics
-        >>> for failed_path, failed_msg in sorted(qaf.failed.iteritems()):
+        >>> for failed_path, failed_msg in sorted(qaf.failed.items()):
         >>>     relp = os.path.relpath(failed_path)
-        >>>     print "-> {}: {}".format(relp, failed_msg)
+        >>>     print("-> {}: {}".format(relp, failed_msg))
         # prints failed
 
     """
@@ -117,8 +117,7 @@ class QAnalyseFeps(object):
                 except QFepOutputError as error_msg:
                     self.failed[qfep_out_name] = error_msg
                 except Exception as error_msg:
-                    raise
-                    self.failed[qfep_out_name] = "UNCAUGHT EXCEPTION: {}"\
+                    self.failed[qfep_out_name] = "Uncaught exception: {}"\
                                                  "".format(error_msg)
                 else:
                     self.qfos[qfep_out_name] = qfo
@@ -130,20 +129,20 @@ class QAnalyseFeps(object):
                     self.qfos[p_qfo_key] = p_qfo.sub_calcs[self._subcalc_key]
 
         # get dG_FEP, dGa, dG0, LRAs
-        for qfep_output, qfo in six.iteritems(self.qfos):
-            self.dgs_fep[qfep_output] = qfo.part1.dg
+        for qfo_path, qfo in six.iteritems(self.qfos):
+            self.dgs_fep[qfo_path] = qfo.part1.dg
             try:
                 dga = qfo.part3.dga
                 dg0 = qfo.part3.dg0
-                self.dgas[qfep_output] = dga
-                self.dg0s[qfep_output] = dg0
+                self.dgas[qfo_path] = dga
+                self.dg0s[qfo_path] = dg0
                 if qfo.part3.warning:
-                    logger.warning("{}: {}".format(qfep_output,
+                    logger.warning("{}: {}".format(qfo_path,
                                                    qfo.part3.warning))
             except QFepOutputError as error_msg:
-                self.failed_dg[qfep_output] = error_msg
+                self.failed_dg[qfo_path] = error_msg
             except Exception as error_msg:
-                self.failed_dg[qfep_output] = "UNCAUGHT EXCEPTION: {}"\
+                self.failed_dg[qfo_path] = "Uncaught exception: {}"\
                                               "".format(error_msg)
             # get LRA energies or log if fails (3 states, weird data)
             if self._lra_lambdas != None:
@@ -152,9 +151,9 @@ class QAnalyseFeps(object):
                                              self._lra_lambdas[1])
                 except Exception as e:
                     logger.warning("LRA failed on '{}': {}"
-                                   "".format(qfep_output, e))
+                                   "".format(qfo_path, e))
                 else:
-                    self.lras[qfep_output] = lra
+                    self.lras[qfo_path] = lra
 
             # add sub_calcs to self.sub_calcs, if they exist
             for subcalc_key in qfo.sub_calcs:
@@ -200,9 +199,9 @@ class QAnalyseFeps(object):
     @property
     def stats_str(self):
         """Free energy stats in string format."""
-        dgas = list(self.dgas.values())
-        dg0s = list(self.dg0s.values())
-        dgs_fep = list(self.dgs_fep.values())
+        dgas = self.dgas.values()
+        dg0s = self.dg0s.values()
+        dgs_fep = self.dgs_fep.values()
 
         allres = {}
         allres["calc_type"] = self._subcalc_key or ""

@@ -31,15 +31,16 @@ Contains classes for running Qcalc (QCalc), generating inputs (QCalcInput),
 parsing output (QCalcOutput).
 """
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import, unicode_literals, division
+import six
+from six.moves import zip
+
 import subprocess
 import logging
 import re
 from collections import OrderedDict
 
 from Qpyl.common import __version__, raise_or_log, DataContainer
-import six
-from six.moves import zip
 
 logger = logging.getLogger(__name__)
 

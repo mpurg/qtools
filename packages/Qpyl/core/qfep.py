@@ -32,14 +32,14 @@ performing system calls to Qfep (QFep), and parsing Qfep output (QFepOutput).
 """
 
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import, unicode_literals, division
+from six.moves import range
+from six.moves import zip
 import subprocess
 import re
 import logging
 
 from Qpyl.common import __version__, DataContainer
-from six.moves import range
-from six.moves import zip
 
 logger = logging.getLogger(__name__)
 
@@ -253,6 +253,19 @@ class _QFepPart0(object):
         if header != self._PART0_HEADER:
             raise QFepOutputError("Part0 has a wrong header, did the qfep "
                                   "binary change?")
+
+        # The energies from different calculations (normal, QCP, exclusions)
+        # are printed in the same Part0, one after another, eg.
+        # File1 normal state1
+        # File1 normal state2
+        # File1 QCP state1
+        # File1 QCP state2
+        # ...
+        # File2 normal state1
+        # ...
+        # so we extract only the one corresponding to the given calc_index
+        # (0: normal, 1: QCP, 2:...)
+
         n_lines_parsed = 0
         lines_to_read = list(range(calc_index*self._num_evb_states,
                               (calc_index+1)*self._num_evb_states))
@@ -270,7 +283,6 @@ class _QFepPart0(object):
             if "-->" in line:
                 n_lines_parsed = 0
                 continue
-            
 
             if n_lines_parsed not in lines_to_read:
                 n_lines_parsed += 1

@@ -31,13 +31,13 @@ Additionally, it implements methods for finding and replacing atom
 placeholders (e.g. $1.N$)
 """
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals, division
+from six.moves import map
 import re
 import logging
 from collections import namedtuple
 
 from Qpyl.common import raise_or_log
-from six.moves import map
 
 logger = logging.getLogger(__name__)
 
@@ -88,10 +88,10 @@ class QStruct(object):
         FILE_TYPES = {'pdb': self._read_pdb,
                       'mol2': self._read_mol2}
         self.filetype = filetype.lower()
-        if self.filetype not in list(FILE_TYPES.keys()):
+        if self.filetype not in FILE_TYPES:
             raise QStructError("Filetype {} not supported. Use {}"
                                .format(filetype,
-                                       " or ".join(list(FILE_TYPES.keys()))))
+                                       " or ".join(FILE_TYPES)))
 
         self.atoms = []
         self.residues = []
@@ -143,7 +143,7 @@ class QStruct(object):
                 lf = line.split()
 
                 aindex, aname = int(lf[0]), lf[1]
-                x, y, z = list(map(float, lf[2:5]))
+                x, y, z = map(float, lf[2:5])
                 rindex = int(lf[6])
                 rname = lf[7][0:3].upper()
 
@@ -203,7 +203,7 @@ class QStruct(object):
                 aname = line[12:17].strip()
                 rname = line[17:20].strip().upper()
                 rindex = int(line[22:26])
-                x, y, z = list(map(float, (line[30:38], line[38:46], line[46:54])))
+                x, y, z = map(float, (line[30:38], line[38:46], line[46:54]))
 
                 if not residue or residue.index_struct != rindex:
                     if residue and rindex - residue.index_struct != 1:
