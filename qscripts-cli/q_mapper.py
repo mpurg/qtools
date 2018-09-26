@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -25,6 +25,8 @@
 #
 
 from __future__ import unicode_literals
+from __future__ import absolute_import
+from __future__ import print_function
 from io import open
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
@@ -36,6 +38,7 @@ import logging
 from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl.qmapping import QMapper
 from Qpyl.common import backup_file, init_logger, get_version_full
+import six
 
 def main():
     logger = init_logger('Qpyl')
@@ -121,10 +124,10 @@ def main():
     # map just the current one
     if not mapdirs:
         mapdirs = [os.getcwd(),]
-        print "No subdirectories. Mapping files in current directory only."
+        print("No subdirectories. Mapping files in current directory only.")
     else:
-        print "Will use these directories for mapping (use --dirs to "\
-              "change this): {}".format(", ".join(mapdirs))
+        print("Will use these directories for mapping (use --dirs to "\
+              "change this): {}".format(", ".join(mapdirs)))
 
     qmapper_parms = {"mapdirs": mapdirs,
                      "hij": args.hij,
@@ -149,7 +152,7 @@ def main():
     qfep_out_fn = QScfg.get("files", "qfep_out")
 
     # write out the inputs and outputs
-    for mapdir, (qfep_inp_str, qfep_out_str) in qmapper.mapped.iteritems():
+    for mapdir, (qfep_inp_str, qfep_out_str) in six.iteritems(qmapper.mapped):
         qfep_inp = os.path.join(mapdir, qfep_inp_fn)
         qfep_out = os.path.join(mapdir, qfep_out_fn)
         open(qfep_inp, "w").write(qfep_inp_str)
@@ -174,12 +177,12 @@ Run q_analysefeps.py for more info...
            fails=len(qafs.failed) or "None", cmdline=" ".join(sys.argv[1:]),
            q_mapper=sys.argv[0], fails_dg=len(qafs.failed_dg) or "None")
 
-    print outstr
+    print(outstr)
     backup = backup_file(args.outfile)
     if backup:
-        print "# Backed up '{}' to '{}'".format(args.outfile, backup)
+        print("# Backed up '{}' to '{}'".format(args.outfile, backup))
     open(args.outfile, "w").write(outstr)
-    print "Wrote '{}'...".format(args.outfile)
+    print("Wrote '{}'...".format(args.outfile))
 
 
 
@@ -187,6 +190,6 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print "\nCtrl-C detected. Quitting..."
+        print("\nCtrl-C detected. Quitting...")
         sys.exit(1)
 

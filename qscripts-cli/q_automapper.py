@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -27,6 +27,8 @@
 #
 
 from __future__ import unicode_literals
+from __future__ import absolute_import
+from __future__ import print_function
 from io import open
 
 from qscripts_config import __version__, QScriptsConfig as QScfg
@@ -40,6 +42,8 @@ import inspect
 from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl.qmapping import QMapper, QMapperError
 from Qpyl.common import backup_file, init_logger, get_version_full
+import six
+from six.moves import zip
 
 def main():
     logger = init_logger('Qpyl')
@@ -108,7 +112,7 @@ def main():
                              "".format(QScfg.get("files", "automapper_log")))
 
     _args, _, _, _defaults = inspect.getargspec(QMapper.fit_to_reference)
-    defs = dict(zip(_args[-len(_defaults):], _defaults))
+    defs = dict(list(zip(_args[-len(_defaults):], _defaults)))
 
     optarg.add_argument("--step", dest="step_size", type=float,
                         help="Step size (default={})."
@@ -143,11 +147,11 @@ def main():
 
     args = parser.parse_args()
 
-    print """\
+    print("""\
 Attempting to fit to dG# = {} and dG0 = {}
 (stepsize = {}, threshold = {}, max iterations = {})
 """.format(args.ref_dga, args.ref_dg0, args.step_size,
-           args.threshold, args.max_iterations)
+           args.threshold, args.max_iterations))
 
     mapdirs = args.mapdirs
 
@@ -163,10 +167,10 @@ Attempting to fit to dG# = {} and dG0 = {}
     # map just the current one
     if not mapdirs:
         mapdirs = [os.getcwd(),]
-        print "No subdirectories. Mapping files in current directory only."
+        print("No subdirectories. Mapping files in current directory only.")
     else:
-        print "Will use these directories for mapping (use --dirs to "\
-              "change this): {}".format(", ".join(mapdirs))
+        print("Will use these directories for mapping (use --dirs to "\
+              "change this): {}".format(", ".join(mapdirs)))
 
     qmapper_parms = {"hij": args.init_hij,
                      "alpha": args.init_alpha,
@@ -182,8 +186,8 @@ Attempting to fit to dG# = {} and dG0 = {}
     # automap with only the first replica (when we have 3 or more)
     # to get a better init guess quickly
     if not args.nosingle and len(mapdirs) > 2:
-        print "\nInitial fit, using only the first folder (disable this "\
-                "with --nosingle)."
+        print("\nInitial fit, using only the first folder (disable this "\
+                "with --nosingle).")
         # create QMapper instance with all arguments
         qmapper_parms["mapdirs"] = mapdirs[:1]
         qmapper_single = QMapper(**qmapper_parms)
@@ -194,7 +198,7 @@ Attempting to fit to dG# = {} and dG0 = {}
                                             max_iterations=1)
                                             
         except QMapperError:
-            print "...failed, will try with all dirs anyhow..."
+            print("...failed, will try with all dirs anyhow...")
         except KeyboardInterrupt:
             qmapper_single.kill_event.set()
             raise
@@ -202,7 +206,7 @@ Attempting to fit to dG# = {} and dG0 = {}
             qmapper_parms.update({"hij": qmapper_single.parms["hij"],
                                   "alpha": qmapper_single.parms["alpha"]})
 
-        print "\nSwitching to all directories..."
+        print("\nSwitching to all directories...")
 
     qmapper_parms["mapdirs"] = mapdirs
     qmapper = QMapper(**qmapper_parms)
@@ -213,29 +217,29 @@ Attempting to fit to dG# = {} and dG0 = {}
                                          threshold=args.threshold,
                                          max_iterations=args.max_iterations)
     except QMapperError as error_msg:
-        print "\nMassive fail:\n{}\n".format(error_msg)
+        print("\nMassive fail:\n{}\n".format(error_msg))
         sys.exit(1)
     except KeyboardInterrupt:
         qmapper.kill_event.set()
         raise
 
     if not rcode:
-        print "Did not converge. Try changing the step (--step), increasing "\
+        print("Did not converge. Try changing the step (--step), increasing "\
               "number of iterations (--iter) or raising the threshold "\
-              "(--threshold)\n"
+              "(--threshold)\n")
 
 
     else:
-        print """
+        print("""
 Well done! Use this on your non-reference simulations:
 q_mapper.py {hij} {alpha} --bins {gap_bins} --skip {points_skip} \
 --min {minpts_bin} --temp {temperature} 
-""".format(**qmapper.parms)
+""".format(**qmapper.parms))
 
         # write out the inputs and outputs from the last step
         qfep_inp_fn = QScfg.get("files", "qfep_inp")
         qfep_out_fn = QScfg.get("files", "qfep_out")
-        for mapdir, (qfep_inp_str, qfep_out_str) in qmapper.mapped.iteritems():
+        for mapdir, (qfep_inp_str, qfep_out_str) in six.iteritems(qmapper.mapped):
             qfep_inp = os.path.join(mapdir, qfep_inp_fn)
             qfep_out = os.path.join(mapdir, qfep_out_fn)
             open(qfep_inp, "w").write(qfep_inp_str)
@@ -245,7 +249,7 @@ q_mapper.py {hij} {alpha} --bins {gap_bins} --skip {points_skip} \
         output_files = [os.path.join(md, qfep_out_fn) for md in qmapper.mapped]
         qafs = QAnalyseFeps(output_files)
         fails = "\n".join(["{}: {}".format(qfo, err) for qfo, err in
-                                            qafs.failed.iteritems()])
+                                            six.iteritems(qafs.failed)])
 
         outstr = """
 ------------------------------- q_automapper.py -------------------------------
@@ -261,17 +265,17 @@ Analysis Fails:
            q_automapper=sys.argv[0])
 
         if fails or qmapper.failed:
-            print """
+            print("""
 WARNING! Some dirs failed to map/analyse! Look at the log!
 
-"""
+""")
 
-        print "Writting out the logfile..."
+        print("Writting out the logfile...")
         backup = backup_file(args.outfile)
         if backup:
-            print "# Backed up '{}' to '{}'".format(args.outfile, backup)
+            print("# Backed up '{}' to '{}'".format(args.outfile, backup))
         open(args.outfile, "w").write(outstr)
-        print "Wrote '{}'...".format(args.outfile)
+        print("Wrote '{}'...".format(args.outfile))
 
 
 
@@ -279,5 +283,5 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print "\nCtrl-C detected. Quitting..."
+        print("\nCtrl-C detected. Quitting...")
         sys.exit(1)

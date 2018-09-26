@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -30,6 +30,8 @@
 # extra keyword that can be used instead of the placeholder is 'LAST.ID' (no explanation needed)
 
 
+from __future__ import absolute_import
+from __future__ import print_function
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -38,6 +40,7 @@ import argparse
 
 from Qpyl.core.qstructure import QStruct, QStructError
 from Qpyl.common import backup_file, init_logger, get_version_full
+import six
 
 logger = init_logger('Qpyl')
 
@@ -66,9 +69,9 @@ if len(sys.argv) == 1:
 
 args = parser.parse_args()
 
-for k, v in vars(args).iteritems():
+for k, v in six.iteritems(vars(args)):
     if k in ["inp", "pdb"] and not os.path.lexists(v):
-        print "FATAL! File '{}' doesn't exist.".format(v)
+        print("FATAL! File '{}' doesn't exist.".format(v))
         sys.exit(1)
 
 inpstr = open(args.inp, "r").read()
@@ -77,12 +80,12 @@ try:
     qstruct = QStruct(args.pdb, "pdb", ignore_errors=args.ignore_errors)
     outstring = qstruct.convert_placeholders(inpstr)
 except QStructError as e:
-    print "FATAL! Exception raised: {}".format(str(e))
+    print("FATAL! Exception raised: {}".format(str(e)))
     sys.exit(1)
 
 backup = backup_file(args.out)
 if backup:
-    print "Backed up '{}' to '{}'".format(args.out, backup)
+    print("Backed up '{}' to '{}'".format(args.out, backup))
 open(args.out, "w").write(outstring)
-print "Created file '{}'...".format(args.out)
+print("Created file '{}'...".format(args.out))
 

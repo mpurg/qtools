@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -26,19 +26,23 @@
 #
 #
 
+from __future__ import absolute_import
+from __future__ import print_function
 import sys
 import os
-import ConfigParser
+import six.moves.configparser
+from io import open
+from six.moves import input
 
-# check for python 2.7
+# check for python version
 if sys.version_info < (2, 7):
-    print "Python 2.7 required. Detected version {0}".format(sys.version)
+    print("Python 2.7+ required. Detected version {0}".format(sys.version))
     sys.exit(1)
 
 try:
     from Qpyl.common import __version__
 except ImportError:
-    print "Can't import Qpyl module, your installation is messed up..."
+    print("Can't import Qpyl module, your installation is messed up...")
     sys.exit(1)
 
 
@@ -52,8 +56,8 @@ try:
     _CFG_FILE = os.path.abspath(os.path.join(os.environ["QTOOLS_HOME"],
                                              "qscripts.cfg"))
 except KeyError:
-    print "Your QTools instalation is messed up, did you source "\
-          "'qscripts_init.sh'?"
+    print("Your QTools instalation is messed up, did you source "\
+          "'qscripts_init.sh'?")
     sys.exit(1)
 
 # absolute path of default config file
@@ -67,33 +71,33 @@ class _QScriptsConfig(object):
 
         self.cfgfile = cfgfile
         if not os.path.lexists(self.cfgfile):
-            print "Configuration file '{}' not found. Please run "\
-                  "'qscripts_config.py'.".format(self.cfgfile)
+            print("Configuration file '{}' not found. Please run "\
+                  "'qscripts_config.py'.".format(self.cfgfile))
             sys.exit(1)
 
-        self.config = ConfigParser.SafeConfigParser()
+        self.config = six.moves.configparser.SafeConfigParser()
 
         try:
             self.config.read(self.cfgfile)
-        except ConfigParser.ParsingError:
-            print "Configuration file '{}' could not be read. Fix/remove it "\
-                  "and run 'qscripts_config.py'.".format(self.cfgfile)
+        except six.moves.configparser.ParsingError:
+            print("Configuration file '{}' could not be read. Fix/remove it "\
+                  "and run 'qscripts_config.py'.".format(self.cfgfile))
             sys.exit(1)
 
         # check version of config file
         version = self.config.getint("other", "cfgversion")
         if version != CFG_VERSION:
-            print "Your configuration file '{}' is outdated. Please remove "\
-                  "it and run 'qscripts_config.py'.".format(self.cfgfile)
+            print("Your configuration file '{}' is outdated. Please remove "\
+                  "it and run 'qscripts_config.py'.".format(self.cfgfile))
             sys.exit(1)
 
     def get(self, section, option):
         try:
             return self.config.get(section, option)
-        except (ConfigParser.NoSectionError, ConfigParser.NoOptionError) as e:
-            print "Somehow your configuration file '{}' got messed up. "\
+        except (six.moves.configparser.NoSectionError, six.moves.configparser.NoOptionError) as e:
+            print("Somehow your configuration file '{}' got messed up. "\
                   "Please fix/remove it and run 'qscripts_config.py'.\n"\
-                  "Details: {}".format(self.cfgfile, e)
+                  "Details: {}".format(self.cfgfile, e))
             sys.exit(1)
 
     def set(self, section, option, value):
@@ -114,14 +118,14 @@ def get_exec_path(name):
                     paths.append(ex)
 
     if paths:
-        print "These '{}' executables were found in your PATH. "\
-              "Choose the correct one (select number).".format(name)
+        print("These '{}' executables were found in your PATH. "\
+              "Choose the correct one (select number).".format(name))
         for i, path in enumerate(paths):
-            print "      [{}] {}".format(i, path)
+            print("      [{}] {}".format(i, path))
         path = ""
         while not path:
             try:
-                inp = raw_input("? ")
+                inp = input("? ")
                 i = int(inp)
                 path = paths[i]
             except (ValueError, IndexError):
@@ -133,45 +137,45 @@ def get_exec_path(name):
 
 def main():
     if os.path.lexists(_CFG_FILE):
-        print "Configuration file '{}' exists. Please remove it before "\
-              "running this script.".format(_CFG_FILE)
+        print("Configuration file '{}' exists. Please remove it before "\
+              "running this script.".format(_CFG_FILE))
         sys.exit(1)
 
     QScriptsConfig = _QScriptsConfig(_CFG_FILE_DEFAULT)
-    print "Creating a new configuration file...\n"
+    print("Creating a new configuration file...\n")
 
-    print "Looking for Qfep6 executables in PATH..."
+    print("Looking for Qfep6 executables in PATH...")
     qfep_path = get_exec_path("Qfep6")
     if not qfep_path:
-        print "Not found, looking for qfep (v5) instead..."
+        print("Not found, looking for qfep (v5) instead...")
         qfep_path = get_exec_path("qfep")
     if not qfep_path:
-        print "No Qfep executable was found in your PATH. "\
-              "Please set the path manually in the config file."
+        print("No Qfep executable was found in your PATH. "\
+              "Please set the path manually in the config file.")
 
     QScriptsConfig.set("qexec", "qfep", qfep_path)
 
-    print "Looking for Qcalc6 executables in PATH..."
+    print("Looking for Qcalc6 executables in PATH...")
     qcalc_path = get_exec_path("Qcalc6")
     if not qcalc_path:
-        print "Not found, looking for qcalc (v5) instead..."
+        print("Not found, looking for qcalc (v5) instead...")
         qcalc_path = get_exec_path("qcalc")
     if not qcalc_path:
-        print "No Qcalc executable was found in your PATH. "\
-              "Please set the path manually in the config file."
+        print("No Qcalc executable was found in your PATH. "\
+              "Please set the path manually in the config file.")
 
     QScriptsConfig.set("qexec", "qcalc", qcalc_path)
 
     QScriptsConfig.config.write(open(_CFG_FILE, "w+"))
-    print "\n\nThe following config file was created with some default "\
-          "values:\n{}".format(_CFG_FILE)
+    print("\n\nThe following config file was created with some default "\
+          "values:\n{}".format(_CFG_FILE))
 
 
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print "\nCtrl-C detected. Quitting..."
+        print("\nCtrl-C detected. Quitting...")
         sys.exit(1)
 else:  # imported
     # This variable is imported from other modules.

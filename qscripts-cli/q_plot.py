@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -24,17 +24,22 @@
 # SOFTWARE.
 #
 
+from __future__ import absolute_import
+from __future__ import print_function
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import os
 import sys
 import math
-import Tkinter as Tk
+import six.moves.tkinter as Tk
 import argparse
 from collections import OrderedDict as ODict
 
 from Qpyl.plotdata import PlotData, PlotDataError, PlotDataJSONDecoder
 from Qpyl.common import get_version_full
+import six
+from six.moves import range
+from six.moves import zip
 
 class PlotApp():
 
@@ -66,8 +71,8 @@ class PlotApp():
         
 
         self.lb1_entries = ODict()
-        for plot_key, plot in self.plots.iteritems():
-            self.lb1_entries[ plot.values()[0].title ] = plot_key
+        for plot_key, plot in six.iteritems(self.plots):
+            self.lb1_entries[ list(plot.values())[0].title ] = plot_key
 
         self.lb1 = Tk.Listbox(self.parent, selectmode=Tk.EXTENDED, exportselection=0)
 
@@ -161,8 +166,8 @@ class PlotApp():
             # can be different (top 20 group contribs for example)
             bar_categories = []
             if plots[0].plot_type == "bar" and \
-                isinstance(plots[0].subplots.values()[0]["xdata"][0],
-                           basestring):
+                isinstance(list(plots[0].subplots.values())[0]["xdata"][0],
+                           six.string_types):
                 for plot in plots.values():
                     for subplots in plot.subplots.values():
                         for i_cat, cat in enumerate(subplots["xdata"]):
@@ -172,8 +177,8 @@ class PlotApp():
             # plot the plots
             # example of plots:
             # { 0: protein_plot, 1: protein2_plot, 2: water_plot }
-            for plot_number, plot in plots.iteritems():
-                for subplot_label, subplot_data in plot.subplots.iteritems():
+            for plot_number, plot in six.iteritems(plots):
+                for subplot_label, subplot_data in six.iteritems(plot.subplots):
 
                     if plot.plot_type == "line":
                         line, = plt.plot(subplot_data["xdata"],
@@ -182,12 +187,12 @@ class PlotApp():
                     elif plot.plot_type == "bar":
                         width = 0.9/(len(plots))
                         # string categories
-                        if isinstance(subplot_data["xdata"][0], basestring):
+                        if isinstance(subplot_data["xdata"][0], six.string_types):
                             # map values to category list made before
-                            xymap = dict(zip(subplot_data["xdata"],
-                                             subplot_data["ydata"]))
-                            xyemap = dict(zip(subplot_data["xdata"],
-                                              subplot_data["yerror"]))
+                            xymap = dict(list(zip(subplot_data["xdata"],
+                                             subplot_data["ydata"])))
+                            xyemap = dict(list(zip(subplot_data["xdata"],
+                                              subplot_data["yerror"])))
                             ydata = []
                             yerror = []
                             for cat in bar_categories:
@@ -198,7 +203,7 @@ class PlotApp():
                                     ydata.append(0)
                                     yerror.append(0)
 
-                            xind = range(0, len(bar_categories))
+                            xind = list(range(0, len(bar_categories)))
                             xind = [x-0.45+plot_number*(width) for x in xind]
                             line = plt.bar(xind, ydata, width=width,
                                            yerr=yerror,
@@ -227,7 +232,7 @@ class PlotApp():
                     # add the line that was drawn to subplot_lines
                     # so that we can change color if lb2 selection changes
                     subplot_label = "%d/%s" % (plot_number, subplot_label)
-                    if subplot_label not in self.subplot_lines.keys():
+                    if subplot_label not in list(self.subplot_lines.keys()):
                         self.subplot_lines[subplot_label] = []
                     self.subplot_lines[subplot_label].append(line)
 
@@ -270,7 +275,7 @@ class PlotApp():
 
             subplots_labels = []
 
-            for plot_number, plot in self.plots[key].iteritems():
+            for plot_number, plot in six.iteritems(self.plots[key]):
                 for subplot_label in sorted(plot.subplots.keys()):
                     subplot_label = "%d/%s" % (plot_number, subplot_label)
                     if subplot_label not in subplots_labels:
@@ -289,7 +294,7 @@ class PlotApp():
 
         # get selected subplots from lb2
         selected_subplots_keys = [ self.lb2.get(int(index)) for index in self.lb2.curselection() ]
-        for subplot_key, subplot_line_list in self.subplot_lines.iteritems():
+        for subplot_key, subplot_line_list in six.iteritems(self.subplot_lines):
             for subplot_line in subplot_line_list:
                 plot_number = int(subplot_key.split("/")[0])
                 if subplot_key in selected_subplots_keys:
@@ -340,10 +345,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if len(args.plotfiles) > 6:
-        print "Currently, only six data files are supported. Deal with it..."
+        print("Currently, only six data files are supported. Deal with it...")
         sys.exit(1)
     if hasattr(args, "export") and len(args.plotfiles) > 1:
-        print "Exporting works only with one plotfile at a time."
+        print("Exporting works only with one plotfile at a time.")
         sys.exit(1)
 
     # allplots looks like this:
@@ -359,21 +364,21 @@ if __name__ == "__main__":
 
     for pf_number, pf in enumerate(args.plotfiles):
         if not os.path.lexists(pf):
-            print "File '%s' doesn't exist." % pf
+            print("File '%s' doesn't exist." % pf)
             sys.exit(1)
         try:
             jsondec = PlotDataJSONDecoder()
             plots = jsondec.decode(open(pf, 'r').read())
         except Exception as e:
             raise
-            print "Could not read data file '%s'. Are you sure it is a .json file?" % pf
+            print("Could not read data file '%s'. Are you sure it is a .json file?" % pf)
             sys.exit(1)
         if not isinstance(plots, ODict):
-            print "Something is wrong with the data file '%s'. Aborting..." % pf
+            print("Something is wrong with the data file '%s'. Aborting..." % pf)
             sys.exit(1)
-        for plot_id, plot in plots.iteritems():
+        for plot_id, plot in six.iteritems(plots):
             if not isinstance(plot, PlotData):
-                print "Something is wrong with the data file '%s'. Aborting..." % pf
+                print("Something is wrong with the data file '%s'. Aborting..." % pf)
                 sys.exit(1)
 
             try:
@@ -394,13 +399,13 @@ if __name__ == "__main__":
             import matplotlib.patches as mpatches
             from mpl_toolkits.mplot3d import Axes3D
         except ImportError:
-            print """Matplotlib is required for this script to work. Try something like:
+            print("""Matplotlib is required for this script to work. Try something like:
             (ubuntu)    $ sudo apt-get install python-matplotlib
             (mac)       $ sudo brew install matplotlib
             (mac)       $ sudo port install py27-matplotlib
             (anything)  $ sudo pip install matplotlib
             (anything)  $ conda install -c conda-forge matplotlib=2.0.0
-            or if you are working on a cluster, try loading a different python module..."""
+            or if you are working on a cluster, try loading a different python module...""")
             sys.exit(1)
 
         root = Tk.Tk()
@@ -411,39 +416,39 @@ if __name__ == "__main__":
 
         exports=[]
         for ex in args.export:
-            if not ex in allplots.keys() and not "all":
-                print "Plot '%s' not found. Ignoring.." % (ex, )
+            if not ex in list(allplots.keys()) and not "all":
+                print("Plot '%s' not found. Ignoring.." % (ex, ))
             else: exports.append(ex)
 
         if not exports: # no arguments passed in
-            print "\nAvailable arguments for --export:\n"
-            print "\n".join( [ k for k in allplots.keys() ] )
-            print "\nSpecial args: all\n"
+            print("\nAvailable arguments for --export:\n")
+            print("\n".join( [ k for k in allplots.keys() ] ))
+            print("\nSpecial args: all\n")
             sys.exit(1)
 
-        print "\nExporting the plots to ASCII Grace format (use xmgrace to plot them)\n"
+        print("\nExporting the plots to ASCII Grace format (use xmgrace to plot them)\n")
         exdir = QScfg.get("files", "plot_export_dir")
         if not os.path.lexists(exdir):
             try:
                 os.mkdir(exdir)
             except IOError as e:
-                print "Could not create directory '%s': %s" % (exports, str(e))
-                print "Quitting..."
+                print("Could not create directory '%s': %s" % (exports, str(e)))
+                print("Quitting...")
                 sys.exit(1)
 
         if "all" in exports: exall=True
         else: exall=False
 
-        for plot_id, plots in allplots.iteritems():
+        for plot_id, plots in six.iteritems(allplots):
             if (not exall) and (not plot_id in exports):  # don't save this one
                 continue
             plot = plots[0]
             try:
                 fn = os.path.join(exdir, "%s.agr" % plot_id)
                 open(fn, 'w').write( plot.export_grace() )
-                print "Wrote '%s' to %s" % (plot.title, fn)
+                print("Wrote '%s' to %s" % (plot.title, fn))
             except (IOError, PlotDataError) as e:
-                print "Could not export '%s': %s" % (plot.title, str(e))
+                print("Could not export '%s': %s" % (plot.title, str(e)))
             
         
 

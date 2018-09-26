@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -24,6 +24,8 @@
 # SOFTWARE.
 #
 
+from __future__ import absolute_import
+from __future__ import print_function
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -33,6 +35,7 @@ import logging
 
 from Qpyl.qmakefep import make_fep, QMakeFepError
 from Qpyl.common import backup_file, init_logger, get_version_full
+import six
 
 
 if __name__ == "__main__":
@@ -86,11 +89,11 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    for k, v in vars(args).iteritems():
+    for k, v in six.iteritems(vars(args)):
         if k in ["pdb", "parms", "libs", "qmap"]:
             for fn in v:
                 if not os.path.lexists(fn):
-                    print "File '{}' doesn't exist.".format(fn)
+                    print("File '{}' doesn't exist.".format(fn))
                     sys.exit(1)
 
     try:
@@ -98,13 +101,13 @@ if __name__ == "__main__":
                           args.prms, args.libs,
                           ignore_errors=args.ignore_errors)
     except QMakeFepError as err:
-        print "\nFATAL!\n{}\n".format(err)
+        print("\nFATAL!\n{}\n".format(err))
         sys.exit(1)
 
     output_file = args.outfile[0]
     backup = backup_file(output_file)
     if backup:
-        print "\n# Backed up '{}' to '{}'".format(output_file, backup)
+        print("\n# Backed up '{}' to '{}'".format(output_file, backup))
     open(output_file, 'w').write(fepstr)
-    print "Wrote '{}'... ".format(output_file)
+    print("Wrote '{}'... ".format(output_file))
     

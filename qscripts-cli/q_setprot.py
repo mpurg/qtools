@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -34,6 +34,8 @@
 # and vice versa
 #
 
+from __future__ import absolute_import
+from __future__ import print_function
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -66,11 +68,11 @@ if len(sys.argv) == 1:
 args = parser.parse_args()
 
 if not os.path.lexists(args.pdb):
-    print "FATAL! File '{}' doesn't exist.".format(args.pdb)
+    print("FATAL! File '{}' doesn't exist.".format(args.pdb))
     sys.exit(1)
 
 if not os.path.lexists(args.resids):
-    print "FATAL! File '{}' doesn't exist.".format(args.resids)
+    print("FATAL! File '{}' doesn't exist.".format(args.resids))
     sys.exit(1)
 
 chres = ("ARG", "GLU", "ASP", "LYS") # charged names
@@ -89,7 +91,7 @@ for line in pdb_lines:
     if ri in charged_residues:
         if rn in nres:
             new_rn = chres[ nres.index(rn) ]
-            print "Changing: %s%s to %s%s" % (rn,ri, new_rn, ri)
+            print("Changing: %s%s to %s%s" % (rn,ri, new_rn, ri))
             new_line=line.replace(rn, new_rn)
         else:
             new_line=line
@@ -104,9 +106,9 @@ for line in pdb_lines:
 
 backup = backup_file(args.outfn)
 if backup:
-    print "Backed up '{}' to '{}'".format(args.outfn, backup)
+    print("Backed up '{}' to '{}'".format(args.outfn, backup))
 open(args.outfn, 'w').write(new_pdb)
-print "Wrote " + args.outfn
+print("Wrote " + args.outfn)
 
 
 

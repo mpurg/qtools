@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -26,6 +26,8 @@
 #
 #
 #
+from __future__ import absolute_import
+from __future__ import print_function
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -39,6 +41,8 @@ from Qpyl.core.qpotential import torsion_energy
 from Qpyl.core.qstructure import QStruct, QStructError
 from Qpyl.core.qtopology import QTopology, QTopologyError
 from Qpyl.common import backup_file, init_logger, get_version_full
+import six
+from six.moves import range
 
 logger = init_logger('Qpyl')
 
@@ -88,19 +92,19 @@ if len(sys.argv) == 1:
 args = parser.parse_args()
 
 if not args.mol2 or not args.prepi:
-    print "FATAL! 'mol2' and 'prepin' are required."
+    print("FATAL! 'mol2' and 'prepin' are required.")
     sys.exit()
 
 if len(args.frcmods) < 1:
-    print "FATAL! At least one frcmod file is required."
+    print("FATAL! At least one frcmod file is required.")
     sys.exit()
 
 
-for k, v in vars(args).iteritems():
+for k, v in six.iteritems(vars(args)):
     if k in ["mol2", "prepi", "parm", "frcmods"]:
         for fn in v:
             if not os.path.lexists(fn):
-                print "File '{}' doesn't exist.".format(fn)
+                print("File '{}' doesn't exist.".format(fn))
                 sys.exit(1)
 
 
@@ -114,39 +118,39 @@ qprm = QPrm("amber", ignore_errors=args.ignore_errors)
 try:
     qlib.read_mol2(args.mol2[0])
 except QLibError as e:
-    print "FATAL! Problem with mol2: {}".format(str(e))
+    print("FATAL! Problem with mol2: {}".format(str(e)))
     sys.exit(1)
 try:
     qlib.read_prepin_impropers(args.prepi[0])
 except QLibError as e:
-    print "FATAL! Problem with prepi: {}".format(str(e))
+    print("FATAL! Problem with prepi: {}".format(str(e)))
     sys.exit(1)
 
 for parm in args.parms:
     try:
         qprm.read_amber_parm(parm)
     except QPrmError as e:
-        print "FATAL! Problem with parm: {}".format(str(e))
+        print("FATAL! Problem with parm: {}".format(str(e)))
         sys.exit(1)
 
 for frcmod in args.frcmods:
     try:
         qprm.read_amber_frcmod(frcmod)
     except QPrmError as e:
-        print "FATAL! Problem with frcmod: {}".format(str(e))
+        print("FATAL! Problem with frcmod: {}".format(str(e)))
         sys.exit(1)
 
 
 try:
     qstruct = QStruct(args.mol2[0], "mol2")
 except QStructError as e:
-    print "FATAL! Problem with mol2: {}".format(str(e))
+    print("FATAL! Problem with mol2: {}".format(str(e)))
     sys.exit(1)
 
 try:
     qtop = QTopology(qlib, qprm, qstruct)
 except QTopologyError as e:
-    print "FATAL! Problem building the topology: {}".format(str(e))
+    print("FATAL! Problem building the topology: {}".format(str(e)))
     sys.exit(1)
 
 #
@@ -207,7 +211,7 @@ for p, de, v, v0 in all_prms:
 #
 # output some information
 #
-print """
+print("""
 Details about the system:
 
 Bonds: {n[bonds]}
@@ -220,7 +224,7 @@ Angle energy: total {t[angles]:.2f}, max {m[angles]:.2f}
 Torsion energy: total {t[torsions]:.2f}, max {m[torsions]:.2f}
 Improper energy: total {t[impropers]:.2f}, max {m[impropers]:.2f}
 
-""".format(n=nprm, t=total_e, m=max_e)
+""".format(n=nprm, t=total_e, m=max_e))
 
 #
 # write the files
@@ -229,10 +233,10 @@ libfn = args.output_basename + ".lib"
 prmfn = args.output_basename + ".prm"
 prmchkfn = args.output_basename + ".prm.chk"
 
-print "Writing the library file: {}".format(libfn)
+print("Writing the library file: {}".format(libfn))
 backup = backup_file(libfn)
 if backup:
-    print "# Backed up '{}' to '{}'".format(libfn, backup)
+    print("# Backed up '{}' to '{}'".format(libfn, backup))
 outstring = """# Generated with {}, version {}
 # Date: {}
 #
@@ -241,10 +245,10 @@ outstring = """# Generated with {}, version {}
            time.ctime(), qlib.get_string())
 open(libfn, "w").write(outstring)
 
-print "Writing the parameter file: {}".format(prmfn)
+print("Writing the parameter file: {}".format(prmfn))
 backup = backup_file(prmfn)
 if backup:
-    print "# Backed up '{}' to '{}'".format(prmfn, backup)
+    print("# Backed up '{}' to '{}'".format(prmfn, backup))
 outstring = """# Generated with {}, version {}
 # Date: {}
 #
@@ -258,8 +262,8 @@ outstring = """# Generated with {}, version {}
                            impropers=[x.prm_full for x in qtop.impropers]))
 open(prmfn, "w").write(outstring)
 
-print "Writing the parameter check file: {}".format(prmchkfn)
+print("Writing the parameter check file: {}".format(prmchkfn))
 backup = backup_file(prmchkfn)
 if backup:
-    print "# Backed up '{}' to '{}'".format(prmchkfn, backup)
+    print("# Backed up '{}' to '{}'".format(prmchkfn, backup))
 open(prmchkfn, "w").write("\n".join(pchk))

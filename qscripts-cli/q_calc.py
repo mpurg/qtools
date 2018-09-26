@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 #
 # MIT License
@@ -25,6 +25,8 @@
 #
 
 from __future__ import unicode_literals
+from __future__ import absolute_import
+from __future__ import print_function
 from io import open
 
 from qscripts_config import __version__, QScriptsConfig as QScfg
@@ -37,11 +39,12 @@ import argparse
 from Qpyl.qgroupcontrib import QGroupContrib, QGroupContribError
 from Qpyl import plotdata
 from Qpyl.common import backup_file, init_logger, get_version_full
+import six
 
 def gc(args):
 
     if not os.path.lexists(args.pdb):
-        print "This file went missing: {}".format(args.pdb)
+        print("This file went missing: {}".format(args.pdb))
         sys.exit(1)
 
     if args.qmaskfile:
@@ -50,7 +53,7 @@ def gc(args):
             if not qmask:
                 raise IOError
         except IOError:
-            print "Can't read '{}' or file empty".format(args.qmaskfile)
+            print("Can't read '{}' or file empty".format(args.qmaskfile))
             sys.exit(1)
     else:
         qmask = None
@@ -62,7 +65,7 @@ def gc(args):
             if lamb < 0 or lamb > 1:
                 raise ValueError
         except ValueError:
-            print "FATAL! Lambda values make no sense. 0 <= lambda <= 1 please."
+            print("FATAL! Lambda values make no sense. 0 <= lambda <= 1 please.")
             sys.exit(1)
         lambdas.append((lamb, 1-lamb))
 
@@ -72,10 +75,10 @@ def gc(args):
         calcdirs = [f for f in lsdir if os.path.isdir(f)]
     if not calcdirs:
         calcdirs = [os.getcwd(),]
-        print "No subdirectories. Calculating in current directory only.\n"
+        print("No subdirectories. Calculating in current directory only.\n")
     else:
-        print "Will use these directories for calculating GCs (use --dirs to "\
-              "change this): {}\n".format(", ".join(calcdirs))
+        print("Will use these directories for calculating GCs (use --dirs to "\
+              "change this): {}\n".format(", ".join(calcdirs)))
 
     qgc = QGroupContrib(args.qcalc_exec, calcdirs, args.pdb,
                         QScfg.get("files", "en_list_fn"),
@@ -88,7 +91,7 @@ def gc(args):
     try:
         qgc.calcall()
     except QGroupContribError as error_msg:
-        print "\nMassive fail:\n{}\n".format(error_msg)
+        print("\nMassive fail:\n{}\n".format(error_msg))
         sys.exit(1)
     except KeyboardInterrupt:
         qgc.kill_event.set()
@@ -96,23 +99,23 @@ def gc(args):
 
     # writeout QCalc inputs and outputs
     if args.writeout:
-        for calcdir, (qcinps, qcouts) in qgc._qcalc_io.iteritems():
+        for calcdir, (qcinps, qcouts) in six.iteritems(qgc._qcalc_io):
             for i, qci in enumerate(qcinps):
                 fn = os.path.join(calcdir, "q_calc.gc.{}.inp".format(i+1))
                 try:
                     open(fn, 'w').write(qci)
                 except OSError as err:
-                    print "Error when writing to {}: {}".format(fn, err)
+                    print("Error when writing to {}: {}".format(fn, err))
                 else:
-                    print "Wrote {}".format(fn)
+                    print("Wrote {}".format(fn))
             for i, qco in enumerate(qcouts):
                 fn = os.path.join(calcdir, "q_calc.gc.{}.out".format(i+1))
                 try:
                     open(fn, 'w').write(qco)
                 except OSError as err:
-                    print "Error when writing to {}: {}".format(fn, err)
+                    print("Error when writing to {}: {}".format(fn, err))
                 else:
-                    print "Wrote {}".format(fn)
+                    print("Wrote {}".format(fn))
 
 
 
@@ -162,13 +165,13 @@ Top REORG (el) contributions:
 """.format(gc_details=qgc.details, top_gcs=top_gcs, q_calc=sys.argv[0],
            top_gcs_reorg=top_gcs_reorg, cmdline=" ".join(sys.argv[1:]))
 
-    print outstr
+    print(outstr)
     fn_out = args.output_fn
     backup = backup_file(fn_out)
     if backup:
-        print "# Backed up '{}' to '{}'".format(fn_out, backup)
+        print("# Backed up '{}' to '{}'".format(fn_out, backup))
     open(fn_out, "w").write(outstr)
-    print "Wrote '{}'...".format(fn_out)
+    print("Wrote '{}'...".format(fn_out))
 
     # convert plots to json and write them out
     fn_out = args.plots_out
@@ -176,19 +179,19 @@ Top REORG (el) contributions:
     jsonenc = plotdata.PlotDataJSONEncoder(indent=2, separators=(",", ": "))
     backup = backup_file(fn_out)
     if backup:
-        print "# Backed up '{}' to '{}'".format(fn_out, backup)
+        print("# Backed up '{}' to '{}'".format(fn_out, backup))
     open(fn_out, 'w').write(jsonenc.encode(plots))
-    print "Wrote '{}'... (q_plot.py is your "\
-          "friend)".format(fn_out)
+    print("Wrote '{}'... (q_plot.py is your "\
+          "friend)".format(fn_out))
 
     # writeout the pdbgc if requested
     if args.pdbgc_out:
         backup = backup_file(args.pdbgc_out)
         if backup:
-            print "# Backed up '{}' to '{}'".format(args.pdbgc_out, backup)
+            print("# Backed up '{}' to '{}'".format(args.pdbgc_out, backup))
         open(args.pdbgc_out, 'w').write(qgc.get_pdbgc())
-        print "Wrote '{}'... (use Pymol/Chimera/VMD and color by occupancy "\
-              "(LRA) or B-factor (reorg))".format(args.pdbgc_out)
+        print("Wrote '{}'... (use Pymol/Chimera/VMD and color by occupancy "\
+              "(LRA) or B-factor (reorg))".format(args.pdbgc_out))
 
 
 def main():
@@ -293,7 +296,7 @@ def main():
         try:
             subps[sys.argv[1]].print_help()
         except KeyError:
-            print "Subcommand '{}' not available...\n".format(sys.argv[1])
+            print("Subcommand '{}' not available...\n".format(sys.argv[1]))
         sys.exit(1)
 
     args = parser.parse_args()
@@ -306,5 +309,5 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print "\nCtrl-C detected. Quitting..."
+        print("\nCtrl-C detected. Quitting...")
         sys.exit(1)

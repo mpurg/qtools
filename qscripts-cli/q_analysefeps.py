@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -26,6 +26,8 @@
 #
 #
 
+from __future__ import absolute_import
+from __future__ import print_function
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -37,6 +39,7 @@ import logging
 from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl import plotdata
 from Qpyl.common import backup_file, init_logger, get_version_full
+import six
 
 
 def main():
@@ -108,13 +111,13 @@ every mapping.
             if lamb < 0 or lamb > 1:
                 raise ValueError
         except ValueError:
-            print "FATAL! LRA lambdas make no sense. 0<lambda<1 please."
+            print("FATAL! LRA lambdas make no sense. 0<lambda<1 please.")
             sys.exit(1)
         lra_l.append(lamb)
 
     if args.subcalcs and os.path.lexists(args.subcalc_dir):
-        print "Directory '{}' exists. Please (re)move it or "\
-              "use --subcalc_dir.".format(args.subcalc_dir)
+        print("Directory '{}' exists. Please (re)move it or "\
+              "use --subcalc_dir.".format(args.subcalc_dir))
         sys.exit(1)
 
     # analyse the outputs
@@ -125,20 +128,20 @@ every mapping.
 
     # get the statistics
     stats.append(qaf.stats_str)
-    for sub_calc_key, sub_calc in sorted(qaf.sub_calcs.iteritems()):
+    for sub_calc_key, sub_calc in sorted(six.iteritems(qaf.sub_calcs)):
         stats.append(sub_calc.stats_str)
 
     # get those that completely failed
     if qaf.failed:
         fails.append("Failed to parse:")
-    for failed_path, failed_msg in sorted(qaf.failed.iteritems()):
+    for failed_path, failed_msg in sorted(six.iteritems(qaf.failed)):
         relp = os.path.relpath(failed_path)
         fails.append("-> {}: {}".format(relp, failed_msg))
 
     # get those that didn't produce dG*/dG0
     if qaf.failed_dg:
         fails.append("Failed to produce dGa/dG0:")
-    for failed_path, failed_msg in sorted(qaf.failed_dg.iteritems()):
+    for failed_path, failed_msg in sorted(six.iteritems(qaf.failed_dg)):
         relp = os.path.relpath(failed_path)
         fails.append("-> {}: {}".format(relp, failed_msg))
 
@@ -164,12 +167,12 @@ every mapping.
 """.format(version=__version__, date=time.ctime(), cwd=os.getcwd(),
            stats=stats, fails=fails, cmdline=" ".join(sys.argv))
 
-    print summary
+    print(summary)
 
     if not qaf.qfos:
-        print "\nFATAL! None of the outputs could be parsed!"
-        print "Are you running an ancient Q version? Then don't..."
-        print "If not, report a bug."
+        print("\nFATAL! None of the outputs could be parsed!")
+        print("Are you running an ancient Q version? Then don't...")
+        print("If not, report a bug.")
         sys.exit(1)
 
 
@@ -185,9 +188,9 @@ every mapping.
     open(fn_out, "w").write(output_string)
 
     if backup:
-        print "Wrote '{}'...    # Backed up to '{}'".format(fn_out, backup)
+        print("Wrote '{}'...    # Backed up to '{}'".format(fn_out, backup))
     else:
-        print "Wrote '{}'...".format(fn_out)
+        print("Wrote '{}'...".format(fn_out))
 
     # convert plots to json and write them out
     fn_out = args.plots_out
@@ -196,27 +199,27 @@ every mapping.
     backup = backup_file(fn_out)
     open(fn_out, 'w').write(jsonenc.encode(plots))
     if backup:
-        print "Wrote '{}'... (q_plot.py is your friend)   "\
-              "# Backed up to '{}'".format(fn_out, backup)
+        print("Wrote '{}'... (q_plot.py is your friend)   "\
+              "# Backed up to '{}'".format(fn_out, backup))
     else:
-        print "Wrote '{}'... (q_plot.py is your friend)".format(fn_out)
+        print("Wrote '{}'... (q_plot.py is your friend)".format(fn_out))
 
     # if there are sub-calculations in the outputs
     if qaf.sub_calcs:
         if not args.subcalcs:
-            print "\nNote: These sub-calculations were found: {}. "\
+            print("\nNote: These sub-calculations were found: {}. "\
                   "Use --subcalcs to write out the plot data."\
-                  "".format(", ".join(qaf.sub_calcs))
+                  "".format(", ".join(qaf.sub_calcs)))
             sys.exit(1)
         else:
             os.mkdir(args.subcalc_dir)
-            for subcalc_key, subcalc in qaf.sub_calcs.iteritems():
+            for subcalc_key, subcalc in six.iteritems(qaf.sub_calcs):
                 fn_out = os.path.join(args.subcalc_dir,
                                       "qaf.{}.json".format(subcalc_key))
 
                 open(fn_out, 'w').write(jsonenc.encode(subcalc.plotdata))
-                print "Wrote '{}'... (q_plot.py is your "\
-                      "friend)".format(fn_out)
+                print("Wrote '{}'... (q_plot.py is your "\
+                      "friend)".format(fn_out))
 
 
 if __name__ == "__main__":
