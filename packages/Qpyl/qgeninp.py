@@ -485,7 +485,7 @@ Quick summary
                        "{:^30} {:^10} {:>10.2f}\n" \
                        "".format(nstep, mdparms["temperature"],
                                  mdparms["stepsize"],
-                                 locale.format('%d', mdsteps, 1),
+                                 locale.format_string('%d', mdsteps, 1),
                                  seq, dist, angle, shake, random_seed, data)
 
         except KeyError as err_msg:
