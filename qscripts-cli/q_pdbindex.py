@@ -30,8 +30,10 @@
 # extra keyword that can be used instead of the placeholder is 'LAST.ID' (no explanation needed)
 
 
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
+import six
+
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -40,7 +42,6 @@ import argparse
 
 from Qpyl.core.qstructure import QStruct, QStructError
 from Qpyl.common import backup_file, init_logger, get_version_full
-import six
 
 logger = init_logger('Qpyl')
 

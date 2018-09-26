@@ -26,13 +26,14 @@
 #
 #
 
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
+import six.moves.configparser
+from six.moves import input
+from io import open
+
 import sys
 import os
-import six.moves.configparser
-from io import open
-from six.moves import input
 
 # check for python version
 if sys.version_info < (2, 7):

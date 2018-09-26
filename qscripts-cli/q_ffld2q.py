@@ -37,8 +37,12 @@
 #   $SCHRODINGER/utilities/ffld_server -ipdb paraoxon.pdb -print_parameters -version 14 > paraoxon.ffld11
 #
 #
-from __future__ import absolute_import
-from __future__ import print_function
+
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
+import six
+from six.moves import range
+
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -53,8 +57,6 @@ from Qpyl.core.qpotential import torsion_energy
 from Qpyl.core.qstructure import QStruct, QStructError
 from Qpyl.core.qtopology import QTopology, QTopologyError
 from Qpyl.common import backup_file, init_logger, get_version_full
-import six
-from six.moves import range
 
 logger = init_logger('Qpyl')
 

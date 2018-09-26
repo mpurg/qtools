@@ -34,8 +34,9 @@
 # and vice versa
 #
 
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
+
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys

@@ -26,8 +26,10 @@
 #
 #
 
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
+import six
+
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -39,7 +41,6 @@ import logging
 from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl import plotdata
 from Qpyl.common import backup_file, init_logger, get_version_full
-import six
 
 
 def main():

@@ -26,10 +26,11 @@
 #
 #
 
-from __future__ import unicode_literals
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
 from io import open
+import six
+from six.moves import zip
 
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
@@ -46,8 +47,6 @@ except ImportError: # py27
 from Qpyl.qanalysis import QAnalyseFeps
 from Qpyl.qmapping import QMapper, QMapperError
 from Qpyl.common import backup_file, init_logger, get_version_full
-import six
-from six.moves import zip
 
 def main():
     logger = init_logger('Qpyl')

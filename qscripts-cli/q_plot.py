@@ -24,8 +24,12 @@
 # SOFTWARE.
 #
 
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
+import six
+from six.moves import range
+from six.moves import zip
+
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import os
@@ -37,9 +41,6 @@ from collections import OrderedDict as ODict
 
 from Qpyl.plotdata import PlotData, PlotDataError, PlotDataJSONDecoder
 from Qpyl.common import get_version_full
-import six
-from six.moves import range
-from six.moves import zip
 
 class PlotApp():
 
