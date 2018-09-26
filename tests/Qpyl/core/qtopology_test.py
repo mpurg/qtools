@@ -72,7 +72,7 @@ improper_definition            explicit\
     qa14_lib = open("data/qamber14.lib", "r").read()
     qa14_prm = open("data/qamber14.prm", "r").read()
 
-    open("asd", "w").write(qap.get_string())
+    #open("asd", "w").write(qap.get_string())
 
     assert qal.get_string() in qa14_lib
     assert qap.get_string() in qa14_prm
