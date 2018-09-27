@@ -9,12 +9,14 @@ fi
 export QTOOLS_TMPDIR=$(mktemp -d --tmpdir QTOOLS_TESTS_XXX)
 TESTS_ROOT=$(pwd)
 
-echo $QBIN_DIR
-
 # make sure we are running this copy of the scripts
 source ../../qtools_init.sh
-# run the config script
-qscripts_config.py 2>&1 >/dev/null
+
+echo "Setting up the CLI"
+# backup existing config files
+mv -f ${QTOOLS_HOME}/qscripts.cfg ${QTOOLS_HOME}/qscripts.cfg.bak
+# run the config
+qscripts_config.py --no_bin 2>&1
 
 for i in q_*/
 do
@@ -27,9 +29,12 @@ do
         echo "####################################################"
         ./run_test.sh
         if [[ $? != 0 ]]; then
+            mv -f ${QTOOLS_HOME}/qscripts.cfg.bak ${QTOOLS_HOME}/qscripts.cfg
             exit 1
         fi
     done
 done
 
+mv -f ${QTOOLS_HOME}/qscripts.cfg.bak ${QTOOLS_HOME}/qscripts.cfg
+exit 0
 

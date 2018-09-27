@@ -49,12 +49,18 @@ class TestQMapper:
 
         for md, (qfep_inp, qfep_out) in six.iteritems(qmapper.mapped):
             fn = "data/qmapping/qfep_" + os.path.basename(md) + ".inp"
-            #open("asd", "w").write(qfep_inp)
+            #open(fn, "w").write(qfep_inp)
             assert open(fn, "r").read() == qfep_inp
 
             fn = "data/qmapping/qfep_" + os.path.basename(md) + ".out"
             #open(fn, "w").write(qfep_out)
-            assert open(fn, "r").read() == re.sub("Current .*", "", qfep_out)
+            ref_str = re.sub("Build.*Copyright", "Copyright",
+                              open(fn, "r").read(), flags=re.DOTALL)
+            ref_str = re.sub(" ", "", ref_str)
+            out_str = re.sub("Build.*Copyright", "Copyright",
+                             qfep_out, flags=re.DOTALL)
+            out_str = re.sub(" ", "", out_str)
+            assert ref_str == out_str
 
     def test_fit_to_reference(self):
 

@@ -32,6 +32,7 @@ import six.moves.configparser
 from six.moves import input
 #from io import open
 
+import argparse
 import sys
 import os
 
@@ -142,38 +143,53 @@ def get_exec_path(name):
 
 
 def main():
+    parser = argparse.ArgumentParser(description="""
+    Creates a config file for the qtools command-line interface (CLI).
+    ($QTOOLS_HOME/qtools.cfg)
+    It searches for Q binaries in the PATH variable and prompts the
+    user to choose the correct ones.
+    """, add_help=False)
+    optarg = parser.add_argument_group("Optional")
+    optarg.add_argument("--no_bin", dest="no_bin", action="store_true",
+                        help="Don't look for Q binaries.", default=False)
+    optarg.add_argument("-h", "--help", action="help", help="show this "
+                        "help message and exit")
+
+    args = parser.parse_args()
+
     if os.path.lexists(_CFG_FILE):
         print("Configuration file '{}' exists. Please remove it before "\
               "running this script.".format(_CFG_FILE))
         sys.exit(1)
 
     QScriptsConfig = _QScriptsConfig(_CFG_FILE_DEFAULT)
-    print("Creating a new configuration file...\n")
+    print("Creating a new configuration file...")
 
-    print("Looking for Qfep6 executables in PATH...")
-    qfep_path = get_exec_path("Qfep6")
-    if not qfep_path:
-        print("Not found, looking for qfep (v5) instead...")
-        qfep_path = get_exec_path("qfep")
-    if not qfep_path:
-        print("No Qfep executable was found in your PATH. "\
-              "Please set the path manually in the config file.")
+    if not args.no_bin:
+        print("\nLooking for Qfep6 executables in PATH...")
+        qfep_path = get_exec_path("Qfep6")
+        if not qfep_path:
+            print("Not found, looking for qfep (v5) instead...")
+            qfep_path = get_exec_path("qfep")
+        if not qfep_path:
+            print("No Qfep executable was found in your PATH. "\
+                  "Please set the path manually in the config file.")
 
-    QScriptsConfig.set("qexec", "qfep", qfep_path)
+        QScriptsConfig.set("qexec", "qfep", qfep_path)
 
-    print("Looking for Qcalc6 executables in PATH...")
-    qcalc_path = get_exec_path("Qcalc6")
-    if not qcalc_path:
-        print("Not found, looking for qcalc (v5) instead...")
-        qcalc_path = get_exec_path("qcalc")
-    if not qcalc_path:
-        print("No Qcalc executable was found in your PATH. "\
-              "Please set the path manually in the config file.")
+        print("Looking for Qcalc6 executables in PATH...")
+        qcalc_path = get_exec_path("Qcalc6")
+        if not qcalc_path:
+            print("Not found, looking for qcalc (v5) instead...")
+            qcalc_path = get_exec_path("qcalc")
+        if not qcalc_path:
+            print("No Qcalc executable was found in your PATH. "\
+                "Please set the path manually in the config file.")
 
-    QScriptsConfig.set("qexec", "qcalc", qcalc_path)
+        QScriptsConfig.set("qexec", "qcalc", qcalc_path)
 
     QScriptsConfig.config.write(open(_CFG_FILE, "w+"))
-    print("\n\nThe following config file was created with some default "\
+    print("\nThe following config file was created with some default "\
           "values:\n{}".format(_CFG_FILE))
 
 
