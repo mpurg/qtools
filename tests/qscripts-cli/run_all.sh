@@ -6,7 +6,6 @@ if [[ $1 == "pass" ]]; then
     export PASSONFAIL=1
 fi
 
-export QTOOLS_TMPDIR=$(mktemp -d --tmpdir QTOOLS_TESTS_XXX)
 TESTS_ROOT=$(pwd)
 
 # make sure we are running this copy of the scripts

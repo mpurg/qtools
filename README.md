@@ -31,12 +31,9 @@ The library and tools do not have any dependencies, except *matplotlib*
 which is required only for *q_plot.py*, a non-essential utility used mostly for
 troubleshooting simulations.
 
-The only requirements are *Python (versions 2.7, 3.4+)* and *Q* (see (https://github.com/qusers/Q6)).
+The only requirements are a *Unix-like OS (Linux or OSX)*, *Python (versions 2.7, 3.4+)* and *Q* (see the [Q6 github page](https://github.com/qusers/Q6)).
 
-*Note: The command-line tools were designed to work in a typical high-perfomance-computer Unix environment, and have not been tested with Microsoft Windows.*
-
-
-#### Installation (Linux)
+#### Installation (Linux, OSX)
 
 Clone the repository to your local directory:  
 ```
@@ -69,13 +66,13 @@ Automated Testing is performed on [Travis-CI](https://travis-ci.org/mpurg/qtools
 with [pytest](https://docs.pytest.org/en/latest/) for Qpyl
 ([code coverage](https://coveralls.io/github/mpurg/qtools?branch=master)).
 and simple regression tests for CLI tools.
-To run the tests locally, make sure you have `pytest` and `pytest-cov` installed and simply type:
+To run the tests locally make sure you have `pytest` and `pytest-cov` installed, then type:
 ```
 export QBIN_DIR=$HOME/apps/Q6/bin   # absolute path to your local Q-binary folder (optional)
 cd tests
 ./run_tests.sh
 ```
-If `QBIN_DIR` is not set, pre-compiled binaries will be downloaded from Github.
+If `QBIN_DIR` is not set, pre-compiled Q binaries will be downloaded from Github.
 
 #### Citations
 

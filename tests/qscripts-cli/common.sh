@@ -7,7 +7,8 @@
 
 TEST_ROOT=$(pwd)
 test_name=$(basename ${TEST_ROOT})
-TEST_TMP=$(mktemp -d --tmpdir=${QTOOLS_TMPDIR} ${test_name}_XXX)
+# https://unix.stackexchange.com/questions/30091/fix-or-alternative-for-mktemp-in-os-x
+TEST_TMP="$(mktemp -q -d -t ${test_name}.XXXXXX 2>/dev/null || mktemp -q -d)"
 
 DIFFS="diffs.txt"
 STDOUT="stdout.txt"
