@@ -11,18 +11,19 @@ qtools is a toolset comprised of a Python library Qpyl and a set of command-line
 
 #### Functionality
 
-- Python API for interfacing with Q executables.
-- EVB mapping and automatic fitting of off-diagonal and gas shift parameters.
-- Support for quantum classical path and group exclusion calculations.
+- Python wrapper for Q
+- Parameter conversions (FFLD OPLS, Amber/GAFF)
+- Input generation for molecular dynamics/free energy perturbation/umbrella sampling (MD/FEP/US) simulations
+- FEP-file generation for empirical valence bond (EVB) simulations
+- EVB mapping and automatic fitting of off-diagonal and gas-shift parameters
 - Linear response approximation (LRA) calculations (including group contributions)
-- Parameter conversions (OPLS, Amber/GAFF).
-- FEP file generation for EVB simulations.
-- Input generation for MD/FEP simulations and EVB calculations.
-- Output parsing and analysis of MD, FEP and EVB.
+- Output parsing and analysis of MD, FEP, and EVB
+- Support for Q6 (quantum classical path and group exclusion calculations)
 - Graphical tool for visualizing results and debugging simulations:
-  - Free energy profiles
-  - LRA, REORG, group contributions
-  - Energy breakdown (VDW, El, Bonds, ...)
+  - Free-energy profiles & sampling distributions
+  - LRA and reorganization free-energy breakdown
+  - LRA group contributions
+  - Energy breakdown (vdW, electrostatics, ...)
 
 
 #### Requirements
@@ -83,10 +84,14 @@ DOI of the latest release:
 *Example:*  
 *...analysis was performed with qtools v0.5.10 (DOI: 10.5281/zenodo.842003).*
 
+#### Bugs, feature requests, and contributions
+Submit issues and feature requests to Github (https://github.com/mpurg/qtools/issues).  
+To contribute create a pull request.
 
 #### Author
 Miha Purg (miha.purg@gmail.com)  
 
 ##### Contributors
 Paul Bauer
+
 
