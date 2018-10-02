@@ -45,7 +45,7 @@ from collections import OrderedDict as ODict
 
 from Qpyl.core.qfep import QFep, QFepError, QFepInput
 from Qpyl.core.qfep import QFepOutput, QFepOutputError
-from Qpyl.common import __version__, np
+from Qpyl.common import __version__, stats
 
 logger = logging.getLogger(__name__)
 
@@ -305,7 +305,7 @@ class QMapper(object):
             raise QMapperError("All directories failed to analyse! Try "
                                "changing the initial-guess values (Hij and "
                                "alpha) or step_size...")
-        return np.mean(dga), np.mean(dg0)
+        return stats.mean(dga), stats.mean(dg0)
 
 
 

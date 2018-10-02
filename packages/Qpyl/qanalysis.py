@@ -43,7 +43,7 @@ from collections import OrderedDict as ODict
 
 from Qpyl.core.qfep import QFepOutput, QFepOutputError
 from Qpyl.core.qdyn import QDynOutput, QDynOutputError
-from Qpyl.common import DataContainer, np
+from Qpyl.common import DataContainer, stats
 from Qpyl.plotdata import PlotData
 
 logger = logging.getLogger(__name__)
@@ -206,15 +206,15 @@ class QAnalyseFeps(object):
         allres = {}
         allres["calc_type"] = self._subcalc_key or ""
         allres["dg_n"] = len(dgas)
-        allres["dga"] = (np.mean(dgas), np.std(dgas),
-                         np.median(dgas), np.std_error(dgas))
+        allres["dga"] = (stats.mean(dgas), stats.stdev(dgas),
+                         stats.median(dgas), stats.sem(dgas))
 
-        allres["dg0"] = (np.mean(dg0s), np.std(dg0s),
-                         np.median(dg0s), np.std_error(dg0s))
+        allres["dg0"] = (stats.mean(dg0s), stats.stdev(dg0s),
+                         stats.median(dg0s), stats.sem(dg0s))
 
         allres["dg_fep_n"] = len(dgs_fep)
-        allres["dg_fep"] = (np.mean(dgs_fep), np.std(dgs_fep),
-                            np.median(dgs_fep), np.std_error(dgs_fep))
+        allres["dg_fep"] = (stats.mean(dgs_fep), stats.stdev(dgs_fep),
+                            stats.median(dgs_fep), stats.sem(dgs_fep))
         return """\
 # {calc_type:<15} Mean      Std.dev    Median    Std.error       N
 dG*         {dga[0]:10.2f} {dga[1]:10.2f} {dga[2]:10.2f} {dga[3]:10.2f} {dg_n:10}
@@ -452,14 +452,14 @@ dG_lambda   {dg_fep[0]:10.2f} {dg_fep[1]:10.2f} {dg_fep[2]:10.2f} \
             values = list(zip(*values))  
             # now they can be easily averaged and std-ed
             e_type = values[0][0]
-            de_st1_mean = np.mean(values[1])
-            de_st2_mean = np.mean(values[2])
-            lra_mean = np.mean(values[3])
-            reo_mean = np.mean(values[4])
-            de_st1_std = np.std(values[1])
-            de_st2_std = np.std(values[2])
-            lra_std = np.std(values[3])
-            reo_std = np.std(values[4])
+            de_st1_mean = stats.mean(values[1])
+            de_st2_mean = stats.mean(values[2])
+            lra_mean = stats.mean(values[3])
+            reo_mean = stats.mean(values[4])
+            de_st1_std = stats.stdev(values[1])
+            de_st2_std = stats.stdev(values[2])
+            lra_std = stats.stdev(values[3])
+            reo_std = stats.stdev(values[4])
 
             average_lras.add_row([e_type, de_st1_mean, de_st1_std,
                                   de_st2_mean, de_st2_std, lra_mean,
@@ -539,10 +539,10 @@ class QAnalyseDyns(object):
         tt, tf, tf_solu, tf_solv = temps.get_columns(("T_tot", "T_free",
                                                       "T_free_solute",
                                                       "T_free_solvent"))
-        tt_mean, tt_std = np.mean(tt), np.std(tt)
-        tf_mean, tf_std = np.mean(tf), np.std(tf)
-        tf_solu_mean, tf_solu_std = np.mean(tf_solu), np.std(tf_solu)
-        tf_solv_mean, tf_solv_std = np.mean(tf_solv), np.std(tf_solv)
+        tt_mean, tt_std = stats.mean(tt), stats.stdev(tt)
+        tf_mean, tf_std = stats.mean(tf), stats.stdev(tf)
+        tf_solu_mean, tf_solu_std = stats.mean(tf_solu), stats.stdev(tf_solu)
+        tf_solv_mean, tf_solv_std = stats.mean(tf_solv), stats.stdev(tf_solv)
         tt_max_dev = max([abs(x - tt_mean) for x in tt])
         tf_max_dev = max([abs(x - tf_mean) for x in tf])
         tf_solu_max_dev = max([abs(x - tf_solu_mean) for x in tf_solu])

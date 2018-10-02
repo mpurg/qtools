@@ -7,7 +7,6 @@ source ../../common.sh
 # make sure we are running this copy of the scripts
 source ../../../../qtools_init.sh
 
-
 echo "Working in ${TEST_TMP}"
 cp -r input ${TEST_TMP}
 cd ${TEST_TMP}

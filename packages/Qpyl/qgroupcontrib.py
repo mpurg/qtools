@@ -46,7 +46,7 @@ from collections import OrderedDict as ODict
 from Qpyl.core.qcalc import QCalc, QCalcError, QCalcInput, QCalcOutput
 from Qpyl.core.qdyn import QDynInput, QDynInputError
 from Qpyl.core.qstructure import QStruct, QStructError
-from Qpyl.common import __version__, np, DataContainer
+from Qpyl.common import __version__, stats, DataContainer
 from Qpyl.plotdata import PlotData
 
 logger = logging.getLogger(__name__)
@@ -309,14 +309,14 @@ class QGroupContrib(object):
             resid, resname = res_key.split(".")
             # get mean and stdev
             rc_stats = [int(resid), resname, len(rc[0]),
-                        np.mean(rc[0]), np.std(rc[0]), # <E2-E1>1 vdw
-                        np.mean(rc[1]), np.std(rc[1]), # <E2-E1>1 el
-                        np.mean(rc[2]), np.std(rc[2]), # <E2-E1>2 vdw
-                        np.mean(rc[3]), np.std(rc[3]), # <E2-E1>2 el
-                        np.mean(rc[4]), np.std(rc[4]), # LRA vdw
-                        np.mean(rc[5]), np.std(rc[5]), # LRA el
-                        np.mean(rc[6]), np.std(rc[6]), # REORG vdw
-                        np.mean(rc[7]), np.std(rc[7])] # REORG el
+                        stats.mean(rc[0]), stats.stdev(rc[0]), # <E2-E1>1 vdw
+                        stats.mean(rc[1]), stats.stdev(rc[1]), # <E2-E1>1 el
+                        stats.mean(rc[2]), stats.stdev(rc[2]), # <E2-E1>2 vdw
+                        stats.mean(rc[3]), stats.stdev(rc[3]), # <E2-E1>2 el
+                        stats.mean(rc[4]), stats.stdev(rc[4]), # LRA vdw
+                        stats.mean(rc[5]), stats.stdev(rc[5]), # LRA el
+                        stats.mean(rc[6]), stats.stdev(rc[6]), # REORG vdw
+                        stats.mean(rc[7]), stats.stdev(rc[7])] # REORG el
 
             self.gcs_stats.add_row(rc_stats)
 

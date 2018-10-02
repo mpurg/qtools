@@ -8,19 +8,29 @@ import pytest
 
 from Qpyl.qanalysis import QAnalyseFeps, QAnalyseDyns
 from Qpyl import plotdata
+from json import encoder
+
+def round_json(inps):
+    # round all numbers to 10 digits to float errors
+    pattern = r'(-?\d+\.\d+)'
+    return re.sub(pattern,
+                  lambda m: "{!r}".format(round(float(m.group(1)), 10)), inps)
+                                 
 
 class TestAnalyseFeps:
     def test_plotdata(self):
         # regression test, see if the data outputed is the same
-        ref_values = open("data/qaf.PlotData.json").read().strip()
+        ref_data = open("data/qaf.PlotData.json").read().strip()
 
         qfep_outs = ["data/qfep.out.1",
                      "data/qfep.out.2"]
         qafs = QAnalyseFeps(qfep_outs, lra_lambdas=(1.0, 0.0))
         jsonenc = plotdata.PlotDataJSONEncoder(indent=2,
                                                separators=(',', ': '))
-        #open("data/qaf.tmp.json", "w").write(jsonenc.encode(qafs.plotdata))
-        assert jsonenc.encode(qafs.plotdata) == ref_values
+
+        outstr = round_json(jsonenc.encode(qafs.plotdata)) 
+        #open("data/qaf.tmp.json", "w").write(outstr)
+        assert outstr == ref_data
 
     def test_lra_stats(self):
         # regression test, see if the data outputed is the same
@@ -57,14 +67,14 @@ class TestAnalyseFeps:
 class TestAnalyseDyns:
     def test_plotdata(self):
         # regression test, see if the data outputed is the same
-        ref_values = open("data/qad.PlotData.json").read().strip()
+        ref_data = open("data/qad.PlotData.json").read().strip()
 
         qdyn_outs = ["data/qdyn5.log",
                      "data/qdyn6.log"]
         qads = QAnalyseDyns(qdyn_outs)
         jsonenc = plotdata.PlotDataJSONEncoder(indent=2,
                                                separators=(',', ': '))
-        pd = jsonenc.encode(qads.get_plotdata(stride=10))
-        #open("data/qad.tmp.json", "w").write(pd)
-        assert pd == ref_values
+        outstr = round_json(jsonenc.encode(qads.get_plotdata(stride=10)))
+        #open("data/qad.tmp.json", "w").write(outstr)
+        assert outstr == ref_data
 

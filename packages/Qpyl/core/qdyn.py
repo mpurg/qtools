@@ -40,7 +40,7 @@ import copy
 import logging
 from collections import OrderedDict as ODict
 
-from Qpyl.common import __version__, raise_or_log, DataContainer, np, gzopen
+from Qpyl.common import __version__, raise_or_log, DataContainer, gzopen
 
 logger = logging.getLogger(__name__)
 
