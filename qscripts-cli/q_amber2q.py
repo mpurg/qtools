@@ -247,6 +247,14 @@ outstring = """# Generated with {}, version {}
            time.ctime(), qlib.get_string())
 open(libfn, "w").write(outstring)
 
+# make a list of unique torsion prms
+# (generics for same atypes are returned from .prm_full as
+# separate _PrmTorsion objects)
+torsion_prms = [x.prm_full for x in qtop.torsions]
+torsion_prms_unique = {x.prm_id: x for x in torsion_prms}.values()
+improper_prms = [x.prm_full for x in qtop.impropers]
+improper_prms_unique = {x.prm_id: x for x in improper_prms}.values()
+
 print("Writing the parameter file: {}".format(prmfn))
 backup = backup_file(prmfn)
 if backup:
@@ -260,8 +268,8 @@ outstring = """# Generated with {}, version {}
            qprm.get_string(atom_types=[x.prm for x in qtop.atoms],
                            bonds=[x.prm for x in qtop.bonds],
                            angles=[x.prm for x in qtop.angles],
-                           torsions=[x.prm_full for x in qtop.torsions],
-                           impropers=[x.prm_full for x in qtop.impropers]))
+                           torsions=torsion_prms_unique,
+                           impropers=improper_prms_unique))
 open(prmfn, "w").write(outstring)
 
 print("Writing the parameter check file: {}".format(prmchkfn))
