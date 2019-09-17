@@ -1180,10 +1180,14 @@ class _PrmTorsion(object):
     @property
     def strval(self):
         """Return parameter values in string format."""
-        fcs = ", ".join("{:.4f}".format(fc) for fc in self.fcs)
-        mults = ",".join("{:.1f}".format(mult) for mult in self.multiplicities)
-        phases = ",".join("{:.1f}".format(phase) for phase in self.phases)
-        npaths = ",".join("{:.1f}".format(path) for path in self.npaths)
+
+        # make sure they are sorted first
+        prm_fcs, prm_mults, prm_phases, prm_npaths = zip(*self.get_prms())
+
+        fcs = ", ".join("{:.4f}".format(fc) for fc in prm_fcs)
+        mults = ",".join("{:.1f}".format(mult) for mult in prm_mults)
+        phases = ",".join("{:.1f}".format(phase) for phase in prm_phases)
+        npaths = ",".join("{:.1f}".format(path) for path in prm_npaths)
 
         return "fcs=({}), multiplicities=({}), phi0=({}), "\
                "npaths=({})".format(fcs, mults, phases, npaths)
@@ -1232,17 +1236,14 @@ class _PrmTorsion(object):
 
         The list is in ascending order of multiplicity.
 
-        [ (fc3, -multiplicity3, phase3, npaths3),
-          (fc2, -multiplicity2, phase2, npaths2),
-          (fc1, multiplicity1, phase1, npaths1) ]
+        [ (fc1, multiplicity1, phase1, npaths1),
+          (fc2, multiplicity2, phase2, npaths2),
+          (fc3, multiplicity3, phase3, npaths3) ]
         """
         prms = sorted(zip(self.fcs, self.multiplicities,
                           self.phases, self.npaths),
                       key=lambda x: x[1])
-        #rl = []
-        #for prm in prms:
-        #    prm = list(prm)
-        #    rl.append(prm)
+
         return prms
 
 
