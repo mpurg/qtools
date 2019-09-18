@@ -186,7 +186,7 @@ def genrelax(relax_proc_file, outdir, restraint,
                 fep_fn = cont_files["fep"]
                 shutil.copy2(os.path.join(di, fep_fn), TMPDIR)
             except KeyError:
-                logger.info("No FEP file found in the input")
+                logger.info("No FEP file found in the input.")
 
     # or take the arguments
     else:
@@ -197,11 +197,12 @@ def genrelax(relax_proc_file, outdir, restraint,
         cont_files = None
         top_fn = os.path.basename(top_file)
         shutil.copy2(top_file, TMPDIR)
-        try:
+
+        if fep_file is not None:
             fep_fn = os.path.basename(fep_file)
             shutil.copy2(fep_file, TMPDIR)
-        except AttributeError:
-            logger.info("NOTE: No FEP file!")
+        else:
+            logger.info("No FEP file was given.")
 
         if restraint in ["cont_inp", "cont_final"]:
             raise QGenrelaxError("Can't restrain to '{}'. Specify 'cont_file'."
@@ -211,9 +212,9 @@ def genrelax(relax_proc_file, outdir, restraint,
 
     logger.info("Restraining to: '{}'".format(rest_fn or 'topology'))
 
-    try:
+    if runscript_file is not None:
         shutil.copy2(runscript_file, TMPDIR)
-    except AttributeError:
+    else:
         logger.info("No submission script was given.")
 
 
