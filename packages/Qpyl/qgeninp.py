@@ -381,7 +381,6 @@ Quick summary
 {0:<10} {1:>5} {2:>10} {3:>10} {4:^10} {5:^10} {6:^10} {7:^30} {8:^10} {9:>10}
 """.format("Step", "T", "Stepsize", "Steps", "Seq.rest", "Dist.rest",
            "Ang.rest", "Shake", "Rand.Seed", "Data (MB)")
-    locale.setlocale(locale.LC_ALL, '')
     restraints = []
     total_time = 0
 
