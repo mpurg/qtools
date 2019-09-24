@@ -90,8 +90,12 @@ class PlotApp():
         self.canvas = FigureCanvasTkAgg(self.figure, master=self.parent)
         self.canvas.get_tk_widget().pack()
         self.canvas._tkcanvas.pack(fill=Tk.BOTH, expand=1)
-
-        self.toolbar = NavigationToolbar2TkAgg( self.canvas, self.parent )
+        
+        
+        if matplotlib.__version__[0] == "3":
+            self.toolbar = NavigationToolbar2Tk( self.canvas, self.parent )
+        else:
+            self.toolbar = NavigationToolbar2TkAgg( self.canvas, self.parent )
         self.toolbar.update()
         self.canvas._tkcanvas.pack(side=Tk.TOP, fill=Tk.BOTH, expand=1)
 
@@ -399,15 +403,28 @@ if __name__ == "__main__":
             from matplotlib.figure import Figure
             import matplotlib.patches as mpatches
             from mpl_toolkits.mplot3d import Axes3D
+        
         except ImportError:
-            print("""Matplotlib is required for this script to work. Try something like:
-            (ubuntu)    $ sudo apt-get install python-matplotlib
-            (mac)       $ sudo brew install matplotlib
-            (mac)       $ sudo port install py27-matplotlib
-            (anything)  $ sudo pip install matplotlib
-            (anything)  $ conda install -c conda-forge matplotlib=2.0.0
-            or if you are working on a cluster, try loading a different python module...""")
-            sys.exit(1)
+            print("Failed to load matplotlib 2.*, trying 3.*")
+            try:
+                import matplotlib
+                matplotlib.use('TkAgg')
+                from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+                from matplotlib.font_manager import FontProperties
+                from matplotlib.figure import Figure
+                import matplotlib.patches as mpatches
+                from mpl_toolkits.mplot3d import Axes3D
+            
+             
+            except:
+                 print("""Matplotlib is required for this script to work. Try something like:
+                          (ubuntu)    $ sudo apt-get install python-matplotlib
+                          (mac)       $ sudo brew install matplotlib
+                          (mac)       $ sudo port install py27-matplotlib
+                          (anything)  $ sudo pip install matplotlib
+                          (anything)  $ conda install -c conda-forge matplotlib=2.0.0
+                          or if you are working on a cluster, try loading a different python module...""")
+                 sys.exit(1)
 
         root = Tk.Tk()
         root.title("Q_Plot")
