@@ -438,14 +438,21 @@ class QGroupContrib(object):
             with open(os.path.join(calcdir, fep_fn), "r") as fep:
                 section = ""
                 q_atoms = []
+                offset = 0
                 for line in fep.readlines():
+                    if line.startswith('offset'):
+                        offset = int(line.split()[1])
                     line = line.split("#")[0].split("!")[0].strip()
                     if line == "":
                         continue
                     elif line[0] == "[":
                         section = line
                     elif section == "[atoms]":
-                        q_atoms.append(line.split()[1])
+                        if offset != 0:
+                            q_atom = int(line.split()[1]) + offset
+                            q_atoms.append(str(q_atom))
+                        else:
+                            q_atoms.append(line.split()[1])
         else:
             q_atoms = self._qmask
 
