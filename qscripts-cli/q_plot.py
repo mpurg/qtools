@@ -70,7 +70,6 @@ class PlotApp():
         self.subplot_lines = {}
         self.legend_font = FontProperties(size="xx-small")
         
-
         self.lb1_entries = ODict()
         for plot_key, plot in six.iteritems(self.plots):
             self.lb1_entries[ list(plot.values())[0].title ] = plot_key
@@ -229,10 +228,12 @@ class PlotApp():
                                            marker="s")
 
                     elif plot.plot_type == "wireframe":
-                        line = plt.plot_wireframe(subplot_data["xdata"],
-                                                  subplot_data["ydata"],
-                                                  subplot_data["zdata"],
-                                                  color=self._COLORS[plot_number])
+                        line = plt.scatter(subplot_data["xdata"],
+                                        subplot_data["ydata"],
+                                        subplot_data["zdata"],
+                                        c=subplot_data["ydata"],
+                                        cmap=matplotlib.cm.viridis)
+                                                
 
                     # add the line that was drawn to subplot_lines
                     # so that we can change color if lb2 selection changes
@@ -406,6 +407,7 @@ if __name__ == "__main__":
             from matplotlib.figure import Figure
             import matplotlib.patches as mpatches
             from mpl_toolkits.mplot3d import Axes3D
+            import numpy as np
         except ImportError:
             print("""Matplotlib is required for this script to work. Try something like:
                      (ubuntu)    $ sudo apt-get install python-matplotlib
