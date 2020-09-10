@@ -28,27 +28,26 @@ qtools is a toolset comprised of a Python library Qpyl and a set of command-line
 
 #### Requirements
 
-The library and tools do not have any dependencies, except *matplotlib*
-which is required only for *q_plot.py*, a non-essential utility used mostly for
-troubleshooting simulations.
-
-The only requirements are a *Unix-like OS (Linux or OSX)*, *Python (versions 2.7, 3.4+)* and *Q* (see the [Q6 github page](https://github.com/qusers/Q6)).
+- Python 3.4+
+- Q (see the [Q6 github page](https://github.com/qusers/Q6)).
+- matplotlib is required for *q_plot.py*, a non-essential utility used mostly for troubleshooting simulations.
 
 #### Installation (Linux, OSX)
 
-Clone the repository to your local directory:  
+Clone the repository:
 ```
 mkdir -p ~/bin && cd ~/bin
 git clone https://github.com/mpurg/qtools
 ```
 
-Add this line to your `~/.bashrc` or `~/.bash_profile`:  
+If using Bash, add this line to your `~/.bashrc`:
 ```
 source $HOME/bin/qtools/qtools_init.sh
 ```
 
-Open a new shell session and run the CLI config script:  
+Reload *.bashrc* and run the CLI config script:  
 ```
+source ~/.bashrc
 qscripts_config.py
 ```
 This script looks for Q executables in your `PATH` and creates a default settings-file `$QTOOLS_HOME/qscripts.cfg`.  
@@ -82,7 +81,7 @@ DOI of the latest release:
 [![DOI](https://zenodo.org/badge/80016679.svg)](https://zenodo.org/badge/latestdoi/80016679)  
 
 *Example:*  
-*...analysis was performed with qtools v0.5.10 (DOI: 10.5281/zenodo.842003).*
+*...analysis was performed with qtools v0.7.0 (DOI: 10.5281/zenodo.842003).*
 
 #### Bugs, feature requests, and contributions
 Submit issues and feature requests to Github (https://github.com/mpurg/qtools/issues).  

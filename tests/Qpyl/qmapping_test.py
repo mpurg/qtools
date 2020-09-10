@@ -52,15 +52,20 @@ class TestQMapper:
             #open(fn, "w").write(qfep_inp)
             assert open(fn, "r").read() == qfep_inp
 
+
+            qfep_out = re.sub(".*Number of energy files",
+                              "Number of energy files",
+                              qfep_out, 0, re.DOTALL)
+
             fn = "data/qmapping/qfep_" + os.path.basename(md) + ".out"
+
             #open(fn, "w").write(qfep_out)
-            ref_str = re.sub("Build.*Copyright", "Copyright",
-                              open(fn, "r").read(), flags=re.DOTALL)
-            ref_str = re.sub(" ", "", ref_str)
-            out_str = re.sub("Build.*Copyright", "Copyright",
-                             qfep_out, flags=re.DOTALL)
-            out_str = re.sub(" ", "", out_str)
-            assert ref_str == out_str
+            qfep_out = re.sub(" +", " ", qfep_out)
+
+            ref_out = open(fn, "r").read()
+            ref_out = re.sub(" +", " ", ref_out)
+
+            assert ref_out == qfep_out
 
     def test_fit_to_reference(self):
 
