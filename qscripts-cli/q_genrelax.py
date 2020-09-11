@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -25,6 +25,9 @@
 #
 #
 #
+
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
 
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
@@ -99,7 +102,7 @@ args = parser.parse_args()
 if args.cont == None and args.restraint == None:
     args.restraint = 'top'
 elif args.cont != None and args.restraint == None:
-    print "FATAL! --rest is required with --cont"
+    print("FATAL! --rest is required with --cont")
     sys.exit(1)
 
 kwargs = {"relax_proc_file": args.relax_proc,
@@ -116,7 +119,7 @@ try:
     gen_inps = genrelax(**kwargs)
     #print gen_inps
 except QGenrelaxError as err:
-    print "ERROR: {}".format(err)
+    print("ERROR: {}".format(err))
     sys.exit(1)
 
 

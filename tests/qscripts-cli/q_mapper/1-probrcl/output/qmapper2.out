@@ -1,19 +1,27 @@
 
+--------------------------------- q_mapper.py ---------------------------------
+# Path: 
+# CMDline: q_mapper.py 100 10 --dirs testrep1 testrep2 testrep3 --skip 100 --min 1 --bins 20 --temp 298 --qfep_exec /home/mpurg/bin/converting_qtools_p3/qtools-modernize/tests/qbin//Qfep6 --out qmapper2.out
 
 ------------------------------- Mapping details -------------------------------
-# Mapped with: Qtools (0.5.12), Qfep (Unknown, likely ancient)
-# Qfep path: /home/mpurg/bin/Q6/bin/Qfep6
-# Work dir: /tmp/1-probrcl_tlL
-# Date: Sun Apr 22 18:07:48 2018
-# CMDline: /home/mpurg/bin/qtools/qscripts-cli/q_mapper.py 100 10 --dirs testrep1 testrep2 testrep3 --skip 100 --min 1 --bins 20 --temp 298 --out qmapper2.out
+# Mapped with: Qtools (0.6.1), Qfep (Unknown, likely ancient)
+# Qfep path:
+# Work dir: /tmp/1-probrcl_SCC
+# Date: Tue Sep 25 22:58:52 2018
 
-Directories:
+# Parms:
+alpha                      10.0
+gap_bins                     20
+gas_const          0.0019872041
+hij                       100.0
+minpts_bin                    1
+points_skip                 100
+temperature               298.0
+
+# Directories:
 testrep1, testrep2, testrep3
 
-Input:
-q_mapper.py 100.0 10.0 --bins 20 --skip 100 --min 1 --temp 298.0 
-
-Fails:
+# Fails:
 testrep1: QFep wrote to STDERR: STOP Qfep5 terminated abnormally: Too few data points in file.
 
 testrep2: QFep wrote to STDERR: STOP Qfep5 terminated abnormally: Too few data points in file.

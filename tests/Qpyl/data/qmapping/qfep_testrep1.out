@@ -1,22 +1,4 @@
-
-Build and version information
-
-Build number 6.0.8
-Build date   20170817
-Built:       
-      by     acmnpv
-      on     acmnpvdell
-      git id 7f54fcf7fd0dc0c14e640a3fa3ce03384d771623
-      with   GNU Fortran Debian 6.4.0-1 6.4.0 20170704
-qfep version 6.0.8 , git id=7f54fcf7fd0dc0c14e640a3fa3ce03384d771623 initialising
-
-
-Welcome in qfep modification date 20170817
-
- Q6, Copyright © 2017 Johan Åqvist, John Marelius, Shina Caroline Lynn Kamerlin and Paul Bauer
- Q6 comes with ABSOLUTELY NO WARRANTY.  This is free software, and you are welcome
- to redistribute it under certain conditions. For details, add the --help flag.
---> Number of energy files: # Number of files                 =    21
+Number of energy files: # Number of files                 =    21
 --> No. of states, no. of predefined off-diag elements: # Number of states                 =     2
 # Number of off-diagonal elements =     0
 --> Give kT & no, of pts to skip   & calculation mode: # kT                              = 0.592
@@ -24,7 +6,7 @@ Welcome in qfep modification date 20170817
 # Only QQ interactions will be considered   =   0
 --> Give number of gap-bins: # Number of gap-bins              =    20
 --> Give minimum # pts/bin: # Minimum number of points per bin=     1
---> Give alpha for state  2:                                                    # Alpha for state  2              = 10.00
+--> Give alpha for state  2:                                                    # Alpha for state  2              =    10.00
 --> Number of off-diagonal elements:# Number of off-diagonal elements =     1
 #   i   j   A(i,j)  mu(i,j) eta(i,j) rxy0(i,j)
 --> i, j, A_ij, mu_ij, eta_ij, r_xy0: #   1   2    100.00      0.00      0.00      0.00

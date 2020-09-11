@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -29,12 +29,20 @@ This module contains some common classes and functions,
 including simple statistical methods and data structures.
 """
 
+from __future__ import absolute_import, division, unicode_literals
+from six.moves import zip
+from io import open
 import math
 import sys
 import os
 import shutil
 import logging
 import gzip
+
+try:
+    import statistics
+except ImportError:
+    pass
 
 logger = logging.getLogger(__name__)
 
@@ -59,8 +67,19 @@ class SpecialFormatter(logging.Formatter):
                logging.INFO : "# %(message)s",
                'DEFAULT' : "%(message)s"}
 
+    def __init__(self, *args, **kwargs):
+        super(SpecialFormatter, self).__init__(*args, **kwargs)
+
     def format(self, record):
-        self._fmt = self.FORMATS.get(record.levelno, self.FORMATS['DEFAULT'])
+# a bit diff in py2 vs py3
+# https://stackoverflow.com/questions/14844970/modifying-logging-message-format-based-on-message-logging-level-in-python3
+        try:
+            self._style
+            self._style._fmt = self.FORMATS.get(record.levelno,
+                                                self.FORMATS['DEFAULT'])
+        except AttributeError:
+            self._fmt = self.FORMATS.get(record.levelno,
+                                         self.FORMATS['DEFAULT'])
         return logging.Formatter.format(self, record)
 
 
@@ -138,29 +157,8 @@ def backup_file(filename):
     return ""
     
 
-
 # no need for numpy to do these basic stats
-class np():
-    @staticmethod
-    def kendall_tau(list_a, list_b):
-        """Calculate Kendall's tau-a correlation coefficient.
-
-        Args:
-            list_a (list):  list of ints/floats
-            list_b (list):  list of ints/floats
-        """
-        lists = zip(list_a, list_b)
-        N, conc, disc = len(lists), 0.0, 0.0
-        for i, (x, y) in enumerate(lists[:-1]):
-            for (x2, y2) in lists[i+1:]:
-                dx, dy = (x - x2), (y - y2)
-                if dx * dy < 0:
-                    disc += 1
-                elif dx * dy > 0:
-                    conc += 1
-                else:
-                    pass # ignore ties
-        return (conc - disc)/(N * (N - 1)/2.0)
+class stats(object):
 
     @staticmethod
     def mean(vals):
@@ -168,40 +166,53 @@ class np():
 
         Args:
             vals (list of float):  sample values
+
+        Wraps statistics.mean() in Py3+.
+
+        Returns float('nan') on empty array.
         """
-        N = len(vals)
-        if N == 0: 
+        if len(vals) == 0:
             return float('nan')
-        return sum(vals) * 1.0 / N
+        try:
+            return statistics.mean(vals)
+        except NameError:
+            return 1.0 / len(vals) * sum(vals)
+
 
     @staticmethod
-    def std(vals, ddof=1):
-        """Calculate standard deviation.
+    def stdev(vals):
+        """Calculate sample standard deviation.
         
         Args:
             vals (list of float):  sample values
-            ddof (int, optional):  delta degrees of freedom (default is 1, \
-                                   producing *sample* standard deviation)
+
+        Wraps statistics.stdev() in Py3+.
+
+        Returns float('nan') when fewer than two values.
         """
-        N = len(vals)
-        if N == 0 or N-ddof == 0: 
+        if len(vals) < 2:
             return float('nan')
-        mean = np.mean(vals)
-        variance = map(lambda x: (x - mean)**2, vals)
-        return math.sqrt(sum(variance)/(N - ddof))
+
+        try:
+            return statistics.stdev(vals)
+        except NameError:
+            mean = stats.mean(vals)
+            variance = [(x - mean)**2 for x in vals]
+            return math.sqrt(sum(variance)*1.0/(len(vals)-1))
 
     @staticmethod
-    def std_error(vals, ddof=1):
+    def sem(vals):
         """Calculates standard error of mean.
         
         Args:
             vals (list of float):  sample values
-            ddof (int, optional):  see np.std()
+
+        Returns float('nan') when fewer than two values.
         """
-        N = len(vals)
-        if N == 0 or N-ddof == 0:
+        if len(vals) < 2:
             return float('nan')
-        return np.std(vals, ddof=ddof) / math.sqrt(N)
+
+        return stats.stdev(vals) / math.sqrt(len(vals))
 
     @staticmethod
     def median(vals):
@@ -209,16 +220,22 @@ class np():
 
         Args:
             vals (list of float):  sample values
+
+        Wraps statistics.median() in Py3+.
+
+        Returns float('nan') on empty array.
         """
         N = len(vals)
         if N == 0:
             return float('nan')
-        vals = sorted(vals)
-        if N % 2 == 0: #even
-            return np.mean((vals[N/2-1], vals[N/2]))
-        else: #odd
-            return vals[N/2]
-
+        try:
+            return statistics.median(vals)
+        except NameError:
+            vals = sorted(vals)
+            if N % 2 == 0: #even
+                return stats.mean((vals[N//2-1], vals[N//2]))
+            else: #odd
+                return vals[N//2]
 
 
 
@@ -237,14 +254,30 @@ class DataContainer(object):
         coltitles (list): column titles
 
     Examples:
-        >>> dg_de = DataContainer( ['Energy_gap', 'dG'] )
-        >>> dg_de.add_row( [-300.0, 10.0 ]
-        # reversed rows
-        >>> rows = dg_de.get_rows( reversed(dg_de.column_titles) )
-        >>> cols = dg_de.get_columns( columns=[0, 1] )
+        >>> dg = DataContainer(['Energy_gap', 'dG', 'points'], comment="asd"))
+        >>> dg.add_row([-300.0, 10.0, 2000])
+        >>> dg.add_row([-200.0, 5.0, 1000])
+        >>> dg
+        DataContainer(['Energy_gap', 'dG', 'points'], comment='asd', Nrows=2)
+        # get all rows
+        >>> dg.get_rows()
+        [[-300.0, 10.0, 2000], [-200.0, 5.0, 1000]]
+        # get rows from specific columns
+        >>> dg.get_rows(columns=('Energy_gap', 'points'))
+        [[-300.0, 2000], [-200.0, 1000]]
+        # get all columns
+        >>> dg.get_columns()
+        [(-300.0, -200.0), (10.0, 5.0), (2000, 1000)]
+        # get specific columns
+        >>> dg.get_columns(columns=(0, 1))
+        [(-300.0, -200.0), (10.0, 5.0)]
+        >>> dg.get_columns(columns=('Energy_gap', 'dG')
+        [(-300.0, -200.0), (10.0, 5.0)]
+        # clean up
+        >>> dg.delete_rows()
     """
 
-    def __init__(self, coltitles):
+    def __init__(self, coltitles, comment=""):
         if not isinstance(coltitles, (list, tuple)):
             coltitles = [coltitles,]
 
@@ -252,7 +285,11 @@ class DataContainer(object):
         # a list containing rows of values
         # (each row is a list with length = len(coltitles))
         self._rows = []
-        self.comment = None
+        self.comment = comment
+
+    def __repr__(self):
+        return "DataContainer({}, comment='{}', Nrows={})" \
+               "".format(self.column_titles, self.comment, len(self._rows))
 
 
     def get_columns(self, columns=None):
@@ -274,7 +311,7 @@ class DataContainer(object):
                 col_inds.append(col)
             else:
                 col_inds.append(self.column_titles.index(str(col)))
-        cols = zip(*self._rows)   # transpose
+        cols = list(zip(*self._rows))   # transpose
         if col_inds:
             return [cols[i] for i in col_inds]
         else:
@@ -293,7 +330,7 @@ class DataContainer(object):
         """
         if columns:
             cols = self.get_columns(columns)
-            return zip(*cols)
+            return list(zip(*cols))
         else:
             return self._rows
 

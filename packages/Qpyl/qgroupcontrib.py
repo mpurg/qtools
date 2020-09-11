@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -31,6 +31,11 @@ LRA group contributions.
 It also defines a custom exception class - QGroupContribError.
 """
 
+from __future__ import absolute_import, division, unicode_literals
+from io import open
+import six
+from six.moves import zip
+
 import sys
 import os
 import time
@@ -41,7 +46,7 @@ from collections import OrderedDict as ODict
 from Qpyl.core.qcalc import QCalc, QCalcError, QCalcInput, QCalcOutput
 from Qpyl.core.qdyn import QDynInput, QDynInputError
 from Qpyl.core.qstructure import QStruct, QStructError
-from Qpyl.common import __version__, np, DataContainer
+from Qpyl.common import __version__, stats, DataContainer
 from Qpyl.plotdata import PlotData
 
 logger = logging.getLogger(__name__)
@@ -200,7 +205,7 @@ class QGroupContrib(object):
 
         # parse the output for results and
         # calculate LRAs for each dir
-        for _dir, (_, qouts) in self._qcalc_io.iteritems():
+        for _dir, (_, qouts) in six.iteritems(self._qcalc_io):
             gcs = []
             failed_flag = False
             for qout in qouts:
@@ -285,12 +290,12 @@ class QGroupContrib(object):
         # get GC stats over all directories
         self.gcs_stats.delete_rows()
         gcs = {}
-        for _, gc in self.gcs.iteritems():
+        for _, gc in six.iteritems(self.gcs):
             for row in gc.get_rows():
                 resid, resname = row[0:2]
                 res_key = "{}.{}".format(resid, resname)
                 values = [[val,] for val in row[2:]]
-                if not gcs.has_key(res_key):
+                if res_key not in gcs:
                     gcs[res_key] = values
                 else:
                     for i, val in enumerate(gcs[res_key]):
@@ -299,19 +304,19 @@ class QGroupContrib(object):
         # iterate through each residue and calculate
         # means and stdevs
         # (sort by residue index)
-        for res_key in sorted(gcs.keys(), key=lambda x: int(x.split(".")[0])):
+        for res_key in sorted(gcs, key=lambda x: int(x.split(".")[0])):
             rc = gcs[res_key]
             resid, resname = res_key.split(".")
             # get mean and stdev
             rc_stats = [int(resid), resname, len(rc[0]),
-                        np.mean(rc[0]), np.std(rc[0]), # <E2-E1>1 vdw
-                        np.mean(rc[1]), np.std(rc[1]), # <E2-E1>1 el
-                        np.mean(rc[2]), np.std(rc[2]), # <E2-E1>2 vdw
-                        np.mean(rc[3]), np.std(rc[3]), # <E2-E1>2 el
-                        np.mean(rc[4]), np.std(rc[4]), # LRA vdw
-                        np.mean(rc[5]), np.std(rc[5]), # LRA el
-                        np.mean(rc[6]), np.std(rc[6]), # REORG vdw
-                        np.mean(rc[7]), np.std(rc[7])] # REORG el
+                        stats.mean(rc[0]), stats.stdev(rc[0]), # <E2-E1>1 vdw
+                        stats.mean(rc[1]), stats.stdev(rc[1]), # <E2-E1>1 el
+                        stats.mean(rc[2]), stats.stdev(rc[2]), # <E2-E1>2 vdw
+                        stats.mean(rc[3]), stats.stdev(rc[3]), # <E2-E1>2 el
+                        stats.mean(rc[4]), stats.stdev(rc[4]), # LRA vdw
+                        stats.mean(rc[5]), stats.stdev(rc[5]), # LRA el
+                        stats.mean(rc[6]), stats.stdev(rc[6]), # REORG vdw
+                        stats.mean(rc[7]), stats.stdev(rc[7])] # REORG el
 
             self.gcs_stats.add_row(rc_stats)
 
@@ -433,14 +438,21 @@ class QGroupContrib(object):
             with open(os.path.join(calcdir, fep_fn), "r") as fep:
                 section = ""
                 q_atoms = []
+                offset = 0
                 for line in fep.readlines():
+                    if line.startswith('offset'):
+                        offset = int(line.split()[1])
                     line = line.split("#")[0].split("!")[0].strip()
                     if line == "":
                         continue
                     elif line[0] == "[":
                         section = line
                     elif section == "[atoms]":
-                        q_atoms.append(line.split()[1])
+                        if offset != 0:
+                            q_atom = int(line.split()[1]) + offset
+                            q_atoms.append(str(q_atom))
+                        else:
+                            q_atoms.append(line.split()[1])
         else:
             q_atoms = self._qmask
 
@@ -487,7 +499,7 @@ class QGroupContrib(object):
     def details(self):
 
         fails = "\n".join(["{}: {}".format(cd, e) \
-                           for cd, e in self.failed.iteritems()])
+                           for cd, e in six.iteritems(self.failed)])
 
         calcdirs = ", ".join(self._calcdirs)
         outstr = """
@@ -496,7 +508,6 @@ class QGroupContrib(object):
 # Qcalc path: {qcalc_exec}
 # Work dir: {cwd}
 # Date: {date}
-# CMDline: {cmdline}
 
 Directories:
 {dirs}
@@ -629,7 +640,7 @@ Fails:
         # top 20 LRA el
         sorted_rows = sorted(self.gcs_stats.get_rows(),
                              key=lambda x: -abs(x[5]))[:20]
-        cols = zip(*sorted_rows)
+        cols = list(zip(*sorted_rows))
         resids, resnames = cols[0], cols[1]
         keys = ["{}_{}".format(rn.capitalize(), ri) \
                                 for ri, rn in zip(resids, resnames)]
@@ -639,7 +650,7 @@ Fails:
         # top 20 reorg el
         sorted_rows = sorted(self.gcs_stats.get_rows(),
                              key=lambda x: -abs(x[9]))[:20]
-        cols = zip(*sorted_rows)
+        cols = list(zip(*sorted_rows))
         resids, resnames = cols[0], cols[1]
         keys = ["{}_{}".format(rn.capitalize(), ri) \
                                 for ri, rn in zip(resids, resnames)]

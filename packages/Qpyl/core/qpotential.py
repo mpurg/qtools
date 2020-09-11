@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -31,6 +31,8 @@ and functions for calculating distances, angles and dihedral angles, as
 implemented in Q.
 """
 
+from __future__ import absolute_import, unicode_literals, division
+from six.moves import zip
 import math
 
 from Qpyl.core import qstructure

@@ -21,26 +21,26 @@ q_calc.py gc dfpase_dfp_start.pdb 15 20 --iscale 1 \
                                         --qcalc_exec ${QBIN_DIR}/Qcalc6 \
                                         --writeout > ${STDOUT}
 
-#q_calc.py gc dfpase_dfp_start.pdb 15 20 --iscale 4 \
-#                                        --dirs testrep1 testrep2 testrep3 \
-#                                        --lra_l 0.86 0.46 \
-#                                        --plots_out qgc2.pd.json \
-#                                        --out qc2.log \
-#                                        --pdbgc gc2.pdb \
-#                                        --qcalc_exec ${QBIN_DIR}/Qcalc6 \
-#                                        --writeout > ${STDOUT}
-#
-#echo "4841 4842 4843 4844" > qmask.list
-#q_calc.py gc dfpase_dfp_start.pdb 15 20 --iscale 1 \
-#                                        --dirs testrep1 testrep2 testrep3 \
-#                                        --lra_l 0.86 0.46 \
-#                                        --qmask qmask.list \
-#                                        --plots_out qgc3.pd.json \
-#                                        --out qc3.log \
-#                                        --pdbgc gc3.pdb \
-#                                        --qcalc_exec ${QBIN_DIR}/Qcalc6 \
-#                                        --writeout > ${STDOUT}
-#
+q_calc.py gc dfpase_dfp_start.pdb 15 20 --iscale 4 \
+                                        --dirs testrep1 testrep2 testrep3 \
+                                        --lra_l 0.86 0.46 \
+                                        --plots_out qgc2.pd.json \
+                                        --out qc2.log \
+                                        --pdbgc gc2.pdb \
+                                        --qcalc_exec ${QBIN_DIR}/Qcalc6 \
+                                        --writeout > ${STDOUT}
+
+echo "4841 4842 4843 4844" > qmask.list
+q_calc.py gc dfpase_dfp_start.pdb 15 20 --iscale 1 \
+                                        --dirs testrep1 testrep2 testrep3 \
+                                        --lra_l 0.86 0.46 \
+                                        --qmask qmask.list \
+                                        --plots_out qgc3.pd.json \
+                                        --out qc3.log \
+                                        --pdbgc gc3.pdb \
+                                        --qcalc_exec ${QBIN_DIR}/Qcalc6 \
+                                        --writeout > ${STDOUT}
+
 
 for i in *log *json *pdb
 do

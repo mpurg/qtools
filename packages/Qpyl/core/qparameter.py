@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -29,6 +29,12 @@
 This module implements the QPrm class for reading and writing Q (and other)
 parameter files.
 """
+
+from __future__ import absolute_import, unicode_literals, division
+import six
+from six.moves import map
+from six.moves import zip
+from io import open
 
 import re
 import math
@@ -116,7 +122,8 @@ class QPrm(object):
             for lnumber, line in enumerate(prmfile.readlines()):
                 lnumber += 1
 
-                line, comment = map(str.strip, re.split("#|\*|\!", line+"!", 1))
+                line, comment = [x.strip() for x in \
+                        re.split("#|\*|\!", line+"!", 1)]
                 comment = " ".join(comment.strip("!").split())
 
                 if line == "":
@@ -254,7 +261,7 @@ class QPrm(object):
                                     "{}: {}".format(parm_fn, section))
 
         dups = []
-        for type_, params in prms.iteritems():
+        for type_, params in six.iteritems(prms):
             for prm in params:
                 dup = self._add_prm(prm)
                 if dup != None:
@@ -354,7 +361,7 @@ class QPrm(object):
                 try:
                     a_types = line[0:2], line[3:5], line[6:8], line[9:11]
                     a_types = [x.strip().replace("*", "star") for x in a_types]
-                    a_types = map(lambda x: "?" if x == "X" else x, a_types)
+                    a_types = ["?" if x == "X" else x for x in a_types]
                     npaths = float(line[11:15])
                     fc, phase = float(line[15:30]), float(line[30:45])
                     try:
@@ -399,7 +406,7 @@ class QPrm(object):
                 try:
                     a_types = line[0:2], line[3:5], line[6:8], line[9:11]
                     a_types = [x.strip().replace("*", "star") for x in a_types]
-                    a_types = map(lambda x: "?" if x == "X" else x, a_types)
+                    a_types = ["?" if x == "X" else x for x in a_types]
                     center_atom = a_types.pop(2)
 
                     fc, phi0 = float(line[15:30]), float(line[30:45])
@@ -451,7 +458,7 @@ class QPrm(object):
 
 
         dups = []
-        for type_, params in prms.iteritems():
+        for type_, params in six.iteritems(prms):
             for prm in params:
                 dup = self._add_prm(prm)
                 if dup != None:
@@ -550,7 +557,7 @@ class QPrm(object):
                 try:
                     a_types = line[0:2], line[3:5], line[6:8], line[9:11]
                     a_types = [x.strip().replace("*", "star") for x in a_types]
-                    a_types = map(lambda x: "?" if x == "X" else x, a_types)
+                    a_types = ["?" if x == "X" else x for x in a_types]
                     npaths = float(line[11:15])
                     fc, phase = float(line[15:30]), float(line[30:45])
                     try:
@@ -596,7 +603,7 @@ class QPrm(object):
                 try:
                     a_types = line[0:2], line[3:5], line[6:8], line[9:11]
                     a_types = [x.strip().replace("*", "star") for x in a_types]
-                    a_types = map(lambda x: "?" if x == "X" else x, a_types)
+                    a_types = ["?" if x == "X" else x for x in a_types]
                     center_atom = a_types.pop(2)
 
                     fc, phi0 = float(line[15:30]), float(line[30:45])
@@ -633,7 +640,7 @@ class QPrm(object):
                 prms["atoms"].append(atom_type)
 
         dups = []
-        for type_, params in prms.iteritems():
+        for type_, params in six.iteritems(prms):
             for prm in params:
                 dup = self._add_prm(prm)
                 if dup != None:
@@ -794,7 +801,7 @@ class QPrm(object):
                 lf = line.split()
                 try:
                     anames = lf[0:4]
-                    fcs = map(float, lf[4:8])
+                    fcs = list(map(float, lf[4:8]))
                     comment = "FFLD: " + " ".join(lf[8:])
                 except Exception as e:
                     raise QPrmError("Could not parse line: '{}'"
@@ -839,7 +846,7 @@ class QPrm(object):
                 prms["impropers"].append(improper)
 
         dups = []
-        for type_, params in prms.iteritems():
+        for type_, params in six.iteritems(prms):
             for prm in params:
                 dup = self._add_prm(prm)
                 if dup != None:
@@ -919,19 +926,19 @@ class QPrm(object):
         genimpropers = []
 
         if atom_types == None:
-            atom_types = self.atom_types.values()
+            atom_types = list(self.atom_types.values())
         if bonds == None:
-            bonds = self.bonds.values()
+            bonds = list(self.bonds.values())
         if angles == None:
-            angles = self.angles.values()
+            angles = list(self.angles.values())
         if torsions == None:
-            gentorsions = self.generic_torsions.values()
-            torsions = self.torsions.values()
+            gentorsions = list(self.generic_torsions.values())
+            torsions = list(self.torsions.values())
         if impropers == None:
-            genimpropers = self.generic_impropers.values()
-            impropers = self.impropers.values()
+            genimpropers = list(self.generic_impropers.values())
+            impropers = list(self.impropers.values())
 
-        for k, v in self.options.iteritems():
+        for k, v in six.iteritems(self.options):
             prm_l["options"].append("{:<30s} {:<s}".format(k, v))
 
         for v in sorted(set(atom_types), key=lambda x: x.prm_id):
@@ -1173,10 +1180,14 @@ class _PrmTorsion(object):
     @property
     def strval(self):
         """Return parameter values in string format."""
-        fcs = ", ".join("{:.4f}".format(fc) for fc in self.fcs)
-        mults = ",".join("{:.1f}".format(mult) for mult in self.multiplicities)
-        phases = ",".join("{:.1f}".format(phase) for phase in self.phases)
-        npaths = ",".join("{:.1f}".format(path) for path in self.npaths)
+
+        # make sure they are sorted first
+        prm_fcs, prm_mults, prm_phases, prm_npaths = zip(*self.get_prms())
+
+        fcs = ", ".join("{:.4f}".format(fc) for fc in prm_fcs)
+        mults = ",".join("{:.1f}".format(mult) for mult in prm_mults)
+        phases = ",".join("{:.1f}".format(phase) for phase in prm_phases)
+        npaths = ",".join("{:.1f}".format(path) for path in prm_npaths)
 
         return "fcs=({}), multiplicities=({}), phi0=({}), "\
                "npaths=({})".format(fcs, mults, phases, npaths)
@@ -1225,17 +1236,14 @@ class _PrmTorsion(object):
 
         The list is in ascending order of multiplicity.
 
-        [ (fc3, -multiplicity3, phase3, npaths3),
-          (fc2, -multiplicity2, phase2, npaths2),
-          (fc1, multiplicity1, phase1, npaths1) ]
+        [ (fc1, multiplicity1, phase1, npaths1),
+          (fc2, multiplicity2, phase2, npaths2),
+          (fc3, multiplicity3, phase3, npaths3) ]
         """
         prms = sorted(zip(self.fcs, self.multiplicities,
                           self.phases, self.npaths),
                       key=lambda x: x[1])
-        #rl = []
-        #for prm in prms:
-        #    prm = list(prm)
-        #    rl.append(prm)
+
         return prms
 
 

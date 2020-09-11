@@ -11,48 +11,47 @@ qtools is a toolset comprised of a Python library Qpyl and a set of command-line
 
 #### Functionality
 
-- Python API for interfacing with Q executables.
-- EVB mapping and automatic fitting of off-diagonal and gas shift parameters.
-- Support for quantum classical path and group exclusion calculations.
+- Python wrapper for Q
+- Parameter conversions (FFLD OPLS, Amber/GAFF)
+- Input generation for molecular dynamics/free energy perturbation/umbrella sampling (MD/FEP/US) simulations
+- FEP-file generation for empirical valence bond (EVB) simulations
+- EVB mapping and automatic fitting of off-diagonal and gas-shift parameters
 - Linear response approximation (LRA) calculations (including group contributions)
-- Parameter conversions (OPLS, Amber/GAFF).
-- FEP file generation for EVB simulations.
-- Input generation for MD/FEP simulations and EVB calculations.
-- Output parsing and analysis of MD, FEP and EVB.
+- Output parsing and analysis of MD, FEP, and EVB
+- Support for Q6 (quantum classical path and group exclusion calculations)
 - Graphical tool for visualizing results and debugging simulations:
-  - Free energy profiles
-  - LRA, REORG, group contributions
-  - Energy breakdown (VDW, El, Bonds, ...)
+  - Free-energy profiles & sampling distributions
+  - LRA and reorganization free-energy breakdown
+  - LRA group contributions
+  - Energy breakdown (vdW, electrostatics, ...)
 
 
 #### Requirements
 
-The library and tools do not have any dependencies, except *matplotlib*
-which is required only for *q_plot.py*, a non-essential utility used mostly for
-troubleshooting simulations.
+- Python 3.4+
+- Q (see the [Q6 github page](https://github.com/qusers/Q6)).
+- matplotlib is required for *q_plot.py*, a non-essential utility used mostly for troubleshooting simulations.
 
-The only requirement is *Python, version 2.7*
+#### Installation (Linux, OSX)
 
-*Note: The command-line tools were designed to work in a typical high-perfomance-computer Unix environment, and have not been tested with Microsoft Windows.*
-
-
-#### Installation (Linux)
-
-Clone the repository to your local directory:  
+Clone the repository:
 ```
 mkdir -p ~/bin && cd ~/bin
 git clone https://github.com/mpurg/qtools
 ```
 
-Add this line to your `~/.bashrc` or `~/.bash_profile`:  
+If using Bash, add this line to your `~/.bashrc`:
 ```
 source $HOME/bin/qtools/qtools_init.sh
 ```
 
-Run the CLI config script:  
+Reload *.bashrc* and run the CLI config script:  
 ```
+source ~/.bashrc
 qscripts_config.py
 ```
+This script looks for Q executables in your `PATH` and creates a default settings-file `$QTOOLS_HOME/qscripts.cfg`.  
+If the executables are not found the settings file should be modified manually.
 
 #### Documentation
 
@@ -67,11 +66,13 @@ Automated Testing is performed on [Travis-CI](https://travis-ci.org/mpurg/qtools
 with [pytest](https://docs.pytest.org/en/latest/) for Qpyl
 ([code coverage](https://coveralls.io/github/mpurg/qtools?branch=master)).
 and simple regression tests for CLI tools.
-To run the tests locally, make sure you have `pytest` installed and simply type:
+To run the tests locally make sure you have `pytest` and `pytest-cov` installed, then type:
 ```
+export QBIN_DIR=$HOME/apps/Q6/bin   # absolute path to your local Q-binary folder (optional)
 cd tests
 ./run_tests.sh
 ```
+If `QBIN_DIR` is not set, pre-compiled Q binaries will be downloaded from Github.
 
 #### Citations
 
@@ -80,12 +81,16 @@ DOI of the latest release:
 [![DOI](https://zenodo.org/badge/80016679.svg)](https://zenodo.org/badge/latestdoi/80016679)  
 
 *Example:*  
-*...analysis was performed with qtools v0.5.10 (DOI: 10.5281/zenodo.842003).*
+*...analysis was performed with qtools v0.7.0 (DOI: 10.5281/zenodo.842003).*
 
+#### Bugs, feature requests, and contributions
+Submit issues and feature requests to Github (https://github.com/mpurg/qtools/issues).  
+To contribute create a pull request.
 
 #### Author
 Miha Purg (miha.purg@gmail.com)  
 
 ##### Contributors
 Paul Bauer
+Florian van der Ent
 

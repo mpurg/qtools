@@ -3,6 +3,8 @@
 #########################
 
 
+from __future__ import absolute_import
+from __future__ import print_function
 import re
 import pytest
 from Qpyl.core.qparameter import QPrm, QPrmError
@@ -181,7 +183,7 @@ class TestOplsaa:
         qstruct = QStruct("data/ace_ash_nma.pdb", "pdb")
         qprm = QPrm("oplsaa")
         qprm.read_ffld("data/ace_ash_nma.ffld11", qstruct)
-        print qprm.torsions.keys()
+        print(list(qprm.torsions.keys()))
         lj_A_i= ( 4*0.17*((3.25)**12) )**0.5
         lj_B_i = ( 4*0.17*((3.25)**6) )**0.5
         at = qprm.atom_types["nma.N"]

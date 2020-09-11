@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -31,6 +31,11 @@ This module contains the QMapper class for automating the calculation and
 calibration of EVB reaction free profiles (via Qfep). 
 """
 
+
+from __future__ import absolute_import, division, unicode_literals
+from io import open
+import six
+
 import sys
 import os
 import time
@@ -40,7 +45,7 @@ from collections import OrderedDict as ODict
 
 from Qpyl.core.qfep import QFep, QFepError, QFepInput
 from Qpyl.core.qfep import QFepOutput, QFepOutputError
-from Qpyl.common import __version__, np
+from Qpyl.common import __version__, stats
 
 logger = logging.getLogger(__name__)
 
@@ -217,6 +222,7 @@ class QMapper(object):
         return (qfep_inp_str, qfep_out_str)
 
 
+
     def fit_to_reference(self, dga_ref, dg0_ref, step_size=10.0,
                          threshold=0.005, max_iterations=10):
         """Fit Hij and alpha to obtain desired dG* and dG0 values.
@@ -273,7 +279,7 @@ class QMapper(object):
         # raises QMapperError on total failure
 
         self.mapall(_supress_info=True)
-        for (qfo, err) in self.failed.iteritems():
+        for (qfo, err) in six.iteritems(self.failed):
             logger.info("Failed to map '{}': {}".format(qfo, err))
 
         if not self.mapped:
@@ -283,7 +289,7 @@ class QMapper(object):
                                "parameters (skip, bins, ...).")
 
         dga, dg0 = [], []
-        for mapdir, (_, qfo_str) in self.mapped.iteritems():
+        for mapdir, (_, qfo_str) in six.iteritems(self.mapped):
             try:
                 qfo = QFepOutput(qfo_str)
                 dga.append(qfo.part3.dga)
@@ -299,7 +305,7 @@ class QMapper(object):
             raise QMapperError("All directories failed to analyse! Try "
                                "changing the initial-guess values (Hij and "
                                "alpha) or step_size...")
-        return np.mean(dga), np.mean(dg0)
+        return stats.mean(dga), stats.mean(dg0)
 
 
 
@@ -345,8 +351,8 @@ class QMapper(object):
             dhij = +1
 
         # Step 3, get results
-        self.parms["hij"] = hij_init + dhij
-        self.parms["alpha"] = alpha_init + dalpha
+        self.parms["hij"] = round(hij_init + dhij, 6)
+        self.parms["alpha"] = round(alpha_init + dalpha, 6)
         means3 = self._getmeans()
         logger.info("{:10.2f} {:10.2f} {:10.2f} {:10.2f}"
                     "".format(self.parms["hij"], self.parms["alpha"],
@@ -357,20 +363,10 @@ class QMapper(object):
 
 
     @property
-    def input_parms_str(self):
-        # TODO: CLI script doesn't belong in here
-        inp_parms = "q_mapper.py {hij} {alpha} "\
-                    "--bins {gap_bins} --skip {points_skip} "\
-                    "--min {minpts_bin} --temp {temperature} "\
-                    "".format(**self.parms)
-        return inp_parms
-
-
-    @property
     def details(self):
 
         fails = "\n".join(["{}: {}".format(md, e) for md, e in \
-                                                 self.failed.iteritems()])
+                                                 six.iteritems(self.failed)])
 
         qfep_version = "Unknown, likely ancient"
         for _, qfep_out in self.mapped.values():
@@ -382,6 +378,8 @@ class QMapper(object):
                 qfep_version = qfo.header.qfep_version
                 break
 
+        parms_str = "\n".join(["{:<15} {:>15}".format(prm, self.parms[prm]) \
+                for prm in sorted(self.parms)])
         mapdirs = ", ".join(self._mapdirs)
         outstr = """
 ------------------------------- Mapping details -------------------------------
@@ -389,20 +387,19 @@ class QMapper(object):
 # Qfep path: {qfep_exec}
 # Work dir: {cwd}
 # Date: {date}
-# CMDline: {cmdline}
 
-Directories:
+# Parms:
+{parms}
+
+# Directories:
 {dirs}
 
-Input:
-{inp_parms}
-
-Fails:
+# Fails:
 {fails}
 -------------------------------------------------------------------------------
 """.format(version=__version__, cwd=os.getcwd(), date=time.ctime(),
-           inp_parms=self.input_parms_str, cmdline=" ".join(sys.argv),
-           fails=fails or "None", dirs=mapdirs, qfep_version=qfep_version,
+           parms=parms_str, fails=fails or "None",
+           dirs=mapdirs, qfep_version=qfep_version,
            qfep_exec=os.path.abspath(self._qfep.qfep_exec))
 
         return outstr

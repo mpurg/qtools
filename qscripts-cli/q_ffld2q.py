@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -37,6 +37,12 @@
 #   $SCHRODINGER/utilities/ffld_server -ipdb paraoxon.pdb -print_parameters -version 14 > paraoxon.ffld11
 #
 #
+
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
+import six
+from six.moves import range
+
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -90,9 +96,9 @@ if len(sys.argv) == 1:
 
 args = parser.parse_args()
 
-for k, v in vars(args).iteritems():
+for k, v in six.iteritems(vars(args)):
     if k in ['ffld_output', 'pdb'] and not os.path.lexists(v):
-        print "FATAL! File '{}' doesn't exist.".format(v)
+        print("FATAL! File '{}' doesn't exist.".format(v))
         sys.exit(1)
 
 
@@ -106,26 +112,26 @@ qprm = QPrm("oplsaa", ignore_errors=args.ignore_errors)
 try:
     qstruct = QStruct(args.pdb, "pdb", ignore_errors=args.ignore_errors)
 except QStructError as err:
-    print "FATAL! Problem with pdb: {}".format(err)
+    print("FATAL! Problem with pdb: {}".format(err))
     sys.exit(1)
 
 try:
     qprm.read_ffld(args.ffld_output, qstruct)
 except QPrmError as err:
-    print "FATAL! Problem with ffld file: {}".format(err)
+    print("FATAL! Problem with ffld file: {}".format(err))
     sys.exit(1)
 
 
 try:
     qlib.read_ffld(args.ffld_output, qstruct)
 except QLibError as err:
-    print "FATAL! Problem with ffld file: {}".format(err)
+    print("FATAL! Problem with ffld file: {}".format(err))
     sys.exit(1)
 
 try:
     qtop = QTopology(qlib, qprm, qstruct)
 except QTopologyError as err:
-    print "FATAL! Problem building the topology: {}".format(err)
+    print("FATAL! Problem building the topology: {}".format(err))
     sys.exit(1)
 
 #
@@ -179,14 +185,14 @@ all_prms.sort(key=lambda x: x[1]) # sort by energy
 pchk = []
 for p, de, v, v0 in all_prms:
     prmtype = "-".join(p.prm.prm_id.split())
-    pchk.append("{:<40}  value:{:>8.2f}   eq.value:{:>8.2f}    "
+    pchk.append("{!r:<40}  value:{:>8.2f}   eq.value:{:>8.2f}    "
                 "dE:{:>6.2f}    # Prm: {}".format(p, v, v0, de, prmtype))
 
 
 #
 # output some information
 #
-print """
+print("""
 Details about the system:
 
 Bonds: {n[bonds]}
@@ -199,7 +205,7 @@ Angle energy: total {t[angles]:.2f}, max {m[angles]:.2f}
 Torsion energy: total {t[torsions]:.2f}, max {m[torsions]:.2f}
 Improper energy: total {t[impropers]:.2f}, max {m[impropers]:.2f}
 
-""".format(n=nprm, t=total_e, m=max_e)
+""".format(n=nprm, t=total_e, m=max_e))
 
 #
 # write the files
@@ -208,10 +214,10 @@ libfn = args.output_basename + ".lib"
 prmfn = args.output_basename + ".prm"
 prmchkfn = args.output_basename + ".prm.chk"
 
-print "Writing the library file: {}".format(libfn)
+print("Writing the library file: {}".format(libfn))
 backup = backup_file(libfn)
 if backup:
-    print "# Backed up '{}' to '{}'".format(libfn, backup)
+    print("# Backed up '{}' to '{}'".format(libfn, backup))
 outstring = """# Generated with {}, version {}
 # Date: {}
 #
@@ -220,10 +226,10 @@ outstring = """# Generated with {}, version {}
            time.ctime(), qlib.get_string())
 open(libfn, "w").write(outstring)
 
-print "Writing the parameter file: {}".format(prmfn)
+print("Writing the parameter file: {}".format(prmfn))
 backup = backup_file(prmfn)
 if backup:
-    print "# Backed up '{}' to '{}'".format(prmfn, backup)
+    print("# Backed up '{}' to '{}'".format(prmfn, backup))
 outstring = """# Generated with {}, version {}
 # Date: {}
 #
@@ -232,8 +238,8 @@ outstring = """# Generated with {}, version {}
            time.ctime(), qprm.get_string())
 open(prmfn, "w").write(outstring)
 
-print "Writing the parameter check file: {}".format(prmchkfn)
+print("Writing the parameter check file: {}".format(prmchkfn))
 backup = backup_file(prmchkfn)
 if backup:
-    print "# Backed up '{}' to '{}'".format(prmchkfn, backup)
+    print("# Backed up '{}' to '{}'".format(prmchkfn, backup))
 open(prmchkfn, "w").write("\n".join(pchk))

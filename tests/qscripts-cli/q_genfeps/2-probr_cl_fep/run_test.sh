@@ -22,9 +22,10 @@ q_genfeps.py ./input/genfeps.proc \
              --pdb ./input/0-topol/probr_cl_start.pdb \
              --prefix test_ >> ${STDOUT}
 
-for i in test_*/*
+for i in test_*/*inp test_*/*fep
 do
-    sed -i -e 's/#.*//' -e 's/random_seed.*//' $i
+    sed -e 's/#.*//' -e 's/random_seed.*//' $i > ${i}.tmp
+    mv ${i}.tmp $i
 done
 
 echo "Checking outputs"

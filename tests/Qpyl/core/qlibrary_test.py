@@ -3,6 +3,7 @@
 #########################
 
 
+from __future__ import absolute_import
 import pytest
 
 from Qpyl.core.qlibrary import QLib, QLibError
@@ -66,9 +67,11 @@ class TestQ:
         qlib = QLib("oplsaa")
         qlib.read_lib("data/prc.lib")
         prc = qlib.residue_dict["PRC"]
-        prc.atoms[0].charge -= 0.5
+        print([a.charge for a in prc.atoms])
+        prc.atoms[0].charge -= 0.51
         prc.rescale(prc.charge_groups[0], 1)
-        assert is_close(prc.atoms[0].charge, -0.72561699999)
+        print([a.charge for a in prc.atoms])
+        assert is_close(prc.atoms[0].charge, -0.733591)
 
     def test_rescale_badatom_fail(self):
         qlib = QLib("oplsaa")

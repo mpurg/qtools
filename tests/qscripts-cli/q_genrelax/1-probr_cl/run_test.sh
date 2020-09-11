@@ -20,9 +20,10 @@ q_genrelax.py ./input/genrelax.proc \
               --rs ./input/run_relax_q.sh \
               --outdir test_relax >> ${STDOUT}
 
-for i in test_relax/*
+for i in test_relax/*inp test_relax/*fep
 do
-    sed -i 's/#.*//' ${i}
+    sed 's/#.*//' ${i} > ${i}.tmp
+    mv ${i}.tmp $i
 done
 
 echo "Checking outputs"

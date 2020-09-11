@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -27,6 +27,8 @@
 #
 #
 
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
 
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
@@ -137,6 +139,6 @@ try:
     gen_dirs = genfeps(**kwargs)
     #print gen_dirs
 except QGenfepsError as e:
-    print "ERROR: {}".format(e)
+    print("ERROR: {}".format(e))
     sys.exit(1)
 

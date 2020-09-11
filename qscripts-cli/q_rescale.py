@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -25,6 +25,9 @@
 #
 #
 #
+
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
 
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
@@ -67,7 +70,7 @@ if len(sys.argv) == 1:
 args = parser.parse_args()
 
 if not os.path.lexists(args.lib_file):
-    print "FATAL! File %s doesn't exist." % args.lib_file
+    print("FATAL! File %s doesn't exist." % args.lib_file)
     sys.exit(1)
 
 
@@ -76,22 +79,22 @@ try:
     qlib = QLib("oplsaa", ignore_errors=args.ignore_errors)
     qlib.read_lib(args.lib_file)
 except QLibError as e:
-    print "FATAL! Problem with library: {}".format(str(e))
+    print("FATAL! Problem with library: {}".format(str(e)))
     sys.exit(1)
 
 if len(qlib.residue_dict) > 1:
-    print "FATAL! Please supply a library with just one residue entry."
+    print("FATAL! Please supply a library with just one residue entry.")
     sys.exit(1)
 
-residue_lib = qlib.residue_dict.values()[0]
+residue_lib = list(qlib.residue_dict.values())[0]
 
 if not residue_lib.charge_groups:
-    print "No charge groups found, using all atoms in residue '{}'"\
-          "".format(residue_lib.name)
+    print("No charge groups found, using all atoms in residue '{}'"\
+          "".format(residue_lib.name))
     ch_groups = [ [a.name for a in residue_lib.atoms] ]
          
 else:
-    print "Rescaling charge groups in '{}'...".format(residue_lib.name)
+    print("Rescaling charge groups in '{}'...".format(residue_lib.name))
     ch_groups = residue_lib.charge_groups
 
 # iterate over the charge groups and rescale the charges
@@ -99,21 +102,21 @@ for ch_group in ch_groups:
     try:
         residue_lib.rescale(ch_group, args.threshold)
     except QLibError as e:
-        print "Library error: {}".format(str(e))
+        print("Library error: {}".format(str(e)))
         sys.exit(1)
         
-print "Checking the library..."
+print("Checking the library...")
 try:
     qlib.check_valid()
 except QLibError as e:
-    print "Library error: {}".format(str(e))
+    print("Library error: {}".format(str(e)))
     sys.exit(1)
-print "Done"
-print 
+print("Done")
+print() 
 
 backup = backup_file(args.lib_file)
 if backup:
-    print "Backed up '{}' to '{}'".format(args.lib_file, backup)
+    print("Backed up '{}' to '{}'".format(args.lib_file, backup))
 outstring = """# Generated with {}, version {}
 # Date: {}
 #
@@ -121,6 +124,6 @@ outstring = """# Generated with {}, version {}
 """.format(os.path.basename(__file__), __version__,
            time.ctime(), qlib.get_string())
 open(args.lib_file, 'w').write(outstring)
-print "Successfully modified the library."
+print("Successfully modified the library.")
 
 

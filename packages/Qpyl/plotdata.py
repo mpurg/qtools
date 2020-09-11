@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -33,6 +33,10 @@ It also contains custom JSON encoder and decoder classes
 which allow saving the objects in JSON format.
 """
 
+from __future__ import absolute_import, division, unicode_literals
+import six
+from six.moves import zip
+
 import json
 import sys
 from collections import OrderedDict as ODict
@@ -41,23 +45,24 @@ from collections import OrderedDict as ODict
 class PlotDataJSONEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, PlotData):
-            return { "__type__":  "PlotData",
-                     "title":     obj.title,
-                     "plot_type": obj.plot_type,
-                     "xlabel":    obj.xlabel,
-                     "ylabel":    obj.ylabel,
-                     "subplots":  obj.subplots }
+            return ODict([("__type__",  "PlotData"),
+                          ("title",     obj.title),
+                          ("plot_type", obj.plot_type),
+                          ("xlabel",    obj.xlabel),
+                          ("ylabel",    obj.ylabel),
+                          ("subplots",  obj.subplots)])
         else:
             return json.JSONEncoder.default(self, obj)
 
 
 class PlotDataJSONDecoder(json.JSONDecoder):
     def __init__(self):
-        if sys.version_info < (2,7):
+        if sys.version_info < (2, 7):
             # object_pairs_hook is supported only in version 2.7
-            print "You need python 2.7 or later to run this script, sorry (it's json's fault)!"
-            sys.exit(1)
-        super(PlotDataJSONDecoder, self).__init__(object_pairs_hook=self.decode_plotdata)
+            raise PlotDataError("You need python 2.7 or later to run this"
+                                "script, sorry (it's json's fault)!")
+        super(PlotDataJSONDecoder,
+                self).__init__(object_pairs_hook=self.decode_plotdata)
 
     def decode_plotdata(self, d):
         d = ODict(d)
@@ -90,8 +95,10 @@ class PlotData(object):
         self.subplots = ODict()
 
     def add_subplot(self, label, xdata, ydata, zdata=None, yerror=None):
-        self.subplots[label] = {"xdata": xdata, "ydata": ydata,
-                                "zdata": zdata, "yerror": yerror}
+        self.subplots[label] = ODict([("xdata", xdata),
+                                      ("ydata", ydata),
+                                      ("zdata", zdata),
+                                      ("yerror", yerror)])
 
 
     # TODO: clean this code, looks almost as bad as Javascript
@@ -105,26 +112,25 @@ class PlotData(object):
         elif self.plot_type == "wireframe":
             raise PlotDataError("Cannot export wireframe data to grace...")
 
-        legends = self.subplots.keys()
-# creates this:
-# @s0 legend "rep_000"
-# @s1 legend "rep_001" ...
         set_config = ""
-        for i, sp in enumerate(self.subplots.keys()):
-            set_config += "@s%d legend \"%s\" \n" % (i, sp)   # add legends
+        sets = ""
+        for i, (label, sp) in enumerate(six.iteritems(self.subplots)):
+            # create this:
+            # @s0 legend "rep_000"
+            # @s1 legend "rep_001" ...
+            set_config += "@s{} legend \"{}\" \n".format(i, label) 
             if typ == "bar":
                 # don't show the line in bar plots
-                set_config += "@s%d line type 0 \n" % (i,)
+                set_config += "@s{} line type 0 \n".format(i)
 
-        sets = ""
-        for label, sp in self.subplots.iteritems():
+            # add the data
             if not sp["yerror"] or len(sp["yerror"]) != len(sp["xdata"]):
                 yerror=["" for x in sp["xdata"]]
             else:
                 yerror = sp["yerror"]
                 typ = typ + "dy"
             for x, y, dy in zip(sp["xdata"], sp["ydata"], yerror):
-                sets += "%s %s %s\n" % (x, y, dy)
+                sets += "{} {} {}\n".format(x, y, dy)
             sets += "&\n"
         
         return """#
@@ -135,6 +141,6 @@ class PlotData(object):
 {set_config}
 {sets}
 
-""".format(typ=typ, title=self.title, xlabel=self.xlabel.encode("utf-8"), ylabel=self.ylabel.encode("utf-8"), set_config=set_config, sets=sets)
+""".format(typ=typ, title=self.title, xlabel=self.xlabel, ylabel=self.ylabel, set_config=set_config, sets=sets)
 
 

@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -32,6 +32,9 @@ performing system calls to Qfep (QFep), and parsing Qfep output (QFepOutput).
 """
 
 
+from __future__ import absolute_import, unicode_literals, division
+from six.moves import range
+from six.moves import zip
 import subprocess
 import re
 import logging
@@ -229,7 +232,7 @@ class _QFepPart0(object):
 
         # LRA=0.5*(<E2-E1>_10+<E2-E1>_01)
         # REO=0.5*(<E2-E1>_10-<E2-E1>_01)
-        des_st1_st2 = zip(des_st1, des_st2)
+        des_st1_st2 = list(zip(des_st1, des_st2))
         es_lra = [0.5 * (de_st1 + de_st2) for de_st1, de_st2 in des_st1_st2]
         es_reo = [0.5 * (de_st1 - de_st2) for de_st1, de_st2 in des_st1_st2]
 
@@ -250,9 +253,22 @@ class _QFepPart0(object):
         if header != self._PART0_HEADER:
             raise QFepOutputError("Part0 has a wrong header, did the qfep "
                                   "binary change?")
+
+        # The energies from different calculations (normal, QCP, exclusions)
+        # are printed in the same Part0, one after another, eg.
+        # File1 normal state1
+        # File1 normal state2
+        # File1 QCP state1
+        # File1 QCP state2
+        # ...
+        # File2 normal state1
+        # ...
+        # so we extract only the one corresponding to the given calc_index
+        # (0: normal, 1: QCP, 2:...)
+
         n_lines_parsed = 0
-        lines_to_read = range(calc_index*self._num_evb_states,
-                              (calc_index+1)*self._num_evb_states)
+        lines_to_read = list(range(calc_index*self._num_evb_states,
+                              (calc_index+1)*self._num_evb_states))
         for line in lines:
             # fix for Q version df165865
             if "Could not read file header!" in line:
@@ -267,7 +283,6 @@ class _QFepPart0(object):
             if "-->" in line:
                 n_lines_parsed = 0
                 continue
-            
 
             if n_lines_parsed not in lines_to_read:
                 n_lines_parsed += 1
@@ -719,13 +734,16 @@ class QFep(object):
             raise QFepError("Problem when running qfep: {}"
                             "".format(error_msg))
 
-        stdout, stderr = self.process.communicate(qfep_input_str)
+        # convert to bytes (Py3+)
+        stdin = qfep_input_str.encode("utf-8")
+        stdout, stderr = self.process.communicate(stdin)
 
         # not sure if this ever happens, but will keep it anyway
         if stderr:
-            raise QFepError("QFep wrote to STDERR: {}".format(stderr))
+            raise QFepError("QFep wrote to STDERR: {}"
+                            "".format(stderr.decode("utf-8")))
 
-        return stdout
+        return stdout.decode("utf-8")
 
 ###############################################################################
 
@@ -777,7 +795,7 @@ class QFepInput(object):
 1 -1                 # linear combination of states ( E = e1 - e2 )
 {en_files}
 stop""".format(frames=len(self.energy_files),
-               RT=self.temperature*self.gas_const,
+               RT=round(self.temperature*self.gas_const, 10),
                points_skip=self.points_skip,
                gap_bins=self.gap_bins,
                minpts_bin=self.minpts_bin,

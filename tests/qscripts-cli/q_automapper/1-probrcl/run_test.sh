@@ -12,6 +12,7 @@ echo "Working in ${TEST_TMP}"
 cp -r ../../shared_data/probr_cl/* ${TEST_TMP}
 cd ${TEST_TMP}
 
+echo $QBIN_DIR
 
 q_automapper.py 12 -5 0 0 \
                --dirs testrep1 testrep2 \

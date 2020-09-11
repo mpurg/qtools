@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -23,6 +23,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 #
+
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
+from io import open
+import six
 
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
@@ -119,10 +124,10 @@ def main():
     # map just the current one
     if not mapdirs:
         mapdirs = [os.getcwd(),]
-        print "No subdirectories. Mapping files in current directory only."
+        print("No subdirectories. Mapping files in current directory only.")
     else:
-        print "Will use these directories for mapping (use --dirs to "\
-              "change this): {}".format(", ".join(mapdirs))
+        print("Will use these directories for mapping (use --dirs to "\
+              "change this): {}".format(", ".join(mapdirs)))
 
     qmapper_parms = {"mapdirs": mapdirs,
                      "hij": args.hij,
@@ -147,7 +152,7 @@ def main():
     qfep_out_fn = QScfg.get("files", "qfep_out")
 
     # write out the inputs and outputs
-    for mapdir, (qfep_inp_str, qfep_out_str) in qmapper.mapped.iteritems():
+    for mapdir, (qfep_inp_str, qfep_out_str) in six.iteritems(qmapper.mapped):
         qfep_inp = os.path.join(mapdir, qfep_inp_fn)
         qfep_out = os.path.join(mapdir, qfep_out_fn)
         open(qfep_inp, "w").write(qfep_inp_str)
@@ -158,6 +163,9 @@ def main():
     qafs = QAnalyseFeps(output_files)
 
     outstr = """
+--------------------------------- q_mapper.py ---------------------------------
+# Path: {q_mapper}
+# CMDline: q_mapper.py {cmdline}
 {mapper_details}
 Analysis Stats:
 {analysis_stats}
@@ -166,15 +174,15 @@ FEP: {fails}, EVB: {fails_dg}
 
 Run q_analysefeps.py for more info...
 """.format(mapper_details=qmapper.details, analysis_stats=qafs.stats_str,
-           fails=len(qafs.failed) or "None",
-           fails_dg=len(qafs.failed_dg) or "None")
+           fails=len(qafs.failed) or "None", cmdline=" ".join(sys.argv[1:]),
+           q_mapper=sys.argv[0], fails_dg=len(qafs.failed_dg) or "None")
 
-    print outstr
+    print(outstr)
     backup = backup_file(args.outfile)
     if backup:
-        print "# Backed up '{}' to '{}'".format(args.outfile, backup)
+        print("# Backed up '{}' to '{}'".format(args.outfile, backup))
     open(args.outfile, "w").write(outstr)
-    print "Wrote '{}'...".format(args.outfile)
+    print("Wrote '{}'...".format(args.outfile))
 
 
 
@@ -182,6 +190,6 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print "\nCtrl-C detected. Quitting..."
+        print("\nCtrl-C detected. Quitting...")
         sys.exit(1)
 

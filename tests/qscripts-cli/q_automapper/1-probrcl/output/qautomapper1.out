@@ -29,10 +29,8 @@ Will use these directories for mapping (use --dirs to change this): testrep1, te
 #      92.10       4.57       9.70      -4.43
 #      82.12       4.57      12.00      -5.00
 
-
 Well done! Use this on your non-reference simulations:
-q_mapper.py 82.1201056503 4.56708284345 --bins 50 --skip 1 --min 1 --temp 298.0 
-
+q_mapper.py 82.120105 4.567082 --bins 50 --skip 1 --min 1 --temp 298.0 
 
 Writting out the logfile...
 Wrote 'qautomapper.log'...

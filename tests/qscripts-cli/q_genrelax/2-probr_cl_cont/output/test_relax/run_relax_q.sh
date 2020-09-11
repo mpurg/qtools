@@ -1,4 +1,4 @@
-
+#!/bin/bash 
 
 OK="(\033[0;32m   OK   \033[0m)"
 FAILED="(\033[0;31m FAILED \033[0m)"

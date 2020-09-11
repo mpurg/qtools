@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -29,6 +29,11 @@
 This module implements the QLib class for reading and writing Q (and other)
 library files.
 """
+
+from __future__ import absolute_import, unicode_literals, division
+import six
+from six.moves import map
+from io import open
 
 import re
 import logging
@@ -449,7 +454,7 @@ class QLib(object):
 
         res_not_in_lib = set()
         # add them to the residues in the library
-        for resname, imps in impropers.iteritems():
+        for resname, imps in six.iteritems(impropers):
             for imp in imps:
                 try:
                     # different naming convention for head and tail
@@ -624,7 +629,7 @@ class QLib(object):
         self.residue_dict[name].get_str()
         """
         out = ""
-        for residue in sorted(self.residue_dict.values(),
+        for residue in sorted(list(self.residue_dict.values()),
                               key=lambda x: x.name):
             out += residue.get_str()
             out += "*" + "-"*80 + "\n"
@@ -803,14 +808,16 @@ class _LibResidue(object):
 
 
 
-    def rescale(self, atoms, threshold):
+    def rescale(self, atoms, threshold=0.4):
         """Rescale the charges of a group of atoms to nearest integer value.
 
         Args:
             atoms (list):  List of atom names
-            threshold:  Maximum difference between sum and nearest integer.\
-                        If the difference is greater than this value,\
-                        QLibError, is raised.
+            threshold (float, optional):  Maximum difference between sum of \
+                                          charges and the nearest integer. \
+                                          If the difference is greater than \
+                                          this value, QLibError, is raised. \
+                                          Default is 0.4.
 
         Used primarily in oplsaa for charge groups, or to fix rounding errors.
 
@@ -846,12 +853,21 @@ class _LibResidue(object):
         # calculate absolute charges and sums
         sum_all_q = sum(atom_dict.values())
         sum_abs_all_q = sum([abs(q) for q in atom_dict.values()])
+
         target = round(sum_all_q)
+
         diff = sum_all_q - target
-        if diff > threshold:
+        if abs(diff) > threshold:
             raise QLibError("Difference between sum of charges and nearest "
                             "integer ({}) is greater than threshold"
                             "".format(diff))
+
+        if abs(abs(sum_all_q - target) - 0.5) < 1e-9:
+            logger.warning("The sum of charges is exactly halfway between "
+                           "the integers ({}). Since Py2 and Py3 handle the "
+                           "rounding of 0.5 differently, the rescaling "
+                           "will be dependent on your python version."
+                           "".format(sum_all_q))
 
         # rescale the charges
         for atom_name in atoms:
@@ -871,8 +887,8 @@ class _LibResidue(object):
         if abs(excess) > 1e-7:
             # only unique atoms, with abs charges
             atom_dict2 = {name: abs(charge) for name, charge in
-                          atom_dict.iteritems() if \
-                          atom_dict.values().count(charge) == 1}
+                          six.iteritems(atom_dict) if \
+                          list(atom_dict.values()).count(charge) == 1}
             # maximum charge atom
             max_ch_atom = max(atom_dict2, key=lambda x: atom_dict2[x])
 
@@ -901,7 +917,7 @@ class _LibResidue(object):
         infol, al, bl, il, cl, brl, col = [], [], [], [], [], [], []
 
         indent = "        "
-        for k, v in self.info.iteritems():
+        for k, v in six.iteritems(self.info):
             infol.append(indent + "{:30} {}".format(k, v))
         for i, atom in enumerate(self.atoms):
             al.append("    {:>5d}  {a.name:<5s}  {a.atom_type:<12s} "
@@ -927,7 +943,7 @@ class _LibResidue(object):
                             ("charge_groups", cl)))
 
         outstr = "{{{}}}\n".format(self.name)
-        for section, lines in outl.iteritems():
+        for section, lines in six.iteritems(outl):
             if lines:
                 outstr += """\
     [{}]

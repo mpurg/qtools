@@ -17,6 +17,7 @@ q_amber2q.py -m ./input/pxn.mol2 \
              --ignore_errors \
              -o pxn >> ${STDOUT}
 
+echo ${TESTS_ROOT}
 for i in pxn.lib pxn.prm pxn.prm.chk
 do
     echo "Checking '${i}'"

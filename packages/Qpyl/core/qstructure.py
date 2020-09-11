@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -31,6 +31,8 @@ Additionally, it implements methods for finding and replacing atom
 placeholders (e.g. $1.N$)
 """
 
+from __future__ import absolute_import, unicode_literals, division
+from six.moves import map
 import re
 import logging
 from collections import namedtuple
@@ -86,10 +88,10 @@ class QStruct(object):
         FILE_TYPES = {'pdb': self._read_pdb,
                       'mol2': self._read_mol2}
         self.filetype = filetype.lower()
-        if self.filetype not in FILE_TYPES.keys():
+        if self.filetype not in FILE_TYPES:
             raise QStructError("Filetype {} not supported. Use {}"
                                .format(filetype,
-                                       " or ".join(FILE_TYPES.keys())))
+                                       " or ".join(FILE_TYPES)))
 
         self.atoms = []
         self.residues = []

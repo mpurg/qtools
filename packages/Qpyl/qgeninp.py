@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -31,6 +31,10 @@ equilibration inputs for Qdyn.
 Example of procedure files can be found in
 qtools/template_examples/
 """
+
+from __future__ import absolute_import, division, unicode_literals
+import six
+from six.moves import range
 
 import sys
 import os
@@ -93,7 +97,7 @@ def genrelax(relax_proc_file, outdir, restraint,
     """
 
     # check if files exist
-    for k, v in locals().iteritems():
+    for k, v in six.iteritems(locals()):
         if k in ["pdb_file", "cont_file", "relax_proc_file",
                  "fep_file", "top_file", "runscript_file", "relax_input"]:
             if v and not os.path.lexists(v):
@@ -182,7 +186,7 @@ def genrelax(relax_proc_file, outdir, restraint,
                 fep_fn = cont_files["fep"]
                 shutil.copy2(os.path.join(di, fep_fn), TMPDIR)
             except KeyError:
-                logger.info("No FEP file found in the input")
+                logger.info("No FEP file found in the input.")
 
     # or take the arguments
     else:
@@ -193,11 +197,12 @@ def genrelax(relax_proc_file, outdir, restraint,
         cont_files = None
         top_fn = os.path.basename(top_file)
         shutil.copy2(top_file, TMPDIR)
-        try:
+
+        if fep_file is not None:
             fep_fn = os.path.basename(fep_file)
             shutil.copy2(fep_file, TMPDIR)
-        except AttributeError:
-            logger.info("NOTE: No FEP file!")
+        else:
+            logger.info("No FEP file was given.")
 
         if restraint in ["cont_inp", "cont_final"]:
             raise QGenrelaxError("Can't restrain to '{}'. Specify 'cont_file'."
@@ -207,9 +212,9 @@ def genrelax(relax_proc_file, outdir, restraint,
 
     logger.info("Restraining to: '{}'".format(rest_fn or 'topology'))
 
-    try:
+    if runscript_file is not None:
         shutil.copy2(runscript_file, TMPDIR)
-    except AttributeError:
+    else:
         logger.info("No submission script was given.")
 
 
@@ -276,13 +281,13 @@ def genrelax(relax_proc_file, outdir, restraint,
 
     # join lists of lines to strings and replace the placeholders
     gen_inp_s = "\n".join(general_inp)
-    for placeholder, value in script_vars.iteritems():
+    for placeholder, value in six.iteritems(script_vars):
         gen_inp_s = gen_inp_s.replace(placeholder, value)
 
     step_inps_s = []
     for i, step_inp in enumerate(steps_inps):
         s = "\n".join(step_inp)
-        for placeholder, value in script_vars.iteritems():
+        for placeholder, value in six.iteritems(script_vars):
             s = s.replace(placeholder, value)
         step_inps_s.append(s)
 
@@ -321,7 +326,7 @@ def genrelax(relax_proc_file, outdir, restraint,
                 overridden_prms_all.append((step_n, ", ".join(
                     ["{}:{}->{}".format(key, value_old, value_new) \
                             for key, (value_old, value_new) in \
-                            overridden_prms.iteritems()])))
+                            six.iteritems(overridden_prms)])))
 
             if "energy" in inp.parameters["intervals"]:
                 files["energy"] = "{}{:03d}.en".format(PREFIX, step_n)
@@ -376,7 +381,6 @@ Quick summary
 {0:<10} {1:>5} {2:>10} {3:>10} {4:^10} {5:^10} {6:^10} {7:^30} {8:^10} {9:>10}
 """.format("Step", "T", "Stepsize", "Steps", "Seq.rest", "Dist.rest",
            "Ang.rest", "Shake", "Rand.Seed", "Data (MB)")
-    locale.setlocale(locale.LC_ALL, '')
     restraints = []
     total_time = 0
 
@@ -446,7 +450,7 @@ Quick summary
             # calculate approx amount of data
             data = {}
             mdsteps = int(mdparms["steps"])
-            for k, v in qintervals.iteritems():
+            for k, v in six.iteritems(qintervals):
                 interval_key = v[0]
                 default_interval = v[1]
                 bytes_per_step = v[2]
@@ -462,7 +466,7 @@ Quick summary
                     # if energy or trajectory, check that files for output are
                     # defined, otherwise set the printout to 0
                     if interval_key in ("energy", "trajectory") and not \
-                            interval_key in step.parameters["files"].keys():
+                            interval_key in step.parameters["files"]:
                         data[k] = 0
 
 
@@ -481,7 +485,7 @@ Quick summary
                        "{:^30} {:^10} {:>10.2f}\n" \
                        "".format(nstep, mdparms["temperature"],
                                  mdparms["stepsize"],
-                                 locale.format('%d', mdsteps, 1),
+                                 locale.format_string('%d', mdsteps, 1),
                                  seq, dist, angle, shake, random_seed, data)
 
         except KeyError as err_msg:
@@ -556,7 +560,7 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
 
 
     # check if files exist
-    for k, v in locals().iteritems():
+    for k, v in six.iteritems(locals()):
         if k in ["pdb_file", "fep_proc_file", "fep_file",
                  "runscript_file", "relax_input_file"]:
             if v and not os.path.lexists(v):
@@ -660,10 +664,10 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
 
     # create lambda values, find the closest to the starting one and
     # rearrange accordingly: [0.0, 0.02, 0.04, ... 0.98, 1.0]  for frames==51
-    lambdas = [float(num) / (frames - 1) for num in xrange(0, frames)]
+    lambdas = [float(num) / (frames - 1) for num in range(0, frames)]
 
     # [2,]   for lambda_initial == 0.04 (or close to 0.04) and frames==51
-    l_i = [i for i in xrange(0, frames) if \
+    l_i = [i for i in range(0, frames) if \
             abs(lambdas[i] - lambda_initial) <= (1.0 / frames)]
     # there should be only one
     l_i = l_i[0]
@@ -783,7 +787,7 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
 
 
     # join lists of lines to strings and replace the placeholders
-    script_variables = sorted(script_vars.items(), reverse=True)
+    script_variables = sorted(list(script_vars.items()), reverse=True)
     gen_inp_s = "\n".join(general_inp)
     fep_inp_s = "\n".join(fep_inp)
     eq_steps_inps_s = ["\n".join(eq_s_inp) for eq_s_inp in eq_steps_inps]
@@ -970,7 +974,7 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
     # restraint file (if any)); create the eq and fep inputs
     #
     # first check for existing directories
-    for num in xrange(0, repeats):
+    for num in range(0, repeats):
         rep = "{}{:03d}".format(prefix, num)
         if os.path.lexists(rep):
             raise QGenfepsError("Directory '{}' exists. Please (re)move it or "
@@ -978,7 +982,7 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
 
     lsdir = os.listdir(TMPDIR)
     rep_dirs = []
-    for num in xrange(0, repeats):
+    for num in range(0, repeats):
         rep = "{}{:03d}".format(prefix, num)
         os.mkdir(rep)
         # copy stuff from TMPDIR
@@ -1064,7 +1068,7 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
     for i, step in enumerate(eq_steps+feps):
         data = {}
         mdsteps = int(step.parameters["md"]["steps"])
-        for k, v in qintervals.iteritems():
+        for k, v in six.iteritems(qintervals):
             interval_key = v[0]
             default_interval = v[1]
             bytes_per_step = v[2]
@@ -1080,7 +1084,7 @@ def genfeps(fep_proc_file, relax_input_file, restraint, energy_list_fn,
                 # if energy or trajectory, check that files for output are
                 # defined, otherwise set the printout to 0
                 if interval_key in ("energy", "trajectory") and not \
-                   interval_key in step.parameters["files"].keys():
+                   interval_key in step.parameters["files"]:
                     data[k] = 0
 
         trj_data = data["trj"]

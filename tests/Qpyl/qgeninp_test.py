@@ -2,6 +2,8 @@
 # py.test test functions
 #########################
 
+from __future__ import absolute_import
+from __future__ import print_function
 import re
 import pytest
 import shutil
@@ -26,7 +28,7 @@ class TestGenFeps:
             generated_files = os.listdir("test_000")
             for rf in reference_files:
                 if rf not in generated_files:
-                    print "Missing file: ", rf
+                    print("Missing file: ", rf)
                     assert 0
                 if ".re" in rf or ".top" in rf or ".sh" in rf:
                     continue
@@ -35,7 +37,7 @@ class TestGenFeps:
                 genstr = re.sub("(\*|\!|#).*", "", genstr)
 
                 if genstr != refstr:
-                    print "File '{}' is bad.".format(rf)
+                    print("File '{}' is bad.".format(rf))
                     assert genstr == refstr
         except:
             raise
@@ -61,7 +63,7 @@ class TestGenRelax:
             generated_files = os.listdir("test_relax")
             for rf in reference_files:
                 if rf not in generated_files:
-                    print "Missing file: ", rf
+                    print("Missing file: ", rf)
                     assert 0
                 if ".re" in rf or ".top" in rf or ".sh" in rf:
                     continue
@@ -70,7 +72,7 @@ class TestGenRelax:
                 genstr = re.sub("(\*|\!|#).*", "", genstr)
 
                 if genstr != refstr:
-                    print "File '{}' is bad.".format(rf)
+                    print("File '{}' is bad.".format(rf))
                     assert genstr == refstr
         except:
             raise

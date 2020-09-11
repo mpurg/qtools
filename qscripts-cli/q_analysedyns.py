@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
 # MIT License
@@ -28,6 +28,8 @@
 # Extracts dynamics information from the logfile and saves to json
 #
 
+from __future__ import absolute_import, print_function
+from __future__ import division, unicode_literals
 from qscripts_config import __version__, QScriptsConfig as QScfg
 
 import sys
@@ -78,7 +80,7 @@ args = parser.parse_args()
 
 for qdynout in args.outputs:
     if not os.path.lexists(qdynout):
-        print "FATAL! File '{}' doesn't exist".format(qdynout)
+        print("FATAL! File '{}' doesn't exist".format(qdynout))
         sys.exit(1)
 
 try:
@@ -86,17 +88,17 @@ try:
                         time_unit=args.timeunit,
                         step_size=args.stepsize)
 except QAnalyseDynsError as e:
-    print "Error: {}".format(e)
+    print("Error: {}".format(e))
     sys.exit(1)
 
-print qads.get_temp_stats()
+print(qads.get_temp_stats())
 
 plots = qads.get_plotdata(stride=args.stride)
 
-jsonenc = plotdata.PlotDataJSONEncoder(indent=2)
+jsonenc = plotdata.PlotDataJSONEncoder(indent=2, separators=(",", ": "))
 backup = backup_file(args.plots_out)
 if backup:
-    print "Backed up '{}' to '{}'".format(args.plots_out, backup)
+    print("Backed up '{}' to '{}'".format(args.plots_out, backup))
 open(args.plots_out, 'w').write(jsonenc.encode(plots))
-print "\nWrote '{}'. Use q_plot.py to visualize the plots.".format(args.plots_out)
+print("\nWrote '{}'. Use q_plot.py to visualize the plots.".format(args.plots_out))
 
