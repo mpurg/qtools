@@ -123,12 +123,17 @@ def make_fep(qmap_file, pdb_file, forcefield,
     fep_changes = {"atoms": [], "charges": [],
                    "bonds": ODict(), "angles": ODict(),
                    "torsions": ODict(), "impropers": ODict()}
+    fep_couplings = {"angles": [], "torsions": [], "impropers": []}
+
     fep_qcp_atoms = []
     fep_morse_prms = {}
     fep_reacting_atoms = set()
     num_evb_states = None
 
-    # parse the MAP file
+
+
+    ###########################################################################
+    # Parse the MAP file
     # pdb_ids_map = [ ('q', [pdbid1_state1,]),
     #                 ('q', [pdbid2_state1,]),
     #                 ...
@@ -140,6 +145,8 @@ def make_fep(qmap_file, pdb_file, forcefield,
     #                 ...
     #               ]
     #
+    ###########################################################################
+
     lib_ids_map = []
     pdb_ids_map = []
     with open(qmap_file, 'r') as qatom_map:
@@ -170,7 +177,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
                 raise QMakeFepError("Duplicate PDB ID: '{}'".format(pdb_id))
             pdb_ids_map.append(tmp)
 
-            if num_evb_states == None:
+            if num_evb_states is None:
                 num_evb_states = len(lib_ids)
             elif len(lib_ids) != num_evb_states:
                 raise QMakeFepError("Number of states in line '{}' not equal "
@@ -195,7 +202,10 @@ def make_fep(qmap_file, pdb_file, forcefield,
                 lib_ids_map[state].append(lib_id)
 
 
-    # load libraries
+    ###########################################################################
+    # Load libraries
+    ###########################################################################
+
     qlib = QLib(forcefield, ignore_errors=ignore_errors)
     for lib in lib_files:
         try:
@@ -205,7 +215,11 @@ def make_fep(qmap_file, pdb_file, forcefield,
                                 "".format(lib, e))
 
 
-    # make dummy structures for other states
+    ###########################################################################
+    # Make dummy structures for other states
+    # (in order to generate a QTopology object)
+    ###########################################################################
+
     structures = [None for _ in range(num_evb_states)]
     structures[0] = pdb_file
     libid_pdbid_map = [{} for _ in range(num_evb_states)]
@@ -259,7 +273,10 @@ def make_fep(qmap_file, pdb_file, forcefield,
 
 
 
-    # load parameters
+    ###########################################################################
+    # Load parameters
+    ###########################################################################
+
     qprm = QPrm(forcefield, ignore_errors=ignore_errors)
     for parm in parm_files:
         try:
@@ -268,7 +285,10 @@ def make_fep(qmap_file, pdb_file, forcefield,
             raise QMakeFepError("Problem with parm ({}): {}"
                                 "".format(parm, e))
 
-    # load structures and make topologies
+    ###########################################################################
+    # Load structures and make topologies
+    ###########################################################################
+
     topologies = []
     for state in range(num_evb_states):
         try:
@@ -286,6 +306,7 @@ def make_fep(qmap_file, pdb_file, forcefield,
 
 
 
+    ###########################################################################
     # Make _TopoAtom (atoms in QTopology) maps out of qmap's lists
     # and extract types, type changes and charge changes
     #
@@ -294,6 +315,8 @@ def make_fep(qmap_file, pdb_file, forcefield,
     #              [_TopoAtom3_state1, _TopoAtom3_state2, ... ], 
     #            ...
     #            ]
+    ###########################################################################
+
     atom_map = []
     for i, (q_or_n, pdb_id_all_states) in enumerate(pdb_ids_map):
         atom_all_states = []
@@ -347,8 +370,11 @@ def make_fep(qmap_file, pdb_file, forcefield,
 
 
 
-    # get all Bonds, Angles, Torsions and Impropers which include
+    ###########################################################################
+    # Get all Bonds, Angles, Torsions and Impropers which include
     # at least one atom defined in qmap
+    ###########################################################################
+
     batis = {"bonds": [], "angles": [], "torsions": [], "impropers": []}
     batis["bonds"] = [set() for _ in range(num_evb_states)]
     batis["angles"] = [set() for _ in range(num_evb_states)]
@@ -362,8 +388,9 @@ def make_fep(qmap_file, pdb_file, forcefield,
             _ = [batis["impropers"][state].add(i) for i in atom.impropers]
 
 
-    # map the bonds,angles,torsions,impropers (bati) in different states
-    # to same key (ordered list of state1 PDB_IDs)
+    ###########################################################################
+    # Map the bonds,angles,torsions,impropers (bati) in different states
+    # to same key (index-ordered list of state1 PDB_IDs)
     #
     # bati_map =
     # { "bonds": {state1_bond1_key: [bond1_state1, bond1_state2,...],
@@ -371,8 +398,9 @@ def make_fep(qmap_file, pdb_file, forcefield,
     #   "angles": {state1_angle1_key: [angle1_state1, angle1_state2,...],...}
     #  ... }
     #
-    # also, include only batis which have all atoms defined in qmap
-    # also, detect inter-residue batis and raies QMakeFepError
+    # Also, include only batis which have all atoms defined in qmap
+    # Also, detect inter-residue batis and raies QMakeFepError
+    ###########################################################################
 
     bati_map = {"bonds": {}, "angles": {}, "torsions": {}, "impropers": {}}
     for state in range(num_evb_states):
@@ -385,9 +413,11 @@ def make_fep(qmap_file, pdb_file, forcefield,
                     atoms_st1 = [atom_map[atoms_in_state.index(a)][0] for a in
                                  bati.atoms]
                 except ValueError:
-                    # one of the Atoms is not defined in QMAP
+                    #logger.info("Bonding across boundary: {}".format(bati))
                     continue
+                    
 
+                # get their PDB-IDs (and indexes for sorting)
                 pdbid_index = []
                 for atom in atoms_st1:
                     pdbid_index.append((atom.index,
@@ -430,6 +460,12 @@ def make_fep(qmap_file, pdb_file, forcefield,
         # for k2, v2 in v.iteritems():
             # print k2, v2[0], v2[1]
 
+
+
+    ###########################################################################
+    # Find changes between states (add to fep_changes dict)
+    ###########################################################################
+
     def _bati_sort(key, bati_all_states):
         # to sort bonds/angles.. based on the key
         # also, breaking and forming bonds have priority
@@ -438,37 +474,69 @@ def make_fep(qmap_file, pdb_file, forcefield,
         except:
             return (1, key)
 
-    # find changes between states (add to fep_changes dict)
     for bati_type, batis in six.iteritems(bati_map):
         for bati_key, bati_all_states in sorted(batis.items(),
                                                 key=lambda key_val: \
                                       _bati_sort(key_val[0], key_val[1])):
 
-            # bond/angle/.. breaking or forming
+            # bond/angle/.. are breaking or forming
             if None in bati_all_states:
                 fep_changes[bati_type][bati_key] = bati_all_states
-
-                # add bond atoms to "reactive atoms" set
-                # and replace the bond parameter with a Morse type
-                if bati_type == "bonds":
-                    for bati in bati_all_states:
-                        if bati != None:
-                            fep_reacting_atoms |= set(bati.atoms)
-                            # the bond parameter is replaced with a Morse
-                            # parameter (_FepPrmMorse)
-                            prm_id = bati.prm.prm_id
-                            try:
-                                bati.prm = fep_morse_prms[prm_id]
-                            except KeyError:
-                                bati.prm = _FepPrmMorse(bati.prm)
-                                fep_morse_prms[prm_id] = bati.prm
-
-            # the actual values of the parameters are not exactly the same
             else:
+                # the actual values of the parameters are not exactly the same
                 tmp = [bati_all_states[0].prm.strval == bati.prm.strval
                                                 for bati in bati_all_states]
                 if not all(tmp):
                     fep_changes[bati_type][bati_key] = bati_all_states
+
+
+    ###########################################################################
+    # bonds which are breaking/forming require special treatment:
+    # - flag atoms as 'reacting'
+    # - replace with Morse
+    # - find angle/torsion/improper couplings
+    ###########################################################################
+
+    bond_changes = fep_changes["bonds"].values()
+    for bond_ch_index, bond_all_states in enumerate(bond_changes):
+
+        # ignore non-breaking/forming
+        if not None in bond_all_states:
+            continue
+
+        for state, bond in enumerate(bond_all_states):
+            if bond is not None:
+                # Add bond atoms to "reactive atoms" set.
+                bond_atoms = set(bond.atoms)
+                fep_reacting_atoms |= bond_atoms
+
+                # the bond parameter is replaced with a Morse
+                # parameter (_FepPrmMorse)
+                prm_id = bond.prm.prm_id
+                try:
+                    bond.prm = fep_morse_prms[prm_id]
+                except KeyError:
+                    bond.prm = _FepPrmMorse(bond.prm)
+                    fep_morse_prms[prm_id] = bond.prm
+                
+                # Find angles/torsions/impropers which are coupled to
+                # breaking/forming bonds. Note the 1-based indices.
+                for t in ["angles", "torsions", "impropers"]:
+                    for ati_index, atis in enumerate(fep_changes[t].values()):
+                        ati = atis[state]
+                        if ati is None:
+                            continue
+                        if bond_atoms.issubset(ati.atoms):
+                            fep_couplings[t].append((ati_index + 1,
+                                                     bond_ch_index + 1))
+
+    # Mark the reactive atoms as flagged in all states, not just bonded.
+    # (Each atom has a different atom object for each state)
+    for atom_all_states in fep_changes["atoms"]:
+        for atom in atom_all_states:
+            if atom in fep_reacting_atoms:
+                fep_reacting_atoms |= set(atom_all_states)
+
 
     # DEBUG
     # for k,v in fep_changes.iteritems():
@@ -481,10 +549,15 @@ def make_fep(qmap_file, pdb_file, forcefield,
                 # print v1,v2
 
 
-    # add parameters of changing batis to fep_types
+
+    ###########################################################################
+    # add parameters of changing bonds/angles/torsions/impropers
+    # to fep_types
+    ###########################################################################
+
     for bati_type in bati_map:
         for bati_all_states in fep_changes[bati_type].values():
-            prms = [bati.prm for bati in bati_all_states if bati != None]
+            prms = [bati.prm for bati in bati_all_states if bati is not None]
             for prm in prms:
                 if prm not in fep_types[bati_type]:
                     fep_types[bati_type].append(prm)
@@ -495,18 +568,11 @@ def make_fep(qmap_file, pdb_file, forcefield,
         # for v2 in v:
             # print v2
 
-    # add reactive atoms from states that have bond==None to fep_reacting_atoms
-    for atom_all_states in fep_changes["atoms"]:
-        for atom in atom_all_states:
-            if atom in fep_reacting_atoms:
-                fep_reacting_atoms |= set(atom_all_states)
 
 
-
-
-    ########################
+    ###########################################################################
     # Prepare the output
-    ########################
+    ###########################################################################
 
 
     fep_l = {"atoms": [],
@@ -523,13 +589,16 @@ def make_fep(qmap_file, pdb_file, forcefield,
              "torsion_types": [],
              "change_torsions": [],
              "improper_types": [],
-             "change_impropers": []}
+             "change_impropers": [],
+             "angle_couplings": [],
+             "torsion_couplings": [],
+             "improper_couplings": []}
 
-    ####################
+    ###########################################################################
     # ATOMS
     # CHANGE_ATOMS
     # CHANGE_CHARGES
-    ####################
+    ###########################################################################
     format_atoms = "{:<15} {:<10}     #  {:<15} {:<15} {:>3}"
     format_ch_atoms = "{:<10} " + " {:<12}"*num_evb_states + "    #  {:<}"
     format_ch_crgs = "{:<10} " + " {:12}"*num_evb_states + "    #  {:<10}"\
@@ -539,16 +608,16 @@ def make_fep(qmap_file, pdb_file, forcefield,
     fep_l["atoms"].append(format_atoms.format("#Q index", "PDB index",
                                               "St.1 PDB_ID", "St.1 LIB_ID", ""))
 
-    tmp = ["#Q index"]
-    tmp.extend(["Type st.{}".format(n+1) for n in range(num_evb_states)])
-    tmp.append("St.1 PDB_ID")
-    fep_l["change_atoms"].append(format_ch_atoms.format(*tmp))
+    header = ["#Q index"]
+    header.extend(["Type st.{}".format(n+1) for n in range(num_evb_states)])
+    header.append("St.1 PDB_ID")
+    fep_l["change_atoms"].append(format_ch_atoms.format(*header))
 
-    tmp = ["#Q index"]
-    tmp.extend(["Charge st.{}".format(n+1) for n in range(num_evb_states)])
-    tmp.append("St.1 PDB_ID")
-    tmp.extend(["dq({}->{})".format(n+1, n+2) for n in range(num_evb_states-1)])
-    fep_l["change_charges"].append(format_ch_crgs.format(*tmp))
+    header = ["#Q index"]
+    header.extend(["Charge st.{}".format(n+1) for n in range(num_evb_states)])
+    header.append("St.1 PDB_ID")
+    header.extend(["dq({}->{})".format(n+1, n+2) for n in range(num_evb_states-1)])
+    fep_l["change_charges"].append(format_ch_crgs.format(*header))
 
     if fep_qcp_atoms:
         fep_l["qcp_mass"].append("[qcp_mass]")
@@ -584,9 +653,9 @@ def make_fep(qmap_file, pdb_file, forcefield,
                                                        "<FIX>", pdb_id))
 
 
-    ###############
+    ###########################################################################
     # ATOM_TYPES
-    ###############
+    ###########################################################################
     format_atypes = "{:<12} {:>10} {:>10} {:>10} {:>10} {:>10} {:>10} {:>10}"
     if forcefield == "amber":
         fep_l["atom_types"].append(format_atypes.format("#Atom_type", "LJ_Rm",
@@ -615,24 +684,25 @@ def make_fep(qmap_file, pdb_file, forcefield,
                                                         sp_c, sp_a, lj3, lj4,
                                                         prm.mass))
 
-    ###############
+    ###########################################################################
     # BOND_TYPES
-    ###############
+    ###########################################################################
     format_hbonds = "{:<8}      {:>10}       {:>10}   # {}"
-    format_mbonds = "{:<8} {:^10} {:^10} {:>10}   # {}"
+    format_mbonds = "{:<8} {:^10} {:^10} {:>10}   # {}   ({})"
     fep_l["bond_types"].append("## Harmonic format")
     fep_l["bond_types"].append(format_hbonds.format("#Index", "Fc",
                                                     "r0", "PRM_ID"))
     fep_l["bond_types"].append("## Morse format")
     fep_l["bond_types"].append(format_mbonds.format("#Index", "D", "alpha",
-                                                    "r0", "PRM_ID"))
+                                                    "r0", "PRM_ID", "Harmonic_Fc"))
 
     for i, bond_type in enumerate(fep_types["bonds"]):
         b_index = i + 1
         if isinstance(bond_type, _FepPrmMorse):
             prm_id = "-".join(bond_type.harmonic_prm.prm_id.split())
             tmp = format_mbonds.format(b_index, "<FIX_D>", "<FIX_a>",
-                                       "<FIX_r0>", prm_id)
+                                       "<FIX_r0>", prm_id,
+                                       bond_type.harmonic_prm.fc)
             fep_l["bond_types"].append(tmp)
         else:
             prm_id = "-".join(bond_type.prm_id.split())
@@ -641,35 +711,38 @@ def make_fep(qmap_file, pdb_file, forcefield,
             fep_l["bond_types"].append(tmp)
 
 
-    ###############
+    ###########################################################################
     # CHANGE_BONDS
-    ###############
-    format_bondch = "{:<10} {:<10} " + "{:^5} "*num_evb_states + "  # {}"
-    tmp = ["#Atom1", "Atom2"]
-    tmp.extend(["St.{}".format(n+1) for n in range(num_evb_states)])
-    tmp.append("St.1 PDB_IDs")
-    fep_l["change_bonds"].append(format_bondch.format(*tmp))
+    ###########################################################################
+    format_bondch = "{:<10} {:<10} " \
+                  + "{:^5} " * num_evb_states \
+                  + "  # {} / {}"
 
-    for bond_key, bond_all_states in six.iteritems(fep_changes["bonds"]):
+    header = ["#Atom1", "Atom2"]
+    header.extend(["St.{}".format(n+1) for n in range(num_evb_states)])
+    header.extend(("Index", "St.1 PDB_IDs"))
+    fep_l["change_bonds"].append(format_bondch.format(*header))
+
+    for index, bond_key in enumerate(fep_changes["bonds"]):
         # bond_key == "PDB_ID1 PDB_ID2"
-        prm_indexes = []
-        for b in bond_all_states:
-            if b == None:
-                prm_indexes.append(0)
+        btype_indexes = []
+        for b in fep_changes["bonds"][bond_key]:
+            if b is None:
+                btype_indexes.append(0)
             else:
                 btype_index = fep_types["bonds"].index(b.prm) + 1
-                prm_indexes.append(btype_index)
+                btype_indexes.append(btype_index)
 
         placeholders = ["${}$".format(a) for a in bond_key.split()]
         pdb_id = "-".join(bond_key.split())
 
-        tmp = placeholders + prm_indexes + [pdb_id]
+        tmp = placeholders + btype_indexes + [index+1, pdb_id]
         fep_l["change_bonds"].append(format_bondch.format(*tmp))
 
 
-    ###############
+    ###########################################################################
     # ANGLE_TYPES
-    ###############
+    ###########################################################################
     format_angles = "{:<8} {:>10} {:>10}   # {}"
     fep_l["angle_types"].append(format_angles.format("#Index", "Fc",
                                                      "theta0", "PRM_ID"))
@@ -681,89 +754,117 @@ def make_fep(qmap_file, pdb_file, forcefield,
         fep_l["angle_types"].append(tmp)
 
 
-    #################
+    ###########################################################################
     # CHANGE_ANGLES
-    #################
-    format_angch = "{:<10} {:<10} {:<10} " + "{:^5} "*num_evb_states + "  # {}"
-    tmp = ["#Atom1", "Atom2", "Atom3"]
-    tmp.extend(["St.{}".format(n+1) for n in range(num_evb_states)])
-    tmp.append("St.1 PDB_IDs")
-    fep_l["change_angles"].append(format_angch.format(*tmp))
+    ###########################################################################
+    format_angch = "{:<10} {:<10} {:<10} " \
+                 + "{:^5} "*num_evb_states \
+                 + "  # {} / {}"
+                 
+    header = ["#Atom1", "Atom2", "Atom3"]
+    header.extend(["St.{}".format(n+1) for n in range(num_evb_states)])
+    header.extend(("Index", "St.1 PDB_IDs"))
+    fep_l["change_angles"].append(format_angch.format(*header))
 
-    for angle_key, angle_all_states in six.iteritems(fep_changes["angles"]):
+    for index, angle_key in enumerate(fep_changes["angles"]):
         # angle_key == "PDB_ID1 PDB_ID2 PDB_ID3"
-        prm_indexes = []
-        for ang in angle_all_states:
-            if ang == None:
-                prm_indexes.append(0)
+        atype_indexes = []
+        for ang in fep_changes["angles"][angle_key]:
+            if ang is None:
+                atype_indexes.append(0)
             else:
                 atype_index = fep_types["angles"].index(ang.prm) + 1
-                prm_indexes.append(atype_index)
+                atype_indexes.append(atype_index)
 
         placeholders = ["${}$".format(a) for a in angle_key.split()]
         pdb_id = "-".join(angle_key.split())
 
-        tmp = placeholders + prm_indexes + [pdb_id]
+        tmp = placeholders + atype_indexes + [index+1, pdb_id]
         fep_l["change_angles"].append(format_angch.format(*tmp))
 
 
 
 
-    #################
+    ###########################################################################
     # TORSION_TYPES
-    #################
+    ###########################################################################
     format_torsions = "{:<8} {:>10} {:>10} {:>10}   # {}"
     fep_l["torsion_types"].append(format_torsions.format("#Index", "Fc",
                                                          "mult", "psi0",
                                                          "PRM_ID"))
-    tor_index = 1
-    tor_indexes = []
+
+    # map_ttype_indexes is a lookup array for torsion type indexes in
+    # "torsion_types" section in the FEP file (one torsion_type object
+    # has several "torsion type" parameters). It's needed to match
+    # objects in change_torsions section to the correct torsion types.
+    #  fep_type_indexes[torsion_type1_index] = [typeindex1, typeindex2]
+    #  fep_type_indexes[torsion_type2_index] = [typeindex3, typeindex4, ...]
+    ttype_index = 1
+    map_ttype_indexes = []
     for i, torsion_type in enumerate(fep_types["torsions"]):
         prm_id = "-".join(torsion_type.prm_id.split())
         prm_indexes = []
         for fc, per, psi0, npath in torsion_type.get_prms():
             fc = fc/npath
-            tmp = format_torsions.format(tor_index, fc, per, psi0, prm_id)
+            tmp = format_torsions.format(ttype_index, fc, per, psi0, prm_id)
             fep_l["torsion_types"].append(tmp)
-            prm_indexes.append(tor_index)
-            tor_index += 1
-        tor_indexes.append(prm_indexes)
+            prm_indexes.append(ttype_index)
+            ttype_index += 1
 
-    ###################
+        map_ttype_indexes.append(prm_indexes)
+
+    ###########################################################################
     # CHANGE_TORSIONS
-    ###################
+    ###########################################################################
+
     format_torch = "{:<10} {:<10} {:<10} {:<10} " \
-                 + "{:^5} "*num_evb_states + "  # {}"
+                 + "{:^5} " * num_evb_states \
+                 + "  # {} / {}"
 
-    tmp = ["#Atom1", "Atom2", "Atom3", "Atom4"]
-    tmp.extend(["St.{}".format(n+1) for n in range(num_evb_states)])
-    tmp.append("St.1 PDB_IDs")
-    fep_l["change_torsions"].append(format_torch.format(*tmp))
+    header = ["#Atom1", "Atom2", "Atom3", "Atom4"]
+    header.extend(["St.{}".format(n+1) for n in range(num_evb_states)])
+    header.extend(("Index", "St.1 PDB_IDs"))
+    fep_l["change_torsions"].append(format_torch.format(*header))
 
-    for torsion_key, torsion_all_states in six.iteritems(fep_changes["torsions"]):
+    # here the index has to be counted per-parameter, not per object
+    index = 0
+    for torsion_key in fep_changes["torsions"]:
         # torsion_key == "PDB_ID1 PDB_ID2 PDB_ID3 PDB_ID4"
-        for state, tor in enumerate(torsion_all_states):
-            if tor == None:
-                continue
+        torsion_all_states = fep_changes["torsions"][torsion_key]
 
-            for i in range(len(tor.prm.fcs)):
-                tprm_index = fep_types["torsions"].index(tor.prm)
-                ttype_index = tor_indexes[tprm_index][i]
+        # Find the max number of prms accross all states
+        max_prms = 0
+        for tor in torsion_all_states:
+            if tor is not None:
+                max_prms = max((max_prms, len(tor.prm.fcs)))
 
-                prm_indexes = [0 for _ in range(len(torsion_all_states))]
-                prm_indexes[state] = ttype_index
+        for prm_i in range(max_prms):
+            ttype_indexes = []
+            for tor in torsion_all_states:
+                try:
+                    _ = tor.prm.fcs[prm_i]
+                except (AttributeError, IndexError):
+                    # torsion is None or prm.fcs[prm_i] doesn't exist
+                    ttype_indexes.append(0)
+                else:
+                    tprm_index = fep_types["torsions"].index(tor.prm)
+                    ttype_index = map_ttype_indexes[tprm_index][prm_i]
+                    ttype_indexes.append(ttype_index)
 
-                placeholders = ["${}$".format(t) for t in torsion_key.split()]
-                pdb_id = "-".join(torsion_key.split())
+            placeholders = ["${}$".format(t) for t in torsion_key.split()]
+            pdb_id = "-".join(torsion_key.split())
 
-                tmp = placeholders + prm_indexes + [pdb_id]
-                fep_l["change_torsions"].append(format_torch.format(*tmp))
+            tmp = placeholders + ttype_indexes + [index+1, pdb_id]
+            fep_l["change_torsions"].append(format_torch.format(*tmp))
+
+            index += 1
 
 
 
-    #################
+
+    ###########################################################################
     # IMPROPER_TYPES
-    #################
+    ###########################################################################
     format_impropers = "{:<8} {:>10} {:>10}   # {}"
     fep_l["improper_types"].append(format_impropers.format("#Index",
                                                            "Fc", "phi0",
@@ -776,22 +877,23 @@ def make_fep(qmap_file, pdb_file, forcefield,
         fep_l["improper_types"].append(tmp)
 
 
-    ###################
+    ###########################################################################
     # CHANGE_IMPROPERS
-    ###################
+    ###########################################################################
     format_impch = "{:<10} {:<10} {:<10} {:<10} " \
-                 + "{:^5} "*num_evb_states + "  # {}"
+                 + "{:^5} " * num_evb_states \
+                 + "  # {} / {}"
 
-    tmp = ["#Atom1", "Atom2", "Atom3", "Atom4"]
-    tmp.extend(["St.{}".format(n+1) for n in range(num_evb_states)])
-    tmp.append("St.1 PDB_IDs")
-    fep_l["change_impropers"].append(format_impch.format(*tmp))
+    header = ["#Atom1", "Atom2", "Atom3", "Atom4"]
+    header.extend(["St.{}".format(n+1) for n in range(num_evb_states)])
+    header.extend(("Index", "St.1 PDB_IDs"))
+    fep_l["change_impropers"].append(format_impch.format(*header))
 
-    for improper_key, improper_all_states in six.iteritems(fep_changes["impropers"]):
+    for index, improper_key in enumerate(fep_changes["impropers"]):
         # improper_key == "PDB_ID1 PDB_ID2 PDB_ID3 PDB_ID4"
         prm_indexes = []
-        for imp in improper_all_states:
-            if imp == None:
+        for imp in fep_changes["impropers"][improper_key]:
+            if imp is None:
                 prm_indexes.append(0)
             else:
                 itype_index = fep_types["impropers"].index(imp.prm) + 1
@@ -800,16 +902,42 @@ def make_fep(qmap_file, pdb_file, forcefield,
         placeholders = ["${}$".format(i) for i in improper_key.split()]
         pdb_id = "-".join(improper_key.split())
 
-        tmp = placeholders + prm_indexes + [pdb_id]
+        tmp = placeholders + prm_indexes + [index+1, pdb_id]
         fep_l["change_impropers"].append(format_impch.format(*tmp))
 
-    ##############
+
+    ###########################################################################
+    # ANGLE_COUPLINGS
+    ###########################################################################
+    format_coupl = "{:<10}    {:<10}"
+    comment = format_coupl.format("#Angle_index", "Bond_index")
+    fep_l["angle_couplings"].append(comment)
+    for ang_i, bond_i in fep_couplings["angles"]:
+        fep_l["angle_couplings"].append(format_coupl.format(ang_i, bond_i))
+                                                        
+    ###########################################################################
+    # TORSION COUPLINGS
+    ###########################################################################
+    comment = format_coupl.format("#Torsion_index", "Bond_index")
+    fep_l["torsion_couplings"].append(comment)
+    for tor_i, bond_i in fep_couplings["torsions"]:
+        fep_l["torsion_couplings"].append(format_coupl.format(tor_i, bond_i))
+
+    ###########################################################################
+    # IMPROPER COUPLINGS
+    ###########################################################################
+    comment = format_coupl.format("#Torsion_index", "Bond_index")
+    fep_l["improper_couplings"].append(comment)
+    for imp_i, bond_i in fep_couplings["impropers"]:
+        fep_l["improper_couplings"].append(format_coupl.format(imp_i, bond_i))
+
+    ###########################################################################
     # SOFT_PAIRS
-    ##############
+    ###########################################################################
     for bond_key, bond_all_states in six.iteritems(fep_changes["bonds"]):
         if None in bond_all_states:
             for state, bond in enumerate(bond_all_states):
-                if bond == None:
+                if bond is None:
                     continue
                 atoms_in_state = [atom_all_states[state] for atom_all_states \
                                                         in fep_changes["atoms"]]
@@ -880,6 +1008,15 @@ states {states}
 
 [change_impropers]
 {change_impropers}
+
+[angle_couplings]
+{angle_couplings}
+
+[torsion_couplings]
+{torsion_couplings}
+
+[improper_couplings]
+{improper_couplings}
 
 {qcp_mass}
 """.format(states=num_evb_states, date=time.ctime(), cmd=" ".join(sys.argv),

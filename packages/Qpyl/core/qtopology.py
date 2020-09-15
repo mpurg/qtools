@@ -495,6 +495,8 @@ class _TopoBonding(object):
 
     def __init__(self, atoms, prm):
         self.prm = prm
+
+        # order the atoms
         atom_indexes = [(a.index, a) for a in atoms]
         if isinstance(self, _TopoBond):
             atom_indexes.sort()
@@ -505,7 +507,6 @@ class _TopoBonding(object):
         elif isinstance(self, _TopoImproper):
             # order is defined in the library
             pass
-
         self.atoms = [a for (i,a) in atom_indexes]
 
         for a in self.atoms:

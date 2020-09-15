@@ -1,7 +1,7 @@
-# Generated with Qtools, version 0.5.0
-# Date: Sat Jan 28 20:56:23 2017
-# CWD: /home/mpurg/bin/qtools/tests/qscripts-cli/q_makefep/1-probr_cl/tmp-run
-# CMDline: /home/mpurg/bin/qtools/qscripts-cli/q_makefep.py -s ../input/probr_cl_start.pdb -m ../input/probr_cl.qmap -l ../input/0-ff/br-.lib ../input/0-ff/cl-.lib ../input/0-ff/prb.lib ../input/0-ff/prc.lib -p ../input/0-ff/br-.prm ../input/0-ff/cl-.prm ../input/0-ff/prb.prm ../input/0-ff/prc.prm -f oplsaa -o probr_cl.fep
+# Generated with Qtools, version 0.7.0
+# Date: Tue Sep 15 15:38:21 2020
+# CWD: /tmp/1-probr_cl.mkEJs6
+# CMDline: /home/mpurg/Desktop/Projects/qtools/qtools_develmp/qscripts-cli/q_makefep.py -s ./input/probr_cl_start.pdb -m ./input/probr_cl.qmap -l ./input/0-ff/br-.lib ./input/0-ff/cl-.lib ./input/0-ff/prb.lib ./input/0-ff/prc.lib -p ./input/0-ff/br-.prm ./input/0-ff/cl-.prm ./input/0-ff/prb.prm ./input/0-ff/prc.prm -f oplsaa -o probr_cl.fep
 #
 
 [FEP]
@@ -50,10 +50,10 @@ prc_Cl11      1692.2485    43.0554      <FIX>        2.5  1196.6004    30.4448  
 
 [change_charges]
 #Q index    Charge st.1  Charge st.2     #  St.1 PDB_ID     dq(1->2)
-1                -0.3022      -0.1984    #  1.C1             0.1038
-2                 0.1441       0.1206    #  1.H2            -0.0235
-3                 0.1441       0.1206    #  1.H3            -0.0235
-4                 0.2129       0.2158    #  1.C4             0.0029
+1                -0.3022      -0.1984    #  1.C1       0.10380000000000003
+2                 0.1441       0.1206    #  1.H2       -0.023500000000000007
+3                 0.1441       0.1206    #  1.H3       -0.023500000000000007
+4                 0.2129       0.2158    #  1.C4       0.002899999999999986
 5                -0.0082      -0.0108    #  1.H5            -0.0026
 6                -0.0082      -0.0108    #  1.H6            -0.0026
 7                -0.1825         -1.0    #  1.Br11          -0.8175
@@ -77,14 +77,14 @@ prc_Cl11      1692.2485    43.0554      <FIX>        2.5  1196.6004    30.4448  
 ## Harmonic format
 #Index                Fc               r0   # PRM_ID
 ## Morse format
-#Index       D        alpha            r0   # PRM_ID
-1         <FIX_D>    <FIX_a>     <FIX_r0>   # prb_Br11-prb_C1
-2         <FIX_D>    <FIX_a>     <FIX_r0>   # prc_C1-prc_Cl11
+#Index       D        alpha            r0   # PRM_ID   (Harmonic_Fc)
+1         <FIX_D>    <FIX_a>     <FIX_r0>   # prb_Br11-prb_C1   (490.0)
+2         <FIX_D>    <FIX_a>     <FIX_r0>   # prc_C1-prc_Cl11   (490.0)
 
 [change_bonds]
-#Atom1     Atom2      St.1  St.2    # St.1 PDB_IDs
-$1.C1$     $1.Br11$     1     0     # 1.C1-1.Br11
-$1.C1$     $2.Cl1$      0     2     # 1.C1-2.Cl1
+#Atom1     Atom2      St.1  St.2    # Index / St.1 PDB_IDs
+$1.C1$     $1.Br11$     1     0     # 1 / 1.C1-1.Br11
+$1.C1$     $2.Cl1$      0     2     # 2 / 1.C1-2.Cl1
 
 [angle_types]
 #Index           Fc     theta0   # PRM_ID
@@ -96,13 +96,13 @@ $1.C1$     $2.Cl1$      0     2     # 1.C1-2.Cl1
 6             102.0      107.6   # prc_Cl11-prc_C1-prc_H3
 
 [change_angles]
-#Atom1     Atom2      Atom3      St.1  St.2    # St.1 PDB_IDs
-$1.C4$     $1.C1$     $1.Br11$     1     0     # 1.C4-1.C1-1.Br11
-$1.H2$     $1.C1$     $1.Br11$     2     0     # 1.H2-1.C1-1.Br11
-$1.H3$     $1.C1$     $1.Br11$     3     0     # 1.H3-1.C1-1.Br11
-$1.C4$     $1.C1$     $2.Cl1$      0     4     # 1.C4-1.C1-2.Cl1
-$1.H2$     $1.C1$     $2.Cl1$      0     5     # 1.H2-1.C1-2.Cl1
-$1.H3$     $1.C1$     $2.Cl1$      0     6     # 1.H3-1.C1-2.Cl1
+#Atom1     Atom2      Atom3      St.1  St.2    # Index / St.1 PDB_IDs
+$1.C4$     $1.C1$     $1.Br11$     1     0     # 1 / 1.C4-1.C1-1.Br11
+$1.H2$     $1.C1$     $1.Br11$     2     0     # 2 / 1.H2-1.C1-1.Br11
+$1.H3$     $1.C1$     $1.Br11$     3     0     # 3 / 1.H3-1.C1-1.Br11
+$1.C4$     $1.C1$     $2.Cl1$      0     4     # 4 / 1.C4-1.C1-2.Cl1
+$1.H2$     $1.C1$     $2.Cl1$      0     5     # 5 / 1.H2-1.C1-2.Cl1
+$1.H3$     $1.C1$     $2.Cl1$      0     6     # 6 / 1.H3-1.C1-2.Cl1
 
 [torsion_types]
 #Index           Fc       mult       psi0   # PRM_ID
@@ -114,18 +114,39 @@ $1.H3$     $1.C1$     $2.Cl1$      0     6     # 1.H3-1.C1-2.Cl1
 6               0.2        3.0        0.0   # prc_Cl11-prc_C1-prc_C4-prc_H6
 
 [change_torsions]
-#Atom1     Atom2      Atom3      Atom4      St.1  St.2    # St.1 PDB_IDs
-$1.C7$     $1.C4$     $1.C1$     $1.Br11$     1     0     # 1.C7-1.C4-1.C1-1.Br11
-$1.H5$     $1.C4$     $1.C1$     $1.Br11$     2     0     # 1.H5-1.C4-1.C1-1.Br11
-$1.H6$     $1.C4$     $1.C1$     $1.Br11$     3     0     # 1.H6-1.C4-1.C1-1.Br11
-$1.C7$     $1.C4$     $1.C1$     $2.Cl1$      0     4     # 1.C7-1.C4-1.C1-2.Cl1
-$1.H5$     $1.C4$     $1.C1$     $2.Cl1$      0     5     # 1.H5-1.C4-1.C1-2.Cl1
-$1.H6$     $1.C4$     $1.C1$     $2.Cl1$      0     6     # 1.H6-1.C4-1.C1-2.Cl1
+#Atom1     Atom2      Atom3      Atom4      St.1  St.2    # Index / St.1 PDB_IDs
+$1.C7$     $1.C4$     $1.C1$     $1.Br11$     1     0     # 1 / 1.C7-1.C4-1.C1-1.Br11
+$1.H5$     $1.C4$     $1.C1$     $1.Br11$     2     0     # 2 / 1.H5-1.C4-1.C1-1.Br11
+$1.H6$     $1.C4$     $1.C1$     $1.Br11$     3     0     # 3 / 1.H6-1.C4-1.C1-1.Br11
+$1.C7$     $1.C4$     $1.C1$     $2.Cl1$      0     4     # 4 / 1.C7-1.C4-1.C1-2.Cl1
+$1.H5$     $1.C4$     $1.C1$     $2.Cl1$      0     5     # 5 / 1.H5-1.C4-1.C1-2.Cl1
+$1.H6$     $1.C4$     $1.C1$     $2.Cl1$      0     6     # 6 / 1.H6-1.C4-1.C1-2.Cl1
 
 [improper_types]
 #Index           Fc       phi0   # PRM_ID
 
 [change_impropers]
-#Atom1     Atom2      Atom3      Atom4      St.1  St.2    # St.1 PDB_IDs
+#Atom1     Atom2      Atom3      Atom4      St.1  St.2    # Index / St.1 PDB_IDs
+
+[angle_couplings]
+#Angle_index    Bond_index
+1             1         
+2             1         
+3             1         
+4             2         
+5             2         
+6             2         
+
+[torsion_couplings]
+#Torsion_index    Bond_index
+1             1         
+2             1         
+3             1         
+4             2         
+5             2         
+6             2         
+
+[improper_couplings]
+#Torsion_index    Bond_index
 
 
