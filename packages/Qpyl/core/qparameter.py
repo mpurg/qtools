@@ -139,7 +139,6 @@ class QPrm(object):
                                     "([atom_types], [bonds], ...):\n{}"
                                     .format(lnumber, parm_fn, line))
 
-
                 if section == "options":
                     try:
                         key, value = line.split()
@@ -147,6 +146,12 @@ class QPrm(object):
                         raise QPrmError("Malformed key/value pair in "
                                         "[options] section of parm file: {}"
                                         "".format(line))
+
+                    if key in self.options and value != self.options[key]:
+                        raise_or_log("Different values for '{}' in [options]"
+                                     "{}".format(key), QPrmError,
+                                     logger, self.ignore_errors)
+
                     self.options[key] = value
 
 

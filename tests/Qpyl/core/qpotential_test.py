@@ -30,6 +30,18 @@ class TestPotFunc:
         e = improper_energy_periodic(150, 10.5, 2, 180)
         assert is_close(e, 5.25)
 
+    def test_vdw_LJ_AB(self):
+        e = vdw_LJ_AB(2, 4096, 64)
+        assert is_close(e, 0)
+
+    def test_vdw_LJ_epsR(self):
+        e = _LJ_epsR(2, 1, 4)
+        assert is_close(e, 4096-2*64)
+
+    def test_vdw_LJ_epsR(self):
+        e = improper_energy_periodic(150, 10.5, 2, 180)
+        assert is_close(e, 5.25)
+
 class TestGeomFunc:
     def test_distance(self):
         a1, a2 = P(0, 0, 0), P(5, 6, 7)

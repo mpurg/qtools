@@ -28,7 +28,7 @@
 """
 This module implements an internal topology builder class QTopology.
 QTopology creates a mapping between the system's structure (QStruct),
-bonding patterns/charges (QLib), and the parameters (Qrm), allowing
+bonding patterns/charges (QLib), and the parameters (Qprm), allowing
 evaluation of individual topological components of the system.
 """
 
@@ -46,14 +46,15 @@ class QTopology(object):
     """
     Class for storing topology information.
 
-    (mashup of library, parameter and structure data)
-    Contains lists of atoms, bonds, angles, torsions
-    and impropers, along with their parameters.
+    Args:
+        qlib (qlibrary.QLib): library object
+        qprm (qparameter.QPrm): parameter object
+        qstruct (qstructure.QStruct): structure object
 
-    The constructor takes in three arguments:
-      qlib (qlibrary.QLib object)
-      qprm (qparameter.QPrm object)
-      qstruct (qstructure.QStruct object)
+    This object is basically a mashup of library,
+    parameter and structure data. It contains the lists
+    of atoms, bonds, angles, torsions and impropers in
+    the structure, along with their parameters.
 
     Typical usage:
 
@@ -70,8 +71,9 @@ class QTopology(object):
         print "Failed to make topology: " + str(e)
 
     for bond in qtopo.bonds:
-        print "%s: fk %.2f, r0 %.2f, r %.2f, E(r) %.2f" %
-              (bond, bond.prm.fc, bond.prm.r0, bond.r, bond.energy)
+        e, r = bond.calc()
+        print(bond, bond.prm.fc, bond.prm.r0, e, r)
+
     """
 
     def __init__(self, qlib, qprm, qstruct):
@@ -85,7 +87,7 @@ class QTopology(object):
         if qlib.ff_type != qprm.ff_type:
             raise QTopologyError("QLib FF ({}) not "
                                  "compatible with QPrm FF ({})"
-                                 .format(qlib.ff_type, qprm.ff_type))
+                                 "".format(qlib.ff_type, qprm.ff_type))
         self.qlib = qlib
         self.qprm = qprm
         self.qstruct = qstruct
@@ -126,6 +128,43 @@ class QTopology(object):
         self._get_impropers()
 
 
+    def find_NB_pairs(self, atoms, atoms_surr=None, cutoff=None):
+        """
+        Returns non-bonded atom pairs between groups `atoms` and `atoms2`.
+
+        Args:
+            atoms (list): list of _TopoAtom objects or indexes (in top.atoms)
+            atoms_surr (list): list of _TopoAtom objects or indexes
+                               (in top.atoms), default=None
+            cutoff (float): distance cut-off in Angstrom
+
+
+        Returns:
+            (nb_pairs): list of _TopoNonBondedPair objects
+
+
+        The search for non-bonded atom pairs is performed against all atoms
+        defined in `atoms`, as well as against all atom-atom combinations
+        between the two groups `atoms` and `atoms_surr`. Pairs exclusively
+        from `atoms2` are not included in the search.
+
+        1-2 and 1-3 bonded pairs are excluded, while 1-4 bonded pairs are
+        flagged accordingly.
+
+        Note:
+            The search for nonbonded atom pairs is done here and not during
+            initialization because it's usually very expensive, and because 
+            in most cases one is interested in a limited set of interacting
+            atoms with a specific cutoff.
+
+        Note2:
+            The NB pairs are not stored in the topology object, nor are the
+            references added to the atom objects (unlike Bonding objects).
+
+        """
+
+
+        raise NotImplementedError
 
 
 
@@ -214,7 +253,6 @@ class QTopology(object):
                                                      .format(prm_id))
                             # create _TopoBond object
                             self.bonds.append(_TopoBond(atoms, bond_prm))
-
 
 
 
@@ -363,7 +401,7 @@ class QTopology(object):
                 # ?  O2 CA CN
                 # ?  O2 CA CB
                 # ?  O2 CB CN
-                if improper_prm == None:
+                if improper_prm is None:
                     for i in range(3):
                         ots = [other_atypes[i], other_atypes[(i+1)%3], "?"]
                         prm_id_gen = qparameter._PrmImproper.get_id(center_atype, ots)
@@ -377,7 +415,7 @@ class QTopology(object):
                 # ?  O2 CB ?
                 # ?  O2 CA ?
                 # ?  O2 CN ?
-                if improper_prm == None:
+                if improper_prm is None:
                     for i in range(3):
                         otypes = [other_atypes[i], "?", "?"]
                         prm_id_gen = qparameter._PrmImproper.get_id(center_atype, otypes)
@@ -388,7 +426,7 @@ class QTopology(object):
                         except KeyError:
                             improper_prm = None
 
-                if improper_prm == None:
+                if improper_prm is None:
                     raise QTopologyError("Improper type '{}' "
                                          "not found!"
                                          .format(prm_id))
@@ -397,6 +435,7 @@ class QTopology(object):
                 self.impropers.append(_TopoImproper(atoms, improper_prm))
 
 
+################################################################################
 
 
 class _TopoAtom(object):
@@ -452,8 +491,11 @@ class _TopoAtom(object):
         try:
             self.bati_map[_type].append(bond_angle_tor_imp)
         except KeyError:
-            raise TypeError("bond_agle_tor_imp of unsupported "
+            raise TypeError("bond_angle_tor_imp of unsupported "
                             "type: {}".format(_type))
+
+
+################################################################################
 
 
 class _TopoResidue(object):
@@ -485,46 +527,23 @@ class _TopoResidue(object):
         self.atoms.append(atom)
 
 
-class _TopoBonding(object):
-    """Abstract class for topology bonds, angles, torsions and impropers.
-
-    Arguments:
-        atoms (list):  list of _TopoAtom objects
-        prm (_PrmBond):  object with bond parameters
-    """
-
-    def __init__(self, atoms, prm):
-        self.prm = prm
-
-        # order the atoms
-        atom_indexes = [(a.index, a) for a in atoms]
-        if isinstance(self, _TopoBond):
-            atom_indexes.sort()
-        elif isinstance(self, _TopoAngle):
-            atom_indexes = min(atom_indexes, list(reversed(atom_indexes)))
-        elif isinstance(self, _TopoTorsion):
-            atom_indexes = min(atom_indexes, list(reversed(atom_indexes)))
-        elif isinstance(self, _TopoImproper):
-            # order is defined in the library
-            pass
-        self.atoms = [a for (i,a) in atom_indexes]
-
-        for a in self.atoms:
-            a.add_ref(self)
-    
-    def __repr__(self):
-        atoms_str = "-".join([a.name for a in self.atoms])
-        return "{}: ({})".format(self.__class__.__name__, atoms_str)
+################################################################################
 
 
-class _TopoBond(_TopoBonding):
+class _TopoBond(object):
     """Contains topological information for a bond.
 
-    Extends _TopoBonding, implements calc()
-    """
-    def __init__(self, *args):
-        super(self.__class__, self).__init__(*args)
+    Args:
+        atoms (list of _TopoAtom): list of _TopoAtom objects
+        prm (_PrmBond): bond parameter object
 
+    """
+    def __init__(self, atoms, prm):
+        self.prm = prm
+        self.atoms = sorted(atoms, key=lambda atom: atom.index)
+        for atom in self.atoms:
+            atom.add_ref(self)
+    
     def calc(self, r=None):
         """Calculate bond distance and energy.
         
@@ -541,14 +560,31 @@ class _TopoBond(_TopoBonding):
         e = qpotential.bond_energy(r, self.prm.fc, self.prm.r0)
         return (e,r)
 
+    def __repr__(self):
+        atoms_str = "-".join([a.name for a in self.atoms])
+        return "{}: ({})".format(self.__class__.__name__, atoms_str)
 
-class _TopoAngle(_TopoBonding):
+
+
+################################################################################
+
+
+
+class _TopoAngle(object):
     """Contains topological information for an angle.
-    
-    Extends _TopoBonding, implements calc()
+
+    Args:
+        atoms (list of _TopoAtom): list of _TopoAtom objects
+        prm (_PrmAngle): angle parameter object
+
     """
-    def __init__(self, *args):
-        super(self.__class__, self).__init__(*args)
+    def __init__(self, atoms, prm):
+        self.prm = prm
+        atom_indexes = [(a.index, a) for a in atoms]
+        atom_indexes = min(atom_indexes, list(reversed(atom_indexes)))
+        self.atoms = [a for (i,a) in atom_indexes]
+        for atom in self.atoms:
+            atom.add_ref(self)
 
     def calc(self, theta=None):
         """Calculate angle and energy
@@ -560,7 +596,7 @@ class _TopoAngle(_TopoBonding):
         Returns tuple (E [kcal/mol], theta [degrees])
         """
 
-        if theta == None:
+        if theta is None:
             ac1, ac2, ac3 = [a.struct.coordinates for a in self.atoms]
             theta = qpotential.angle_angle(ac1, ac2, ac3)
 
@@ -569,15 +605,32 @@ class _TopoAngle(_TopoBonding):
                                     self.prm.theta0)
         return (e, theta)
 
+    def __repr__(self):
+        atoms_str = "-".join([a.name for a in self.atoms])
+        return "{}: ({})".format(self.__class__.__name__, atoms_str)
 
-class _TopoTorsion(_TopoBonding):
+
+
+################################################################################
+
+
+
+class _TopoTorsion(object):
     """Contains topological information for a torsion.
     
-    Extends _TopoBonding, implements calc(), prm_full
-    """
-    def __init__(self, *args):
-        super(self.__class__, self).__init__(*args)
+    Args:
+        atoms (list of _TopoAtom): list of _TopoAtom objects
+        prm (_PrmTorsion): torsion parameter object
 
+    """
+    def __init__(self, atoms, prm):
+        self.prm = prm
+        atom_indexes = [(a.index, a) for a in atoms]
+        atom_indexes = min(atom_indexes, list(reversed(atom_indexes)))
+        self.atoms = [a for (i,a) in atom_indexes]
+        for atom in self.atoms:
+            atom.add_ref(self)
+    
     def calc(self, phi=None):
         """Calculate torsion angle and energy
 
@@ -588,7 +641,7 @@ class _TopoTorsion(_TopoBonding):
         Returns tuple (E [kcal/mol], phi [degrees])
         """
 
-        if phi == None:
+        if phi is None:
             ac1, ac2, ac3, ac4 = [a.struct.coordinates for a in self.atoms]
             phi = qpotential.torsion_angle(ac1, ac2, ac3, ac4)
 
@@ -616,14 +669,30 @@ class _TopoTorsion(_TopoBonding):
         else:
             return self.prm
 
+    def __repr__(self):
+        atoms_str = "-".join([a.name for a in self.atoms])
+        return "{}: ({})".format(self.__class__.__name__, atoms_str)
 
-class _TopoImproper(_TopoBonding):
+
+
+################################################################################
+
+
+
+class _TopoImproper(object):
     """Contains topological information for an improper.
     
-    Extends _TopoBonding, implements calc(), prm_full
+    Args:
+        atoms (list of _TopoAtom): list of _TopoAtom objects
+        prm (_PrmImproper): improper parameter object
+
     """
-    def __init__(self, *args):
-        super(self.__class__, self).__init__(*args)
+    def __init__(self, atoms, prm):
+        self.prm = prm
+        # order is defined in the library
+        self.atoms = atoms
+        for atom in self.atoms:
+            atom.add_ref(self)
 
     def calc(self, phi=None):
         """Calculate improper angle and energy
@@ -635,10 +704,9 @@ class _TopoImproper(_TopoBonding):
         Returns tuple (E [kcal/mol], phi [degrees])
         """
 
-        if phi == None:
+        if phi is None:
             ac1, ac2, ac3, ac4 = [a.struct.coordinates for a in self.atoms]
             phi = qpotential.improper_angle(ac1, ac2, ac3, ac4)
-
         e =  qpotential.improper_energy_periodic(phi,
                                                  self.prm.fc,
                                                  self.prm.multiplicity,
@@ -662,4 +730,69 @@ class _TopoImproper(_TopoBonding):
             return full_prm
         else:
             return self.prm
+
+    def __repr__(self):
+        atoms_str = "-".join([a.name for a in self.atoms])
+        return "{}: ({})".format(self.__class__.__name__, atoms_str)
+
+
+
+################################################################################
+
+
+
+class _TopoNonBondedPair(object):
+    """Contains topological information for a non-bonded atom pair.
+    
+    Args:
+        atoms (list of _TopoAtom): list of _TopoAtom objects
+        is_14 (boolean): flag to indicate 1-4 bonded atoms
+
+    """
+    def __init__(self, atoms, is_14):
+        self.is_14 = is_14
+        self.atoms = sorted(atoms, key=lambda atom: atom.index)
+    
+    def calc_LJ(self, r=None):
+        """Calculate distance and Lennard-Jones potential.
+        
+        Args:
+            r (float, optional): define the distance instead of
+                                 calculating it from the structure
+
+        Returns tuple (E [kcal/mol], r [angstrom])
+        """
+        ac1, ac2 = [a.struct.coordinates for a in self.atoms]
+        if not r:
+            r = qpotential.bond_distance(ac1, ac2)
+
+        if ac1.prm.lj_A is not None:
+            lj_A = ac1.prm.lj_A * ac2.prm.lj_A
+            lj_B = ac1.prm.lj_B * ac2.prm.lj_B
+            e = qpotential.vdw_LJ_AB(r, lj_A, lj_B)
+        else:
+            lj_eps = (ac1.prm.lj_eps * ac2.prm.lj_eps)**0.5
+            lj_R = ac1.prm.lj_R + ac2.prm.lj_R
+            e = qpotential.vdw_LJ_epsR(r, lj_eps, lj_R)
+
+        return (e,r)
+
+    def calc_coulomb(self, r=None):
+        """Calculate distance and Coulomb energy.
+        
+        Args:
+            r (float, optional): define the distance instead of
+                                 calculating it from the structure
+
+        Returns tuple (E [kcal/mol], r [angstrom])
+        """
+        ac1, ac2 = [a.struct.coordinates for a in self.atoms]
+        if not r:
+            r = qpotential.bond_distance(ac1, ac2)
+        e = qpotential.coulomb(r, ac1.charge, ac2.charge)
+        return (e,r)
+
+    def __repr__(self):
+        atoms_str = "-".join([a.name for a in self.atoms])
+        return "{}: ({})".format(self.__class__.__name__, atoms_str)
 

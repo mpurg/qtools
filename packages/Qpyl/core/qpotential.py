@@ -222,5 +222,51 @@ def improper_energy_periodic(phi, fc, multiplicity, phi0):
     phi0 = math.pi/180.0 * phi0   # degrees to radians
     return fc * (1 + math.cos(multiplicity*phi - phi0))
 
+def coulomb(r, q1, q2, eps=1.0, eps0=332.4):
+    """
+    Calculate electrostatic energy.
 
+    E = eps0*q1*q2 / (eps*r)
+
+    Args:
+      r (float): distance [Angstrom]
+      q1 (float): charge [e]
+      q2 (float): charge [e]
+      eps (float): relative dielectric
+      eps0 (float): Coulomb's constant [kcal A/(mol e^2)]
+      
+    """
+    return eps0*q1*q2/eps/r
+
+
+def vdw_LJ_AB(r, A, B):
+    """
+    Calculate energy of Lennard-Jones potential in AB form.
+
+    E = A / r^12 - B / r^6
+
+    Args:
+      r (float): distance [Angstrom]
+      A (float): LJ A parameter [kcal A^12 / mol]
+      B (float): LJ B parameter [kcal A^6 / mol]
+      
+    """
+    r6 = r**6
+    return A/r6**2 - B/r6
+
+
+def vdw_LJ_epsR(r, eps, Rm):
+    """
+    Calculate energy of Lennard-Jones potential in eps/R form.
+
+    E = eps * (Rm/r)^12  -  2 * eps * (Rm/r)^6
+
+    Args:
+      r (float): distance [Angstrom]
+      eps (float): LJ epsilon parameter [kcal / mol]
+      Rm (float): LJ Rm parameter [A]
+      
+    """
+    r6 = (Rm/r)**6
+    return eps * r6**2 - 2 * eps * r6
 
