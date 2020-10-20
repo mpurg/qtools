@@ -58,6 +58,16 @@ ATOM_MASSES = { "H": 1.0079,
                 "I": 126.90,
                 "DU": 0 }
 
+force_fields = {"oplsaa": {
+                    "scaling_14_el": 0.5,
+                    "scaling_14_AB": 1/2**0.5
+                    },
+                "amber": {
+                    "scaling_14_el": 0.8333,
+                    "scaling_14_EPS": 0.5
+                    }
+                }
+
 
 class QPrmError(Exception):
     pass
@@ -76,12 +86,11 @@ class QPrm(object):
     """
     def __init__(self, ff_type, ignore_errors=False):
         self.ignore_errors = ignore_errors
-        supported_ff = ['oplsaa', 'amber']
         ff_type = ff_type.lower()
-        if ff_type not in supported_ff:
-            raise QPrmError("Force field type '{}' not supported. "
-                            "Use {}".format(ff_type,
-                                            " or ".join(supported_ff)))
+        if ff_type not in force_fields:
+            raise QPrmError("Force field type '{}' not supported. Use {}"
+                            "".format(ff_type, ",".join(force_fields)))
+
         self.ff_type = ff_type
         self.options = OrderedDict()
         self.amber_masses = OrderedDict()

@@ -222,51 +222,65 @@ def improper_energy_periodic(phi, fc, multiplicity, phi0):
     phi0 = math.pi/180.0 * phi0   # degrees to radians
     return fc * (1 + math.cos(multiplicity*phi - phi0))
 
-def coulomb(r, q1, q2, eps=1.0, eps0=332.4):
+def coulomb(r, q1, q2, eps=1.0):
     """
-    Calculate electrostatic energy.
+    Calculate electrostatic energy in kcal/mol.
 
-    E = eps0*q1*q2 / (eps*r)
+    E = 332.4 * q1*q2 / (eps*r)
 
     Args:
       r (float): distance [Angstrom]
       q1 (float): charge [e]
       q2 (float): charge [e]
       eps (float): relative dielectric
-      eps0 (float): Coulomb's constant [kcal A/(mol e^2)]
       
+    Returns:
+      e_coulomb (float): energy in kcal/mol
+
     """
-    return eps0*q1*q2/eps/r
+    return 332.4*q1*q2/eps/r
 
 
-def vdw_LJ_AB(r, A, B):
+def vdw_LJ_AB(r, A, B, scaling14=1.0):
     """
     Calculate energy of Lennard-Jones potential in AB form.
 
-    E = A / r^12 - B / r^6
+    E = A_s / r^12 - B_s / r^6
+
+    Where A_s = A*scaling14, B_s = B*scaling14.
 
     Args:
       r (float): distance [Angstrom]
       A (float): LJ A parameter [kcal A^12 / mol]
       B (float): LJ B parameter [kcal A^6 / mol]
+      scaling14 (float, optional): fudge factor (default = 1.0)
       
+    Returns:
+      e_vdw (float): energy in kcal/mol
+
     """
     r6 = r**6
-    return A/r6**2 - B/r6
+    return A*scaling14/r6**2 - B*scaling14/r6
 
 
-def vdw_LJ_epsR(r, eps, Rm):
+def vdw_LJ_epsR(r, eps, Rm, scaling14=1.0):
     """
     Calculate energy of Lennard-Jones potential in eps/R form.
 
-    E = eps * (Rm/r)^12  -  2 * eps * (Rm/r)^6
+    E = eps * (Rm_s/r)^12  -  2 * eps * (Rm_s/r)^6
+
+    Where Rm_s = Rm_s * scaling14
 
     Args:
       r (float): distance [Angstrom]
       eps (float): LJ epsilon parameter [kcal / mol]
       Rm (float): LJ Rm parameter [A]
+      scaling14 (float, optional): fudge factor (default = 1.0)
       
+    Returns:
+      e_vdw (float): energy in kcal/mol
+
     """
-    r6 = (Rm/r)**6
+    r6 = (Rm*scaling14/r)**6
     return eps * r6**2 - 2 * eps * r6
 

@@ -34,13 +34,25 @@ class TestPotFunc:
         e = vdw_LJ_AB(2, 4096, 64)
         assert is_close(e, 0)
 
-    def test_vdw_LJ_epsR(self):
-        e = _LJ_epsR(2, 1, 4)
-        assert is_close(e, 4096-2*64)
+    def test_vdw_LJ_AB_2(self):
+        e = vdw_LJ_AB(2, 4096*2, 64*2, 0.5)
+        assert is_close(e, 0)
 
     def test_vdw_LJ_epsR(self):
-        e = improper_energy_periodic(150, 10.5, 2, 180)
-        assert is_close(e, 5.25)
+        e = vdw_LJ_epsR(2, 1, 4)
+        assert is_close(e, 4096-2*64)
+
+    def test_vdw_LJ_epsR_2(self):
+        e = vdw_LJ_epsR(2, 1, 4*2, 0.5)
+        assert is_close(e, 4096-2*64)
+
+    def test_coulomb(self):
+        e = coulomb(2, 2, 2)
+        assert is_close(e, 2.0*332.4)
+
+    def test_coulomb(self):
+        e = coulomb(2, 2, 2, 2) 
+        assert is_close(e, 332.4)
 
 class TestGeomFunc:
     def test_distance(self):

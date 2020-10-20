@@ -163,6 +163,7 @@ class QTopology(object):
 
         """
 
+        
 
         raise NotImplementedError
 
@@ -749,8 +750,9 @@ class _TopoNonBondedPair(object):
         is_14 (boolean): flag to indicate 1-4 bonded atoms
 
     """
-    def __init__(self, atoms, is_14):
-        self.is_14 = is_14
+    def __init__(self, atoms, scaling14_el=1, scaling14_vdw=1):
+        self.scaling14_el = scaling14_el
+        self.scaling14_vdw = scaling14_vdw
         self.atoms = sorted(atoms, key=lambda atom: atom.index)
     
     def calc_LJ(self, r=None):
@@ -762,18 +764,20 @@ class _TopoNonBondedPair(object):
 
         Returns tuple (E [kcal/mol], r [angstrom])
         """
+
         ac1, ac2 = [a.struct.coordinates for a in self.atoms]
         if not r:
             r = qpotential.bond_distance(ac1, ac2)
 
-        if ac1.prm.lj_A is not None:
-            lj_A = ac1.prm.lj_A * ac2.prm.lj_A
-            lj_B = ac1.prm.lj_B * ac2.prm.lj_B
-            e = qpotential.vdw_LJ_AB(r, lj_A, lj_B)
+        prm1, prm2 = [a.prm for a in self.atoms]
+        if prm1.lj_A is not None:
+            lj_A = prm1.lj_A * prm2.lj_A
+            lj_B = prm1.lj_B * prm2.lj_B
+            e = qpotential.vdw_LJ_AB(r, lj_A, lj_B, self.scaling14_vdw)
         else:
-            lj_eps = (ac1.prm.lj_eps * ac2.prm.lj_eps)**0.5
-            lj_R = ac1.prm.lj_R + ac2.prm.lj_R
-            e = qpotential.vdw_LJ_epsR(r, lj_eps, lj_R)
+            lj_eps = (prm1.lj_eps * prm2.lj_eps)**0.5
+            lj_R = prm1.lj_R + prm2.lj_R
+            e = qpotential.vdw_LJ_epsR(r, lj_eps, lj_R, self.scaling14_vdw)
 
         return (e,r)
 
@@ -789,7 +793,7 @@ class _TopoNonBondedPair(object):
         ac1, ac2 = [a.struct.coordinates for a in self.atoms]
         if not r:
             r = qpotential.bond_distance(ac1, ac2)
-        e = qpotential.coulomb(r, ac1.charge, ac2.charge)
+        e = qpotential.coulomb(r, ac1.charge, ac2.charge, self.scaling14_el)
         return (e,r)
 
     def __repr__(self):
