@@ -527,6 +527,9 @@ class _TopoResidue(object):
         """Append a _TopoAtom object to the 'atoms' list"""
         self.atoms.append(atom)
 
+    def __repr__(self):
+        return "_TopoResidue: {}_{}".format(self.name,
+                                            self.index)
 
 ################################################################################
 
@@ -544,22 +547,23 @@ class _TopoBond(object):
         self.atoms = sorted(atoms, key=lambda atom: atom.index)
         for atom in self.atoms:
             atom.add_ref(self)
-    
-    def calc(self, r=None):
-        """Calculate bond distance and energy.
-        
-        Args:
-            r (float, optional): define the bond distance instead of
-                                 calculating it from the structure
+        self._r = None
 
-        Returns tuple (E [kcal/mol], r [angstrom])
-        """
-        if not r:
+    @property
+    def r(self):
+        """ Return bond distance in Angstrom. """
+        if self._r is None:
             ac1, ac2 = [a.struct.coordinates for a in self.atoms]
-            r = qpotential.bond_distance(ac1, ac2)
-
-        e = qpotential.bond_energy(r, self.prm.fc, self.prm.r0)
-        return (e,r)
+            self._r = qpotential.bond_distance(ac1, ac2)
+        return self._r
+    
+    @property
+    def energy(self):
+        """ Return bond energy in kcal/mol. """
+        # TODO: implement Morse potential
+        return qpotential.bond_energy(self.r,
+                                      self.prm.fc,
+                                      self.prm.r0)
 
     def __repr__(self):
         atoms_str = "-".join([a.name for a in self.atoms])
@@ -586,25 +590,22 @@ class _TopoAngle(object):
         self.atoms = [a for (i,a) in atom_indexes]
         for atom in self.atoms:
             atom.add_ref(self)
+        self._theta = None
 
-    def calc(self, theta=None):
-        """Calculate angle and energy
-
-        Args:
-            theta (float, optional): define the angle instead of calculating it
-                                     from the structure
-
-        Returns tuple (E [kcal/mol], theta [degrees])
-        """
-
-        if theta is None:
+    @property
+    def theta(self):
+        """Return angle in degrees."""
+        if self._theta is None:
             ac1, ac2, ac3 = [a.struct.coordinates for a in self.atoms]
-            theta = qpotential.angle_angle(ac1, ac2, ac3)
+            self._theta = qpotential.angle_angle(ac1, ac2, ac3)
+        return self._theta
 
-        e = qpotential.angle_energy(theta,
-                                    self.prm.fc,
-                                    self.prm.theta0)
-        return (e, theta)
+    @property
+    def energy(self):
+        """Return angle energy in kcal/mol."""
+        return qpotential.angle_energy(self.theta,
+                                       self.prm.fc,
+                                       self.prm.theta0)
 
     def __repr__(self):
         atoms_str = "-".join([a.name for a in self.atoms])
@@ -631,27 +632,26 @@ class _TopoTorsion(object):
         self.atoms = [a for (i,a) in atom_indexes]
         for atom in self.atoms:
             atom.add_ref(self)
+        self._phi = None
     
-    def calc(self, phi=None):
-        """Calculate torsion angle and energy
-
-        Args:
-            phi (float, optional): define the angle instead of calculating it
-                                   from the structure
-
-        Returns tuple (E [kcal/mol], phi [degrees])
-        """
-
-        if phi is None:
+    @property
+    def phi(self):
+        """Return torsion angle in degrees."""
+        if self._phi is None:
             ac1, ac2, ac3, ac4 = [a.struct.coordinates for a in self.atoms]
-            phi = qpotential.torsion_angle(ac1, ac2, ac3, ac4)
+            self._phi = qpotential.torsion_angle(ac1, ac2, ac3, ac4)
+        return self._phi
+
+    @property
+    def energy(self):
+        """Return torsion energy in kcal/mol."""
 
         energy = 0
         for fc, multiplicity, phase, npaths in self.prm.get_prms():
-            energy += qpotential.torsion_energy(phi,
+            energy += qpotential.torsion_energy(self.phi,
                                                 fc, multiplicity, 
                                                 npaths, phase)
-        return (energy, phi)
+        return energy
 
     @property
     def prm_full(self):
@@ -694,26 +694,23 @@ class _TopoImproper(object):
         self.atoms = atoms
         for atom in self.atoms:
             atom.add_ref(self)
+        self._phi = None
 
-    def calc(self, phi=None):
-        """Calculate improper angle and energy
-
-        Args:
-            phi (float, optional): define the angle instead of calculating it
-                                   from the structure
-
-        Returns tuple (E [kcal/mol], phi [degrees])
-        """
-
-        if phi is None:
+    @property
+    def phi(self):
+        """Return improper torsion angle in degrees."""
+        if self._phi is None:
             ac1, ac2, ac3, ac4 = [a.struct.coordinates for a in self.atoms]
-            phi = qpotential.improper_angle(ac1, ac2, ac3, ac4)
-        e =  qpotential.improper_energy_periodic(phi,
-                                                 self.prm.fc,
-                                                 self.prm.multiplicity,
-                                                 self.prm.phi0)
-        return (e, phi)
+            self._phi = qpotential.improper_angle(ac1, ac2, ac3, ac4)
+        return self._phi
 
+    @property
+    def energy(self):
+        """Return improper torsion energy in kcal/mol."""
+        return qpotential.improper_energy_periodic(self.phi,
+                                                   self.prm.fc,
+                                                   self.prm.multiplicity,
+                                                   self.prm.phi0)
     @property
     def prm_full(self):
         """Return full parameter in case it is generic.
@@ -746,55 +743,54 @@ class _TopoNonBondedPair(object):
     """Contains topological information for a non-bonded atom pair.
     
     Args:
-        atoms (list of _TopoAtom): list of _TopoAtom objects
-        is_14 (boolean): flag to indicate 1-4 bonded atoms
+        atoms (list of _TopoAtom):       list of _TopoAtom objects
+        scaling14_el (float, optional):  scaling factor for 1-4 electrostatic \
+                                           energy (default=1.0)
+        scaling14_vdw (float, optional): scaling factor for 1-4 vdw \
+                                           parameters (default=1.0)
 
     """
-    def __init__(self, atoms, scaling14_el=1, scaling14_vdw=1):
-        self.scaling14_el = scaling14_el
-        self.scaling14_vdw = scaling14_vdw
+    def __init__(self, atoms, scaling14_el=None, scaling14_vdw=None):
+        self.scaling14_el = scaling14_el or 1.0
+        self.scaling14_vdw = scaling14_vdw or 1.0
         self.atoms = sorted(atoms, key=lambda atom: atom.index)
+        self._r = None
     
-    def calc_LJ(self, r=None):
-        """Calculate distance and Lennard-Jones potential.
-        
-        Args:
-            r (float, optional): define the distance instead of
-                                 calculating it from the structure
+    @property
+    def r(self):
+        """ Return distance in Angstrom.  """
+        if self._r is None:
+            ac1, ac2 = [a.struct.coordinates for a in self.atoms]
+            self._r = qpotential.bond_distance(ac1, ac2)
+        return self._r
 
-        Returns tuple (E [kcal/mol], r [angstrom])
-        """
-
-        ac1, ac2 = [a.struct.coordinates for a in self.atoms]
-        if not r:
-            r = qpotential.bond_distance(ac1, ac2)
-
+    @property
+    def energy_LJ(self):
+        """ Calculate energy of Lennard-Jones potential in kcal/mol."""
         prm1, prm2 = [a.prm for a in self.atoms]
         if prm1.lj_A is not None:
             lj_A = prm1.lj_A * prm2.lj_A
             lj_B = prm1.lj_B * prm2.lj_B
-            e = qpotential.vdw_LJ_AB(r, lj_A, lj_B, self.scaling14_vdw)
+            return qpotential.vdw_LJ_AB(self.r,
+                                        lj_A,
+                                        lj_B,
+                                        self.scaling14_vdw)
         else:
             lj_eps = (prm1.lj_eps * prm2.lj_eps)**0.5
             lj_R = prm1.lj_R + prm2.lj_R
-            e = qpotential.vdw_LJ_epsR(r, lj_eps, lj_R, self.scaling14_vdw)
+            return qpotential.vdw_LJ_epsR(self.r,
+                                          lj_eps,
+                                          lj_R,
+                                          self.scaling14_vdw)
 
-        return (e,r)
+    @property
+    def energy_coulomb(self):
+        """ Calculate Coulomb energy in kcal/mol. """
+        return qpotential.coulomb(self.r,
+                                  self.atoms[0].charge,
+                                  self.atoms[1].charge,
+                                  self.scaling14_el)
 
-    def calc_coulomb(self, r=None):
-        """Calculate distance and Coulomb energy.
-        
-        Args:
-            r (float, optional): define the distance instead of
-                                 calculating it from the structure
-
-        Returns tuple (E [kcal/mol], r [angstrom])
-        """
-        ac1, ac2 = [a.struct.coordinates for a in self.atoms]
-        if not r:
-            r = qpotential.bond_distance(ac1, ac2)
-        e = qpotential.coulomb(r, ac1.charge, ac2.charge, self.scaling14_el)
-        return (e,r)
 
     def __repr__(self):
         atoms_str = "-".join([a.name for a in self.atoms])

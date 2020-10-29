@@ -58,10 +58,10 @@ improper_definition            explicit\
     assert q_tors == 1950
     assert len(qat.impropers) == 102
 
-    be = sum([bond.calc()[0] for bond in qat.bonds])
-    ae = sum([ang.calc()[0] for ang in qat.angles])
-    te = sum([tor.calc()[0] for tor in qat.torsions])
-    ie = sum([imp.calc()[0] for imp in qat.impropers])
+    be = sum([bond.energy for bond in qat.bonds])
+    ae = sum([ang.energy for ang in qat.angles])
+    te = sum([tor.energy for tor in qat.torsions])
+    ie = sum([imp.energy for imp in qat.impropers])
 
     assert is_close(be, 181.2572830)
     assert is_close(ae, 212.8539304)

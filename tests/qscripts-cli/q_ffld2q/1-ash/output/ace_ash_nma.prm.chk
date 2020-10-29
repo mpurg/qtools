@@ -29,6 +29,7 @@ _TopoTorsion: (CH3-C-N-CA)                value:  179.99   eq.value:  180.00    
 _TopoAngle: (C-CH3-HH32)                  value:  109.51   eq.value:  109.50    dE:  0.00    # Prm: ace.C-ace.CH3-ace.HH32
 _TopoAngle: (N-CA-HA2)                    value:  109.49   eq.value:  109.50    dE:  0.00    # Prm: nma.HA2-nma.CA-nma.N
 _TopoBond: (CA-HA3)                       value:    1.09   eq.value:    1.09    dE:  0.00    # Prm: nma.CA-nma.HA3
+_TopoImproper: (C-N-CA-H)                 value:  179.95   eq.value:  180.00    dE:  0.00    # Prm: ace.C-ash.N-ash.CA-ash.H
 _TopoTorsion: (O-C-N-H)                   value:  179.97   eq.value:    0.00    dE:  0.00    # Prm: ash.O-ash.C-nma.N-nma.H
 _TopoAngle: (C-CH3-HH33)                  value:  109.49   eq.value:  109.50    dE:  0.00    # Prm: ace.C-ace.CH3-ace.HH33
 _TopoTorsion: (N-CA-C-N)                  value:  179.96   eq.value:  180.00    dE:  0.00    # Prm: ash.N-ash.CA-ash.C-nma.N
@@ -39,8 +40,10 @@ _TopoBond: (C-O)                          value:    1.23   eq.value:    1.23    
 _TopoTorsion: (O-C-N-CA)                  value:    0.05   eq.value:    0.00    dE:  0.00    # Prm: ace.O-ace.C-ash.N-ash.CA
 _TopoBond: (CB-HB3)                       value:    1.09   eq.value:    1.09    dE:  0.00    # Prm: ash.CB-ash.HB3
 _TopoTorsion: (CB-CG-OD2-HD2)             value:  179.94   eq.value:  180.00    dE:  0.00    # Prm: ash.CB-ash.CG-ash.OD2-ash.HD2
+_TopoImproper: (C-N-CA-H)                 value:  179.88   eq.value:  180.00    dE:  0.00    # Prm: ash.C-nma.N-nma.CA-nma.H
 _TopoBond: (CH3-HH31)                     value:    1.09   eq.value:    1.09    dE:  0.00    # Prm: ace.CH3-ace.HH31
 _TopoBond: (CH3-HH32)                     value:    1.09   eq.value:    1.09    dE:  0.00    # Prm: ace.CH3-ace.HH32
+_TopoImproper: (CH3-C-N-O)                value:  179.96   eq.value:  180.00    dE:  0.00    # Prm: ace.CH3-ace.C-ace.O-ash.N
 _TopoBond: (CH3-HH33)                     value:    1.09   eq.value:    1.09    dE:  0.00    # Prm: ace.CH3-ace.HH33
 _TopoAngle: (N-CA-HA3)                    value:  109.54   eq.value:  109.50    dE:  0.00    # Prm: nma.HA3-nma.CA-nma.N
 _TopoTorsion: (O-C-N-CA)                  value:    0.09   eq.value:    0.00    dE:  0.00    # Prm: ash.O-ash.C-nma.N-nma.CA
@@ -49,6 +52,7 @@ _TopoTorsion: (CA-C-N-H)                  value:    0.13   eq.value:    0.00    
 _TopoAngle: (N-CA-HA1)                    value:  109.45   eq.value:  109.50    dE:  0.00    # Prm: nma.HA1-nma.CA-nma.N
 _TopoBond: (CA-HA2)                       value:    1.09   eq.value:    1.09    dE:  0.00    # Prm: nma.CA-nma.HA2
 _TopoAngle: (O-C-N)                       value:  122.94   eq.value:  122.90    dE:  0.00    # Prm: ash.O-ash.C-nma.N
+_TopoImproper: (CA-C-N-O)                 value:  179.91   eq.value:  180.00    dE:  0.00    # Prm: ash.CA-ash.C-ash.O-nma.N
 _TopoBond: (CB-HB2)                       value:    1.09   eq.value:    1.09    dE:  0.00    # Prm: ash.CB-ash.HB2
 _TopoBond: (CA-HA1)                       value:    1.09   eq.value:    1.09    dE:  0.00    # Prm: nma.CA-nma.HA1
 _TopoBond: (N-H)                          value:    1.01   eq.value:    1.01    dE:  0.00    # Prm: ash.H-ash.N
@@ -79,6 +83,7 @@ _TopoAngle: (HH31-CH3-HH32)               value:  109.47   eq.value:  107.80    
 _TopoAngle: (HH32-CH3-HH33)               value:  109.48   eq.value:  107.80    dE:  0.03    # Prm: ace.HH32-ace.CH3-ace.HH33
 _TopoAngle: (HA2-CA-HA3)                  value:  109.50   eq.value:  107.80    dE:  0.03    # Prm: nma.HA2-nma.CA-nma.HA3
 _TopoAngle: (O-C-N)                       value:  124.00   eq.value:  122.90    dE:  0.03    # Prm: ace.O-ace.C-ash.N
+_TopoImproper: (CB-CG-OD1-OD2)            value:  177.64   eq.value:  180.00    dE:  0.04    # Prm: ash.CB-ash.CG-ash.OD1-ash.OD2
 _TopoBond: (CA-CB)                        value:    1.54   eq.value:    1.53    dE:  0.04    # Prm: ash.CA-ash.CB
 _TopoBond: (C-N)                          value:    1.34   eq.value:    1.33    dE:  0.04    # Prm: ash.C-nma.N
 _TopoAngle: (CA-C-N)                      value:  115.16   eq.value:  116.60    dE:  0.04    # Prm: ash.CA-ash.C-nma.N
@@ -95,11 +100,6 @@ _TopoAngle: (CG-OD2-HD2)                  value:  109.47   eq.value:  113.00    
 _TopoTorsion: (C-N-CA-HA2)                value:   60.12   eq.value:    0.00    dE:  0.14    # Prm: ash.C-nma.N-nma.CA-nma.HA2
 _TopoTorsion: (C-N-CA-HA1)                value:  179.94   eq.value:    0.00    dE:  0.14    # Prm: ash.C-nma.N-nma.CA-nma.HA1
 _TopoTorsion: (C-N-CA-HA3)                value:   59.97   eq.value:    0.00    dE:  0.14    # Prm: ash.C-nma.N-nma.CA-nma.HA3
-_TopoImproper: (C-N-CA-H)                 value:  179.95   eq.value:    0.00    dE:  0.14    # Prm: ace.C-ash.N-ash.CA-ash.H
-_TopoImproper: (C-N-CA-H)                 value:  179.88   eq.value:    0.00    dE:  0.14    # Prm: ash.C-nma.N-nma.CA-nma.H
-_TopoImproper: (CH3-C-N-O)                value:  179.96   eq.value:    0.00    dE:  0.14    # Prm: ace.CH3-ace.C-ace.O-ash.N
-_TopoImproper: (CA-C-N-O)                 value:  179.91   eq.value:    0.00    dE:  0.14    # Prm: ash.CA-ash.C-ash.O-nma.N
-_TopoImproper: (CB-CG-OD1-OD2)            value:  177.64   eq.value:    0.00    dE:  0.17    # Prm: ash.CB-ash.CG-ash.OD1-ash.OD2
 _TopoAngle: (C-CA-CB)                     value:  114.12   eq.value:  111.10    dE:  0.18    # Prm: ash.C-ash.CA-ash.CB
 _TopoTorsion: (N-CA-CB-CG)                value:  179.99   eq.value:   90.00    dE:  0.18    # Prm: ash.CG-ash.CB-ash.CA-ash.N
 _TopoAngle: (C-CA-HA)                     value:  113.68   eq.value:  109.50    dE:  0.19    # Prm: ash.C-ash.CA-ash.HA

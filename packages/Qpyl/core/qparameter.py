@@ -60,11 +60,11 @@ ATOM_MASSES = { "H": 1.0079,
 
 force_fields = {"oplsaa": {
                     "scaling_14_el": 0.5,
-                    "scaling_14_AB": 1/2**0.5
+                    "scaling_14_vdw": 1/2**0.5
                     },
                 "amber": {
                     "scaling_14_el": 0.8333,
-                    "scaling_14_EPS": 0.5
+                    "scaling_14_vdw": 0.5
                     }
                 }
 
@@ -956,13 +956,16 @@ class QPrm(object):
             prm_l["options"].append("{:<30s} {:<s}".format(k, v))
 
         for v in sorted(set(atom_types), key=lambda x: x.prm_id):
+
+            vdw14 = force_fields[self.ff_type]["scaling_14_vdw"]
+
             if self.ff_type == "amber":
                 prm_l["atom_types"].append("{:<12} {:>10} {:>10} "
                                            "{:>10} {:>10} {:>10} "
                                            "{:>10}{}"
                                            .format(v.atom_type, v.lj_R, 0.0,
                                                    v.lj_eps, v.lj_R,
-                                                   v.lj_eps/2, v.mass,
+                                                   v.lj_eps*vdw14, v.mass,
                                                    v.comment))
             elif self.ff_type == "oplsaa":
                 lj_A = round(v.lj_A, 4)
@@ -972,8 +975,8 @@ class QPrm(object):
                                            "{:>10}{}"
                                            .format(v.atom_type, lj_A, lj_A,
                                                    lj_B,
-                                                   round(lj_A/2**0.5, 4),
-                                                   round(lj_B/2**0.5, 4),
+                                                   round(lj_A*vdw14, 4),
+                                                   round(lj_B*vdw14, 4),
                                                    v.mass, v.comment))
 
         for v in sorted(set(bonds), key=lambda x: x.prm_id):

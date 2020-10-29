@@ -170,9 +170,11 @@ for bati_name in ["bonds", "angles", "torsions", "impropers"]:
         if bati_name == "bonds":
             e0 = 0
             v0 = bati.prm.r0
+            v = bati.r
         elif bati_name == "angles":
             e0 = 0
             v0 = bati.prm.theta0
+            v = bati.theta
         elif bati_name == "torsions":
             # get the torsion minimum
             energy_profile = []
@@ -184,12 +186,13 @@ for bati_name in ["bonds", "angles", "torsions", "impropers"]:
                 energy_profile.append((energy, phi))
             energy_profile.sort()
             e0, v0 = min(energy_profile)
-        elif bati_name == "improper":
+            v = bati.phi
+        elif bati_name == "impropers":
             e0 = 0
             v0 = bati.prm.phi0
+            v = bati.phi
 
-        e, v = bati.calc()
-        de = e - e0
+        de = bati.energy - e0
 
         data[bati_name].append((bati, de, v, v0))
         total_e[bati_name] += de
