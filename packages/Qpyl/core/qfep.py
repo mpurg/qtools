@@ -455,6 +455,7 @@ class _QFepPart3(object):
         self.warning = None
 
         self._parse()
+
         if not self.data.get_rows():
             raise QFepOutputError("Part3 is empty (no rows).")
 
@@ -589,7 +590,7 @@ class QFepOutput(object):
     _PART0_RE = re.compile(r"(# Part 0.*?)# Part 1", re.DOTALL)
     _PART1_RE = re.compile(r"(# Part 1.*?)# Part 2", re.DOTALL)
     _PART2_RE = re.compile(r"(# Part 2.*?)# Part 3", re.DOTALL)
-    _PART3_RE = re.compile(r"(# Part 3.*)", re.DOTALL)
+    _PART3_RE = re.compile(r"(# Part 3.*?)(# Part 4|$)", re.DOTALL)
 
     # To extract the full, exclusions and QCP results separately
     # '# Part 1' is added manually to the end of the logfile
