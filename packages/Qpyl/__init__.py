@@ -12,5 +12,5 @@ generating FEP files (*qmakefep*).
 """
 __author__ = "Miha Purg"
 __license__ = "MIT"
-__version__ = "0.7.0"
+__version__ = "0.7.1"
 
