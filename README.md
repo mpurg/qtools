@@ -4,7 +4,7 @@
 
 #### Description
 
-qtools is a toolset comprised of a Python library Qpyl and a set of command-line tools, for use with the [molecular dynamics simulation package *Q*](http://xray.bmc.uu.se/~aqwww/q/). This open-source project was created by Miha Purg (currently at Uppsala University) in order to provide Q-users with a set of well-tested tools for automating repetitive and/or tedious tasks, debugging simulations, and analysing results. The author strives to achieve a good balance between the level of user-control over *Q* (i.e., relatively low abstraction level) and the ease-of-use provided by qtools.
+qtools is a toolset comprised of a Python library Qpyl and a set of command-line tools, for use with the [molecular dynamics simulation package *Q*](http://xray.bmc.uu.se/~aqwww/q/). This open-source project was created to provide Q-users with a set of well-tested tools for automating repetitive and/or tedious tasks, debugging simulations, and analysing results. The author strives to achieve a good balance between the level of user-control over *Q* (i.e., relatively low abstraction level) and the ease-of-use provided by qtools.
 
 *Disclaimer: qtools is not affiliated with *Q* nor should it be considered an official toolset for Q.*
 
@@ -88,7 +88,7 @@ Submit issues and feature requests to Github (https://github.com/mpurg/qtools/is
 To contribute create a pull request.
 
 #### Author
-Miha Purg (miha.purg@gmail.com)  
+Miha Purg
 
 ##### Contributors
 Paul Bauer
