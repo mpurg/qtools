@@ -91,6 +91,6 @@ To contribute create a pull request.
 Miha Purg
 
 ##### Contributors
-Paul Bauer
-Florian van der Ent
+- Paul Bauer
+- Florian van der Ent
 
