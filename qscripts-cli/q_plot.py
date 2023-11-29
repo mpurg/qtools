@@ -110,7 +110,7 @@ class PlotApp():
         for i, plotdata_file in enumerate(self.plotdata_files):
             handls.append(mpatches.Patch(color=self._COLORS[i]))
             labls.append("%d: %s" % (i, plotdata_file))
-        self.figure.legend(handls, labls, pos, prop=self.legend_font)
+        self.figure.legend(handls, labls, loc=pos, prop=self.legend_font)
 
 
     def change_geometry(self):
